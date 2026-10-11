@@ -10,7 +10,11 @@
 | ★ **Gemma** | Free, small open model for cheap pre-filtering of large review volumes |
 | ★ **Vertex AI multimodal embeddings** | Turns product photos and text into vectors for finding twins and copied photos |
 | ★ **Cloud Vision API: Web Detection** | Finds where else an image appears online. Key to the **"copied photos"** check: did this shop's photo come from the brand's official page? |
-| ★ **Agent Development Kit (ADK)** + **Vertex AI Agent Engine** | The Investigation Copilot agent, with tools |
+| ★ **Agent Development Kit (ADK)** + **Vertex AI Agent Engine** | The SafeShelf agent: Concierge + Shelf Chat, the investigate pipeline (sequential + parallel agents), Shopper and Research agents, Investigation Copilot. Sessions hold the product identity |
+| ★ **Gemini computer use** (`gemini-3.8-flash`, or `gemini-3.5-flash-lite` for speed) | Shopper Agent (clicks through the product page) and Research Agent (registries without an API). Vertex support to confirm on Oct 12 |
+| **Agent Engine Memory Bank** | My Shelf: remembers what the shopper owns (Firestore also works) |
+| **Firebase Cloud Messaging** | My Shelf recall push notifications |
+| **A2A protocol** + **MCP** | Let other AI shopping agents call SafeShelf |
 | ★ **Grounding with Google Search** | Gemini looks up recall notices or registry pages in other countries, with sources |
 | ★ **Cloud Run** | Hosts our API and web app (required by the rules) |
 | ★ **Cloud SQL (PostgreSQL + pgvector)** | Products, evidence and relationships, with vector search |
@@ -22,14 +26,14 @@
 | **Cloud Translation API** | Translating summaries and non-English reviews |
 | **Document AI** | Reading certificates and test-report PDFs (optional; Gemini can often do this itself) |
 | **Vertex AI Vector Search** | Large-scale vector search later; pgvector is enough for the hackathon |
-| **Cloud Tasks / Pub/Sub / Cloud Scheduler** | Background jobs: ingestion, registry re-checks |
+| ★ **Cloud Tasks / Pub/Sub / Cloud Scheduler** | Background jobs: ingestion, registry re-checks, daily My Shelf recall checks |
 | **Firebase Hosting / Firestore** | Quick front-end hosting or simple data storage |
 | **Secret Manager, Cloud Logging, Cloud Monitoring** | API keys, logs, health checks |
 | **Looker Studio** | Quick trend dashboards (optional) |
 | ★ **Google Antigravity / AI Studio** | The rules require one agentic platform (Agent Platform, Antigravity or AI Studio). Use it for prompt testing and building, but bill Gemini calls through Vertex: the $300 credit doesn't cover AI Studio API calls |
 | ★ **Google Colab** | Notebook for running the backtest quickly |
 | ★ **Lighthouse** (built into Chrome) | Accessibility, performance and quality scores |
-| **Chrome Extensions (Manifest V3)** | The browser extension platform |
+| ★ **Chrome Extensions (Manifest V3)** | The browser extension platform. `chrome.sidePanel` for Shelf Chat, `chrome.tabs.captureVisibleTab` for screenshots, content script or `chrome.debugger` to carry out the agent's clicks |
 | **Gemini Nano in Chrome** (built-in AI) | Optional on-device summaries in the extension, for privacy |
 | **Google Slides** | The deck (the official template is a .pptx) |
 
@@ -64,7 +68,7 @@
 | **WXT or Plasmo** | Faster Chrome extension development |
 | **ReportLab / WeasyPrint** | Evidence pack PDF |
 | ★ **axe-core**, **NVDA** (Windows), **TalkBack** (Android) | Accessibility testing |
-| **Playwright** | Automated end-to-end tests of the app and extension |
+| ★ **Playwright** | Headless browser for the Research Agent on Cloud Run; also end-to-end tests of the app and extension |
 | **GitHub Actions** | Running tests on every push |
 | **Docker** | Packaging services for Cloud Run |
 | **OBS Studio or QuickTime** | Recording the 3-minute demo video |
@@ -74,3 +78,4 @@
 - **Twin finding:** Vertex multimodal embeddings + pgvector + imagehash + Gemini.
 - **"Is it real?":** Cloud Vision Web Detection + RDAP + price-floor rules + Web Risk API.
 - **Accessibility:** Gemini TTS + Lighthouse + axe + NVDA.
+- **Agent:** ADK + Agent Engine + Gemini computer use + Playwright on Cloud Run + `chrome.sidePanel`.
