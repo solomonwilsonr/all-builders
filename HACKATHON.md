@@ -120,3 +120,42 @@ Judges have not been announced yet.
 - Discord: https://discord.gg/x5GRzJbKpa
 - Email: support+aibuildercup@hack2skill.com · Phone: +91 98703 30830
 - Pages: [Themes](https://aibuildercup.com/themes.html) · [Rewards](https://aibuildercup.com/rewards.html) · [FAQs](https://aibuildercup.com/Faqs.html) · Terms & Conditions (a Google Doc linked from the site)
+
+## Gemini models: important
+- **Gemini 2.5 Pro/Flash/Flash-Lite retire on Vertex on Oct 16, 2026**, during judging. Don't build on them.
+- On day one, list the 3.x model IDs the project can actually call. Keep the model ID in an environment variable.
+- The $300 Google Cloud trial credit can't pay for Gemini API calls through AI Studio. Call Gemini through Vertex billed to the trial.
+
+## Inconsistencies on the official site
+- The rewards page shows a "USD 0" total (placeholder); the home page says $30k, and the individual prizes add up to that.
+- The themes page asks for a "PDF proposal"; the FAQ says "deck". The official PPTX template settles it: deck → PDF.
+- A "Category Specification" line lists Healthcare/Education/etc. That's copied from an older event; use the six themes.
+- One aggregator site lists the event as ending Oct 11. The official dashboard confirms **Oct 18** for submission.
+
+## Submission deck template (`Submission Template _ AI Builder Cup.pptx`, 16 slides)
+| # | Slide | Notes |
+|---|---|---|
+| 1 | Team details | Team name Hashes, leader, problem statement/theme |
+| 2 | Instructions | Delete before submitting |
+| 3 | Brief about the idea | Pitch + user story |
+| 4 | Opportunities: how it differs, how it solves, USP | Competitor comparison |
+| 5 | Features | |
+| 6 | Process flow / use-case diagram | |
+| 7 | Wireframes (optional) | Can skip; slide 11 shows real screens |
+| 8 | Architecture diagram | Google stack |
+| 9 | Technologies | |
+| 10 | Implementation cost (optional) | Worth filling; makes it look like a real product |
+| 11 | **Prototype snapshots** | Needs real screenshots |
+| 12 | **Performance / benchmarking** | Needs measured numbers |
+| 13 | Future development | |
+| 14 | Links | GitHub, 3-min video, live URL |
+| 15–16 | Closing | |
+
+## What wins hackathons (from a study of 16 hackathons in 2026)
+- **One named user, one painful workflow**, often public-service paperwork
+- **A measurable before/after** ("weeks → 5 hours")
+- **A human-in-the-loop safeguard**: the AI says "verify", the human decides
+- **Deep use of the sponsor's tech**, not a token API call
+- **Looks like a product, not a demo**: works end to end, polished, with tests
+- **A credible builder or human story**, and one memorable **wow moment**
+- **What didn't win:** generic "AI for X", novelty that isn't feasible, overbuilding

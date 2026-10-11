@@ -132,7 +132,7 @@ Not counted: haidertaqvee/terratwin-sos (says the AI Builder Cup is out of scope
 | Future of Work | 9 | 3 | **12** |
 | Manufacturing | 4 | 2 | **6** |
 | Media, Content & Digital | 2 | 2 | **4** |
-Themes marked "?" were assigned by us. Overlap screen for candidate spaces: `research_notes/Winning idea search/competitor_screen.md`.
+Themes marked "?" were assigned by us. Idea overlap notes are in `IDEAS.md` (Parts 4–5).
 
 ## New since 2026-10-10 (third scan, evening)
 | Theme | Repo | Idea |
@@ -175,3 +175,31 @@ Themes marked "?" were assigned by us. Overlap screen for candidate spaces: `res
 | Sustainability? | vigneshgeni/sarvam | Explains official notices in Indian languages |
 
 **Running totals (third scan): BFSI ~27 · Sustainability ~25 · Future of Work ~19 · Retail ~15 · Manufacturing ~11 · Media ~8–9 · ≈105 real entries.** None touches pharmacy or medicine recalls (BatchWatch) or fact-checking (NightDesk).
+
+## Fourth scan (2026-10-11, team-lock day)
+Method: `gh search repos` (10 query variants, created since 2026-08-15, incl. `in:readme`) + `gh search code` (4 variants) → 152 unique repos. 71 were already listed above; the rest were checked by reading each README.
+
+**New real entries (15):**
+| Theme | Repo | Idea |
+|---|---|---|
+| Manufacturing | likhith-bluelotus/andon-agent | Root-cause analysis for assembly-line stops, code-verified claims |
+| Manufacturing | jeyaanthanandan/pramaan | CBAM emissions proof from a phone photo for small steel-goods exporters |
+| Manufacturing | rashidu189/smartfactory-ai | SmartFactory AI (intelligent operations), details thin |
+| Future of Work | men16922/ai-builder-cup | "Aide": mobile multi-agent crew (ADK, A2A) that investigates Google Cloud incidents |
+| Future of Work | sonusv7719/computer_automate_agent_harness | "Shadow": teach a desktop task once, replay as code, Gemini repairs it |
+| Future of Work | vidadatakita/ai-recruitment-hr-co-worker-gemini | Explainable AI hiring co-worker |
+| Future of Work | vi-shub/askonce | AskOnce (enterprise Q&A), details thin |
+| Future of Work? | mocharil/organa | Company North Star → coordinated AI coworkers with human review |
+| Future of Work? | ducnmm/ocpad | Pen/ink overlay on opencode web for iPad |
+| Media? | sruthiranabothu/ai_builder_cup | "Creator OS": autonomous assistant for content creators |
+| BFSI | elli0t-yash/drift-risk-copilot | Portfolio risk copilot (Rust) |
+| Sustainability | zikazama/tipo | Disaster report triage for Indonesian posko/BPBD operators |
+| Sustainability | getkcoin-alt (profile) | "Project CANOPY": Observe → Understand → Decide → Act → Verify loop; repo not public yet. **Watch: closest in spirit to ClearSight** |
+| Sustainability? | butcher532/snakebite_ros | "CarePath": emergency operations and routing |
+| ? | saijeevan06/ai-ify-my-project | Growth campaign: turn student projects into AI projects |
+
+**Placeholders (not counted, 9):** ssuish/syntropic, chimee-lee/jomisu, janeshkapoor/ai_builder_cup, badhansen/build-x, gitfynithya/ai-builder-cup, codeforinnovation/ai_builder_cup, majinbruce/ai-builder-cup-google-cloud, swar186j/aibuildercup-initial, syrzy-wna/tb-link-ai-builder-cup.
+
+**Noise (not counted):** 9 repos for the crypto *Botcamp / Hummingbot Agent Builders Cup* (ajjcoppola, alemaxxx, doi-doi, hbminerfan, phibao, pizzylee001, ronyz1320, southenempire, seekdaseek); *Ramp Builders Cup* (juliuszhou124, sanskriti-slngh); unrelated keyword hits (boba-lab, gaming Java template, coffee shop, betting tips, esports rulebook, Conv' Cup ML).
+
+**Running totals (fourth scan): BFSI ~28 · Sustainability ~28 · Future of Work ~25 · Retail ~15 · Manufacturing ~14 · Media ~9–10 · ≈120 real public entries.** Still nothing on environmental clearances, permits or satellite-vs-self-report checks.
