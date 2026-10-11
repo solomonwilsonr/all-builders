@@ -7,6 +7,7 @@ Updated 2026-10-11 · AI Builder Cup 2026 · Deadline **Oct 18, 11:59 PM IST** (
 | **1** | **ClearSight** | Sustainability | **CORE: we are building this** | **~4.45** (ceiling ~4.7) |
 | 2 | SolventGate+ | Manufacturing | Backup if Earth Engine fails by end of Oct 12 | 4.34 |
 | 3 | Witness | Media | Vision / roadmap slide only | ~3.9 |
+| 1b | PitStop (SMED changeover copilot) | Manufacturing | New candidate (2026-10-11), see `PITSTOP.md` | ~4.39 |
 | 4 | Ghost Ledger PH, HakGig, NightDesk, BatchWatch | various | Parked | 3.4–4.1 |
 | 5 | ~40 others | various | Dropped | n/a |
 
