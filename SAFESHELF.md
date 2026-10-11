@@ -33,6 +33,8 @@ Today every e-commerce platform keeps its own separate product records. SafeShel
 
 Both answers come from the same identity engine. SafeShelf already knows what the genuine product looks like: its photos, model, normal price range and certificates. So it can tell when a shop copies those photos, prices the product impossibly low, or has only just appeared.
 
+**For every shopper.** Both answers work with screen readers and the keyboard. They can be read aloud ("Read it to me"), in plain language and in Hindi, so blind, low-vision, elderly and non-English-reading shoppers get the same protection (section 12.1).
+
 **What "Is it real?" does not cover:** payment, bank, UPI, phishing-SMS or phone-call scams. Those are a different problem, and many other teams already work on them.
 
 ### The central question
@@ -551,7 +553,40 @@ The intelligence is offered through reusable, versioned APIs, not built only int
 - Send only the product page's details to the API, never the shopper's identity.
 - Show verified facts (green), AI findings (amber, "under review") and official recalls (red) in different styles.
 - **First version:** Chrome plus two shopping sites. Add Firefox, Edge and more stores after the matching pipeline has proven itself.
-- **Accessibility:** keyboard navigation, screen-reader labels, plain-language explanations.
+- **Accessibility:** built in from the start, see section 12.1.
+
+### 12.1 Accessibility: SafeShelf for every shopper
+
+**Why it matters here.** The evidence SafeShelf relies on is mostly visual:
+- buyer photos of melted or burnt products,
+- safety marks and numbers printed on the pack,
+- price and seller details shown in images.
+
+Blind and low-vision shoppers using screen readers cannot see any of this, so they are more exposed to fake and dangerous products than anyone else. SafeShelf already turns these images into words, so it can also speak them.
+
+**What we build:**
+
+| Feature | Who it helps | How |
+|---|---|---|
+| **Accessibility basics** | Blind, low-vision and colour-blind shoppers, keyboard-only users | Every panel works with the keyboard alone. All buttons and results have screen-reader labels (ARIA). Contrast meets WCAG 2.2 AA, and text can be enlarged. Warnings always use **an icon and words as well as colour** (green / amber / red is never the only signal). Focus order follows the reading order |
+| **"Read it to me"** | Blind, low-vision and elderly shoppers, people who find reading hard | One button (or a keyboard shortcut) reads a short spoken summary using Gemini TTS, for example: *"This charger looks genuine. Nine buyers reported overheating, under review. Not recalled."* |
+| **Plain-language mode** | People with cognitive disabilities, first-time online shoppers | Gemini writes the summary in short sentences with no jargon. Each warning has a "Why?" button with one simple reason and the evidence behind it |
+| **Indian languages** | Shoppers who don't read English | The summary and voice in Hindi first, with more Indian languages later |
+| **Ask by voice** (stretch goal) | Blind and elderly shoppers | Gemini Live: the shopper asks "Is this charger safe?" or "Is this shop real?" and hears the answer, grounded in the same evidence and API results |
+
+**Rules:**
+- **The spoken answer never says more than the evidence.** It uses the same wording rules as the screen: "be careful", "under review", never "scam" or "dangerous" unless there is an official recall.
+- **Short first, detail on request.** The first spoken sentence gives the verdict. Detail is read only when the shopper asks.
+- **No extra permissions.** Voice runs only when the shopper presses the button or the shortcut.
+
+**How we check it:**
+- **Google Lighthouse** accessibility score of 95 or higher on every screen.
+- An **axe** automated scan with no serious issues.
+- **Manual tests** with the NVDA screen reader (Windows) and TalkBack (Android).
+- Keyboard-only walkthroughs of the four hero screens.
+- On the deck: "Meets WCAG 2.2 AA (self-tested)".
+
+**Scope:** accessibility is a layer on top of SafeShelf, not the main idea. SafeShelf stays a Retail product that everyone can use.
 
 ---
 
@@ -736,7 +771,8 @@ The full platform above is the vision. For the hackathon we build **one working 
 4. **Certification Truth:** a listing claims a 5-star energy rating, but the Australian registry shows 3 stars, so it's a mismatch, with the registry record shown.
 5. **Investigation Copilot:** it drafts the evidence pack and regulator report. The analyst approves it.
 6. **Is it real? (about 20 seconds):** we open a mock "fake shop" page we built ourselves, clearly labelled as a demo. It sells the same charger for Rs 299. The extension shows that the photos are copied from the official listing, the price is far below the genuine product, and the website is 19 days old. It then adds that the genuine model also has hazard reports.
-7. **Extension and API:** the Chrome extension shows the same findings on a demo product page. One `curl` to `/v1/products/{id}/safety` returns the same JSON.
+7. **For every shopper (about 15 seconds):** a screen reader is running on a shopping page. The shopper presses one key, and SafeShelf says in Hindi: *"Be careful. This shop copied the brand's photos, and the price is too low to be real."*
+8. **Extension and API:** the Chrome extension shows the same findings on a demo product page. One `curl` to `/v1/products/{id}/safety` returns the same JSON.
 
 ## 22. Hackathon scope (every module shown, depth chosen)
 
@@ -755,6 +791,7 @@ The full platform above is the vision. For the hackathon we build **one working 
 | Investigation Copilot | **Full:** ADK agent drafting the evidence pack, human approval |
 | Developer API | `identify`, `duplicates`, `safety`, `history`, `trust-check` on Cloud Run with API key |
 | Browser extension | Chrome, one demo product page |
+| Accessibility (section 12.1) | **Full:** WCAG 2.2 AA basics, "Read it to me" (Gemini TTS), plain-language mode, Hindi summary. **Stretch:** ask by voice (Gemini Live) |
 
 ## 23. Evaluation (performance slide)
 - **Early-warning backtest:** 20+ past CPSC recalls with matching Amazon reviews. Report the median lead time between our flag and the recall date, plus precision on a set of products that were never recalled (false alarms).
@@ -766,6 +803,11 @@ The full platform above is the vision. For the hackathon we build **one working 
   - a few changed specs.
 
   We add 50 genuine listings, including real discounts and new authorised shops. Then we report precision and recall for each of the 3 checks. The labels are known because we made the pages.
+- **Accessibility:**
+  - Lighthouse accessibility score of at least 95 on every screen,
+  - axe scan with no serious issues,
+  - NVDA and TalkBack walkthroughs,
+  - time for a screen-reader user to get the verdict on a product page (target: one key press, under 10 seconds).
 - **Analyst time:** building an evidence pack by hand vs with SafeShelf.
 
 **Make-or-break test (first thing on Oct 12, about 2 hours):** do hazard reviews and photos appear at least 2 weeks before the recall date on enough recalls? If yes, build SafeShelf. If no, stay with ClearSight.
@@ -777,9 +819,11 @@ The full platform above is the vision. For the hackathon we build **one working 
 | Technical merit & GenAI | 40% | Gemini does real work: image damage analysis, multilingual hazard extraction, pair verification, certification reading, an agentic copilot. Code makes the final decisions; there's a full stack on Cloud Run and a measured backtest |
 | Problem & impact | 25% | Lives and injuries; OECD 87%; ACCC and BIS enforcement. It serves the marketplace, the shopper and the regulator. "Is it real?" also helps every shopper who clicks a too-good-to-be-true ad |
 | Innovation | 25% | Early warning *before* the recall, from photos, plus the rule that only verified twins inherit a recall |
-| UX | 10% | Timeline replay, the twin view with colour-coded certainty, an extension in the shopper's flow |
+| UX | 10% | Timeline replay, the twin view with colour-coded certainty, an extension in the shopper's flow. **Accessible to blind, low-vision and elderly shoppers** (screen reader, "Read it to me", Hindi, plain language) |
 
 **Rough score:** Tech 4.5, Impact 4.5, Innovation 4.5, UX 4.0 gives **4.45**, and about 4.5 if the backtest shows a lead time of at least 2 weeks.
+
+Accessibility adds roughly **+0.03 to +0.05** overall (UX up about 0.25–0.5, a small Impact lift), and makes us a stronger contender for the separate **Best UI/UX** prize.
 
 "Is it real?" adds roughly **+0.05 to +0.1**, mainly to Impact, as long as it stays at 3 small checks. Grown into a full scam app, it would overlap the many scam entries and pull the score down.
 
@@ -791,7 +835,7 @@ The full platform above is the vision. For the hackathon we build **one working 
 | Oct 13 | Fingerprints, embeddings, candidate search, Gemini pair verification, relationship rules |
 | Oct 14 | Safety Radar (text and photos), dedup, change detection, recall matching, timeline replay |
 | Oct 15 | Certification Truth, **"Is it real?" checks** (copied photos, price floor, website age) and the 100-page test set, Investigation Copilot (ADK), API endpoints |
-| Oct 16 | Safety Passport page, Chrome extension (both panels), mock fake-shop page, report form, evaluation runs, polish, freeze |
+| Oct 16 | Safety Passport page, Chrome extension (both panels), mock fake-shop page, report form. **Accessibility pass:** ARIA labels, keyboard, contrast, "Read it to me" (Gemini TTS), Hindi summary, Lighthouse/axe/NVDA checks. Evaluation runs, polish, freeze. (Ask by voice only if time is left) |
 | Oct 17 | Demo video, deck, submit |
 
 ---
@@ -820,6 +864,7 @@ The full platform above is the vision. For the hackathon we build **one working 
 | Review photos are sparse in some categories | Text evidence still works; photos increase confidence but aren't required |
 | Some registries (BIS) are behind a captcha | Australia's open registry for the demo; BIS via an official API or partnership later |
 | Too big for 6 days | We build one deep slice through every layer and show the rest on the roadmap |
+| Accessibility done badly (labels missing, voice too long) | Build it in from day one instead of adding it at the end; run Lighthouse and axe on every screen; keep spoken answers to one sentence first |
 | "Isn't this just another scam checker?" | No. It covers only deception about the product (copied photos, impossible price, brand-new shop, fakes), checked against the genuine product's identity. Payment, phishing and call scams are out of scope |
 | A real shop gets flagged (new shop, genuine sale) | The result says "Be careful" with the reasons, never "scam". Authorised-seller lists and the price history reduce false flags, and the test set includes real discounts and new shops |
 

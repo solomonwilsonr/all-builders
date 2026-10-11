@@ -221,3 +221,36 @@ Method: `gh search repos` (7 queries, each by name/description and `in:readme`, 
 **Still placeholders (not counted):** CodeByKodi/2026aibuildercup-geni (empty, Future of Work per description), swar186j/aibuildercup-initial and majinbruce/ai-builder-cup-google-cloud (single "test" file), ssuish/syntropic, chimee-lee/jomisu (Vite template), janeshkapoor/ai_builder_cup, badhansen/build-x, gitfynithya/ai-builder-cup, codeforinnovation/ai_builder_cup, syrzy-wna/tb-link-ai-builder-cup. Project CANOPY (getkcoin-alt) is still not public.
 
 **Running totals (fifth scan): BFSI ~29 · Sustainability ~30 · Future of Work ~26 · Retail ~16 · Manufacturing ~14 · Media ~9–10 · ≈125 real public entries.** CivicLens is the first entry that checks a public promise against what happened, but it still covers no environmental clearances or satellite-vs-self-report checks. New public entries have slowed to about 5 per scan.
+
+## Strongest public entries so far (2026-10-12)
+Our prediction, based on the idea (impact, originality, depth of Gemini use) plus signs of progress from GitHub (commit count, recent activity, live link). Only about 125 entries are public out of an estimated 1,000+, so the real top 10 will include private teams. Commit counts measure effort, not quality.
+
+| # | Entry | Theme | Idea | Repo | Live demo | Commits |
+|---|---|---|---|---|---|---|
+| 1 | Gapline | Media | AI audio description (KO/EN) fitted into dialogue gaps; video and deck done | [emforce77/gapline](https://github.com/emforce77/gapline) | [link](https://scene-ad-958994530029.asia-northeast3.run.app) | 70 |
+| 2 | Decision Safety Network | BFSI | Scam interruption during the call + first-hour recovery (India) | [Chander-Shekhar/decision-safety-network](https://github.com/Chander-Shekhar/decision-safety-network) | none listed | 180 |
+| 3 | Kavach | BFSI/health | Fights rejected health-insurance claims: appeal + ombudsman forms | [cherrymekala/kavach](https://github.com/cherrymekala/kavach) | none listed | 46 |
+| 4 | NomadFinance | BFSI | Financial protection for migrant workers | [google-ai-builder-cup/NomadFinance](https://github.com/google-ai-builder-cup/NomadFinance) | [link](https://nomadfinance-prod.web.app) | 378 |
+| 5 | Harvest | Manufacturing | Gemini Live agent phones farmers, forecasts supply, negotiates prices | [RaymonddC/Harvest](https://github.com/RaymonddC/Harvest) | none listed | 66 |
+| 6 | ReadiCheck | BFSI | Gemini plays scammers (Live voice) to test bank customers | [MegaWiz-Dev-Team/readicheck](https://github.com/MegaWiz-Dev-Team/readicheck) | [link](https://readicheck-api-199079528714.asia-southeast1.run.app/demo) | 74 |
+| 7 | Taal | **Retail** | Stock about to be written off becomes tested customer offers | [Nandish3010/probable-fortnight](https://github.com/Nandish3010/probable-fortnight) | [link](https://taal-web-2obkp776ca-el.a.run.app) | 268 |
+| 8 | Luwas | Sustainability | Disaster command centre for Philippine villages, Gemini checks reports | [kd-s-t/luwas](https://github.com/kd-s-t/luwas) | none listed | 21 |
+| 9 | AIRA | Sustainability | A blind shopkeeper runs their own shop | [Saravana-Rajan/AIRA](https://github.com/Saravana-Rajan/AIRA) | [link](https://aira-shop.web.app) | 67 |
+| 10 | Andon Agent | Manufacturing | Root cause of assembly-line stops, claims checked by code | [Likhith-BlueLotus/andon-agent](https://github.com/Likhith-BlueLotus/andon-agent) | none listed | 57 |
+
+**Also worth watching:**
+
+| Entry | Theme | Repo | Live demo |
+|---|---|---|---|
+| bunnbaa | **Retail** | [Donna12301230/bunnbaa-mvp](https://github.com/Donna12301230/bunnbaa-mvp) | [link](https://bunnbaa-mvp-5474.web.app) |
+| Scam Shield | **Retail** | [SumalaMannage/trust-engine](https://github.com/SumalaMannage/trust-engine) | [link](https://trust-engine-865854861902.asia-southeast1.run.app) |
+| varelyx | **Retail** | [Saidur-droid/varelyx](https://github.com/Saidur-droid/varelyx) | [link](https://varelyx-ai-builder-cup.web.app) |
+| CivicLens | Sustainability | [rupesh-kaneki88/ai-builder-cup-2026-civic-lens](https://github.com/rupesh-kaneki88/ai-builder-cup-2026-civic-lens) | not deployed yet |
+| Nightingale | Sustainability | [Crystal32378/Nightingale-Walk-with-Me](https://github.com/Crystal32378/Nightingale-Walk-with-Me) | [link](https://nightingale-walk-with-me--english-20261008-q4gion1y.web.app/?flow=last300m&photo=1&lang=en) |
+
+**Our direct Retail rivals:** Taal, bunnbaa, varelyx and Scam Shield. All four are working builds with live demos, so they are ahead of us on build progress. None of them covers product safety, recalls or fake shops.
+
+**What the strong entries have in common:**
+- a live link and a lot of real building,
+- one clear human user,
+- one memorable Gemini moment.

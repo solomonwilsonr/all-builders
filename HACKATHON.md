@@ -5,7 +5,8 @@ Source: https://aibuildercup.com/ (pulled 2026-10-07) · Operator: Hack2skill ·
 ## Timeline
 | Phase | Dates |
 |---|---|
-| Registration & team formation | Sep 1 – **Oct 11, 2026** (team changes close here) |
+| Registration | Sep 1 – **Oct 11, 2026** (closed; we are registered) |
+| Team formation | Sep 1 – **Oct 14, 2026** (extended from Oct 11) |
 | Prototype building & submission | Sep 7 – **Oct 18, 2026** (submission deadline) |
 | Evaluation (scoring round → shortlist) | Oct 19 – Nov 6, 2026 |
 | Finalists announced | Nov 7, 2026 |
@@ -13,7 +14,18 @@ Source: https://aibuildercup.com/ (pulled 2026-10-07) · Operator: Hack2skill ·
 | Mentorship Week with Google Experts (likely for the Top 50) | Nov 10 – Nov 30, 2026 |
 | Grand Finale / Demo Day (in person) | Dec 4, 2026, Singapore (9 AM – 5 PM) |
 
-All deadlines are **11:59 PM IST**. Source: the Hack2skill dashboard roadmap, seen 2026-10-10. Our team: **Hashes** (a duo, registered). The dashboard banner says teams need at least 2 members to be eligible to submit.
+All deadlines are **11:59 PM IST**. Source: the Hack2skill dashboard roadmap, seen 2026-10-10. Our team: **Hashes**, 2 members: **Seshu Madhavan (team leader)** and Solomon Wilson R. The dashboard banner says teams need at least 2 members to be eligible to submit. Theme to choose on submission: **Retail & Commerce** (SafeShelf). Dashboard checked 2026-10-12.
+
+
+## How many will submit (our estimate, 2026-10-12)
+No official numbers have been published; this is our estimate and could be off by 2x.
+- **Unteamed pool:** the dashboard's "Explore Public Profile" list has 1,927 pages of 10 people, so about **19,262 people are still looking for a team**. Registered teams are not in this list.
+- **Total registered:** about **40,000–60,000**, assuming the pool is a third to a half of everyone.
+- **Teams:** about **7,000–13,000**, assuming 50–60% of people join teams of about 2.7.
+- **Submissions:** about **1,000–2,000**, assuming 10–20% submit; central guess **1,200–1,500**. A deployed app, video and deck is a high bar.
+- **Retail:** about **13%** of public entries, so **~150–250 Retail submissions**, of which perhaps 30–50 are polished.
+- **Top 50 shortlist:** covers all themes, so it is the top ~3–5% overall. Retail might get ~6–8 places.
+- **To check:** rescan GitHub on Oct 17–18, when repos must go public, and ask on Discord.
 
 ## Eligibility
 - Working professionals, entrepreneurs, startups only. **No students**; one student on the team disqualifies the whole team, even after selection.
