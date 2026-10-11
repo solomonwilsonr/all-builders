@@ -203,3 +203,21 @@ Method: `gh search repos` (10 query variants, created since 2026-08-15, incl. `i
 **Noise (not counted):** 9 repos for the crypto *Botcamp / Hummingbot Agent Builders Cup* (ajjcoppola, alemaxxx, doi-doi, hbminerfan, phibao, pizzylee001, ronyz1320, southenempire, seekdaseek); *Ramp Builders Cup* (juliuszhou124, sanskriti-slngh); unrelated keyword hits (boba-lab, gaming Java template, coffee shop, betting tips, esports rulebook, Conv' Cup ML).
 
 **Running totals (fourth scan): BFSI ~28 · Sustainability ~28 · Future of Work ~25 · Retail ~15 · Manufacturing ~14 · Media ~9–10 · ≈120 real public entries.** Still nothing on environmental clearances, permits or satellite-vs-self-report checks.
+
+## Fifth scan (2026-10-11, late evening)
+Method: `gh search repos` (7 queries, each by name/description and `in:readme`, created since 2026-08-15) plus `gh search code` (4 queries), which found 439 unique repos. 124 were already listed. For the other 315 we read each README and kept only those that name the AI Builder Cup; most were noise from "cup" or "builder" (coffee, World Cup, recipe builders). We also re-checked last scan's placeholders.
+
+**New real entries (5):**
+| Theme | Repo | Idea |
+|---|---|---|
+| Sustainability | rupesh-kaneki88/ai-builder-cup-2026-civic-lens | **CivicLens (TenderWatch AI)**: reads public-works tenders and flags "double-tendering", where a city pays for repairs the original contractor must do free during the defect-liability period. Cloud Run + Gemini. **Watch: close to ClearSight's "promise vs. reality" angle and to the Part 3 ghost-project idea, but it uses procurement documents only, with no satellite or field check.** |
+| Sustainability | Supphaset/ReachPoint | Flood-response coordination (Thailand): volunteers plan help, coordinators validate requests, residents track their own request status. Uses past Hat Yai and Bangkok flood data. React/Firebase + FastAPI on Cloud Run + Gemini. In build week. |
+| Retail | SumalaMannage/trust-engine | "Scam Shield": a small-shop owner pastes a message, screenshot or payment slip and gets STOP / VERIFY / SAFE with reasons. Deployed. (A scam checker, so BFSI-adjacent.) |
+| Future of Work | shaluka97/AssessCraft_AI_Shaluka | Multi-agent copilot that writes, checks and moderates university exam papers (ADK, Vertex AI Search, Document AI, OR-Tools). |
+| BFSI? | TWILIGHTCLOUDCODERZ/Raptorz-AI-Builder-CUP | "Autonomous defense for every transaction". README only, created today. |
+
+**Upgraded:** Chatnoir-la3/ai-builder-cup-2026 went from skeleton to a real BFSI entry. It checks a payment instruction (email, chat screenshot, invoice) against company records just before a bank transfer is approved, and says what to verify and whom to call. **Direct overlap with ChopDesk.**
+
+**Still placeholders (not counted):** CodeByKodi/2026aibuildercup-geni (empty, Future of Work per description), swar186j/aibuildercup-initial and majinbruce/ai-builder-cup-google-cloud (single "test" file), ssuish/syntropic, chimee-lee/jomisu (Vite template), janeshkapoor/ai_builder_cup, badhansen/build-x, gitfynithya/ai-builder-cup, codeforinnovation/ai_builder_cup, syrzy-wna/tb-link-ai-builder-cup. Project CANOPY (getkcoin-alt) is still not public.
+
+**Running totals (fifth scan): BFSI ~29 · Sustainability ~30 · Future of Work ~26 · Retail ~16 · Manufacturing ~14 · Media ~9–10 · ≈125 real public entries.** CivicLens is the first entry that checks a public promise against what happened, but it still covers no environmental clearances or satellite-vs-self-report checks. New public entries have slowed to about 5 per scan.
