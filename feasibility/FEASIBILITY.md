@@ -46,6 +46,27 @@
 - Rushikulya sand mining, Ganjam, Odisha (ORSAC imagery shows out-of-lease mining).
 - Tolarpasi quarry, Talcher (OA 185/2025/EZ, EC revoked 18 Jan 2025): unconfirmed.
 
+## Cost estimate (whole hackathon)
+**~$15–70 total, covered by the $300 GCP trial credit.** Gemini is the only real spend. These are estimates from public price lists, not measured; check the billing console after day 1.
+
+| Item | Basis | Cost |
+|---|---|---|
+| Earth Engine | Noncommercial Community tier, 150 EECU-h/month | $0 |
+| Gemini 3.6/3.7 Flash (Vertex) | $0.75 in / $3.75 out per 1M tokens (intro price to 31 Dec 2026) | ~$10–50 |
+| Cloud Run | Free tier: 2M requests, 180K vCPU-s/month | $0 (~$5–15 if min-instances=1 during judging) |
+| Firestore | Free tier: 50K reads, 20K writes/day, 1 GiB | $0 |
+| Cloud Storage | PDFs + cached tiles, < 5 GB | < $1 |
+| Data | All public | $0 |
+
+Gemini maths: EC letter ~25–40K tokens + compliance report ~100K tokens + ~10K output ≈ **$0.15 per project run**. ~20 projects × many dev re-runs ≈ 300 runs ≈ $45. Using Pro instead of Flash multiplies this several times; keep Pro for the few explanation calls if at all.
+
+Guardrails:
+- Budget alert at $50 on day 1.
+- Cache EE results and Gemini outputs for demo cases, so judge clicks cost nothing.
+- Pin a 3.x model ID in an env var (Gemini 2.5 retires on Vertex Oct 16).
+- Call Gemini via Vertex; the trial credit does not cover AI Studio API calls.
+- EE over-quota throttles (restricted mode until the 1st), it doesn't bill.
+
 ## Still to do (needs a human)
 - Register an EE Cloud project and authenticate (`earthengine authenticate`), then rerun the metric on EE with Dynamic World inside a drawn footprint.
 - Pull the full CAG report from cag.gov.in for exact wording.
@@ -58,3 +79,7 @@
 - 40th EAC minutes: https://environmentclearance.nic.in/writereaddata/Form-1A/Minutes/0403202379611075MoM40thEACMeetingheldon16&17February2023.pdf
 - EE access: https://developers.google.com/earth-engine/guides/access
 - 13-year quote: https://www.livelaw.in/articles/post-facto-environmental-clearance-546751
+- Vertex AI pricing: https://cloud.google.com/vertex-ai/generative-ai/pricing
+- Cloud Run pricing: https://cloud.google.com/run/pricing
+- Firestore pricing: https://cloud.google.com/firestore/pricing
+- EE noncommercial tiers: https://developers.google.com/earth-engine/guides/noncommercial_tiers
