@@ -8,7 +8,7 @@
 
 > **What judges should remember:** *ClearSight doesn't decide guilt. It makes environmental promises testable, shows what evidence is missing, and records how every decision was made.*
 
-Built from three earlier drafts: the original ClearSight (core case and data), **OpenPermit** (Permit-to-Test Compiler, human review, Decision Replay, safe wording) and **NegativeSpace** (missing evidence is not proof of compliance, AlphaEarth embeddings). Previous version: `research_notes/Final idea round/FINAL_IDEA_v1_clearsight.md`.
+Built from three earlier drafts: the original ClearSight (core case and data), **OpenPermit** (Permit-to-Test Compiler, human review, Decision Replay, safe wording) and **NegativeSpace** (missing evidence is not proof of compliance, AlphaEarth embeddings).
 
 ## The problem
 - Mines, quarries and industrial projects get an **Environmental Clearance (EC)** with conditions: lease boundary, validity period, green belt, plantation, no mining near water bodies.
@@ -167,4 +167,4 @@ Citizen reports, company response and appeal workflow, other industries and coun
 ## Backup if Earth Engine fails by Oct 12
 **SolventGate+** (IDEA_SOLVENTGATE.md + research_notes/Final idea round/stress_test.md). Documents only, no satellite, with the real WHO forged-label photos already downloaded.
 
-Notes: research_notes/Final idea round/
+Backup notes: research_notes/Final idea round/stress_test.md
