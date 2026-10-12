@@ -7,6 +7,8 @@ dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
     "pyyaml>=6.0",
+    "google-genai>=1.0",  # engine/ (real handlers)
+    "psycopg[binary]>=3.2",
 ]
 
 [dependency-groups]
@@ -17,4 +19,4 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = [".", ".."]

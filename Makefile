@@ -8,7 +8,7 @@ REGION ?= asia-south1
 .PHONY: api test db-up db-down load-data deploy-api
 
 api:            ## run the API locally on :8080 (MOCK=1 by default)
-	cd api && MOCK=$${MOCK:-1} uv run --python 3.12 uvicorn app.main:app --reload --port 8080
+	cd api && MOCK=$${MOCK:-1} PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --port 8080
 
 test:           ## contract tests: every endpoint has a mock and is served
 	cd api && uv run --python 3.12 pytest -q
@@ -24,6 +24,6 @@ load-data:      ## CPSC recalls + Australian registry (TVs, fridges) into the lo
 	uv run data/load_au_registry.py --types tv rf
 
 deploy-api:     ## mock API to Cloud Run (needs gcloud login and a project)
-	rm -rf .build && mkdir -p .build && cp -R api contracts .build/ && rm -rf .build/api/.venv && cp api/Dockerfile .build/Dockerfile
+	rm -rf .build && mkdir -p .build && cp -R api engine contracts .build/ && rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
 		--allow-unauthenticated --min-instances 0 --set-env-vars MOCK=1
