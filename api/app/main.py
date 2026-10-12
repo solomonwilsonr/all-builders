@@ -5,6 +5,7 @@ if one is registered in REAL_HANDLERS, otherwise with its example from contracts
 MOCK=1 forces every endpoint to the mock, so the screens always have something to show.
 The X-SafeShelf-Source response header says which one answered (real or mock).
 """
+import copy
 import json
 import os
 from pathlib import Path
@@ -71,6 +72,23 @@ for path, methods in spec["paths"].items():
             summary=op.get("summary"),
             operation_id=op["operationId"],
         )
+
+
+def contract_openapi() -> dict[str, Any]:
+    """/docs shows the contract itself (inputs, schemas) with each endpoint's mock as its example."""
+    if app.openapi_schema is None:
+        doc = copy.deepcopy(spec)
+        doc["servers"] = [{"url": "/", "description": "This server"}]
+        for methods in doc["paths"].values():
+            for op in methods.values():
+                status, response = next(iter(op["responses"].items()))
+                content = response.setdefault("content", {}).setdefault("application/json", {})
+                content["example"] = load_mock(op["x-mock"])
+        app.openapi_schema = doc
+    return app.openapi_schema
+
+
+app.openapi = contract_openapi
 
 
 # Not /healthz: Cloud Run reserves paths ending in "z".
