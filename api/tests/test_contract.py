@@ -57,5 +57,5 @@ def test_demo_ids_are_consistent():
     assert "SS-P-10291" in {p["product_id"] for p in demo["products"]}
 
 
-def test_healthz():
-    assert client.get("/healthz").json()["ok"] is True
+def test_health():
+    assert client.get("/health").json()["ok"] is True

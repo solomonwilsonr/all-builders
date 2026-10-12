@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 import re
+import time
 from pathlib import Path
 
 import requests
@@ -30,12 +31,19 @@ ELECTRICAL = re.compile(
 BACKTEST_CUTOFF = "2023-08-01"
 
 
-def fetch_year(year: int) -> list[dict]:
+def fetch_year(year: int, attempts: int = 6) -> list[dict]:
     params = {"format": "json", "RecallDateStart": f"{year}-01-01", "RecallDateEnd": f"{year}-12-31"}
-    # The CPSC server rejects the default python-requests User-Agent with 403.
-    response = requests.get(API, params=params, timeout=120, headers={"User-Agent": "SafeShelf-research/0.1"})
-    response.raise_for_status()
-    return response.json()
+    for attempt in range(1, attempts + 1):
+        # The CPSC server rejects the default python-requests User-Agent with 403.
+        response = requests.get(API, params=params, timeout=120, headers={"User-Agent": "SafeShelf-research/0.1"})
+        response.raise_for_status()
+        recalls = [r for r in response.json() if r.get("RecallNumber")]
+        # The API sometimes answers a whole year with one empty record; CPSC issues 200+ a year.
+        if len(recalls) >= 50:
+            return recalls
+        print(f"  {year}: only {len(recalls)} recalls (attempt {attempt}/{attempts}); retrying")
+        time.sleep(10 * attempt)
+    raise SystemExit(f"CPSC API kept returning an incomplete {year}; nothing was saved, try again later")
 
 
 def text_of(recall: dict) -> str:

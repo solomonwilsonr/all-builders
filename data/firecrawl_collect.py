@@ -27,6 +27,7 @@ LEDGER = OUT / "ledger.jsonl"
 BASE = os.environ.get("FIRECRAWL_BASE_URL", "https://api.firecrawl.dev/v2")
 
 # Rough credit cost per job, for the budget check before anything is sent.
+PACE_SECONDS = 6.5
 COST = {"scrape": 1, "search": 1}  # search: per result returned (limit), scrape: per page
 
 
@@ -53,6 +54,18 @@ def call(job: dict, api_key: str) -> dict:
     return requests.post(f"{BASE}/search", json=body, headers=headers, timeout=120).json()
 
 
+PRIORITY = [
+    ("power bank", "powerbank", "charger", "adapter", "charging", "battery"),
+    ("heater", "heated", "heating", "extension cord", "surge", "power cable"),
+    ("hoverboard", "scooter", "e-bike", "energy storage"),
+]
+
+
+def priority(job: dict) -> int:
+    query = job["query"].lower()
+    return next((rank for rank, words in enumerate(PRIORITY) if any(w in query for w in words)), len(PRIORITY))
+
+
 def plan_recall_twins(limit: int) -> None:
     """Search queries for current listings that may match recalled products (real-world finding, M16)."""
     candidates = [json.loads(l) for l in (RAW / "cpsc_backtest_candidates.jsonl").read_text().splitlines()]
@@ -68,14 +81,27 @@ def plan_recall_twins(limit: int) -> None:
                 "tag": "recall_twins",
                 "recall_id": recall["id"],
             })
+    jobs.sort(key=priority)  # spend credits on the demo's product types first
     path = RAW / "firecrawl_jobs.jsonl"
     path.write_text("".join(json.dumps(j) + "\n" for j in jobs))
     print(f"wrote {len(jobs)} jobs -> {path} (estimated {sum(map(estimate, jobs))} credits)")
 
 
+def load_dotenv() -> None:
+    """Read KEY=VALUE lines from the repo's .env into os.environ (shell values win)."""
+    env = Path(__file__).resolve().parents[1] / ".env"
+    if not env.exists():
+        return
+    for line in env.read_text().splitlines():
+        key, sep, value = line.strip().partition("=")
+        if sep and not key.startswith("#"):
+            os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+
+
 def run(jobs_path: str, max_credits: int, dry_run: bool) -> None:
     jobs = [json.loads(l) for l in Path(jobs_path).read_text().splitlines() if l.strip()]
     OUT.mkdir(parents=True, exist_ok=True)
+    load_dotenv()
     api_key = os.environ.get("FIRECRAWL_API_KEY")
     if not dry_run and not api_key:
         raise SystemExit("Set FIRECRAWL_API_KEY (keep it in .env, never commit it)")
@@ -93,7 +119,18 @@ def run(jobs_path: str, max_credits: int, dry_run: bool) -> None:
         if dry_run:
             print(f"[dry-run] {job['type']:<6} ~{cost} credits  {label}")
         else:
+            time.sleep(PACE_SECONDS)  # our plan allows about 10 requests a minute
             result = call(job, api_key)
+            for _ in range(3):
+                if not (isinstance(result, dict) and "rate limit" in str(result.get("error", "")).lower()):
+                    break
+                print("rate limited; waiting 60 s")
+                time.sleep(60)
+                result = call(job, api_key)
+            if not (isinstance(result, dict) and result.get("success")):
+                # Not saved, so the job is retried next run; failed calls aren't billed.
+                error = result.get("error") if isinstance(result, dict) else result
+                raise SystemExit(f"{job['type']} failed: {error}  ({label})")
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(json.dumps({"job": job, "result": result, "fetched_at": time.time()}))
             used = result.get("creditsUsed", cost) if isinstance(result, dict) else cost

@@ -73,6 +73,7 @@ for path, methods in spec["paths"].items():
         )
 
 
-@app.get("/healthz", include_in_schema=False)
-def healthz() -> dict[str, Any]:
+# Not /healthz: Cloud Run reserves paths ending in "z".
+@app.get("/health", include_in_schema=False)
+def health() -> dict[str, Any]:
     return {"ok": True, "mock": MOCK, "real_endpoints": sorted(REAL_HANDLERS)}

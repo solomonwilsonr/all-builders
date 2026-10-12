@@ -1,5 +1,7 @@
 # SafeShelf developer commands. Run from the repo root.
 DATABASE_URL ?= postgresql://safeshelf:safeshelf@localhost:5442/safeshelf
+# Passed to recipes through the environment, never as an argument, so the password stays out of `ps`.
+export DATABASE_URL
 GCP_PROJECT ?= $(shell gcloud config get-value project 2>/dev/null)
 REGION ?= asia-south1
 
@@ -18,8 +20,8 @@ db-down:
 	docker compose down
 
 load-data:      ## CPSC recalls + Australian registry (TVs, fridges) into the local database
-	uv run data/load_cpsc.py --from 2019 --to 2026 --summary --db "$(DATABASE_URL)"
-	uv run data/load_au_registry.py --types tv rf --db "$(DATABASE_URL)"
+	uv run data/load_cpsc.py --from 2019 --to 2026 --summary
+	uv run data/load_au_registry.py --types tv rf
 
 deploy-api:     ## mock API to Cloud Run (needs gcloud login and a project)
 	rm -rf .build && mkdir -p .build && cp -R api contracts .build/ && rm -rf .build/api/.venv && cp api/Dockerfile .build/Dockerfile

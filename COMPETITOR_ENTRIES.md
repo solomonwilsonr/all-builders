@@ -254,3 +254,33 @@ Our prediction, based on the idea (impact, originality, depth of Gemini use) plu
 - a live link and a lot of real building,
 - one clear human user,
 - one memorable Gemini moment.
+
+## Sixth scan (2026-10-12)
+Method: same as the fifth scan (14 repo searches + 4 code searches) → 441 unique repos, 34 not screened before. We read each README.
+
+**New real entries (16):**
+| Theme | Repo | Idea |
+|---|---|---|
+| **Retail** | [joeymilano/merchreflex](https://github.com/joeymilano/merchreflex) | MerchReflex: an agent that repairs product pages from customer feedback, grounded in evidence (Gemini text + image). Not about safety or fakes |
+| Media | [akashmeruva9/open-lens](https://github.com/akashmeruva9/open-lens) | OpenLens: an AI media house built on a reviewed "claim & evidence ledger" → web, video and social posts |
+| Manufacturing | [SunilSparkScala/factory-decision-engine](https://github.com/SunilSparkScala/factory-decision-engine) | What-if and recovery planning when a plant is disrupted |
+| Manufacturing | [notnullai/harmonic-cup](https://github.com/notnullai/harmonic-cup) | Predictive maintenance from vibration without any failure history |
+| BFSI | [cikohtech/pauseguard](https://github.com/cikohtech/pauseguard) | PauseGuard (renamed "ScamShield"), currently a build starter kit |
+| BFSI | [bhav1509/Purrtect](https://github.com/bhav1509/Purrtect) | Mascot for Gmail/WhatsApp Web: explains risky messages, blocks clicks, first-hour scam recovery |
+| BFSI | [rishi222k/bank-agent-assist](https://github.com/rishi222k/bank-agent-assist) | Co-pilot for bank card-servicing agents |
+| Future of Work | [KaustubhUp025/ustaad](https://github.com/KaustubhUp025/ustaad) | Voice-first assistant for Indian AC and appliance repair technicians (Hindi, Telugu, Tamil, Bengali) |
+| Future of Work | [XOR0831/WorkWeave](https://github.com/XOR0831/WorkWeave) | Workforce continuity: keeps knowledge flowing across joins, shifts and exits |
+| Future of Work | [nikitarani0/sentinelmesh](https://github.com/nikitarani0/sentinelmesh) | Security control plane for AI agents. Live demo + video already |
+| Future of Work | [prateek8741/firstrung](https://github.com/prateek8741/firstrung) | Senior records a task once and Gemini builds an adaptive onboarding plan |
+| Future of Work | [sivasubramanian86/FuturaSculptAI](https://github.com/sivasubramanian86/FuturaSculptAI) | "Work transformation operating system" |
+| Future of Work | [umagurunathan/close-the-gap-app](https://github.com/umagurunathan/close-the-gap-app) | Keeps meetings on track when someone is out of office |
+| Sustainability | [combfreak45/earthWhispers](https://github.com/combfreak45/earthWhispers) | Flood-risk intelligence with evidence and next steps |
+| Sustainability | [melvferrer/berto-ai-builder-cup](https://github.com/melvferrer/berto-ai-builder-cup) | Voice-first multilingual type 2 diabetes companion (JAPAC) |
+| Sustainability | [sujaritha2009-ui/CityWeave-AI](https://github.com/sujaritha2009-ui/CityWeave-AI) | Staggers institution timings to reduce traffic hotspots (Karnataka) |
+
+**Not counted:**
+- SimonJu/First-Hackathon-AI-Builder-Cup-2026 (empty placeholder)
+- abhisek11 (profile page)
+- solomonwilsonr/all-builders (our own repo; it is private, and appears only because we are logged in)
+
+**Running totals (sixth scan): BFSI ~32 · Sustainability ~33 · Future of Work ~32 · Retail ~17 · Manufacturing ~16 · Media ~10–11 · ≈141 real public entries.** Still nobody on product safety, recalls, certification checks or fake shops.
