@@ -11,6 +11,10 @@ Deadline: **Oct 18, 2026, 11:59 PM IST** (we aim for Oct 17).
 |---|---|
 | [`SAFESHELF.md`](SAFESHELF.md) | Full product and technical design, hackathon scope, demo, evaluation, build plan |
 | [`SafeShelf_Global.pdf`](SafeShelf_Global.pdf) | The same document as a PDF |
+| [`PROGRESS.md`](PROGRESS.md) | Everything done so far, the feasibility test results and next steps |
+| [`PARALLEL_PLAN.md`](PARALLEL_PLAN.md) | Day-by-day plan for Person A (Brain) and Person B (Face), with time estimates and join points |
+| [`MODULES.md`](MODULES.md) | The 19 build modules: steps, dependencies, prerequisites, done-when checks |
+| [`feasibility/`](feasibility/) | Scripts for the feasibility test (CPSC recalls vs Amazon reviews) |
 | [`BACKTEST.md`](BACKTEST.md) | Plan for the make-or-break backtest (do reviews warn before recalls?) |
 | [`TOOLS.md`](TOOLS.md) | Google tools, data sources and open-source tools we plan to use |
 | [`HACKATHON.md`](HACKATHON.md) | Rules, judging criteria, submission requirements, deck template, submission estimate |

@@ -51,6 +51,28 @@
 | **Wayback Machine API** | Whether a shop's website existed in the past |
 | **Watchlist Internet fake-shop list** (Austria) | Possible fake-shop test data (to be verified) |
 
+### Firecrawl: data collection only
+We have **21,119 Firecrawl credits**, which expire on 21 Oct 2026. Firecrawl is used **only to collect data this week**. It is **not** part of the live product: no live scanning in the Lab, extension or agents. Everything collected is saved to Cloud Storage (raw snapshots) and Cloud SQL (extracted fields), so nothing depends on Firecrawl after the credits expire.
+
+| Collect | For | Credits (est.) |
+|---|---|---|
+| Current listings matching about 60 recalled products (search + scrape) | Real-world finding | ~3,600 |
+| ACCC + OECD recalls, 2019–2026, electrical | Recalls beyond the US (JAPAC) | ~1,500 |
+| About 400 charger / power-bank listings and their rebrands | Identity pairs for SafeShelfBench | ~400 |
+| Official product photos, genuine prices, authorised-seller lists, 50 genuine listings | "Is it real?" reference data and tests | ~400 |
+| 500 listings for a seeded catalog | Catalog Scan test | ~500 |
+| BEE star-label registry (India), only if there's no captcha | Certification check (India) | ~500 |
+| Frozen snapshots (HTML, markdown, screenshot) of the demo and test pages | Repeatable tests, offline Shopper Agent tests | ~300 |
+| News stories (charger fires in India) | Deck and video | ~50 |
+| **Total** | | **~7,250**; the rest is spare for re-runs |
+
+**Rules:**
+- Test extraction on 10 pages first, because structured JSON may cost more than 1 credit per page.
+- Scrape once, save, then always work from the saved copy.
+- No bulk Amazon or Flipkart review scraping, no getting around captchas (BIS).
+- Don't republish full marketplace pages in the public repo; commit only extracted fields.
+- **Finish the main collection by 14 Oct**, before the build days. Top-ups (re-runs, missing pages) are possible until 20 Oct; after 21 Oct the credits are gone.
+
 ## Open-source tools
 
 | Tool | Used for |
@@ -78,4 +100,5 @@
 - **Twin finding:** Vertex multimodal embeddings + pgvector + imagehash + Gemini.
 - **"Is it real?":** Cloud Vision Web Detection + RDAP + price-floor rules + Web Risk API.
 - **Accessibility:** Gemini TTS + Lighthouse + axe + NVDA.
+- **Data collection (this week only):** Firecrawl → Cloud Storage + Cloud SQL.
 - **Agent:** ADK + Agent Engine + Gemini computer use + Playwright on Cloud Run + `chrome.sidePanel`.
