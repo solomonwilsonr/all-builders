@@ -1,0 +1,19 @@
+{
+  "product_id": "SS-P-10291",
+  "category": "usb_charger",
+  "brand": "ExampleBrand",
+  "model": "CX-65",
+  "gtin": null,
+  "attributes": {
+    "power_watts": 65,
+    "ports": 2,
+    "plug_type": "Type C"
+  },
+  "visual_features": {
+    "port_layout": "2x USB-C stacked",
+    "housing_shape": "rounded_rectangle"
+  },
+  "identity_version": 3,
+  "verification_status": "provisional",
+  "image_urls": ["https://storage.googleapis.com/safeshelf-demo/SS-P-10291/front.jpg"]
+}

@@ -1,0 +1,32 @@
+{
+  "product_id": "SS-P-10291",
+  "verdict": "amber",
+  "official_status": {
+    "recalled": false,
+    "checked": ["CPSC", "ACCC", "EU Safety Gate"],
+    "recall_ids": []
+  },
+  "ai_findings": [
+    {
+      "hazard_type": "fire_burn",
+      "mechanism": "USB-C port overheating during charging",
+      "severity": "high",
+      "independent_reports": 9,
+      "with_photos": 4,
+      "first_seen": "2026-07-02",
+      "trend": "rising",
+      "status": "under_review",
+      "evidence_ids": ["EV-201", "EV-207", "EV-215"],
+      "counterevidence": "Most reports involve third-party cables"
+    }
+  ],
+  "certifications": [
+    {
+      "authority": "BIS",
+      "number": "R-41XXXXXX",
+      "result": "mismatch",
+      "field": "brand"
+    }
+  ],
+  "label": "AI finding - not a regulatory determination"
+}

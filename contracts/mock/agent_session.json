@@ -1,0 +1,14 @@
+{
+  "session_id": "SS-A-0001",
+  "mode": "chat",
+  "product_id": "SS-P-10291",
+  "language": "hi",
+  "messages": [
+    {
+      "role": "assistant",
+      "text": "Be careful. Nine buyers reported overheating, under review. Not recalled.",
+      "evidence_ids": ["EV-201", "EV-207"]
+    }
+  ],
+  "steps": []
+}

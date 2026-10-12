@@ -1,0 +1,27 @@
+{
+  "job_id": "SS-J-0001",
+  "status": "done",
+  "listings_checked": 2300,
+  "summary": "14 of your 2,300 listings match recalled chargers",
+  "results": [
+    {
+      "row": 118,
+      "listing_title": "VoltNova 65W PD fast charger",
+      "matched_product_id": "SS-P-30118",
+      "finding": "possible_recall_match",
+      "relationship": "rebranded_equivalent",
+      "status": "sent_for_review",
+      "evidence_ids": ["EV-108"]
+    },
+    {
+      "row": 412,
+      "listing_title": "ViewMax 55 inch 4K TV 5 star",
+      "matched_product_id": "SS-P-50001",
+      "finding": "certification_mismatch",
+      "relationship": "exact_model",
+      "status": "flagged",
+      "evidence_ids": ["EV-305"]
+    }
+  ],
+  "seconds_per_1000_listings": 42
+}

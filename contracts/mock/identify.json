@@ -1,0 +1,16 @@
+{
+  "product_id": "SS-P-10291",
+  "listing_id": "SS-L-0666",
+  "category": "usb_charger",
+  "brand": "ExampleBrand",
+  "model": "CX-65",
+  "attributes": {
+    "power_watts": 65,
+    "ports": 2,
+    "plug_type": "Type C"
+  },
+  "certifications_claimed": ["BIS R-41XXXXXX"],
+  "identity_status": "provisional",
+  "confidence": 0.91,
+  "evidence_ids": ["EV-001", "EV-002"]
+}

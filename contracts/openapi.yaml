@@ -1,0 +1,343 @@
+openapi: 3.1.0
+info:
+  title: SafeShelf API
+  version: 0.1.0
+  description: |
+    The single front door for every SafeShelf screen, agent and bot.
+    Shared contract between Person A (Brain) and Person B (Face): change only after telling the other person.
+    Each operation's `x-mock` names the example answer in `contracts/mock/` that the API returns when MOCK=1.
+    Demo IDs are in `contracts/demo_products.json`.
+servers:
+  - url: http://localhost:8080
+    description: Local (make api)
+security:
+  - apiKey: []
+
+paths:
+  /v1/products/identify:
+    post:
+      summary: Resolve a listing, image or identifiers to a product
+      operationId: identifyProduct
+      x-mock: identify.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ListingInput'}
+      responses:
+        '200': {description: Product identity, content: {application/json: {schema: {$ref: '#/components/schemas/Identity'}}}}
+
+  /v1/products/duplicates:
+    post:
+      summary: Find verified and possible duplicates (twins)
+      operationId: findDuplicates
+      x-mock: duplicates.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [product_id]
+              properties:
+                product_id: {type: string, example: SS-P-10291}
+      responses:
+        '200': {description: Twins by relationship class, content: {application/json: {schema: {$ref: '#/components/schemas/Duplicates'}}}}
+
+  /v1/products/{product_id}:
+    get:
+      summary: Get the product's identity
+      operationId: getProduct
+      x-mock: product.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Product, content: {application/json: {schema: {type: object, required: [product_id, brand, model]}}}}
+
+  /v1/products/{product_id}/safety:
+    get:
+      summary: Evidence-backed safety findings (verdict colour is set by code, not the LLM)
+      operationId: getSafety
+      x-mock: safety.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Safety, content: {application/json: {schema: {$ref: '#/components/schemas/Safety'}}}}
+
+  /v1/products/{product_id}/relationships:
+    get:
+      summary: Variants and related products
+      operationId: getRelationships
+      x-mock: relationships.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Relationships, content: {application/json: {schema: {type: object, required: [product_id, relationships]}}}}
+
+  /v1/products/{product_id}/history:
+    get:
+      summary: Product history (Safety Passport); nothing is ever deleted
+      operationId: getHistory
+      x-mock: history.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: History, content: {application/json: {schema: {type: object, required: [product_id, events]}}}}
+
+  /v1/products/{product_id}/certifications:
+    get:
+      summary: Safety-mark checks against official registries
+      operationId: getCertifications
+      x-mock: certifications.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Certification checks, content: {application/json: {schema: {$ref: '#/components/schemas/Certifications'}}}}
+
+  /v1/products/{product_id}/alternatives:
+    get:
+      summary: Safer genuine twins (exact model or verified rebrand, no hazard reports)
+      operationId: getAlternatives
+      x-mock: alternatives.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Alternatives, content: {application/json: {schema: {type: object, required: [product_id, alternatives]}}}}
+
+  /v1/listings/trust-check:
+    post:
+      summary: '"Is it real?": copied photos, impossible price, website age, impossible specs'
+      operationId: trustCheck
+      x-mock: trust_check.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ListingInput'}
+      responses:
+        '200': {description: Trust check, content: {application/json: {schema: {$ref: '#/components/schemas/TrustCheck'}}}}
+
+  /v1/reports:
+    post:
+      summary: Submit a consumer or analyst report (personal details are masked)
+      operationId: createReport
+      x-mock: report_created.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [product_id, description]
+              properties:
+                product_id: {type: string}
+                description: {type: string}
+                photo_urls: {type: array, items: {type: string}}
+      responses:
+        '201': {description: Report received, content: {application/json: {schema: {type: object, required: [report_id, status]}}}}
+
+  /v1/shelf/items:
+    post:
+      summary: Add a product to My Shelf for recall alerts
+      operationId: addShelfItem
+      x-mock: shelf_item.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [product_id]
+              properties:
+                product_id: {type: string}
+                user_id: {type: string}
+      responses:
+        '201': {description: Saved, content: {application/json: {schema: {type: object, required: [item_id, product_id]}}}}
+
+  /v1/catalog/scan:
+    post:
+      summary: Marketplace Catalog Scan (async batch job)
+      operationId: catalogScan
+      x-mock: catalog_scan.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csv_url: {type: string, description: Cloud Storage URL of the uploaded catalog CSV}
+                webhook_url: {type: string}
+      responses:
+        '202': {description: Job accepted (mock returns the finished job), content: {application/json: {schema: {type: object, required: [job_id, status]}}}}
+
+  /v1/agent/sessions:
+    post:
+      summary: Start a Shelf Chat or Investigate session
+      operationId: startAgentSession
+      x-mock: agent_session.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mode, product_id]
+              properties:
+                mode: {type: string, enum: [chat, investigate]}
+                product_id: {type: string}
+                message: {type: string}
+                language: {type: string, enum: [en, hi], default: en}
+      responses:
+        '200': {description: Session, content: {application/json: {schema: {type: object, required: [session_id, messages]}}}}
+
+  /v1/investigations/{investigation_id}/trace:
+    get:
+      summary: Every step of an investigation (model, tool, time, cost)
+      operationId: getTrace
+      x-mock: trace.json
+      parameters:
+        - {name: investigation_id, in: path, required: true, schema: {type: string, example: SS-I-0001}}
+      responses:
+        '200': {description: Trace, content: {application/json: {schema: {type: object, required: [investigation_id, steps]}}}}
+
+  /v1/bench/results:
+    get:
+      summary: Latest SafeShelfBench results, with baselines
+      operationId: getBenchResults
+      x-mock: bench_results.json
+      responses:
+        '200': {description: Bench results, content: {application/json: {schema: {type: object, required: [tasks]}}}}
+
+components:
+  securitySchemes:
+    apiKey: {type: apiKey, in: header, name: X-API-Key}
+
+  parameters:
+    ProductId:
+      name: product_id
+      in: path
+      required: true
+      schema: {type: string, example: SS-P-10291}
+
+  schemas:
+    ListingInput:
+      type: object
+      description: Give a URL, or page data the extension already read. At least one field is needed.
+      properties:
+        url: {type: string}
+        title: {type: string}
+        price: {type: number}
+        currency: {type: string, default: INR}
+        seller: {type: string}
+        image_urls: {type: array, items: {type: string}}
+        page_text: {type: string, description: Treated as data, never as instructions}
+
+    RelationshipClass:
+      type: string
+      enum: [exact_model, rebranded_equivalent, model_variant, visually_similar, shared_component]
+      description: Only exact_model inherits a recall; rebranded_equivalent only after human verification.
+
+    Identity:
+      type: object
+      required: [product_id, brand, model, identity_status]
+      properties:
+        product_id: {type: string}
+        listing_id: {type: string}
+        category: {type: string}
+        brand: {type: string}
+        model: {type: string}
+        attributes: {type: object}
+        certifications_claimed: {type: array, items: {type: string}}
+        identity_status: {type: string, enum: [provisional, verified, unknown]}
+        confidence: {type: number}
+        evidence_ids: {type: array, items: {type: string}}
+
+    Duplicates:
+      type: object
+      required: [query_product_id, matches]
+      properties:
+        query_product_id: {type: string}
+        graph_version: {type: integer}
+        matches:
+          type: array
+          items:
+            type: object
+            required: [product_id, relationship, status]
+            properties:
+              product_id: {type: string}
+              relationship: {$ref: '#/components/schemas/RelationshipClass'}
+              status: {type: string, enum: [verified, unverified, rejected]}
+              confidence: {type: number}
+              agreements: {type: array, items: {type: string}}
+              conflicts: {type: array, items: {type: string}}
+              would_change_if: {type: array, items: {type: string}}
+              evidence_ids: {type: array, items: {type: string}}
+
+    Safety:
+      type: object
+      required: [product_id, verdict, official_status, ai_findings, label]
+      properties:
+        product_id: {type: string}
+        verdict:
+          type: string
+          enum: [green, amber, red, not_enough_evidence]
+          description: green = checked facts only, amber = AI findings under review, red = official recall
+        official_status:
+          type: object
+          required: [recalled, checked]
+          properties:
+            recalled: {type: boolean}
+            checked: {type: array, items: {type: string}}
+            recall_ids: {type: array, items: {type: string}}
+        ai_findings:
+          type: array
+          items:
+            type: object
+            required: [hazard_type, status, evidence_ids]
+            properties:
+              hazard_type: {type: string, enum: [fire_burn, electric_shock, choking, chemical, mechanical_injury, other]}
+              mechanism: {type: string}
+              severity: {type: string, enum: [low, medium, high]}
+              independent_reports: {type: integer}
+              with_photos: {type: integer}
+              first_seen: {type: string, format: date}
+              trend: {type: string, enum: [rising, stable, falling]}
+              status: {type: string, enum: [under_review, confirmed, dismissed]}
+              evidence_ids: {type: array, items: {type: string}}
+              counterevidence: {type: string}
+        certifications: {type: array, items: {$ref: '#/components/schemas/CertificationCheck'}}
+        label: {type: string}
+
+    CertificationCheck:
+      type: object
+      required: [authority, result]
+      properties:
+        authority: {type: string}
+        number: {type: string}
+        claimed_value: {type: [string, 'null']}
+        registry_value: {type: [string, 'null']}
+        result: {type: string, enum: [verified, mismatch, unknown]}
+        field: {type: [string, 'null'], description: Which field differs, for a mismatch}
+        reason: {type: string}
+        registry_record_url: {type: string}
+        checked_at: {type: string, format: date-time}
+
+    Certifications:
+      type: object
+      required: [product_id, checks]
+      properties:
+        product_id: {type: string}
+        checks: {type: array, items: {$ref: '#/components/schemas/CertificationCheck'}}
+
+    TrustCheck:
+      type: object
+      required: [checks, summary, label]
+      properties:
+        listing_url: {type: string}
+        matched_product_id: {type: [string, 'null']}
+        checks:
+          type: object
+          properties:
+            copied_photos: {type: object, required: [result]}
+            price: {type: object, required: [result]}
+            website_age: {type: object, required: [result]}
+            spec: {type: object, required: [result]}
+        hidden_instructions_found: {type: boolean}
+        summary: {type: string, description: 'Always "Be careful: ..." with reasons; never "scam"'}
+        safety_of_genuine_model: {type: string}
+        label: {type: string}

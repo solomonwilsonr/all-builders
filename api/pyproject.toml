@@ -1,0 +1,20 @@
+[project]
+name = "safeshelf-api"
+version = "0.1.0"
+description = "SafeShelf API (M7): the single front door for screens, agents and bots"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "httpx>=0.27",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,15 @@
+# Local Postgres + pgvector for development (Cloud SQL in the cloud).
+# make db-up, then DATABASE_URL=postgresql://safeshelf:safeshelf@localhost:5442/safeshelf
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: safeshelf
+      POSTGRES_PASSWORD: safeshelf
+      POSTGRES_DB: safeshelf
+    ports: ["5442:5432"]
+    volumes:
+      - ./data/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

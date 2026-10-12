@@ -1,0 +1,46 @@
+{
+  "_note": "Fixed demo IDs used by every module. All brands, models and shops here are fictional demo data.",
+  "products": [
+    {
+      "product_id": "SS-P-10291",
+      "role": "hero product: the genuine charger shoppers see",
+      "category": "usb_charger",
+      "brand": "ExampleBrand",
+      "model": "CX-65",
+      "power_watts": 65,
+      "lowest_credible_price_inr": 1399
+    },
+    {
+      "product_id": "SS-P-20019",
+      "role": "exact same model sold under another listing (inherits recall status)",
+      "category": "usb_charger",
+      "brand": "ExampleBrand",
+      "model": "CX-65"
+    },
+    {
+      "product_id": "SS-P-30118",
+      "role": "possible rebrand (same hardware, other brand; needs human review)",
+      "category": "usb_charger",
+      "brand": "VoltNova",
+      "model": "VN-65PD"
+    },
+    {
+      "product_id": "SS-P-40007",
+      "role": "look-alike only (different verified model; never inherits a recall)",
+      "category": "usb_charger",
+      "brand": "ChargeKing",
+      "model": "CK-60"
+    },
+    {
+      "product_id": "SS-P-50001",
+      "role": "TV for the certification demo (claims 5 stars, registry says 3)",
+      "category": "television",
+      "brand": "ViewMax",
+      "model": "VM-55U8"
+    }
+  ],
+  "listings": {
+    "demo_product_page": "SS-L-0001",
+    "fake_shop_page": "SS-L-0666"
+  }
+}

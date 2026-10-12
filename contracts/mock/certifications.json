@@ -1,0 +1,25 @@
+{
+  "product_id": "SS-P-50001",
+  "checks": [
+    {
+      "authority": "AU Energy Rating",
+      "number": "ATV0000000",
+      "claimed_value": "5 stars",
+      "registry_value": "3 stars",
+      "result": "mismatch",
+      "field": "star_rating",
+      "registry_record_url": "https://reg.energyrating.gov.au/",
+      "checked_at": "2026-10-14T09:00:00Z"
+    },
+    {
+      "authority": "BIS",
+      "number": "R-41XXXXXX",
+      "claimed_value": "ViewMax",
+      "registry_value": null,
+      "result": "unknown",
+      "field": null,
+      "reason": "BIS registry is a mock connector in the hackathon demo",
+      "checked_at": "2026-10-14T09:00:00Z"
+    }
+  ]
+}

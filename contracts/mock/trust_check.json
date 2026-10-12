@@ -1,0 +1,14 @@
+{
+  "listing_url": "https://example-deals-store.test/65w-charger",
+  "matched_product_id": "SS-P-10291",
+  "checks": {
+    "copied_photos": {"result": "flag", "matches_official_listing": true, "seller_authorised": false},
+    "price": {"result": "flag", "price": 299, "currency": "INR", "lowest_credible_price": 1399, "ratio": 0.21},
+    "website_age": {"result": "flag", "domain_registered_days_ago": 19},
+    "spec": {"result": "ok", "conflicts": []}
+  },
+  "hidden_instructions_found": true,
+  "summary": "Be careful: photos copied from the official listing, price far below the genuine product, website only 19 days old.",
+  "safety_of_genuine_model": "9 hazard reports under review, no recall",
+  "label": "Evidence for the shopper - not a legal finding"
+}

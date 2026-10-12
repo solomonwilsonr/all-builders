@@ -1,0 +1,9 @@
+{
+  "product_id": "SS-P-10291",
+  "events": [
+    {"version": 1, "at": "2026-06-20T10:00:00Z", "change_type": "identity_created", "summary": "Listing first seen and identified as ExampleBrand CX-65", "actor": "system"},
+    {"version": 2, "at": "2026-07-02T08:30:00Z", "change_type": "hazard_signal", "summary": "First overheating report with a photo of a melted port", "actor": "system", "evidence_ids": ["EV-201"]},
+    {"version": 3, "at": "2026-08-15T12:00:00Z", "change_type": "relationship_changed", "summary": "SS-P-40007 downgraded from possible rebrand to look-alike: verified model number differs", "actor": "analyst", "evidence_ids": ["EV-111"]}
+  ],
+  "recalls": []
+}

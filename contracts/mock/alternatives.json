@@ -1,0 +1,17 @@
+{
+  "product_id": "SS-P-10291",
+  "alternatives": [
+    {
+      "product_id": "SS-P-20019",
+      "relationship": "exact_model",
+      "seller": "ExampleBrand Official Store",
+      "seller_authorised": true,
+      "price": 1450,
+      "currency": "INR",
+      "hazard_reports": 0,
+      "certifications_valid": true,
+      "url": "https://example-marketplace.test/examplebrand-cx-65",
+      "reason": "Same charger, genuine, authorised seller, no hazard reports"
+    }
+  ]
+}

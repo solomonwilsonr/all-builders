@@ -1,0 +1,11 @@
+{
+  "_note": "Placeholder numbers until M2 runs. Do not quote these.",
+  "generated_at": null,
+  "tasks": {
+    "early_warning": {
+      "keyword_rules": {"recalls_flagged": null, "median_lead_weeks": null, "false_alarm_rate": null},
+      "gemini_alone": {"recalls_flagged": null, "median_lead_weeks": null, "false_alarm_rate": null},
+      "safeshelf": {"recalls_flagged": null, "median_lead_weeks": null, "false_alarm_rate": null}
+    }
+  }
+}
