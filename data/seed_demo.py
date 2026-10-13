@@ -7,7 +7,7 @@ All brands, models and shops are fictional demo data.
 """
 import json
 
-from engine import identity
+from engine import identity, safety
 
 CHARGER_LOOK = {"housing_shape": "rounded_rectangle", "port_layout": "2x USB-C stacked", "colour": "white",
                 "plug": "foldable Type C pins"}
@@ -54,6 +54,44 @@ DEMO = {
         "certifications_claimed": ["Energy Rating 5 stars"], "price": 38999, "currency": "INR"}),
 }
 
+# Fictional reviews of the hero charger: a rising run of heat complaints, plus the traps the Radar must ignore.
+HERO_REVIEWS = [(d, r, t) for d, r, t in [
+    ("2026-05-04", 5, "Charges my laptop and phone together, compact and light."),
+    ("2026-05-11", 5, "This charger is fire 🔥 best 65W brick I've owned"),
+    ("2026-05-19", 4, "Works fine. Gets a little warm under full load, which is normal."),
+    ("2026-05-28", 5, "No overheating at all, even charging two devices."),
+    ("2026-06-03", 3, "Charging speed is ok, cable not included which is annoying."),
+    ("2026-06-12", 5, "Great value at this price."),
+    ("2026-06-20", 4, "Lit charger, does what it says."),
+    ("2026-06-29", 2, "My friend said hers got really hot, mine has been ok so far."),
+    ("2026-07-02", 1, "Overheats when charging my laptop. Too hot to touch and the USB-C port looks discoloured."),
+    ("2026-07-09", 5, "Folding pins are handy for travel."),
+    ("2026-07-15", 4, "Good charger, slightly bulky."),
+    ("2026-07-24", 1, "Melted on the first day. The plastic around the top port is black and it smelled of burning."),
+    ("2026-07-30", 5, "Fast charging for my Pixel and iPad."),
+    ("2026-08-06", 3, "Stopped working after a month, no lights."),
+    ("2026-08-12", 1, "Woke up to a burning smell. The charger was scorched around the port, unplugged it fast."),
+    ("2026-08-18", 5, "Never gets hot, unlike my old one."),
+    ("2026-08-25", 1, "Port melted while charging overnight. Photos attached. Do not leave this plugged in."),
+    ("2026-08-30", 4, "Decent, but the second port charges slower."),
+    ("2026-09-04", 1, "Sparks from the USB-C port when I plugged in my laptop cable, then it died."),
+    ("2026-09-09", 5, "Perfect for my desk setup."),
+    ("2026-09-15", 1, "Overheated and deformed after a week of normal use. Scary."),
+    ("2026-09-21", 4, "Works as described."),
+    ("2026-09-26", 1, "Smoke came out of it while charging my phone. Threw it away."),
+    ("2026-10-01", 5, "Bought a second one for the office."),
+]]
+
+
+def seed_reviews() -> None:
+    reviews = [{"id": f"demo-{i:02d}", "date": d, "rating": r, "text": t} for i, (d, r, t) in enumerate(HERO_REVIEWS)]
+    safety.add_reviews("SS-P-10291", reviews)
+    answer = safety.safety("SS-P-10291")
+    print(f"safety SS-P-10291: {answer['verdict']}, {answer['reviews_checked']} reviews")
+    for f in answer["ai_findings"]:
+        print(f"  {f['hazard_type']} {f['severity']} reports={f['independent_reports']} trend={f['trend']} "
+              f"first={f['first_seen']} | {f['mechanism']}")
+
 
 def main() -> None:
     for product_id, (listing_id, listing) in DEMO.items():
@@ -63,6 +101,7 @@ def main() -> None:
     for m in result["matches"]:
         print(f"  {m['product_id']}  {m['relationship']:<21} {m['status']:<10} {m['confidence']}")
     print(json.dumps(result["matches"][0], indent=1)[:600])
+    seed_reviews()
 
 
 if __name__ == "__main__":

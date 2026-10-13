@@ -24,8 +24,8 @@ API = "https://www.saferproducts.gov/RestWebServices/Recall"
 
 FIRE = re.compile(r"\b(fire|burn|overheat\w*|melt\w*|shock|electrocution|explo\w*|smok\w*)", re.I)
 ELECTRICAL = re.compile(
-    r"\b(charger|power ?bank|battery|batteries|adapter|cable|heater|hoverboard|e-?bike|scooter|"
-    r"extension cord|power strip|lithium|usb|outlet|lamp|light)\b",
+    r"\b(chargers?|power ?banks?|battery|batteries|adapters?|cables?|heaters?|hoverboards?|e-?bikes?|scooters?|"
+    r"extension cords?|power strips?|lithium|usb|outlets?|lamps?|lights?)\b",  # plurals: "Portable Chargers"
     re.I,
 )
 BACKTEST_CUTOFF = "2023-08-01"
@@ -102,11 +102,15 @@ def main() -> None:
     parser.add_argument("--to", dest="end", type=int, default=2026)
     parser.add_argument("--db", default=os.environ.get("DATABASE_URL"), help="Postgres URL; omit to write files only")
     parser.add_argument("--summary", action="store_true", help="print counts")
+    parser.add_argument("--offline", action="store_true", help="reuse raw/cpsc_recalls.jsonl instead of the API")
     args = parser.parse_args()
 
     RAW.mkdir(exist_ok=True)
     recalls = []
-    for year in range(args.start, args.end + 1):
+    if args.offline:
+        recalls = [json.loads(line) for line in (RAW / "cpsc_recalls.jsonl").read_text().splitlines() if line]
+        print(f"offline: {len(recalls)} recalls from raw/cpsc_recalls.jsonl")
+    for year in [] if args.offline else range(args.start, args.end + 1):
         batch = fetch_year(year)
         print(f"{year}: {len(batch)} recalls")
         recalls += batch

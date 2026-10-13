@@ -713,6 +713,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "google-genai" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "requests" },
 ]
 
 [package.dev-dependencies]
@@ -724,6 +725,7 @@ dev = [
 requires-dist = [
     { name = "google-genai", specifier = ">=1.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
+    { name = "requests", specifier = ">=2.32" },
 ]
 
 [package.metadata.requires-dev]

@@ -1,0 +1,26 @@
+{
+ "_note": "Hand-labelled reviews for the Safety Radar live check (M4 'done when'). hazard = own experience of a physical hazard.",
+ "product": "USB-C wall charger, 65W",
+ "cases": [
+  {"id": "c01", "text": "Melted on the first day. Plastic around the port is black and it smelled like burning.", "hazard": true, "type": "fire_burn"},
+  {"id": "c02", "text": "Works great, charges my laptop fast without overheating.", "hazard": false},
+  {"id": "c03", "text": "This charger is fire 🔥🔥 best purchase this year", "hazard": false},
+  {"id": "c04", "text": "Woke up to smoke coming out of the outlet, the charger was scorched. Unplugged it just in time.", "hazard": true, "type": "fire_burn"},
+  {"id": "c05", "text": "Gets a little warm but that's normal for a 65W brick.", "hazard": false},
+  {"id": "c06", "text": "Got a shock when I touched the metal part while it was plugged in. Threw it away.", "hazard": true, "type": "electric_shock"},
+  {"id": "c07", "text": "My neighbour said hers caught fire, but mine has been fine for months.", "hazard": false},
+  {"id": "c08", "text": "Stopped working after two weeks. No lights, nothing.", "hazard": false},
+  {"id": "c09", "text": "It sparked when I plugged it in and tripped the breaker.", "hazard": true, "type": "fire_burn"},
+  {"id": "c10", "text": "Never gets hot, unlike my old one that melted.", "hazard": false},
+  {"id": "c11", "text": "Lit charger, charges my phone in no time. 10/10", "hazard": false},
+  {"id": "c12", "text": "Burned my son's hand, the casing was too hot to touch after 20 minutes of charging.", "hazard": true, "type": "fire_burn"},
+  {"id": "c13", "text": "Packaging was damaged and the cable is too short.", "hazard": false},
+  {"id": "c14", "text": "Overheats when charging. Too hot to hold, the plastic is deformed now.", "hazard": true, "type": "fire_burn"},
+  {"id": "c15", "text": "Charges slower than advertised, maybe 30W at best.", "hazard": false},
+  {"id": "c16", "text": "Strong burning plastic smell every time I use it, and a brown mark on the case.", "hazard": true, "type": "fire_burn"},
+  {"id": "c17", "text": "Read online that these can explode, so I returned it before using it.", "hazard": false},
+  {"id": "c18", "text": "Caught fire on my nightstand overnight. Fire department came. Photos attached.", "hazard": true, "type": "fire_burn"},
+  {"id": "c19", "text": "Absolutely love it, no heat issues at all with my MacBook.", "hazard": false},
+  {"id": "c20", "text": "The prongs came loose and I saw sparks inside the wall socket.", "hazard": true, "type": "fire_burn"}
+ ]
+}

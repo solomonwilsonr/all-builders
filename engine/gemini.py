@@ -88,20 +88,19 @@ def embed(texts: list[str]) -> list[list[float]]:
     return out
 
 
-def compare(a: dict, b: dict) -> dict:
-    """Gemini's structured comparison of two listings. The decision itself is engine.rules.decide."""
-    prompt = COMPARE_PROMPT.format(a=json.dumps(a, ensure_ascii=False, indent=1),
-                                   b=json.dumps(b, ensure_ascii=False, indent=1))
+def structured(prompt: str, schema: dict, models: list[str] | None = None, timeout_s: int = 30) -> dict:
+    """JSON that follows schema, from the first model that answers in time; result["model"] says which.
+    Live API calls keep the 30 s default; bulk jobs with long answers pass a longer timeout."""
     errors = []
-    for model in COMPARE_MODELS:
+    for model in models or COMPARE_MODELS:
         thinking = None if "lite" in model else types.ThinkingConfig(thinking_level="low")
         try:
             response = client().models.generate_content(
                 model=model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
-                    temperature=0, response_mime_type="application/json", response_json_schema=COMPARE_SCHEMA,
-                    thinking_config=thinking),
+                    temperature=0, response_mime_type="application/json", response_json_schema=schema,
+                    thinking_config=thinking, http_options=types.HttpOptions(timeout=timeout_s * 1000)),
             )
             result = json.loads(response.text)
         except Exception as error:  # noqa: BLE001  timeout, 429, 5xx or bad JSON: try the next model
@@ -109,4 +108,10 @@ def compare(a: dict, b: dict) -> dict:
             continue
         result["model"] = model
         return result
-    raise RuntimeError("every compare model failed: " + "; ".join(errors))
+    raise RuntimeError("every model failed: " + "; ".join(errors))
+
+
+def compare(a: dict, b: dict) -> dict:
+    """Gemini's structured comparison of two listings. The decision itself is engine.rules.decide."""
+    return structured(COMPARE_PROMPT.format(a=json.dumps(a, ensure_ascii=False, indent=1),
+                                            b=json.dumps(b, ensure_ascii=False, indent=1)), COMPARE_SCHEMA)
