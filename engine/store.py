@@ -94,6 +94,21 @@ def neighbours(product_id: str, k: int = 8, max_distance: float = 0.25) -> list[
     return [(r["product_id"], float(r["distance"])) for r in rows if r["distance"] <= max_distance]
 
 
+def nearest(vector: list[float], max_distance: float) -> str | None:
+    """Closest product by brand-blind text embedding (latest fingerprints), if close enough."""
+    row = conn().execute(
+        """WITH latest AS (SELECT DISTINCT ON (product_id) product_id, text_vector FROM product_fingerprints
+                           ORDER BY product_id, version DESC)
+           SELECT product_id, text_vector <=> %s::vector AS distance FROM latest ORDER BY distance LIMIT 1""",
+        (vector_literal(vector),)).fetchone()
+    return row["product_id"] if row and row["distance"] <= max_distance else None
+
+
+def product_listings(product_id: str) -> list[dict]:
+    return conn().execute("SELECT id, marketplace, url, title, raw FROM listings WHERE product_id = %s",
+                          (product_id,)).fetchall()
+
+
 def add_evidence(source_type: str, source_ref: str, content: dict) -> str:
     body = json.dumps(content, sort_keys=True, ensure_ascii=False)
     digest = hashlib.sha1(body.encode()).hexdigest()

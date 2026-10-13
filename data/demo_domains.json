@@ -1,0 +1,6 @@
+{
+ "_note": "Registration dates for the fictional demo shops only (the fake shop page from M8). Every answer that uses this file says 'demo data'. Real domains always go to RDAP.",
+ "domains": {
+  "example-deals-store.test": "2026-09-25"
+ }
+}

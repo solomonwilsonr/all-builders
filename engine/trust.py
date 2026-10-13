@@ -1,0 +1,211 @@
+"""M6 "Is it real?": does this listing look like the genuine product sold by someone who may sell it?
+(SAFESHELF.md section 4, items 7 and 8)
+
+    trust_check(listing) -> TrustCheck answer (contract: POST /v1/listings/trust-check)
+
+Four checks against the genuine product (found by M3, read-only): copied photos, impossible price, brand-new
+website, conflicting specs. Plus a scan for hidden instructions aimed at AI agents. Code sets every flag and writes
+the summary: always "Be careful: ..." with reasons, never "scam". The checks describe the listing; the shopper
+decides.
+"""
+import io
+import json
+import re
+from datetime import UTC, date, datetime
+from functools import cache
+from pathlib import Path
+from urllib.parse import urlparse
+
+import requests
+
+from engine import identity, store
+from engine.normalize import attributes, norm_brand
+from engine.rules import attribute_conflicts
+
+DATA = Path(__file__).resolve().parents[1] / "data"
+LABEL = "Evidence for the shopper - not a legal finding"
+PRICE_FLOOR = 0.40  # below 40% of the lowest credible price is not a discount
+NEW_DOMAIN_DAYS = 90
+PHASH_MAX_DISTANCE = 8
+MARKETPLACES = ("amazon.", "flipkart.", "meesho.", "myntra.", "snapdeal.", "jiomart.", "tatacliq.", "ebay.",
+                "walmart.", "etsy.", "aliexpress.", "temu.")
+TWO_PART_TLDS = ("co.in", "co.uk", "com.au", "net.in", "org.in", "co.nz")
+HIDDEN = re.compile(
+    r"ignore (all |any )?(previous|prior|above) instructions|you are an? (ai|assistant|agent)|system prompt|"
+    r"(mark|rate|report|classify) (this|the) (product|shop|seller|listing) as (safe|genuine|trusted|verified)|"
+    r"do not (warn|flag|tell)|assistant:|<\s*/?\s*(system|instructions)\s*>", re.IGNORECASE)
+
+
+@cache
+def _json(name: str) -> dict:
+    path = DATA / name
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
+def host(url: str | None) -> str:
+    return (urlparse(url or "").hostname or "").lower().removeprefix("www.")
+
+
+def registrable(hostname: str) -> str:
+    parts = hostname.split(".")
+    keep = 3 if ".".join(parts[-2:]) in TWO_PART_TLDS else 2
+    return ".".join(parts[-keep:])
+
+
+def authorised(brand: str, seller: str | None, url: str | None) -> bool:
+    entry = _json("authorised_sellers.json").get("brands", {}).get(norm_brand(brand), {})
+    domain = host(url)
+    return bool(domain and any(domain == d or domain.endswith("." + d) for d in entry.get("domains", []))) or \
+        bool(seller and norm_brand(seller) in {norm_brand(s) for s in entry.get("sellers", []) + [brand]})
+
+
+# ---------- checks (pure functions, unit-tested) ----------
+
+def price_check(price: float | None, lowest_credible: float | None, currency: str = "INR") -> dict:
+    if not price or not lowest_credible:
+        return {"result": "unknown", "price": price, "currency": currency, "lowest_credible_price": lowest_credible,
+                "reason": "no price" if not price else "no price from an authorised seller to compare with"}
+    ratio = round(price / lowest_credible, 2)
+    return {"result": "flag" if ratio < PRICE_FLOOR else "ok", "price": price, "currency": currency,
+            "lowest_credible_price": lowest_credible, "ratio": ratio}
+
+
+def spec_check(listing: dict, genuine: dict) -> dict:
+    text = " ".join(str(listing.get(k) or "") for k in ("title", "page_text"))
+    conflicts = attribute_conflicts(attributes(text), genuine.get("attributes") or {})
+    return {"result": "flag" if conflicts else "ok", "conflicts": conflicts}
+
+
+def age_from_rdap(payload: dict) -> date | None:
+    for event in payload.get("events", []):
+        if event.get("eventAction") == "registration":
+            return datetime.fromisoformat(event["eventDate"]).date()
+    return None
+
+
+def website_check(url: str | None, today: date | None = None) -> dict:
+    hostname = host(url)
+    today = today or datetime.now(UTC).date()
+    if not hostname:
+        return {"result": "unknown", "reason": "no URL"}
+    if any(m in hostname for m in MARKETPLACES):
+        return {"result": "skipped", "reason": "large marketplace; the seller, not the website, is what matters"}
+    domain = registrable(hostname)
+    demo = _json("demo_domains.json").get("domains", {}).get(domain)
+    if demo:  # fictional demo shops; labelled so nobody mistakes it for a real lookup
+        registered, source = date.fromisoformat(demo), "demo data (fictional shop)"
+    else:
+        try:
+            response = requests.get(f"https://rdap.org/domain/{domain}", timeout=10)
+            registered, source = (age_from_rdap(response.json()) if response.ok else None), "RDAP"
+        except (requests.RequestException, ValueError):
+            registered, source = None, "RDAP"
+    if not registered:
+        return {"result": "unknown", "domain": domain, "reason": "registration date not available", "source": source}
+    days = (today - registered).days
+    return {"result": "flag" if days < NEW_DOMAIN_DAYS else "ok", "domain": domain,
+            "domain_registered_days_ago": days, "source": source}
+
+
+def phash(url: str):
+    import imagehash
+    from PIL import Image
+
+    response = requests.get(url, timeout=15)
+    response.raise_for_status()
+    return imagehash.phash(Image.open(io.BytesIO(response.content)))
+
+
+def photo_check(listing_images: list[str], genuine_images: list[str], seller_ok: bool, hasher=phash) -> dict:
+    if not listing_images or not genuine_images:
+        return {"result": "unknown", "reason": "no photos to compare"}
+    genuine, matches = [], 0
+    for url in genuine_images[:6]:
+        try:
+            genuine.append(hasher(url))
+        except Exception:  # noqa: BLE001, S112  unreachable or unreadable image: skip it
+            continue
+    for url in listing_images[:6]:
+        try:
+            h = hasher(url)
+        except Exception:  # noqa: BLE001, S112
+            continue
+        matches += any(h - g <= PHASH_MAX_DISTANCE for g in genuine)
+    copied = matches > 0
+    return {"result": "flag" if copied and not seller_ok else "ok", "matches_official_listing": copied,
+            "matching_photos": matches, "seller_authorised": seller_ok}
+
+
+def summary(checks: dict, hidden: bool) -> str:
+    reasons = []
+    if checks["copied_photos"]["result"] == "flag":
+        reasons.append("photos copied from the official listing, but the seller is not authorised")
+    if checks["price"]["result"] == "flag":
+        reasons.append(f"price is {round(100 * checks['price']['ratio'])}% of the lowest price from an authorised seller")
+    if checks["website_age"]["result"] == "flag":
+        reasons.append(f"website registered only {checks['website_age']['domain_registered_days_ago']} days ago")
+    if checks["spec"]["result"] == "flag":
+        reasons.append("specs differ from the genuine model (" + "; ".join(checks["spec"]["conflicts"]) + ")")
+    if hidden:
+        reasons.append("the page hides instructions aimed at AI assistants")
+    if not reasons:
+        return "No warning signs found in these checks."
+    return "Be careful: " + "; ".join(reasons) + "."
+
+
+# ---------- the answer ----------
+
+def genuine_offer(product_id: str, brand: str) -> tuple[float | None, list[str]]:
+    """Lowest price and photos from listings sold by the brand or an authorised seller."""
+    prices, images = [], []
+    for row in store.product_listings(product_id):
+        raw = row["raw"] or {}
+        if not authorised(brand, raw.get("seller"), row["url"]) and row["marketplace"] != "demo":
+            continue
+        if raw.get("price"):
+            prices.append(float(raw["price"]))
+        images += raw.get("image_urls") or []
+    return (min(prices) if prices else None), images
+
+
+def safety_note(product_id: str) -> str:
+    signals = store.conn().execute(
+        "SELECT count(*) AS n FROM hazard_signals WHERE product_id = %s AND status = 'under_review'",
+        (product_id,)).fetchone()["n"]
+    recalled = store.conn().execute(
+        "SELECT count(*) AS n FROM recall_products WHERE product_id = %s AND match_class = 'exact_model'",
+        (product_id,)).fetchone()["n"]
+    parts = ["recalled" if recalled else "no recall"]
+    parts.insert(0, f"{signals} hazard finding{'s' if signals != 1 else ''} under review" if signals else
+                 "no hazard findings")
+    return ", ".join(parts)
+
+
+def trust_check(listing: dict) -> dict:
+    product_id, how = identity.resolve(listing)
+    genuine = store.latest_fingerprint(product_id) if product_id else None
+    url, seller = listing.get("url"), listing.get("seller")
+    if genuine:
+        lowest, images = genuine_offer(product_id, genuine["brand"])
+        seller_ok = authorised(genuine["brand"], seller, url)
+        checks = {"copied_photos": photo_check(listing.get("image_urls") or [], images, seller_ok),
+                  "price": price_check(listing.get("price"), lowest, listing.get("currency") or "INR"),
+                  "website_age": website_check(url),
+                  "spec": spec_check(listing, genuine)}
+    else:
+        unknown = {"result": "unknown", "reason": "no genuine product matched"}
+        checks = {"copied_photos": unknown, "price": unknown, "website_age": website_check(url), "spec": unknown}
+    hidden = bool(HIDDEN.search(listing.get("page_text") or ""))
+    answer = {
+        "listing_url": url,
+        "matched_product_id": product_id,
+        "matched_by": how,
+        "checks": checks,
+        "hidden_instructions_found": hidden,
+        "summary": summary(checks, hidden),
+        "safety_of_genuine_model": safety_note(product_id) if product_id else "unknown product",
+        "label": LABEL,
+    }
+    evidence_id = store.add_evidence("trust_check", url or listing.get("title") or "", answer)
+    answer["evidence_ids"] = [evidence_id]
+    return answer

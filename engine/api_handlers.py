@@ -4,7 +4,7 @@ from typing import Any
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import identity, marks, safety
+from engine import identity, marks, safety, trust
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -40,10 +40,18 @@ async def get_certifications(request: Request, params: dict[str, Any]) -> dict:
         raise HTTPException(status_code=404, detail=f"Unknown product {missing}") from None
 
 
+async def trust_check(request: Request, params: dict[str, Any]) -> dict:
+    listing = await request.json()
+    if not any(listing.get(k) for k in ("url", "title", "page_text", "image_urls")):
+        raise HTTPException(status_code=422, detail="Give at least a url, title, page_text or image_urls")
+    return await run_in_threadpool(trust.trust_check, listing)
+
+
 HANDLERS = {
     "identifyProduct": identify_product,
     "findDuplicates": find_duplicates,
     "getRelationships": get_relationships,
     "getSafety": get_safety,
     "getCertifications": get_certifications,
+    "trustCheck": trust_check,
 }

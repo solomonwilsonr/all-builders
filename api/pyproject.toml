@@ -9,6 +9,9 @@ dependencies = [
     "pyyaml>=6.0",
     "google-genai>=1.0",  # engine/ (real handlers)
     "psycopg[binary]>=3.2",
+    "requests>=2.32",
+    "pillow>=10",
+    "imagehash>=4.3",
 ]
 
 [dependency-groups]

@@ -42,6 +42,21 @@ def same_brand(fp: dict, listing: dict, product_id: str) -> bool:
     return bool(other) and other in re.sub(r"[^a-z0-9]", "", (listing.get("title") or "").lower())
 
 
+def resolve(listing: dict, max_distance: float = 0.12) -> tuple[str | None, str]:
+    """Which known product does this listing claim to be? Read-only, so fake-shop listings never become products.
+    Returns (product_id, how): url, model_number, look_alike (brand-blind embedding) or (None, none)."""
+    fp = fingerprint(listing)
+    known = listing.get("url") and store.listing_by_url(listing["url"])
+    if known:
+        return known["product_id"], "url"
+    same_id = [p for p in store.by_identifier(fp) if same_brand(fp, listing, p)]
+    if same_id:
+        return same_id[0], "model_number"
+    [vector] = gemini.embed([brand_blind_text(listing, fp)])
+    nearest = store.nearest(vector, max_distance)
+    return (nearest, "look_alike") if nearest else (None, "none")
+
+
 def identify(listing: dict) -> dict:
     """Resolve a listing to a product: known URL, then a matching identifier, else a new provisional product.
 
