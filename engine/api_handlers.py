@@ -4,7 +4,7 @@ from typing import Any
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import identity, marks, safety, trust
+from engine import identity, marks, passport, safety, trust
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -47,6 +47,31 @@ async def trust_check(request: Request, params: dict[str, Any]) -> dict:
     return await run_in_threadpool(trust.trust_check, listing)
 
 
+def by_product(fn):
+    """GET /v1/products/{product_id}/... handler: unknown product -> 404."""
+    async def handler(request: Request, params: dict[str, Any]) -> dict:
+        try:
+            return await run_in_threadpool(fn, params["product_id"])
+        except KeyError as missing:
+            raise HTTPException(status_code=404, detail=f"Unknown product {missing}") from None
+    return handler
+
+
+async def create_report(request: Request, params: dict[str, Any]) -> dict:
+    body = await request.json()
+    if not body.get("product_id") or not body.get("description"):
+        raise HTTPException(status_code=422, detail="Give a product_id and a description")
+    try:
+        # The reporter is stored only as a hash (Firebase uid or WhatsApp number from the calling screen or bot).
+        return await run_in_threadpool(passport.create_report, body, request.headers.get("x-reporter-ref"))
+    except KeyError as missing:
+        raise HTTPException(status_code=404, detail=f"Unknown product {missing}") from None
+
+
+async def bench_results(request: Request, params: dict[str, Any]) -> dict:
+    return passport.bench_results()
+
+
 HANDLERS = {
     "identifyProduct": identify_product,
     "findDuplicates": find_duplicates,
@@ -54,4 +79,9 @@ HANDLERS = {
     "getSafety": get_safety,
     "getCertifications": get_certifications,
     "trustCheck": trust_check,
+    "getProduct": by_product(passport.product),
+    "getHistory": by_product(passport.history),
+    "getAlternatives": by_product(passport.alternatives),
+    "createReport": create_report,
+    "getBenchResults": bench_results,
 }

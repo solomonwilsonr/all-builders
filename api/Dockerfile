@@ -1,4 +1,4 @@
-# Built from a staging folder that holds api/, engine/ and contracts/ side by side (see `make deploy-api`).
+# Built from a staging folder that holds api/, engine/, contracts/, data/ and bench/ side by side (see `make deploy-api`).
 FROM python:3.12-slim
 WORKDIR /srv
 COPY api/pyproject.toml api/
@@ -8,6 +8,7 @@ COPY api/app api/app
 COPY engine engine
 COPY contracts contracts
 COPY data data
+COPY bench bench
 ENV CONTRACTS_DIR=/srv/contracts MOCK=1 PORT=8080 PYTHONPATH=/srv
 WORKDIR /srv/api
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]

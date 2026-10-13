@@ -28,6 +28,7 @@ load-data:      ## CPSC recalls + Australian registry (TVs, fridges) into the lo
 deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for example answers only)
 	rm -rf .build && mkdir -p .build && cp -R api engine contracts .build/ && mkdir -p .build/data && \
 		cp data/bis_mock.json data/authorised_sellers.json data/demo_domains.json .build/data/ && \
+		mkdir -p .build/bench && cp bench/results.json .build/bench/ && \
 		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
 		--allow-unauthenticated --min-instances 0 --memory 1Gi --timeout 300 \

@@ -37,6 +37,13 @@
       "category": "television",
       "brand": "ViewMax",
       "model": "VM-55U8"
+    },
+    {
+      "product_id": "SS-P-60002",
+      "role": "safer alternative to the hero charger (same specs, other brand, 24 reviews, no hazard reports)",
+      "category": "usb_charger",
+      "brand": "SafeVolt",
+      "model": "SV-65"
     }
   ],
   "listings": {
