@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SafeShelf</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>SafeShelf</h1>
+  <p class="lede">Check before you buy.</p>
+  <ul>
+    <li><button id="power" type="button" role="switch" aria-checked="true" class="row"><span id="power-label">SafeShelf is on</span><span id="power-state" class="state">On</span></button></li>
+    <li><button id="guard" type="button" role="switch" aria-checked="true" class="row"><span>Ask before paid requests</span><span id="guard-state" class="state">On</span></button></li>
+    <li class="spend"><span id="spend">Estimated AI spend: ₹0.00 (0 requests)</span><button id="spend-reset" type="button" class="link">Reset</button></li>
+    <li class="nav"><button id="shelf" type="button" class="primary">My Shelf</button></li>
+    <li class="nav"><button id="lab" type="button">Judges' Lab</button></li>
+  </ul>
+  <script src="popup.js"></script>
+</body>
+</html>

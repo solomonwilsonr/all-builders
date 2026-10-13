@@ -1,0 +1,6 @@
+{
+ "_note": "Mock BIS (India) licence registry for the hackathon demo. The real BIS CRS registry has no open API. All entries are fictional demo data; engine/marks.py says 'mock registry' in every answer that uses it.",
+ "licences": {
+  "R-41XXXXXX": {"brand": "ExampleBrand", "category": "usb_charger", "models": ["CX-65"], "status": "active"}
+ }
+}

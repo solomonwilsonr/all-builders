@@ -1,0 +1,18 @@
+:root { --ink:#10151b; --bg:#eef1f4; --raise:#e0e5ea; --accent:#0b57d0; --on-accent:#fff; --off:#9a1b13; --focus:#0b57d0; }
+@media (prefers-color-scheme: dark) { :root { --ink:#eef1f4; --bg:#14181d; --raise:#222930; --accent:#8ab4f8; --on-accent:#10151b; --off:#ff8a80; --focus:#8ab4f8; } }
+* { box-sizing:border-box; }
+body { margin:0; padding:20px 16px 16px; width:280px; font:15px/1.45 system-ui,sans-serif; color:var(--ink); background:var(--bg); }
+h1 { font-size:2rem; line-height:1; letter-spacing:-.03em; margin:0 0 4px; }
+.lede { margin:0 0 20px; font-size:1rem; }
+ul { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+.nav:first-of-type { margin-top:12px; }
+button { width:100%; font:inherit; padding:12px 14px; border:0; border-radius:12px; background:var(--raise); color:var(--ink); cursor:pointer; text-align:left; transition:transform .12s ease, background-color .12s ease; }
+button:active { transform:scale(.98); }
+button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+button.row { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+button.primary { background:var(--accent); color:var(--on-accent); font-weight:700; }
+.state { font-weight:700; padding:2px 10px; border-radius:999px; background:var(--accent); color:var(--on-accent); }
+button[aria-checked="false"] .state { background:var(--off); color:#fff; }
+.spend { font-size:.9rem; display:flex; justify-content:space-between; align-items:center; gap:8px; padding:0 4px; }
+button.link { width:auto; background:none; padding:4px 8px; text-decoration:underline; font-size:.9rem; }
+@media (prefers-reduced-motion: reduce) { button { transition:none; } button:active { transform:none; } }

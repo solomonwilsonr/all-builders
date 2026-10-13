@@ -1,0 +1,21 @@
+[project]
+name = "safeshelf-engine"
+version = "0.1.0"
+description = "SafeShelf engine (Person A): identity, Safety Radar, recall and safety marks, Is it real?"
+requires-python = ">=3.12"
+dependencies = [
+    "google-genai>=1.0",
+    "psycopg[binary]>=3.2",
+    "requests>=2.32",
+    "pillow>=10",
+    "imagehash>=4.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".."]

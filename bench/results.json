@@ -1,0 +1,712 @@
+{
+ "generated_at": "2026-10-13T12:07:32+00:00",
+ "tasks": {
+  "early_warning": {
+   "keyword_rules": {
+    "recalls_flagged": "11/25",
+    "median_lead_weeks": 169.9,
+    "false_alarm_rate": 0.28,
+    "false_alarms": "11/40"
+   },
+   "gemini_alone": {
+    "recalls_flagged": "6/25",
+    "median_lead_weeks": 104.1,
+    "false_alarm_rate": 0.15,
+    "false_alarms": "6/40"
+   },
+   "safeshelf": {
+    "recalls_flagged": "6/25",
+    "median_lead_weeks": 92.6,
+    "false_alarm_rate": 0.05,
+    "false_alarms": "2/40"
+   },
+   "safeshelf_no_pooling": {
+    "recalls_flagged": "1/25",
+    "median_lead_weeks": 67.3,
+    "false_alarm_rate": 0.05,
+    "false_alarms": "2/40"
+   }
+  }
+ },
+ "safeshelf_on_test_half": {
+  "recalls_flagged": "2/9",
+  "median_lead_weeks": 71.7,
+  "false_alarm_rate": 0.0,
+  "false_alarms": "0/14"
+ },
+ "safeshelf_params": {
+  "k": 3,
+  "min_severity": "medium",
+  "min_rate": 5.0
+ },
+ "per_recall": [
+  {
+   "recall_id": "cpsc:19752",
+   "title": "Amazon Recalls AmazonBasics Ceramic Space Heaters Due to Fire and Burn Hazards (Recall Alert)",
+   "recall_date": "2019-06-11",
+   "listings": 1,
+   "reviews_before_recall": 0,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:19731",
+   "title": "Bulk Unlimited Recalls Children's Globes Due to Fire and Burn Hazards (Recall Alert)",
+   "recall_date": "2019-03-21",
+   "listings": 4,
+   "reviews_before_recall": 849,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:19059",
+   "title": "DeWALT Recalls Drills Due to Shock Hazard",
+   "recall_date": "2019-02-05",
+   "listings": 2,
+   "reviews_before_recall": 661,
+   "split": "train",
+   "keyword_rules_lead_days": 2488,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:21028",
+   "title": "Ring Recalls Video Doorbells (2nd Generation) Due to Fire Hazard",
+   "recall_date": "2020-11-10",
+   "listings": 2,
+   "reviews_before_recall": 0,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:21703",
+   "title": "Sales BSD Recalls Homerygardens Extension Cord Splitters Due to Fire Hazard (Recall Alert)",
+   "recall_date": "2020-10-15",
+   "listings": 1,
+   "reviews_before_recall": 64,
+   "split": "test",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:21003",
+   "title": "Endliss Technology Recalls Trianium Battery Phone Cases Due to Burn Hazard; Sold Exclusively on Amazon.com",
+   "recall_date": "2020-10-07",
+   "listings": 2,
+   "reviews_before_recall": 347,
+   "split": "test",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:20184",
+   "title": "Monoprice Recalls Ethernet Cables Due to Fire Hazard",
+   "recall_date": "2020-09-16",
+   "listings": 2,
+   "reviews_before_recall": 20,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:20162",
+   "title": "Intertex Recalls Blowers Due To Fire Hazard",
+   "recall_date": "2020-08-12",
+   "listings": 16,
+   "reviews_before_recall": 582,
+   "split": "train",
+   "keyword_rules_lead_days": 1818,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:20089",
+   "title": "Yamaha Recalls Digital Wireless Equipment for Electric Guitars Due to Fire and Injury Hazards",
+   "recall_date": "2020-03-12",
+   "listings": 3,
+   "reviews_before_recall": 167,
+   "split": "test",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:22038",
+   "title": "Pearl River Propane Hoses Sold with Flame King Torches and Accessories Recalled Due to Fire Hazard",
+   "recall_date": "2021-12-22",
+   "listings": 9,
+   "reviews_before_recall": 720,
+   "split": "test",
+   "keyword_rules_lead_days": 885,
+   "gemini_alone_lead_days": 499,
+   "safeshelf_lead_days": 499,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:22009",
+   "title": "myCharge Recalls Powerbanks Due to Fire and Burn Hazards",
+   "recall_date": "2021-10-27",
+   "listings": 35,
+   "reviews_before_recall": 1400,
+   "split": "test",
+   "keyword_rules_lead_days": 722,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:21197",
+   "title": "Gas One Recalls Propane Adapter Hoses Due to Fire Hazard",
+   "recall_date": "2021-09-15",
+   "listings": 7,
+   "reviews_before_recall": 366,
+   "split": "train",
+   "keyword_rules_lead_days": 1189,
+   "gemini_alone_lead_days": 918,
+   "safeshelf_lead_days": 918,
+   "safeshelf_no_pooling_lead_days": 471
+  },
+  {
+   "recall_id": "cpsc:21189",
+   "title": "Razor USA Recalls GLW Battery Packs Sold with Hovertrax 2.0 Self-Balancing Hoverboards Due to Fire Hazard",
+   "recall_date": "2021-08-25",
+   "listings": 1,
+   "reviews_before_recall": 17,
+   "split": "test",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:21104",
+   "title": "Goal Zero Recalls Power Cables Due to Fire Hazard",
+   "recall_date": "2021-04-07",
+   "listings": 1,
+   "reviews_before_recall": 6,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:21081",
+   "title": "Jimco Lamps Recalls Accent Tables with Charging Receptacles Due to Shock Hazard",
+   "recall_date": "2021-02-17",
+   "listings": 1,
+   "reviews_before_recall": 0,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:21073",
+   "title": "Victory Innovations Recalls Electrostatic Sprayers with Lithium-ion Battery Packs Due to Fire and Explosion Hazards",
+   "recall_date": "2021-02-03",
+   "listings": 1,
+   "reviews_before_recall": 9,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23059",
+   "title": "JBR Solutions Recalls Aduro Surge Protectors Due to Shock and Fire Hazards",
+   "recall_date": "2022-12-01",
+   "listings": 17,
+   "reviews_before_recall": 1397,
+   "split": "train",
+   "keyword_rules_lead_days": 2266,
+   "gemini_alone_lead_days": 2018,
+   "safeshelf_lead_days": 801,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23007",
+   "title": "E-Bikes Recalled Due to Fire, Explosion and Burn Hazards; Distributed by Ancheer",
+   "recall_date": "2022-10-13",
+   "listings": 67,
+   "reviews_before_recall": 1997,
+   "split": "train",
+   "keyword_rules_lead_days": 1929,
+   "gemini_alone_lead_days": 1858,
+   "safeshelf_lead_days": 792,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:22737",
+   "title": "SOUNDBOKS Recalls Bluetooth Speakers with Lithium-Ion Batteries Due to Fire Hazard (Recall Alert)",
+   "recall_date": "2022-03-31",
+   "listings": 1,
+   "reviews_before_recall": 78,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23238",
+   "title": "VRURC Portable Chargers Recalled Due to Fire Hazard; Sold Exclusively on Amazon.com by VRURC; Caught Fire on Commercial Flight",
+   "recall_date": "2023-07-06",
+   "listings": 11,
+   "reviews_before_recall": 1310,
+   "split": "train",
+   "keyword_rules_lead_days": 263,
+   "gemini_alone_lead_days": 353,
+   "safeshelf_lead_days": 10,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23770",
+   "title": "Infanttech Recalls Zooby Video Baby Monitors for Cars Due to Fire Hazard (Recall Alert)",
+   "recall_date": "2023-06-22",
+   "listings": 1,
+   "reviews_before_recall": 3,
+   "split": "test",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23207",
+   "title": "CPSC Warns Consumers to Immediately Stop Using BQQZHZ Combination Smoke and Carbon Monoxide Detectors Due to Failure to Alert Consumers to Deadly Smoke and Fire; Sold on Amazon.com",
+   "recall_date": "2023-05-18",
+   "listings": 2,
+   "reviews_before_recall": 57,
+   "split": "test",
+   "keyword_rules_lead_days": 980,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23753",
+   "title": "Berkshire Innovations Recalls Sahara Folding Food Dehydrators Due to Fire Hazard (Recall Alert)",
+   "recall_date": "2023-05-04",
+   "listings": 1,
+   "reviews_before_recall": 61,
+   "split": "train",
+   "keyword_rules_lead_days": null,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23157",
+   "title": "Sunbeam Heated Blankets Recalled Due to Burn and Fire Hazards; Distributed by Star Elite",
+   "recall_date": "2023-03-16",
+   "listings": 76,
+   "reviews_before_recall": 1888,
+   "split": "train",
+   "keyword_rules_lead_days": 3028,
+   "gemini_alone_lead_days": null,
+   "safeshelf_lead_days": null,
+   "safeshelf_no_pooling_lead_days": null
+  },
+  {
+   "recall_id": "cpsc:23735",
+   "title": "Bedshe International Recalls Bedsure Electric Heating Blankets and Pads Due to Fire and Thermal Burn Hazards (Recall Alert)",
+   "recall_date": "2023-03-09",
+   "listings": 25,
+   "reviews_before_recall": 1870,
+   "split": "test",
+   "keyword_rules_lead_days": 901,
+   "gemini_alone_lead_days": 539,
+   "safeshelf_lead_days": 505,
+   "safeshelf_no_pooling_lead_days": null
+  }
+ ],
+ "controls": [
+  {
+   "asin": "B077P7GM7Z",
+   "recall_id": "cpsc:19752",
+   "reviews": 136,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B07SMSB64L",
+   "recall_id": "cpsc:19752",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B08HL3RWLC",
+   "recall_id": "cpsc:19752",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B072QLXK2T",
+   "recall_id": "cpsc:21028",
+   "reviews": 13312,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": true,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B07YNGX4WV",
+   "recall_id": "cpsc:21028",
+   "reviews": 1421,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B08PCRN5YT",
+   "recall_id": "cpsc:21028",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B07FP41MC5",
+   "recall_id": "cpsc:21003",
+   "reviews": 6198,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BSS1HNRP",
+   "recall_id": "cpsc:21003",
+   "reviews": 1655,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B07K722W9R",
+   "recall_id": "cpsc:21003",
+   "reviews": 1,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BQY4XJKV",
+   "recall_id": "cpsc:20184",
+   "reviews": 38,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0B3F3V3JJ",
+   "recall_id": "cpsc:20184",
+   "reviews": 2,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B01B92JTB8",
+   "recall_id": "cpsc:20184",
+   "reviews": 2,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B08TG548GL",
+   "recall_id": "cpsc:20089",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B08TGL5X4D",
+   "recall_id": "cpsc:20089",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B08TH19FZV",
+   "recall_id": "cpsc:20089",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B082ZJBYJL",
+   "recall_id": "cpsc:22038",
+   "reviews": 37,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B09WYZP5DH",
+   "recall_id": "cpsc:22038",
+   "reviews": 35,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BZ7T1FGJ",
+   "recall_id": "cpsc:22038",
+   "reviews": 39,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BHNFQQN1",
+   "recall_id": "cpsc:22009",
+   "reviews": 26,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BHND9VSS",
+   "recall_id": "cpsc:22009",
+   "reviews": 7,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B008PQAFRO",
+   "recall_id": "cpsc:22009",
+   "reviews": 124,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B09M6C156N",
+   "recall_id": "cpsc:21197",
+   "reviews": 78,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0B6R63N8T",
+   "recall_id": "cpsc:21197",
+   "reviews": 63,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B098RCZ438",
+   "recall_id": "cpsc:21197",
+   "reviews": 81,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": true,
+   "safeshelf_false_alarm": true,
+   "safeshelf_no_pooling_false_alarm": true
+  },
+  {
+   "asin": "B08L91WH5V",
+   "recall_id": "cpsc:21189",
+   "reviews": 17,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B07XZNH8ZK",
+   "recall_id": "cpsc:21189",
+   "reviews": 56,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B077S3RLN2",
+   "recall_id": "cpsc:21104",
+   "reviews": 91,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B072KP53XK",
+   "recall_id": "cpsc:21104",
+   "reviews": 21,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B073SFDK98",
+   "recall_id": "cpsc:21104",
+   "reviews": 13,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B077NQ7DM6",
+   "recall_id": "cpsc:23059",
+   "reviews": 43,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BC9CH241",
+   "recall_id": "cpsc:23007",
+   "reviews": 419,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": true,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B08LY9QBZT",
+   "recall_id": "cpsc:23007",
+   "reviews": 109,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BPC1JRNR",
+   "recall_id": "cpsc:23007",
+   "reviews": 87,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B077XFYQ6F",
+   "recall_id": "cpsc:22737",
+   "reviews": 210,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B09YRMRGKV",
+   "recall_id": "cpsc:22737",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0CCVTH9QW",
+   "recall_id": "cpsc:23238",
+   "reviews": 0,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BLGCYQM8",
+   "recall_id": "cpsc:23238",
+   "reviews": 81,
+   "keyword_rules_false_alarm": false,
+   "gemini_alone_false_alarm": false,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0C37R51C5",
+   "recall_id": "cpsc:23157",
+   "reviews": 8078,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": true,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  },
+  {
+   "asin": "B0BSKMH9GX",
+   "recall_id": "cpsc:23157",
+   "reviews": 7390,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": true,
+   "safeshelf_false_alarm": true,
+   "safeshelf_no_pooling_false_alarm": true
+  },
+  {
+   "asin": "B07RF6L6G4",
+   "recall_id": "cpsc:23157",
+   "reviews": 3692,
+   "keyword_rules_false_alarm": true,
+   "gemini_alone_false_alarm": true,
+   "safeshelf_false_alarm": false,
+   "safeshelf_no_pooling_false_alarm": false
+  }
+ ],
+ "caveats": [
+  "Gemini methods only read reviews that pass a broad keyword pre-filter.",
+  "Recalls whose notice lists no model numbers count every listing of the named product family.",
+  "Controls are the same brands' other products; a control alarm may be a real, never-recalled hazard.",
+  "SafeShelf alarm settings were tuned on the train half; safeshelf_on_test_half is the unbiased figure."
+ ]
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SafeShelf Lab</title>
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+<main>
+  <h1>SafeShelf Lab</h1>
+  <p class="muted">For judges and developers. Every screen here reads the live SafeShelf API. If an endpoint isn't live yet, it says so; no example data is shown.</p>
+
+  <section aria-labelledby="h-status">
+    <h2 id="h-status">API status</h2>
+    <p class="muted">All endpoints. "Live" means the API has a real handler (from <code>/health</code>). Checking this is free.</p>
+    <button id="refresh" type="button">Refresh status</button>
+    <table id="status"><thead><tr><th>Endpoint</th><th>Status</th><th>Used in</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <section aria-labelledby="h-explore">
+    <h2 id="h-explore">Product explorer</h2>
+    <p class="muted">Enter a product ID (for example <code>SS-P-AMZ-B0B4SCK38N</code>). These are database reads on the API.</p>
+    <div class="row"><input id="pid" type="text" aria-label="Product ID" placeholder="SS-P-…">
+      <button data-op="product" data-key="product">Details</button><button data-op="safety" data-key="safety">Safety</button>
+      <button data-op="certifications" data-key="certifications">Marks</button><button data-op="relationships" data-key="relationships">Copies</button>
+      <button data-op="history" data-key="history">History</button><button data-op="alternatives" data-key="alternatives">Safer options</button></div>
+    <div id="explore" role="status"></div>
+  </section>
+
+  <section aria-labelledby="h-bench">
+    <h2 id="h-bench">SafeShelfBench</h2>
+    <button id="bench" type="button">Load results</button>
+    <div id="bench-out" role="status"></div>
+  </section>
+
+  <section aria-labelledby="h-trace">
+    <h2 id="h-trace">Investigation trace</h2>
+    <div class="row"><input id="inv" type="text" aria-label="Investigation ID" placeholder="SS-I-…"><button id="trace" type="button">Load trace</button></div>
+    <div id="trace-out" role="status"></div>
+  </section>
+
+  <section aria-labelledby="h-scan">
+    <h2 id="h-scan">Catalog scan (marketplace)</h2>
+    <p class="muted">Runs a batch job over a catalog file. It can use real AI credits, and the cost depends on the file size.</p>
+    <div class="row"><input id="csv" type="text" aria-label="Catalog file URL" placeholder="gs://bucket/catalog.csv"><button id="scan" type="button">Run scan</button></div>
+    <div id="scan-out" role="status"></div>
+  </section>
+</main>
+<script src="panels.js"></script>
+<script src="lab.js"></script>
+</body>
+</html>

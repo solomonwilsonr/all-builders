@@ -59,6 +59,8 @@ def main() -> None:
     parser.add_argument("mode", choices=["meta", "reviews"])
     parser.add_argument("--category", required=True, help="e.g. Cell_Phones_and_Accessories, Electronics")
     parser.add_argument("--match", help="meta mode: regex over the raw metadata line (case-insensitive)")
+    parser.add_argument("--title-match", help="meta mode: regex over the title only (case-insensitive)")
+    parser.add_argument("--min-ratings", type=int, default=0, help="meta mode: keep listings with this many ratings")
     parser.add_argument("--asins", help="reviews mode: file of parent_asin values (.txt) or targets .json")
     parser.add_argument("--out", help="output file (default data/raw/<mode>_<category>.jsonl)")
     args = parser.parse_args()
@@ -66,10 +68,21 @@ def main() -> None:
     RAW.mkdir(exist_ok=True)
     out = Path(args.out or RAW / f"{args.mode}_{args.category}.jsonl")
     if args.mode == "meta":
-        if not args.match:
-            parser.error("meta mode needs --match")
-        pattern = re.compile(args.match.encode(), re.I)
-        run(f"{HF}/meta_categories/meta_{args.category}.jsonl", out, pattern.search)
+        if not (args.match or args.title_match):
+            parser.error("meta mode needs --match or --title-match")
+        pattern = re.compile((args.match or args.title_match).encode(), re.IGNORECASE)
+        title = re.compile(args.title_match, re.IGNORECASE) if args.title_match else None
+
+        def keep(line: bytes) -> bool:
+            if not pattern.search(line):  # cheap test on the raw bytes first
+                return False
+            if not (title or args.min_ratings):
+                return True
+            row = json.loads(line)
+            return (not title or bool(title.search(row.get("title") or ""))) and \
+                int(row.get("rating_number") or 0) >= args.min_ratings
+
+        run(f"{HF}/meta_categories/meta_{args.category}.jsonl", out, keep)
     else:
         if not args.asins:
             parser.error("reviews mode needs --asins")

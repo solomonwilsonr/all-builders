@@ -1,0 +1,8 @@
+{
+ "_note": "Who may sell each brand (engine/trust.py). Keys are normalised brand names. Demo brands are fictional.",
+ "brands": {
+  "examplebrand": {"domains": ["demo.safeshelf.app", "examplebrand.example"], "sellers": ["ExampleBrand Official Store", "Appario Retail"]},
+  "voltnova": {"domains": ["voltnova.example"], "sellers": ["VoltNova Store"]},
+  "viewmax": {"domains": ["viewmax.example"], "sellers": ["ViewMax India"]}
+ }
+}

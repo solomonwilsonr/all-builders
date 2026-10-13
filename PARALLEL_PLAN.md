@@ -4,6 +4,8 @@ How two people build SafeShelf at the same time and join the pieces later. Each 
 
 Deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct). Live version in Notion: *SafeShelf Plan → Parallel work plan*.
 
+**Status on 14 Oct (Day 3), Person B items:** ☑ done · ◐ partly done · ☐ not done. Person A's items are not marked here.
+
 ## How to use this plan
 
 1. **Decide who is who.** Write the names in the table below.
@@ -35,12 +37,12 @@ Deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct). Live version in Not
 
 | 🔵 Person A (Brain) | 🟣 Person B (Face) |
 |---|---|
-| ☐ Put the **mock API** online on Cloud Run (`MOCK=1`): [M7](MODULES.md#m7-api-server) · ⏱ 1.5 h | ☐ Apply for the **WhatsApp Business test number**: [M12](MODULES.md#m12-whatsapp-bot) · ⏱ 0.5 h |
-| ☐ Load CPSC recalls + Australian registry: [M1](MODULES.md#m1-data-collection) · ⏱ 2 h | ☐ Create the **Firebase** project: [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) · ⏱ 0.5 h |
-| ☐ Start Firecrawl collection: [M1](MODULES.md#m1-data-collection) · ⏱ 1.5 h | ☐ Build the **demo product page**: [M8](MODULES.md#m8-browser-extension--accessibility) · ⏱ 2 h |
-| ☐ Set up Colab / cloud VM for the big review files: [M1](MODULES.md#m1-data-collection) · ⏱ 1 h | ☐ Build the **fake shop page** (with hidden trick text): [M8](MODULES.md#m8-browser-extension--accessibility) · ⏱ 2 h |
+| ☐ Put the **mock API** online on Cloud Run (`MOCK=1`): [M7](MODULES.md#m7-api-server) · ⏱ 1.5 h | ☐ Apply for the **WhatsApp Business test number** — *postponed*: [M12](MODULES.md#m12-whatsapp-bot) · ⏱ 0.5 h |
+| ☐ Load CPSC recalls + Australian registry: [M1](MODULES.md#m1-data-collection) · ⏱ 2 h | ☑ Create the **Firebase** project — *done: project `shelf2026-3656b`, Google sign-in on, Firestore in Mumbai; not wired into the app yet*: [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) · ⏱ 0.5 h |
+| ☐ Start Firecrawl collection: [M1](MODULES.md#m1-data-collection) · ⏱ 1.5 h | ☑ Build the **demo product page** — *done: `extension/demo/product.html`*: [M8](MODULES.md#m8-browser-extension--accessibility) · ⏱ 2 h |
+| ☐ Set up Colab / cloud VM for the big review files: [M1](MODULES.md#m1-data-collection) · ⏱ 1 h | ☑ Build the **fake shop page** (with hidden trick text) — *done: `extension/demo/fake-shop.html`, plus a results page `search.html`*: [M8](MODULES.md#m8-browser-extension--accessibility) · ⏱ 2 h |
 
-🔗 **Join point (evening, ⏱ 0.5 h):** Person B calls the mock API and gets the demo product back.
+🔗 **Join point (evening, ⏱ 0.5 h):** Person B calls the mock API and gets the demo product back. ✅ *Done, against the live API instead of the mock.*
 
 ---
 
@@ -48,9 +50,9 @@ Deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct). Live version in Not
 
 | 🔵 Person A (Brain) | 🟣 Person B (Face) |
 |---|---|
-| ☐ [M3](MODULES.md#m3-identity-engine-find-copies) Find copies: fingerprints, look-alike search, Gemini compare, 5 labels · ⏱ 5 h | ☐ [M8](MODULES.md#m8-browser-extension--accessibility) Chrome extension panel "Is it safe? / Is it real?" (mock data) · ⏱ 4 h |
-| ☐ [M4](MODULES.md#m4-safety-radar) Safety Radar: Gemini reads reviews + photos · ⏱ 3 h | ☐ [M8](MODULES.md#m8-browser-extension--accessibility) Side panel · ⏱ 2 h |
-| ☐ [M2](MODULES.md#m2-big-test--safeshelfbench) Keyword and Gemini-alone scores · ⏱ 2 h | ☐ [M9](MODULES.md#m9-ai-agents) Shelf Chat with ADK (mock data) · ⏱ 4 h |
+| ☐ [M3](MODULES.md#m3-identity-engine-find-copies) Find copies: fingerprints, look-alike search, Gemini compare, 5 labels · ⏱ 5 h | ☑ [M8](MODULES.md#m8-browser-extension--accessibility) Chrome extension panel "Is it safe? / Is it real?" (mock data) — *done as an in-page button and card, and now on the live API* · ⏱ 4 h |
+| ☐ [M4](MODULES.md#m4-safety-radar) Safety Radar: Gemini reads reviews + photos · ⏱ 3 h | ☑ [M8](MODULES.md#m8-browser-extension--accessibility) Side panel — *replaced by choice: in-page buttons and card instead of a side panel* · ⏱ 2 h |
+| ☐ [M2](MODULES.md#m2-big-test--safeshelfbench) Keyword and Gemini-alone scores · ⏱ 2 h | ◐ [M9](MODULES.md#m9-ai-agents) Shelf Chat with ADK (mock data) — *built (Hindi and English, evidence IDs, "I don't know"), but not live on the API: needs Person A's chat handler, see `HANDOFF_PERSON_A.md`* · ⏱ 4 h |
 | ☐ [M1](MODULES.md#m1-data-collection) Finish loading Amazon reviews (background) · ⏱ 1 h | |
 
 🔗 **Together (⏱ 1 h):** plan the demo video (storyboard), [M17](MODULES.md#m17-submission).
@@ -61,14 +63,14 @@ Deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct). Live version in Not
 
 | 🔵 Person A (Brain) | 🟣 Person B (Face) |
 |---|---|
-| ☐ [M5](MODULES.md#m5-recall-check--safety-mark-check) Recall check (exact matches only) · ⏱ 2 h | ☐ [M9](MODULES.md#m9-ai-agents) Investigate (Shopper Agent): clicks, overlay, Esc to stop · ⏱ 5 h |
-| ☐ [M5](MODULES.md#m5-recall-check--safety-mark-check) Safety mark check (Australian registry + BIS mock) · ⏱ 2 h | ☐ [M9](MODULES.md#m9-ai-agents) Research Agent (Australian registry) · ⏱ 2 h |
-| ☐ [M6](MODULES.md#m6-is-it-real--spec-and-price-check) "Is it real?": copied photos, low price, new website · ⏱ 3 h | ☐ [M9](MODULES.md#m9-ai-agents) Safer Alternative · ⏱ 1.5 h |
-| ☐ [M6](MODULES.md#m6-is-it-real--spec-and-price-check) Spec and price check · ⏱ 1 h | ☐ [M8](MODULES.md#m8-browser-extension--accessibility) Accessibility: screen reader, keyboard, Read it to me, plain language, Hindi · ⏱ 3 h |
+| ☐ [M5](MODULES.md#m5-recall-check--safety-mark-check) Recall check (exact matches only) · ⏱ 2 h | ☐ [M9](MODULES.md#m9-ai-agents) Investigate (Shopper Agent): clicks, overlay, Esc to stop — *not started; the computer-use model is shut down, so scripted clicks are the plan* · ⏱ 5 h |
+| ☐ [M5](MODULES.md#m5-recall-check--safety-mark-check) Safety mark check (Australian registry + BIS mock) · ⏱ 2 h | ☐ [M9](MODULES.md#m9-ai-agents) Research Agent (Australian registry) — *not started* · ⏱ 2 h |
+| ☐ [M6](MODULES.md#m6-is-it-real--spec-and-price-check) "Is it real?": copied photos, low price, new website · ⏱ 3 h | ☑ [M9](MODULES.md#m9-ai-agents) Safer Alternative — *done as the card's "Safer options" tab; its API is live* · ⏱ 1.5 h |
+| ☐ [M6](MODULES.md#m6-is-it-real--spec-and-price-check) Spec and price check · ⏱ 1 h | ◐ [M8](MODULES.md#m8-browser-extension--accessibility) Accessibility: screen reader, keyboard, Read it to me, plain language, Hindi — *done: ARIA labels, keyboard use, dark mode, Read it to me (browser voice), Hindi chat answers. Missing: Hindi interface, plain-language mode, Lighthouse check* · ⏱ 3 h |
 | ☐ [M2](MODULES.md#m2-big-test--safeshelfbench) Full big test on 25+ recalls · ⏱ 3 h | |
 | ☐ [M1](MODULES.md#m1-data-collection) Finish Firecrawl collection · ⏱ 1 h | |
 
-🔗 **Join point (evening, ⏱ 1 h):** swap mock data for the real `identify`, `safety`, `certifications` and `trust-check` answers. The extension shows real results.
+🔗 **Join point (evening, ⏱ 1 h):** swap mock data for the real `identify`, `safety`, `certifications` and `trust-check` answers. The extension shows real results. ✅ *Done for `trust-check`, `safety` and `certifications` (Marks tab); `identify` is a button in Details.*
 
 ---
 
@@ -76,12 +78,13 @@ Deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct). Live version in Not
 
 | 🔵 Person A (Brain) | 🟣 Person B (Face) |
 |---|---|
-| ☐ [M7](MODULES.md#m7-api-server) Finish real API + MCP for other AI agents · ⏱ 3 h | ☐ [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) My Shelf + daily recall check + phone alert · ⏱ 3 h |
-| ☐ [M12](MODULES.md#m12-whatsapp-bot) WhatsApp bot (link or photo → answer + voice note) · ⏱ 4 h | ☐ [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) Scan with phone camera · ⏱ 2 h |
-| ☐ [M16](MODULES.md#m16-real-world-finding) Search current listings for copies of recalled products · ⏱ 3 h | ☐ [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) Report a problem form · ⏱ 1.5 h |
-| ☐ [M3](MODULES.md#m3-identity-engine-find-copies) Product history page data · ⏱ 1.5 h | ☐ [M11](MODULES.md#m11-website--one-account--share-button) Website + one login + share button · ⏱ 4 h |
+| ☐ [M7](MODULES.md#m7-api-server) Finish real API + MCP for other AI agents · ⏱ 3 h | ◐ [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) My Shelf + daily recall check + phone alert — *done: Save, list and remove, kept in the browser. Missing: daily recall check, phone alert; the API's shelf is still an example* · ⏱ 3 h |
+| ☐ [M12](MODULES.md#m12-whatsapp-bot) WhatsApp bot (link or photo → answer + voice note) · ⏱ 4 h | ☐ [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) Scan with phone camera — *not started* · ⏱ 2 h |
+| ☐ [M16](MODULES.md#m16-real-world-finding) Search current listings for copies of recalled products · ⏱ 3 h | ☑ [M10](MODULES.md#m10-my-shelf-camera-scan-report-form) Report a problem form — *done as the card's Report tab (API live); no photo upload yet* · ⏱ 1.5 h |
+| ☐ [M3](MODULES.md#m3-identity-engine-find-copies) Product history page data · ⏱ 1.5 h | ☐ [M11](MODULES.md#m11-website--one-account--share-button) Website + one login + share button — *not started: `web/` only holds the Firebase config* · ⏱ 4 h |
+| ☐ [P2-1](MODULES.md#p2-1-seller-and-partner-context-for-trust-check) **Seller and partner context** in `trust-check`, first version: brand partner list, relationship (official / partner / third-party / unknown), `checks.seller` in the answer · ⏱ 4 h | ☐ [P2-1](MODULES.md#p2-1-seller-and-partner-context-for-trust-check) **Seller context** read from the page, seller line in "Is it real?" + **Seller** tab, built on a mock `checks.seller` first · ⏱ 4 h |
 
-🔗 **Join point (evening, ⏱ 1 h):** agents run on real data. Investigate and Shelf Chat work on the fake shop page.
+🔗 **Join point (evening, ⏱ 1 h):** agents run on real data. Investigate and Shelf Chat work on the fake shop page. **Seller context** (P2-1) shows on a real listing, with a mock fallback.
 **Decision:** if everything is on track, add the small food demo (Phase 2 preview, ⏱ about 4 h).
 
 ---
@@ -90,11 +93,12 @@ Deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct). Live version in Not
 
 | 🔵 Person A (Brain) | 🟣 Person B (Face) |
 |---|---|
-| ☐ [M14a](MODULES.md#m14a-business-backend) Catalog Scan backend · ⏱ 3 h | ☐ [M13](MODULES.md#m13-ask-by-voice) Ask by voice · ⏱ 2 h |
-| ☐ [M14a](MODULES.md#m14a-business-backend) Evidence pack + supply chain data · ⏱ 2.5 h | ☐ [M14b](MODULES.md#m14b-business-screens) Business dashboard + Catalog Scan screen + supply chain map · ⏱ 3.5 h |
-| ☐ [M2](MODULES.md#m2-big-test--safeshelfbench) Final scores (`make bench`) · ⏱ 1.5 h | ☐ [M14b](MODULES.md#m14b-business-screens) Regulator form helper (stops before Submit) · ⏱ 2 h |
-| ☐ [M16](MODULES.md#m16-real-world-finding) Check real-world matches by hand · ⏱ 2 h | ☐ [M15](MODULES.md#m15-judges-lab) Judges' Lab: 5 steps, 7 Challenge cases, trace, audit report · ⏱ 4 h |
-| ☐ Spare: help Person B with joining · ⏱ 2 h | |
+| ☐ [M14a](MODULES.md#m14a-business-backend) Catalog Scan backend · ⏱ 3 h | ☐ [M13](MODULES.md#m13-ask-by-voice) Ask by voice — *not started* · ⏱ 2 h |
+| ☐ [M14a](MODULES.md#m14a-business-backend) Evidence pack + supply chain data · ⏱ 2.5 h | ◐ [M14b](MODULES.md#m14b-business-screens) Business dashboard + Catalog Scan screen + supply chain map — *only a Catalog Scan screen, inside the Lab; its API isn't live* · ⏱ 3.5 h |
+| ☐ [M2](MODULES.md#m2-big-test--safeshelfbench) Final scores (`make bench`) · ⏱ 1.5 h | ☐ [M14b](MODULES.md#m14b-business-screens) Regulator form helper (stops before Submit) — *not started* · ⏱ 2 h |
+| ☐ [M16](MODULES.md#m16-real-world-finding) Check real-world matches by hand · ⏱ 2 h | ◐ [M15](MODULES.md#m15-judges-lab) Judges' Lab: 5 steps, 7 Challenge cases, trace, audit report — *done: a Lab page with an API status board, product explorer, bench results, trace and catalog-scan screens. Missing: the 5 guided steps, 7 Challenge cases, audit report; it is an extension page, so judges can't open it without installing the extension* · ⏱ 4 h |
+| ☐ [P2-1](MODULES.md#p2-1-seller-and-partner-context-for-trust-check) 30 labelled sellers into SafeShelfBench, fix mistakes · ⏱ 1 h | ☐ [P2-1](MODULES.md#p2-1-seller-and-partner-context-for-trust-check) Join: real `checks.seller` in the card and the chat context, tests · ⏱ 1.5 h |
+| ☐ Spare: help Person B with joining · ⏱ 1 h | |
 
 🔗 **Midday (⏱ 2 h):** join everything. The full Lab path works start to finish.
 🔒 **Evening: feature freeze.** Only bug fixes after this.
@@ -125,3 +129,14 @@ Deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct). Live version in Not
 - **Claude Code in parallel:** one Git worktree per module, so agents don't edit the same files.
 - **Stuck for more than an hour?** Say so straight away.
 - **Running 50% over the estimate?** Tell the other person and cut to the module's minimum version.
+
+---
+
+## Phase 2 preview: seller and partner context (built before the 18 Oct submission)
+
+[`P2-1`](MODULES.md#p2-1-seller-and-partner-context-for-trust-check) adds "who is selling this, and are they allowed to?" to `trust-check` (official brand store, authorised partner, third-party seller, the selling company). It is scheduled on **Day 4** (first version) and **Day 5** (join and check). The full version (company registry, 100 labelled sellers, more brands) comes after submission.
+
+**It must fit before the freeze (evening of 16 Oct).** Both days are already full, so something gives way:
+- **Person A, Day 4:** `M3 product history` is already live (nothing to build), and the **WhatsApp bot (M12)** shrinks to its minimum (text reply only) or moves after submission, since the test number isn't set up. Day 5: the **evidence pack + supply chain data (M14a)** moves after submission to free the time.
+- **Person B, Day 4:** **Scan with phone camera (M10)** is dropped unless time is left. Several Day 4 items are already done (Report form, local My Shelf).
+- **If either person is more than 50% over their estimate,** use the minimum version: the partner list plus the seller name and source shown, no company registry.

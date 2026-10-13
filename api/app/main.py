@@ -5,6 +5,7 @@ if one is registered in REAL_HANDLERS, otherwise with its example from contracts
 MOCK=1 forces every endpoint to the mock, so the screens always have something to show.
 The X-SafeShelf-Source response header says which one answered (real or mock).
 """
+import copy
 import json
 import os
 from pathlib import Path
@@ -23,6 +24,10 @@ Handler = Callable[[Request, dict[str, Any]], Awaitable[Any]]
 
 # operationId -> real handler. Engine modules (M3-M6) register here as they finish.
 REAL_HANDLERS: dict[str, Handler] = {}
+if not MOCK and (os.environ.get("DATABASE_URL") or os.environ.get("CLOUD_SQL_INSTANCE")):
+    from engine.api_handlers import HANDLERS  # needs the database and Vertex AI
+
+    REAL_HANDLERS.update(HANDLERS)
 
 spec = yaml.safe_load((CONTRACTS_DIR / "openapi.yaml").read_text())
 app = FastAPI(title=spec["info"]["title"], version=spec["info"]["version"])
@@ -73,6 +78,24 @@ for path, methods in spec["paths"].items():
         )
 
 
-@app.get("/healthz", include_in_schema=False)
-def healthz() -> dict[str, Any]:
+def contract_openapi() -> dict[str, Any]:
+    """/docs shows the contract itself (inputs, schemas) with each endpoint's mock as its example."""
+    if app.openapi_schema is None:
+        doc = copy.deepcopy(spec)
+        doc["servers"] = [{"url": "/", "description": "This server"}]
+        for methods in doc["paths"].values():
+            for op in methods.values():
+                _status, response = next(iter(op["responses"].items()))
+                content = response.setdefault("content", {}).setdefault("application/json", {})
+                content["example"] = load_mock(op["x-mock"])
+        app.openapi_schema = doc
+    return app.openapi_schema
+
+
+app.openapi = contract_openapi
+
+
+# Not /healthz: Cloud Run reserves paths ending in "z".
+@app.get("/health", include_in_schema=False)
+def health() -> dict[str, Any]:
     return {"ok": True, "mock": MOCK, "real_endpoints": sorted(REAL_HANDLERS)}

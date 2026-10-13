@@ -57,5 +57,12 @@ def test_demo_ids_are_consistent():
     assert "SS-P-10291" in {p["product_id"] for p in demo["products"]}
 
 
-def test_healthz():
-    assert client.get("/healthz").json()["ok"] is True
+def test_health():
+    assert client.get("/health").json()["ok"] is True
+
+
+def test_docs_show_contract_with_examples():
+    doc = client.get("/openapi.json").json()
+    op = doc["paths"]["/v1/products/identify"]["post"]
+    assert "requestBody" in op
+    assert op["responses"]["200"]["content"]["application/json"]["example"]
