@@ -133,6 +133,24 @@ def vectors_for(rows: list[tuple[str, str]]) -> dict[str, list[float]]:
     return cache
 
 
+def bulk(sql: str, rows: list[tuple], chunk: int = 500) -> None:
+    """executemany in chunks: one 29,000-row pipeline is too much for the smallest Cloud SQL tier (it dropped the
+    connection, 13 Oct). Each chunk retries once on a fresh connection; inserts are idempotent, so reruns are safe."""
+    import psycopg
+
+    for start in range(0, len(rows), chunk):
+        for attempt in (1, 2):
+            try:
+                with store.conn().cursor() as cur:
+                    cur.executemany(sql, rows[start:start + chunk])
+                break
+            except psycopg.OperationalError:
+                if attempt == 2:
+                    raise
+        if (start // chunk) % 10 == 9:
+            print(f"    {start + chunk}/{len(rows)}", flush=True)
+
+
 def load_reviews(product_ids: set[str]) -> None:
     """Real Amazon reviews of loaded products (the backtest's recalled listings and controls) as evidence, with
     Safety Radar labels: reused from the backtest cache, labelled now if they were not, or "no hazard" when the
@@ -176,14 +194,13 @@ def load_reviews(product_ids: set[str]) -> None:
         label_body = json.dumps(label, sort_keys=True, ensure_ascii=False)
         label_digest = hashlib.sha1(label_body.encode() + evidence_id.encode()).hexdigest()
         label_rows.append((store.short_id("EV-", label_digest), "radar_label", evidence_id, label_body, label_digest))
-    with store.conn().cursor() as cur:
-        cur.executemany(
+    bulk(
             """INSERT INTO evidence (id, source_type, source_ref, content, observed_at, hash)
                VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO NOTHING""", evidence)
-        cur.executemany(
+    bulk(
             """INSERT INTO evidence_claims (evidence_id, claim_type, claim_id) SELECT %s, 'review_of', %s
                WHERE NOT EXISTS (SELECT 1 FROM evidence_claims WHERE evidence_id = %s AND claim_id = %s)""", claims)
-        cur.executemany(
+    bulk(
             """INSERT INTO evidence (id, source_type, source_ref, content, hash) VALUES (%s, %s, %s, %s, %s)
                ON CONFLICT (id) DO NOTHING""", label_rows)
     print(f"stored {len(evidence)} reviews with Safety Radar labels")
@@ -200,26 +217,24 @@ def main() -> None:
         prints[item["product_id"]] = (fp, hashlib.sha1(text.encode()).hexdigest(), text)
     vectors = vectors_for([(h, text) for _, h, text in prints.values()])
 
-    conn = store.conn()
-    with conn.cursor() as cur:
-        cur.executemany(
+    bulk(
             """INSERT INTO products (id, brand, model, category, gtin) VALUES (%s, %s, %s, %s, NULL)
                ON CONFLICT (id) DO UPDATE SET brand = EXCLUDED.brand, model = EXCLUDED.model,
                                               category = EXCLUDED.category""",
             [(i["product_id"], i["brand"], prints[i["product_id"]][0]["model"], i["category"]) for i in items])
-        cur.executemany(
+    bulk(
             """INSERT INTO listings (id, product_id, marketplace, url, title, raw) VALUES (%s, %s, %s, %s, %s, %s)
                ON CONFLICT (id) DO UPDATE SET raw = EXCLUDED.raw, title = EXCLUDED.title""",
             [(i["listing_id"], i["product_id"], i["marketplace"], i["url"], i["title"],
               Jsonb({k: i.get(k) for k in ("title", "price", "currency", "seller", "image_urls", "rating_number")
                      if i.get(k) is not None})) for i in items])
-        cur.executemany(
+    bulk(
             """INSERT INTO product_fingerprints (product_id, version, text_vector, attributes_json)
                VALUES (%s, 1, %s::vector, %s)
                ON CONFLICT (product_id, version) DO UPDATE SET text_vector = EXCLUDED.text_vector,
                                                                attributes_json = EXCLUDED.attributes_json""",
             [(pid, store.vector_literal(vectors[h]), Jsonb(fp)) for pid, (fp, h, _) in prints.items()])
-        cur.executemany(
+    bulk(
             """INSERT INTO recall_products (recall_id, product_id, match_class)
                SELECT %s, %s, %s WHERE NOT EXISTS (
                    SELECT 1 FROM recall_products WHERE recall_id = %s AND product_id = %s)""",
