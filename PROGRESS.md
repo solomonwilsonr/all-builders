@@ -2,17 +2,20 @@
 
 Everything done so far, newest at the bottom. Submission deadline: **18 Oct 2026, 11:59 PM IST** (we aim for 17 Oct).
 
-## Status on 12 Oct 2026
+## Status on 13 Oct 2026 (evening)
 
 | Area | Status |
 |---|---|
 | Product and technical design ([SAFESHELF.md](SAFESHELF.md) v1.1) | ✅ Done |
 | Tools, rules, competitors, backtest plan | ✅ Done ([TOOLS.md](TOOLS.md), [HACKATHON.md](HACKATHON.md), [COMPETITOR_ENTRIES.md](COMPETITOR_ENTRIES.md), [BACKTEST.md](BACKTEST.md)) |
-| Feasibility test (small backtest) | ✅ Done, mixed result (below) |
-| Full backtest (25+ recalls) | ❌ Not started; needs Colab or a GCP VM |
-| Vertex model check (Gemini 3.x, computer use) | ❌ Not done; `gcloud` isn't installed on Solomon's laptop |
-| Code (backend, extension, agents, Lab) | ❌ Not started |
-| PDF ([SafeShelf_Global.pdf](SafeShelf_Global.pdf)) | ⚠️ Out of date: doesn't include the agent layer or v1.1 |
+| Google Cloud (Vertex AI, Cloud Run, Cloud SQL, bucket, Secret Manager) | ✅ Done (section 4.1) |
+| Full backtest (25 recalls, 40 controls) | ✅ First result (section 4.4): SafeShelf 6/25 early, 5% false alarms |
+| Person A engine: M3 copies, M4 Safety Radar, M5 recalls + safety marks, M6 "Is it real?" | ✅ Built and live on Cloud Run (section 4.2) |
+| Real catalog: 27,492 Amazon + 286 Amazon.in/Flipkart products, 29,379 real reviews | ✅ Loaded locally and in Cloud SQL (section 4.5) |
+| Live API on real data ([/docs](https://safeshelf-api-368488022657.asia-south1.run.app/docs)) | ✅ identify, duplicates, relationships, safety, certifications, trust-check |
+| Person B (extension, agents, website, Lab) | ⏳ Teammate's track; real API ready for them |
+| Real-world finding (M16) | ⏳ Candidates found (section 4.6), hand check on Day 5 |
+| PDF ([SafeShelf_Global.pdf](SafeShelf_Global.pdf)) | ⚠️ Out of date |
 | Deck, demo video | ❌ Not started (planned for 17 Oct) |
 
 ## 1. Design work (12 Oct)
@@ -94,10 +97,65 @@ Rule: flag when there are 3 reviews containing hazard keywords within 90 days.
 - Use them **only to collect data**, finishing the main collection by 14 Oct (top-ups until 20 Oct): current listings for the real-world finding, ACCC/OECD recalls, identity pairs, "Is it real?" reference data, a seeded catalog, and frozen test snapshots. Budget about 7,250 credits ([TOOLS.md](TOOLS.md)).
 - **Not** used live in the Lab, extension or agents. Everything is saved to Cloud Storage and Cloud SQL.
 
-## 3. Next steps
+## 3. Next steps (written 12 Oct; all done on 12–13 Oct, see section 4)
 1. **Today:** someone with GCP access checks the Gemini 3.x and computer-use model IDs on Vertex.
 2. **Full backtest on Colab:** 25+ recalls, Gemini review classification, rate-based alarm rule, never-recalled controls, twin pooling.
 3. **Firecrawl data collection, by 14 Oct** (budget in TOOLS.md).
 4. Book 3–5 user conversations. Find a real charger-fire news story from India.
 5. **13 Oct:** storyboard the video, then follow the build plan (SAFESHELF.md section 25).
+6. Regenerate the PDF before submission.
+
+## 4. Build: Person A track (12–13 Oct)
+
+All code is on the `person-1` branch. Tests: 38 engine + 19 API, all passing.
+
+### 4.1 Google Cloud
+- Project `project-03d8d835-d5c5-4ad4-bf8` (free-trial account). Vertex AI on; **Gemini 3.x only answers on location `global`**.
+- Working models: `gemini-3.5-flash`, `gemini-3-flash-preview` (best for bulk jobs), `gemini-3.5-flash-lite`, `gemini-3.1-pro-preview`, `gemini-embedding-001`; computer use works on `gemini-3.8-flash`, `3.5-flash-lite`, `3-flash-preview`. `gemini-3.8-flash` took up to 244 s per call, so it is not used for the engine.
+- **API on Cloud Run:** https://safeshelf-api-368488022657.asia-south1.run.app (`/docs` shows the contract with examples). Real engine on Cloud SQL; endpoints without an engine yet still return their example answers.
+- **Cloud SQL** `safeshelf-db` (Postgres 16 + pgvector, smallest tier). Password only in Secret Manager. Connect locally with `cloud-sql-proxy --port 5443 ...`.
+- **Bucket** `gs://safeshelf-data-03d8d835`: raw data, review files, catalog files.
+- Throwaway VMs streamed the Amazon Reviews 2023 files (metadata scan, review scan, catalog scan) and were deleted afterwards.
+
+### 4.2 Engine modules (`engine/`)
+| Module | What it does | "Done when" |
+|---|---|---|
+| M3 Find copies (`identity.py`, `rules.py`) | Fingerprints, brand-blind look-alike search (pgvector), Gemini compares pairs, **code** decides the 5 classes | ✅ Demo charger: exact copy, rebrand for review, look-alike. Real: Nexzvolt 65 W → Avaxon rebrand for review |
+| M4 Safety Radar (`radar.py`, `safety.py`) | Gemini reads reviews (own experience vs hearsay, joke, negation) and photos; code dedupes, rates, sets the verdict | ✅ 20/20 hand-labelled reviews; "melted on the first day" flagged, "this charger is fire" not |
+| M5 Recalls + safety marks (`recalls.py`, `marks.py`) | Only an exact model number = recalled; family-only notices go to review. Marks checked against the Australian registry and a BIS mock | ✅ Demo TV claims 5 stars, registry 3 → mismatch |
+| M6 Is it real? (`trust.py`) | Copied photos, impossible price, new website (RDAP), spec conflicts, hidden AI instructions; "Be careful", never "scam" | ✅ Fake shop gets all flags; real discount gets none |
+
+### 4.3 Data collected
+- CPSC recalls 2019–2026 (2,537) and the Australian energy-rating registry (8,470 TVs and fridges), local and in Cloud SQL.
+- Amazon Reviews 2023: 9,598 listings from 47 recalled brands → **25 recalls matched to 289 listings that sold the recalled product**, plus 40 never-recalled same-brand controls, and their 57,431 reviews dated before the recalls.
+- Firecrawl (about 510 of 21,119 credits used): 53 searches for recalled products still on sale, 20 catalog searches and 324 product pages from Amazon.in and Flipkart (product pages only, no review scraping).
+
+### 4.4 Backtest result (`make bench`, `bench/results.json`)
+| Method | Recalls flagged early | False alarms on controls |
+|---|---|---|
+| Keyword rules | 11/25 | 11/40 (28%) |
+| Gemini alone | 6/25 | 6/40 (15%) |
+| **SafeShelf** | **6/25** | **2/40 (5%)** |
+| SafeShelf without twin pooling | 1/25 | 2/40 |
+- **Honest headline:** SafeShelf catches as many recalls early as Gemini alone with a third of the false alarms, and twin pooling is what makes it work (6 vs 1).
+- Test half only (settings tuned on the other half): 2/9 flagged, 0/14 false alarms.
+- Many recalls had almost no reviews before the recall date; no method can catch those.
+- Flags came early, e.g. Aduro surge protectors, Ancheer e-bikes, Bedsure blankets, Pearl River propane hoses: first clear warning more than a year before the recall. Quote examples, not the median (90+ weeks, inflated by long-running listings).
+- Fix found on the way: the CPSC filter missed plural titles ("Portable Chargers"), which dropped the VRURC recall.
+
+### 4.5 Real products (13 Oct)
+- `data/load_catalog.py` loads 27,492 everyday Amazon products (chargers, power banks, heaters, cords, TVs, heated blankets), the recalled listings linked to their recalls, and 286 Indian listings; plus 29,379 real reviews with Safety Radar labels.
+- Live results: **VRURC charger** (recalled July 2023) → amber, 2 fire reports and a photo Gemini confirmed shows melting; a fake **boAt** power-bank copy on an unknown site → price flag against the real Flipkart price.
+- First safety check of a product takes ~1–1.5 min (photo checks); after that ~0.3 s. Warm up the demo products before recording.
+
+### 4.6 Real-world finding candidates
+- **Sunbeam heated blanket (B0BSKMH9GX, never recalled):** 74 own-experience fire/burn reports (3 with damage confirmed in photos) and 13 shock reports in 7,430 reviews. Strongest candidate; check by hand on Day 5 and report to the regulator.
+- Recalled products still listed today (Firecrawl): e.g. the recalled AmazonBasics ceramic heater on amazon.com.
+
+## 5. Next steps (from 13 Oct)
+1. **Teammate:** switch the extension to the live API; send the demo page photos and the fake shop URL (`example-deals-store.test`).
+2. **Agree with the teammate:** an optional `reviews` field so the extension can send the reviews on the page for a live Radar check.
+3. **Day 4 (15 Oct):** MCP access for other AI agents, WhatsApp bot (M12), real-world finding search (M16), product history endpoint.
+4. **Day 5 (16 Oct):** Catalog Scan backend (M14a), hand-check the Sunbeam candidate, final `make bench`.
+5. Still open on Person A's track: M3 image embeddings; warm-up script for the demo products.
 6. Regenerate the PDF before submission.
