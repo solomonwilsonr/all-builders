@@ -86,7 +86,8 @@ def dedupe_key(review: dict) -> str:
     return hashlib.sha1(re.sub(r"\W+", " ", (review.get("text") or "").lower()).strip().encode()).hexdigest()
 
 
-def classify(product: str, reviews: list[dict], timeout_s: int = 90) -> dict[str, dict]:
+def classify(product: str, reviews: list[dict], timeout_s: int = 90,
+             models: list[str] | None = None) -> dict[str, dict]:
     """Labels by review id. Batches that fail on every model are skipped (missing ids = not classified)."""
     labels: dict[str, dict] = {}
     for start in range(0, len(reviews), BATCH):
@@ -94,7 +95,7 @@ def classify(product: str, reviews: list[dict], timeout_s: int = 90) -> dict[str
                   "rating": r.get("rating")} for r in reviews[start:start + BATCH]]
         prompt = REVIEW_PROMPT.format(product=product, reviews=json.dumps(batch, ensure_ascii=False, indent=1))
         try:
-            result = gemini.structured(prompt, REVIEW_SCHEMA, timeout_s=timeout_s)
+            result = gemini.structured(prompt, REVIEW_SCHEMA, models=models, timeout_s=timeout_s)
         except RuntimeError:
             continue
         labels.update({row["id"]: {**row, "model": result["model"]} for row in result.get("reviews", [])})

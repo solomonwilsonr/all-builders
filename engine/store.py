@@ -2,17 +2,33 @@
 import hashlib
 import json
 import os
-from functools import cache
+import threading
 
 import psycopg
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
+_conn: psycopg.Connection | None = None
+_conn_lock = threading.Lock()
 
-@cache
+
+def connect_kwargs() -> dict:
+    """DATABASE_URL locally; on Cloud Run the Cloud SQL socket plus DB_PASSWORD from Secret Manager, so the
+    password never appears in a URL, a command line or the service config."""
+    socket = os.environ.get("CLOUD_SQL_INSTANCE")
+    if socket:
+        return {"host": f"/cloudsql/{socket}", "dbname": os.environ.get("DB_NAME", "safeshelf"),
+                "user": os.environ.get("DB_USER", "safeshelf"), "password": os.environ["DB_PASSWORD"]}
+    return {"conninfo": os.environ.get("DATABASE_URL", "postgresql://safeshelf:safeshelf@localhost:5442/safeshelf")}
+
+
 def conn() -> psycopg.Connection:
-    url = os.environ.get("DATABASE_URL", "postgresql://safeshelf:safeshelf@localhost:5442/safeshelf")
-    return psycopg.connect(url, autocommit=True, row_factory=dict_row)
+    """One shared connection (psycopg 3 serialises use across threads), reopened if the server dropped it."""
+    global _conn
+    with _conn_lock:
+        if _conn is None or _conn.closed or _conn.broken:
+            _conn = psycopg.connect(**connect_kwargs(), autocommit=True, row_factory=dict_row)
+        return _conn
 
 
 def short_id(prefix: str, *parts: str) -> str:

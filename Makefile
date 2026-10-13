@@ -4,6 +4,8 @@ DATABASE_URL ?= postgresql://safeshelf:safeshelf@localhost:5442/safeshelf
 export DATABASE_URL
 GCP_PROJECT ?= $(shell gcloud config get-value project 2>/dev/null)
 REGION ?= asia-south1
+SQL_INSTANCE ?= $(GCP_PROJECT):$(REGION):safeshelf-db
+DEPLOY_MOCK ?= 0
 
 .PHONY: api test db-up db-down load-data deploy-api bench
 
@@ -23,12 +25,16 @@ load-data:      ## CPSC recalls + Australian registry (TVs, fridges) into the lo
 	uv run data/load_cpsc.py --from 2019 --to 2026 --summary
 	uv run data/load_au_registry.py --types tv rf
 
-deploy-api:     ## mock API to Cloud Run (needs gcloud login and a project)
-	rm -rf .build && mkdir -p .build && cp -R api engine contracts .build/ && rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
+deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for example answers only)
+	rm -rf .build && mkdir -p .build && cp -R api engine contracts .build/ && mkdir -p .build/data && \
+		cp data/bis_mock.json data/authorised_sellers.json data/demo_domains.json .build/data/ && \
+		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
-		--allow-unauthenticated --min-instances 0 --set-env-vars MOCK=1
+		--allow-unauthenticated --min-instances 0 --memory 1Gi --timeout 300 \
+		--add-cloudsql-instances $(SQL_INSTANCE) --set-secrets DB_PASSWORD=safeshelf-db-password:latest \
+		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT)
 
 bench:          ## M2 backtest: reviews from the bucket (once), Gemini labels (cached), bench/results.json + README
-	@test -d data/raw/amazon_reviews || (mkdir -p data/raw/amazon_reviews && \
-		gcloud storage cp "gs://safeshelf-data-03d8d835/amazon_reviews_backtest/reviews_*.jsonl" data/raw/amazon_reviews/)
+	@mkdir -p data/raw/amazon_reviews && gcloud storage cp --no-clobber \
+		"gs://safeshelf-data-03d8d835/amazon_reviews_backtest/reviews_*.jsonl" data/raw/amazon_reviews/
 	cd engine && PYTHONPATH=.. uv run --python 3.12 python ../bench/backtest.py

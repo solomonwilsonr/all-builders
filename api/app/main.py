@@ -24,7 +24,7 @@ Handler = Callable[[Request, dict[str, Any]], Awaitable[Any]]
 
 # operationId -> real handler. Engine modules (M3-M6) register here as they finish.
 REAL_HANDLERS: dict[str, Handler] = {}
-if not MOCK and os.environ.get("DATABASE_URL"):
+if not MOCK and (os.environ.get("DATABASE_URL") or os.environ.get("CLOUD_SQL_INSTANCE")):
     from engine.api_handlers import HANDLERS  # needs the database and Vertex AI
 
     REAL_HANDLERS.update(HANDLERS)

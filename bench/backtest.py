@@ -36,6 +36,8 @@ RECALL_WORD = re.compile(r"\brecall", re.IGNORECASE)
 WINDOW = timedelta(days=90)
 FIXED_K = 3
 SEVERITY = {"low": 0, "medium": 1, "high": 2}
+# Bulk labelling: 3-flash-preview first (20/20 on the hand labels, faster than 3.5-flash under load, 13 Oct).
+BULK_MODELS = ["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
 SAFESHELF_GRID = [{"k": k, "min_severity": s, "min_rate": r}
                   for k in (2, 3, 4) for s in ("low", "medium") for r in (0.0, 2.0, 5.0)]
 
@@ -144,51 +146,54 @@ def load_reviews(asins: set[str]) -> dict[str, list[dict]]:
     return by_asin
 
 
-def cached_batches(name: str, reviews: list[dict], size: int, run) -> dict[str, dict]:
-    """Label reviews in batches through run(batch) -> {id: label}; each batch is cached on disk."""
-    CACHE.mkdir(parents=True, exist_ok=True)
-    batches = [reviews[i:i + size] for i in range(0, len(reviews), size)]
-
-    def one(batch: list[dict]) -> dict[str, dict]:
-        key = hashlib.sha1((name + "|".join(rid(r) for r in batch)).encode()).hexdigest()[:16]
-        path = CACHE / f"{name}-{key}.json"
-        if path.exists():
-            return json.loads(path.read_text())
-        labels = run(batch)
-        if labels:
-            path.write_text(json.dumps(labels))
-        return labels
-
-    out: dict[str, dict] = {}
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        for labels in pool.map(one, batches):
-            out.update(labels)
-    return out
+def cached(name: str, batch: list[dict], run) -> dict[str, dict]:
+    """run(batch) -> {review id: label}, cached on disk per batch so reruns only redo failed batches."""
+    key = hashlib.sha1((name + "|".join(rid(r) for r in batch)).encode()).hexdigest()[:16]
+    path = CACHE / f"{name}-{key}.json"
+    if path.exists():
+        return json.loads(path.read_text())
+    labels = run(batch)
+    if labels:
+        CACHE.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(labels))
+    return labels
 
 
-def label_safeshelf(product: str, reviews: list[dict]) -> dict[str, dict]:
+def radar_job(product: str, batch: list[dict]):
     from engine import radar
 
-    def run(batch: list[dict]) -> dict[str, dict]:
-        items = [{**r, "id": rid(r)} for r in batch]
-        return radar.classify(product, items, timeout_s=120)
+    def run(items: list[dict]) -> dict[str, dict]:
+        return radar.classify(product, [{**r, "id": rid(r)} for r in items], timeout_s=90, models=BULK_MODELS)
 
-    return cached_batches("radar", reviews, radar.BATCH, run)
+    return lambda: cached("radar", batch, run)
 
 
-def label_gemini_alone(reviews: list[dict]) -> dict[str, dict]:
+def alone_job(batch: list[dict]):
     from engine import gemini
 
-    def run(batch: list[dict]) -> dict[str, dict]:
-        items = [{"id": rid(r), "text": f"{r.get('title') or ''}. {(r.get('text') or '')[:1500]}"} for r in batch]
+    def run(items: list[dict]) -> dict[str, dict]:
+        rows = [{"id": rid(r), "text": f"{r.get('title') or ''}. {(r.get('text') or '')[:1500]}"} for r in items]
         try:
-            result = gemini.structured(GEMINI_ALONE_PROMPT.format(reviews=json.dumps(items, ensure_ascii=False)),
-                                       GEMINI_ALONE_SCHEMA, timeout_s=120)
+            result = gemini.structured(GEMINI_ALONE_PROMPT.format(reviews=json.dumps(rows, ensure_ascii=False)),
+                                       GEMINI_ALONE_SCHEMA, models=BULK_MODELS, timeout_s=90)
         except RuntimeError:
             return {}
         return {row["id"]: row for row in result.get("reviews", [])}
 
-    return cached_batches("alone", reviews, 25, run)
+    return lambda: cached("alone", batch, run)
+
+
+def run_jobs(jobs: list, workers: int = 10) -> dict[str, dict]:
+    """Every batch of every product through one pool, so small products don't leave workers idle."""
+    out: dict[str, dict] = {}
+    done = 0
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for labels in pool.map(lambda job: job(), jobs):
+            out.update(labels)
+            done += 1
+            if done % 50 == 0:
+                print(f"  {done}/{len(jobs)} batches labelled", flush=True)
+    return out
 
 
 # ---------- the run ----------
@@ -202,7 +207,7 @@ def build_units(manifest: dict, by_asin: dict[str, list[dict]]) -> list[dict]:
                       "asins": entry["recalled"], "reviews": family,
                       "singles": [usable(by_asin.get(a, []), cutoff) for a in entry["recalled"]]})
         for asin in entry["controls"]:
-            units.append({"kind": "control", "recall_id": recall_id, "title": f"control {asin}", "cutoff": cutoff,
+            units.append({"kind": "control", "recall_id": recall_id, "title": f"another product from the brand in: {entry['title']}", "cutoff": cutoff,
                           "asins": [asin], "reviews": usable(by_asin.get(asin, []), cutoff), "singles": []})
     return units
 
@@ -216,12 +221,19 @@ def main() -> None:
     candidates = {rid(r): r for u in units for r in u["reviews"]
                   if PREFILTER.search(f"{r.get('title') or ''} {r.get('text') or ''}")}
     print(f"{sum(len(u['reviews']) for u in units)} usable reviews, {len(candidates)} pass the pre-filter")
-    radar_labels: dict[str, dict] = {}
+    from engine import radar
+
+    jobs, queued = [], set()
     for unit in units:  # Radar is told which product family it is reading
-        todo = [r for r in unit["reviews"] if rid(r) in candidates and rid(r) not in radar_labels]
-        if todo:
-            radar_labels.update(label_safeshelf(unit["title"], todo))
-    alone_labels = label_gemini_alone(list(candidates.values()))
+        todo = [r for r in unit["reviews"] if rid(r) in candidates and rid(r) not in queued]
+        queued.update(rid(r) for r in todo)
+        jobs += [radar_job(unit["title"], todo[i:i + radar.BATCH]) for i in range(0, len(todo), radar.BATCH)]
+    print(f"Safety Radar: {len(jobs)} batches")
+    radar_labels = run_jobs(jobs)
+    pool = list(candidates.values())
+    alone = [alone_job(pool[i:i + 25]) for i in range(0, len(pool), 25)]
+    print(f"Gemini alone: {len(alone)} batches")
+    alone_labels = run_jobs(alone)
 
     def keyword_hits(reviews: list[dict]) -> list[date]:
         return [review_day(r) for r in reviews if KEYWORDS.search(f"{r.get('title') or ''} {r.get('text') or ''}")]

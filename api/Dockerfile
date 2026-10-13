@@ -7,6 +7,7 @@ RUN pip install --no-cache-dir "fastapi>=0.115" "uvicorn[standard]>=0.30" "pyyam
 COPY api/app api/app
 COPY engine engine
 COPY contracts contracts
+COPY data data
 ENV CONTRACTS_DIR=/srv/contracts MOCK=1 PORT=8080 PYTHONPATH=/srv
 WORKDIR /srv/api
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
