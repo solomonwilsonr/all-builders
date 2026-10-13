@@ -4,10 +4,13 @@ Routes come from contracts/openapi.yaml. Each endpoint answers with its real han
 if one is registered in REAL_HANDLERS, otherwise with its example from contracts/mock/.
 MOCK=1 forces every endpoint to the mock, so the screens always have something to show.
 The X-SafeShelf-Source response header says which one answered (real or mock).
+Other AI agents use the same answers as MCP tools at /mcp (app/mcp_server.py).
 """
 import copy
 import json
+import logging
 import os
+import time
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
@@ -16,9 +19,15 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app import mcp_server
+
 CONTRACTS_DIR = Path(os.environ.get("CONTRACTS_DIR", Path(__file__).resolve().parents[2] / "contracts"))
 MOCK = os.environ.get("MOCK", "1") == "1"
 API_KEY = os.environ.get("API_KEY")  # unset = no key check (local development)
+MAX_BODY = 1_000_000  # bytes; listings and reports are small
+
+log = logging.getLogger("safeshelf.api")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 Handler = Callable[[Request, dict[str, Any]], Awaitable[Any]]
 
@@ -32,6 +41,25 @@ if not MOCK and (os.environ.get("DATABASE_URL") or os.environ.get("CLOUD_SQL_INS
 spec = yaml.safe_load((CONTRACTS_DIR / "openapi.yaml").read_text())
 app = FastAPI(title=spec["info"]["title"], version=spec["info"]["version"])
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+
+@app.middleware("http")
+async def guard_and_log(request: Request, call_next):
+    """Body size and API key checks (also for /mcp), then one JSON log line per request for Cloud Logging.
+    Logs the path and outcome only, never request bodies."""
+    started = time.monotonic()
+    if int(request.headers.get("content-length") or 0) > MAX_BODY:
+        response = JSONResponse({"detail": "Request body too large"}, status_code=413)
+    elif API_KEY and request.url.path.startswith("/mcp") and request.headers.get("x-api-key") != API_KEY:
+        response = JSONResponse({"detail": "Missing or wrong X-API-Key"}, status_code=401)
+    else:
+        response = await call_next(request)
+    log.info(json.dumps({
+        "severity": "WARNING" if response.status_code >= 500 else "INFO",
+        "method": request.method, "path": request.url.path, "status": response.status_code,
+        "ms": round(1000 * (time.monotonic() - started)), "source": response.headers.get("x-safeshelf-source"),
+        "investigation_id": request.headers.get("x-investigation-id")}))
+    return response
 
 
 def load_mock(name: str) -> Any:
@@ -99,3 +127,6 @@ app.openapi = contract_openapi
 @app.get("/health", include_in_schema=False)
 def health() -> dict[str, Any]:
     return {"ok": True, "mock": MOCK, "real_endpoints": sorted(REAL_HANDLERS)}
+
+
+mcp_server.attach(app)  # last: it mounts at "/" behind every route above

@@ -3,6 +3,7 @@ import json
 import math
 import os
 import threading
+from contextvars import ContextVar
 
 from google import genai
 from google.genai import types
@@ -55,6 +56,28 @@ Rules:
 </product_b>"""
 
 
+# Per-request record of model calls, for the investigation trace (engine.trace). None = not recording.
+_usage: ContextVar[list | None] = ContextVar("gemini_usage", default=None)
+
+
+def track() -> list[dict]:
+    """Start recording model calls in this context; returns the list they are appended to."""
+    calls: list[dict] = []
+    _usage.set(calls)
+    return calls
+
+
+def _record(model: str, response) -> None:
+    calls = _usage.get()
+    if calls is not None:
+        meta = getattr(response, "usage_metadata", None)
+        embedded = sum(int(getattr(getattr(e, "statistics", None), "token_count", 0) or 0)
+                       for e in getattr(response, "embeddings", None) or [])
+        calls.append({"model": model, "input_tokens": (getattr(meta, "prompt_token_count", None) or 0) + embedded,
+                      "output_tokens": (getattr(meta, "candidates_token_count", None) or 0)
+                      + (getattr(meta, "thoughts_token_count", None) or 0)})
+
+
 _clients: dict[str, genai.Client] = {}
 _clients_lock = threading.Lock()
 
@@ -85,6 +108,7 @@ def embed(texts: list[str]) -> list[list[float]]:
             config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY", output_dimensionality=EMBED_DIMS),
         )
         out += [_unit(e.values) for e in response.embeddings]
+        _record(EMBED_MODEL, response)
     return out
 
 
@@ -107,6 +131,7 @@ def structured(prompt: str | list, schema: dict, models: list[str] | None = None
         except Exception as error:  # noqa: BLE001  timeout, 429, 5xx or bad JSON: try the next model
             errors.append(f"{model}: {type(error).__name__}")
             continue
+        _record(model, response)
         result["model"] = model
         return result
     raise RuntimeError("every model failed: " + "; ".join(errors))

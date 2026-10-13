@@ -4,6 +4,7 @@
     duplicates(product_id)     -> Duplicates      (contract: POST /v1/products/duplicates)
     relationships(product_id)  -> relationships   (contract: GET /v1/products/{id}/relationships)
 """
+import contextvars
 import re
 from concurrent.futures import ThreadPoolExecutor
 
@@ -117,8 +118,10 @@ def duplicates(product_id: str, refresh: bool = False) -> dict:
         candidates = dict.fromkeys(store.by_identifier(fp, exclude=product_id))
         candidates.update(dict.fromkeys(p for p, _ in store.neighbours(product_id)))
         # In parallel, so one slow Gemini call doesn't hold up the rest; each pair is stored on its own.
+        # Each worker runs in a copy of this context, so the trace still sees its Gemini calls.
         with ThreadPoolExecutor(max_workers=6) as pool:
-            list(pool.map(lambda target: compare_and_store(product_id, target), candidates))
+            list(pool.map(lambda target, ctx: ctx.run(compare_and_store, product_id, target),
+                          candidates, [contextvars.copy_context() for _ in candidates]))
     matches = []
     for rel in store.latest_relationships(product_id):
         detail = store.evidence_content(rel["evidence_ids"][0]) if rel["evidence_ids"] else {}

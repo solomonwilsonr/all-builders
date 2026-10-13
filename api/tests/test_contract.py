@@ -66,3 +66,15 @@ def test_docs_show_contract_with_examples():
     op = doc["paths"]["/v1/products/identify"]["post"]
     assert "requestBody" in op
     assert op["responses"]["200"]["content"]["application/json"]["example"]
+
+
+def test_mcp_lists_tools_and_answers_from_the_api():
+    headers = {"accept": "application/json, text/event-stream"}
+    with TestClient(app) as mcp_client:  # the MCP session manager runs in the app's lifespan
+        tools = mcp_client.post("/mcp", headers=headers, json={"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
+        names = {t["name"] for t in tools.json()["result"]["tools"]}
+        assert {"identify_product", "product_safety", "check_listing", "safer_alternatives"} <= names
+        call = mcp_client.post("/mcp", headers=headers, json={
+            "jsonrpc": "2.0", "id": 2, "method": "tools/call",
+            "params": {"name": "safer_alternatives", "arguments": {"product_id": "SS-P-20019"}}})
+        assert json.loads(call.json()["result"]["content"][0]["text"])["product_id"] == "SS-P-20019"

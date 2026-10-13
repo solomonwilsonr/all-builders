@@ -12,6 +12,7 @@ dependencies = [
     "requests>=2.32",
     "pillow>=10",
     "imagehash>=4.3",
+    "mcp>=2.3",  # /mcp (app/mcp_server.py), MCPServer API
 ]
 
 [dependency-groups]

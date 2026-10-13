@@ -1,10 +1,11 @@
 """Real handlers the API registers (api/app/main.py REAL_HANDLERS) when MOCK=0 and DATABASE_URL is set."""
+import time
 from typing import Any
 
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import identity, marks, passport, safety, trust
+from engine import gemini, identity, marks, passport, safety, trace, trust
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -72,6 +73,29 @@ async def bench_results(request: Request, params: dict[str, Any]) -> dict:
     return passport.bench_results()
 
 
+async def get_trace(request: Request, params: dict[str, Any]) -> dict:
+    try:
+        return await run_in_threadpool(trace.get_trace, params["investigation_id"])
+    except KeyError as missing:
+        raise HTTPException(status_code=404, detail=f"Unknown investigation {missing}") from None
+
+
+def traced(operation_id: str, handler):
+    """With an X-Investigation-Id header, the answer is also recorded as a step of that investigation."""
+    async def wrapper(request: Request, params: dict[str, Any]) -> dict:
+        investigation_id = request.headers.get("x-investigation-id")
+        if not investigation_id:
+            return await handler(request, params)
+        if not trace.VALID_ID.match(investigation_id):
+            raise HTTPException(status_code=422, detail="X-Investigation-Id: letters, digits and ._:- only")
+        calls = gemini.track()  # copied into the worker thread by run_in_threadpool
+        started = time.monotonic()
+        body = await handler(request, params)
+        await run_in_threadpool(trace.record, investigation_id, operation_id, time.monotonic() - started, calls, body)
+        return body
+    return wrapper
+
+
 HANDLERS = {
     "identifyProduct": identify_product,
     "findDuplicates": find_duplicates,
@@ -85,3 +109,5 @@ HANDLERS = {
     "createReport": create_report,
     "getBenchResults": bench_results,
 }
+HANDLERS = {op: traced(op, handler) for op, handler in HANDLERS.items()}
+HANDLERS["getTrace"] = get_trace
