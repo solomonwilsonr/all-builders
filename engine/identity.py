@@ -68,13 +68,17 @@ def identify(listing: dict) -> dict:
     """
     fp = fingerprint(listing)
     known = listing.get("url") and store.listing_by_url(listing["url"])
-    same_id = [] if known else [p for p in store.by_identifier(fp) if same_brand(fp, listing, p)]
     listing_id = known["id"] if known else store.short_id("SS-L-", listing.get("url") or listing.get("title") or "")
-    if known or same_id:
-        product_id = known["product_id"] if known else same_id[0]
+    matched, how = resolve(listing)
+    # A brand-blind look-alike is another brand's product: never attach a listing to it.
+    if matched and how in ("url", "model_number", "same_brand_look_alike"):
+        product_id = matched
         stored = store.latest_fingerprint(product_id)
         store.upsert_listing(listing_id, product_id, listing)
-        status, confidence = ("verified", 0.95) if fp["gtin"] and fp["gtin"] == stored["gtin"] else ("provisional", 0.85)
+        if fp["gtin"] and fp["gtin"] == stored["gtin"]:
+            status, confidence = "verified", 0.95
+        else:
+            status, confidence = "provisional", 0.7 if how == "same_brand_look_alike" else 0.85
     else:
         product_id = store.short_id("SS-P-", fp["brand_norm"], fp["model_norm"], listing.get("title") or "")
         stored = register(product_id, listing_id, listing)
