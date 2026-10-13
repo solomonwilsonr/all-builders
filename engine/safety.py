@@ -1,14 +1,14 @@
 """Safety answer for GET /v1/products/{id}/safety: Safety Radar findings + official status, verdict set by code.
 
 Reviews are evidence (reviewer ids hashed). Each review's Gemini label is stored once, so a product is only
-re-read when new reviews arrive. Recall and safety-mark checks (M5) plug into official_status/certifications.
+re-read when new reviews arrive. Recall and safety-mark checks come from M5 (engine.recalls, engine.marks).
 """
 import hashlib
 import json
 
 from psycopg.types.json import Jsonb
 
-from engine import radar, store
+from engine import marks, radar, recalls, store
 
 LABEL = "AI finding - not a regulatory determination"
 
@@ -62,11 +62,11 @@ def label_reviews(product_view: str, reviews: list[dict]) -> dict[str, dict]:
 
 
 def official_status(product_id: str) -> dict:
-    """Exact-model recall links only (M5 fills recall_products); look-alikes never count."""
-    rows = store.conn().execute(
-        "SELECT recall_id FROM recall_products WHERE product_id = %s AND match_class = 'exact_model'",
-        (product_id,)).fetchall()
-    return {"recalled": bool(rows), "checked": ["CPSC"], "recall_ids": [r["recall_id"] for r in rows]}
+    """Only exact-model recall links make a product recalled; family-level and rebrand links are under review."""
+    links = recalls.link(product_id)
+    exact = sorted({x["recall_id"] for x in links if x["match_class"] == "exact_model"})
+    review = sorted({x["recall_id"] for x in links if x["match_class"] == "needs_review"} - set(exact))
+    return {"recalled": bool(exact), "checked": ["CPSC"], "recall_ids": exact, "recall_ids_under_review": review}
 
 
 def save_signals(product_id: str, ai_findings: list[dict]) -> None:
@@ -102,7 +102,7 @@ def safety(product_id: str) -> dict:
         "verdict": radar.verdict(status["recalled"], len(reviews), ai_findings),
         "official_status": status,
         "ai_findings": ai_findings,
-        "certifications": [],
+        "certifications": marks.certifications(product_id)["checks"],
         "reviews_checked": len(reviews),
         "label": LABEL,
     }

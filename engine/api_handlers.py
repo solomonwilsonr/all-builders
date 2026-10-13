@@ -4,7 +4,7 @@ from typing import Any
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import identity, safety
+from engine import identity, marks, safety
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -33,9 +33,17 @@ async def get_safety(request: Request, params: dict[str, Any]) -> dict:
         raise HTTPException(status_code=404, detail=f"Unknown product {missing}") from None
 
 
+async def get_certifications(request: Request, params: dict[str, Any]) -> dict:
+    try:
+        return await run_in_threadpool(marks.certifications, params["product_id"])
+    except KeyError as missing:
+        raise HTTPException(status_code=404, detail=f"Unknown product {missing}") from None
+
+
 HANDLERS = {
     "identifyProduct": identify_product,
     "findDuplicates": find_duplicates,
     "getRelationships": get_relationships,
     "getSafety": get_safety,
+    "getCertifications": get_certifications,
 }

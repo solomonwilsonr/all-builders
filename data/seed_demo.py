@@ -7,7 +7,7 @@ All brands, models and shops are fictional demo data.
 """
 import json
 
-from engine import identity, safety
+from engine import identity, marks, safety, store
 
 CHARGER_LOOK = {"housing_shape": "rounded_rectangle", "port_layout": "2x USB-C stacked", "colour": "white",
                 "plug": "foldable Type C pins"}
@@ -93,6 +93,17 @@ def seed_reviews() -> None:
               f"first={f['first_seen']} | {f['mechanism']}")
 
 
+def seed_registry_demo() -> None:
+    """One clearly marked demo row: the fictional ViewMax TV is registered at 3 stars (the listing claims 5)."""
+    store.conn().execute(
+        """INSERT INTO registry_energy_rating (registration_number, appliance_type, brand, model, star_rating, status, raw)
+           VALUES ('ATV-DEMO-0001', 'tv', 'ViewMax', 'VM-55U8', 3, 'Approved', '{"demo": true}')
+           ON CONFLICT (appliance_type, brand, model) DO NOTHING""")
+    for check in marks.certifications("SS-P-50001")["checks"]:
+        print(f"certification SS-P-50001: {check['authority']} {check['result']} {check.get('field') or ''} "
+              f"claimed={check.get('claimed_value')} registry={check.get('registry_value')}")
+
+
 def main() -> None:
     for product_id, (listing_id, listing) in DEMO.items():
         fp = identity.register(product_id, listing_id, listing)
@@ -102,6 +113,7 @@ def main() -> None:
         print(f"  {m['product_id']}  {m['relationship']:<21} {m['status']:<10} {m['confidence']}")
     print(json.dumps(result["matches"][0], indent=1)[:600])
     seed_reviews()
+    seed_registry_demo()
 
 
 if __name__ == "__main__":
