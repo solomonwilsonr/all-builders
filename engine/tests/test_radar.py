@@ -67,3 +67,11 @@ def test_live_gemini_matches_hand_labels():
     wrong = [c["id"] for c in CASES["cases"] if radar.counts(labels.get(c["id"], {})) != c["hazard"]]
     assert {"c01", "c02", "c03"}.isdisjoint(wrong), f"done-when cases wrong: {wrong}"
     assert len(wrong) <= 1, f"misclassified: {wrong}"
+
+
+def test_fire_words_decide_the_type():
+    melted = {"hazard_type": "mechanical_injury", "mechanism": "the charger melted", "quote": ""}
+    assert radar.effective_type(melted) == "fire_burn"
+    assert radar.effective_type({"hazard_type": "mechanical_injury", "mechanism": "sharp edge cut my finger"}) \
+        == "mechanical_injury"
+    assert radar.effective_type({"hazard_type": "electric_shock", "mechanism": "shock and sparks"}) == "electric_shock"

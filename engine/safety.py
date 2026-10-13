@@ -56,14 +56,38 @@ def label_reviews(product_view: str, reviews: list[dict]) -> dict[str, dict]:
         fresh = radar.classify(product_view, todo, timeout_s=60)
         for review in todo:
             if review["id"] in fresh:
-                store.add_evidence("radar_label", review["evidence_id"], fresh[review["id"]])
+                # The review's id is part of the content: identical labels must not collapse into one row.
+                store.add_evidence("radar_label", review["evidence_id"],
+                                   {**fresh[review["id"]], "review_evidence_id": review["evidence_id"]})
         labels.update(fresh)
     return labels
 
 
+def check_photos(view: str, reviews: list[dict], labels: dict[str, dict], limit: int = 5) -> dict[str, dict]:
+    """Gemini vision on photos attached to hazard reports (most severe first), each photo checked once ever."""
+    urls = [u for r in sorted(reviews, key=lambda r: radar.SEVERITY_ORDER.index(labels.get(r["id"], {}).get("severity")
+                                                                                 or "low"), reverse=True)
+            if radar.counts(labels.get(r["id"], {})) for u in radar.image_urls(r)]
+    results: dict[str, dict] = {}
+    for url in urls[:limit]:
+        cached = store.conn().execute(
+            "SELECT content FROM evidence WHERE source_type = 'photo_check' AND source_ref = %s LIMIT 1", (url,)
+        ).fetchone()
+        if cached:
+            results[url] = json.loads(cached["content"])
+            continue
+        try:
+            results[url] = radar.check_photo(view, url)
+        except Exception:  # noqa: BLE001, S112  unreachable image or model error: the photo just does not count
+            continue
+        store.add_evidence("photo_check", url, results[url])
+    return results
+
+
 def official_status(product_id: str) -> dict:
     """Only exact-model recall links make a product recalled; family-level and rebrand links are under review."""
-    links = recalls.link(product_id)
+    links = recalls.link(product_id) + store.conn().execute(  # plus links stored by the catalog loader
+        "SELECT recall_id, match_class FROM recall_products WHERE product_id = %s", (product_id,)).fetchall()
     exact = sorted({x["recall_id"] for x in links if x["match_class"] == "exact_model"})
     review = sorted({x["recall_id"] for x in links if x["match_class"] == "needs_review"} - set(exact))
     return {"recalled": bool(exact), "checked": ["CPSC"], "recall_ids": exact, "recall_ids_under_review": review}
@@ -92,7 +116,8 @@ def safety(product_id: str) -> dict:
     view = f"{fp['brand']} {fp['model']} ({fp['category']})"
     labels = label_reviews(view, reviews)
     review_evidence = {r["id"]: r["evidence_id"] for r in reviews}
-    ai_findings = radar.findings(reviews, labels)
+    photos = check_photos(view, reviews, labels)
+    ai_findings = radar.findings(reviews, labels, photos)
     for finding in ai_findings:  # point at stored evidence rows, not internal review ids
         finding["evidence_ids"] = [review_evidence[e.removeprefix("REV-")] for e in finding["evidence_ids"]]
     save_signals(product_id, ai_findings)

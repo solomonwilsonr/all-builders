@@ -88,9 +88,10 @@ def embed(texts: list[str]) -> list[list[float]]:
     return out
 
 
-def structured(prompt: str, schema: dict, models: list[str] | None = None, timeout_s: int = 30) -> dict:
+def structured(prompt: str | list, schema: dict, models: list[str] | None = None, timeout_s: int = 30) -> dict:
     """JSON that follows schema, from the first model that answers in time; result["model"] says which.
-    Live API calls keep the 30 s default; bulk jobs with long answers pass a longer timeout."""
+    Live API calls keep the 30 s default; bulk jobs with long answers pass a longer timeout.
+    prompt may be a list of parts (e.g. an image Part and text) for vision calls."""
     errors = []
     for model in models or COMPARE_MODELS:
         thinking = None if "lite" in model else types.ThinkingConfig(thinking_level="low")

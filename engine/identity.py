@@ -53,6 +53,10 @@ def resolve(listing: dict, max_distance: float = 0.12) -> tuple[str | None, str]
     if same_id:
         return same_id[0], "model_number"
     [vector] = gemini.embed([brand_blind_text(listing, fp)])
+    brand = fp["brand_norm"] or next((b for b in store.brands_in(listing.get("title") or "")), "")
+    same_brand_match = brand and store.nearest(vector, max_distance * 2, brand)
+    if same_brand_match:  # the brand's own product first; a brand-blind look-alike only when it has none close
+        return same_brand_match, "same_brand_look_alike"
     nearest = store.nearest(vector, max_distance)
     return (nearest, "look_alike") if nearest else (None, "none")
 

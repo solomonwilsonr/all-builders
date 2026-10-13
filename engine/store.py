@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 import threading
 
 import psycopg
@@ -110,14 +111,27 @@ def neighbours(product_id: str, k: int = 8, max_distance: float = 0.25) -> list[
     return [(r["product_id"], float(r["distance"])) for r in rows if r["distance"] <= max_distance]
 
 
-def nearest(vector: list[float], max_distance: float) -> str | None:
-    """Closest product by brand-blind text embedding (latest fingerprints), if close enough."""
+def nearest(vector: list[float], max_distance: float, brand_norm: str = "") -> str | None:
+    """Closest product by brand-blind text embedding (latest fingerprints), if close enough; only that brand's
+    products when brand_norm is given."""
     row = conn().execute(
-        """WITH latest AS (SELECT DISTINCT ON (product_id) product_id, text_vector FROM product_fingerprints
-                           ORDER BY product_id, version DESC)
-           SELECT product_id, text_vector <=> %s::vector AS distance FROM latest ORDER BY distance LIMIT 1""",
-        (vector_literal(vector),)).fetchone()
+        """WITH latest AS (SELECT DISTINCT ON (product_id) product_id, text_vector, attributes_json->>'brand_norm' AS b
+                           FROM product_fingerprints ORDER BY product_id, version DESC)
+           SELECT product_id, text_vector <=> %s::vector AS distance FROM latest
+           WHERE %s = '' OR b = %s ORDER BY distance LIMIT 1""",
+        (vector_literal(vector), brand_norm, brand_norm)).fetchone()
     return row["product_id"] if row and row["distance"] <= max_distance else None
+
+
+def brands_in(title: str) -> list[str]:
+    """Known brands (normalised) whose name starts the title, longest first: "Anker 20W ..." -> ["anker"]."""
+    words = re.findall(r"[a-z0-9]+", title.lower())
+    candidates = ["".join(words[:n]) for n in (3, 2, 1) if len(words) >= n]
+    rows = conn().execute(
+        """SELECT DISTINCT attributes_json->>'brand_norm' AS b FROM product_fingerprints
+           WHERE attributes_json->>'brand_norm' = ANY(%s)""", (candidates,)).fetchall()
+    found = {r["b"] for r in rows}
+    return [c for c in candidates if c in found]
 
 
 def product_listings(product_id: str) -> list[dict]:

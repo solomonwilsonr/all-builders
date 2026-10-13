@@ -64,7 +64,7 @@ def authorised(brand: str, seller: str | None, url: str | None) -> bool:
 def price_check(price: float | None, lowest_credible: float | None, currency: str = "INR") -> dict:
     if not price or not lowest_credible:
         return {"result": "unknown", "price": price, "currency": currency, "lowest_credible_price": lowest_credible,
-                "reason": "no price" if not price else "no price from an authorised seller to compare with"}
+                "reason": "no price" if not price else f"no {currency} price from an authorised seller to compare with"}
     ratio = round(price / lowest_credible, 2)
     return {"result": "flag" if ratio < PRICE_FLOOR else "ok", "price": price, "currency": currency,
             "lowest_credible_price": lowest_credible, "ratio": ratio}
@@ -138,10 +138,14 @@ def photo_check(listing_images: list[str], genuine_images: list[str], seller_ok:
 
 def summary(checks: dict, hidden: bool) -> str:
     reasons = []
+    marketplace = "marketplace" in (checks["price"].get("reference") or checks["copied_photos"].get("reference") or "")
     if checks["copied_photos"]["result"] == "flag":
-        reasons.append("photos copied from the official listing, but the seller is not authorised")
+        reasons.append("photos copied from the genuine product's " + (
+            "marketplace listing, on a site that is not a known seller" if marketplace else
+            "official listing, but the seller is not authorised"))
     if checks["price"]["result"] == "flag":
-        reasons.append(f"price is {round(100 * checks['price']['ratio'])}% of the lowest price from an authorised seller")
+        reasons.append(f"price is {round(100 * checks['price']['ratio'])}% of the genuine product's lowest " +
+                       ("marketplace price" if marketplace else "price from an authorised seller"))
     if checks["website_age"]["result"] == "flag":
         reasons.append(f"website registered only {checks['website_age']['domain_registered_days_ago']} days ago")
     if checks["spec"]["result"] == "flag":
@@ -155,17 +159,24 @@ def summary(checks: dict, hidden: bool) -> str:
 
 # ---------- the answer ----------
 
-def genuine_offer(product_id: str, brand: str) -> tuple[float | None, list[str]]:
-    """Lowest price and photos from listings sold by the brand or an authorised seller."""
-    prices, images = [], []
+REFERENCE_MARKETPLACES = ("amazon.in", "flipkart.com", "amazon.com")
+
+
+def genuine_offer(product_id: str, brand: str, currency: str = "INR") -> tuple[float | None, list[str], str]:
+    """Reference price (same currency) and photos for the genuine product: from the brand or an authorised seller
+    when we know them, otherwise from its listings on the big marketplaces (said so in the answer)."""
+    authorised_rows, marketplace_rows = [], []
     for row in store.product_listings(product_id):
         raw = row["raw"] or {}
-        if not authorised(brand, raw.get("seller"), row["url"]) and row["marketplace"] != "demo":
-            continue
-        if raw.get("price"):
-            prices.append(float(raw["price"]))
-        images += raw.get("image_urls") or []
-    return (min(prices) if prices else None), images
+        if authorised(brand, raw.get("seller"), row["url"]) or row["marketplace"] == "demo":
+            authorised_rows.append(raw)
+        elif row["marketplace"] in REFERENCE_MARKETPLACES:
+            marketplace_rows.append(raw)
+    rows, source = (authorised_rows, "brand or authorised seller") if authorised_rows else \
+        (marketplace_rows, "the genuine product's listings on major marketplaces")
+    prices = [float(r["price"]) for r in rows if r.get("price") and (r.get("currency") or "INR") == currency]
+    images = [u for r in rows for u in r.get("image_urls") or []]
+    return (min(prices) if prices else None), images, source
 
 
 def safety_note(product_id: str) -> str:
@@ -186,10 +197,13 @@ def trust_check(listing: dict) -> dict:
     genuine = store.latest_fingerprint(product_id) if product_id else None
     url, seller = listing.get("url"), listing.get("seller")
     if genuine:
-        lowest, images = genuine_offer(product_id, genuine["brand"])
-        seller_ok = authorised(genuine["brand"], seller, url)
-        checks = {"copied_photos": photo_check(listing.get("image_urls") or [], images, seller_ok),
-                  "price": price_check(listing.get("price"), lowest, listing.get("currency") or "INR"),
+        lowest, images, source = genuine_offer(product_id, genuine["brand"], listing.get("currency") or "INR")
+        # On a big marketplace the photos are the listing's own; elsewhere they need an authorised seller.
+        seller_ok = authorised(genuine["brand"], seller, url) or any(m in host(url) for m in REFERENCE_MARKETPLACES)
+        checks = {"copied_photos": {**photo_check(listing.get("image_urls") or [], images, seller_ok),
+                                    "reference": source},
+                  "price": {**price_check(listing.get("price"), lowest, listing.get("currency") or "INR"),
+                            "reference": source},
                   "website_age": website_check(url),
                   "spec": spec_check(listing, genuine)}
     else:

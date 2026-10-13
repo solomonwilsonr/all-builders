@@ -22,6 +22,7 @@ from engine import gemini
 HAZARDS = ["fire_burn", "electric_shock", "choking", "chemical", "mechanical_injury", "other"]
 EXPERIENCE = ["own_experience", "hearsay", "figurative_or_joke", "negated_or_absent", "not_a_hazard"]
 BATCH = 15
+SEVERITY_ORDER = ["low", "medium", "high"]
 MIN_REVIEWS = 20  # fewer than this and the verdict is not_enough_evidence
 TREND_WINDOW_DAYS = 90
 
@@ -105,14 +106,22 @@ def classify(product: str, reviews: list[dict], timeout_s: int = 90,
 def check_photo(product: str, url: str) -> dict:
     image = requests.get(url, timeout=20)
     image.raise_for_status()
-    response = gemini.client().models.generate_content(
-        model=gemini.COMPARE_MODELS[0],
-        contents=[types.Part.from_bytes(data=image.content, mime_type=image.headers.get("content-type", "image/jpeg")),
-                  PHOTO_PROMPT.format(product=product)],
-        config=types.GenerateContentConfig(temperature=0, response_mime_type="application/json",
-                                           response_json_schema=PHOTO_SCHEMA),
-    )
-    return {**json.loads(response.text), "url": url}
+    part = types.Part.from_bytes(data=image.content, mime_type=image.headers.get("content-type", "image/jpeg"))
+    result = gemini.structured([part, PHOTO_PROMPT.format(product=product)], PHOTO_SCHEMA,
+                               models=["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.5-flash-lite"])
+    return {**result, "url": url}
+
+
+FIRE_WORDS = re.compile(r"\b(melt\w*|fire|flames?|burn\w*|scorch\w*|smok\w*|spark\w*|char(red)?|overheat\w*)\b",
+                        re.IGNORECASE)
+
+
+def effective_type(label: dict) -> str:
+    """The model sometimes files "the charger melted" under mechanical_injury or other; fire words decide."""
+    kind = label.get("hazard_type") or "other"
+    if kind in ("other", "mechanical_injury") and FIRE_WORDS.search(f"{label.get('mechanism')} {label.get('quote')}"):
+        return "fire_burn"
+    return kind
 
 
 def counts(label: dict) -> bool:
@@ -137,7 +146,7 @@ def findings(reviews: list[dict], labels: dict[str, dict], photos: dict[str, dic
         if not label or not counts(label) or dedupe_key(review) in seen:
             continue
         seen.add(dedupe_key(review))
-        groups[label.get("hazard_type") or "other"].append({"review": review, "label": label})
+        groups[effective_type(label)].append({"review": review, "label": label})
 
     out = []
     for hazard_type, items in groups.items():

@@ -8,6 +8,7 @@ Registries: the Australian energy-rating registry (open data, TVs and fridges) a
 (data/bis_mock.json) for the hackathon. Code compares; the model only reads. It never guesses: anything it cannot
 check is "unknown".
 """
+import hashlib
 import json
 import re
 from datetime import UTC, datetime
@@ -61,8 +62,16 @@ def claims(view: dict, use_gemini: bool = True) -> list[dict]:
         found.append({"authority": BIS, "number": number, "claimed_value": view.get("brand")})
     if found or not use_gemini or not text:
         return found
-    result = gemini.structured(CLAIMS_PROMPT.format(listing=json.dumps(view, ensure_ascii=False)), CLAIMS_SCHEMA)
-    return [c for c in result.get("claims", []) if c.get("authority") in (AU, BIS)]
+    body = json.dumps(view, ensure_ascii=False, sort_keys=True)
+    cached = store.conn().execute(  # each listing view is read by Gemini once, ever
+        "SELECT content FROM evidence WHERE source_type = 'mark_claims' AND source_ref = %s LIMIT 1",
+        (hashlib.sha1(body.encode()).hexdigest(),)).fetchone()
+    if cached:
+        return json.loads(cached["content"])["claims"]
+    result = gemini.structured(CLAIMS_PROMPT.format(listing=body), CLAIMS_SCHEMA)
+    found = [c for c in result.get("claims", []) if c.get("authority") in (AU, BIS)]
+    store.add_evidence("mark_claims", hashlib.sha1(body.encode()).hexdigest(), {"claims": found, "view": view})
+    return found
 
 
 def _now() -> str:
