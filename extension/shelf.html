@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Shelf - SafeShelf</title>
+<link rel="stylesheet" href="shelf.css">
+</head>
+<body>
+  <main>
+    <h1>My Shelf</h1>
+    <p class="lede" id="note">Products you saved. SafeShelf re-checks recalls for them every day and will alert you.</p>
+    <p class="notice">Your shelf is stored in this browser only. It doesn't sync to other devices, and clearing the extension's data deletes it.</p>
+    <p id="empty" class="empty" hidden>Nothing saved yet. Open a product page and press <strong>Save to My Shelf</strong>.</p>
+    <ul id="list" aria-label="Saved products"></ul>
+  </main>
+  <script src="shelf.js"></script>
+</body>
+</html>

@@ -422,3 +422,50 @@ Find **copies of officially recalled products still on sale today**, check them,
 
 **Video opening (first 20 s):** the big test result plus the real-world finding.
 **Deadline:** 18 Oct 2026, 11:59 PM IST (aim: 17 Oct).
+
+
+
+---
+
+# Phase 2 preview (built before the 18 Oct submission)
+
+## P2-1 Seller and partner context for trust-check
+
+**Track A + B · ⏱ first version: A ≈ 5 h, B ≈ 5.5 h · Day 4 to Day 5 (15–16 Oct) · full version after submission**
+
+"Is it real?" should also answer **"Who is selling this, and are they allowed to?"** Today the engine knows only a yes/no `seller_authorised`, taken from a small hand-made list (`data/authorised_sellers.json`, mostly demo brands), and the extension sends the seller as one plain string.
+
+**Context to add** (public business information only, never personal data)
+1. **Relationship to the brand:** official brand store · authorised partner or distributor · third-party marketplace seller · unknown.
+2. **The selling company:** legal name, how long it has sold on the marketplace, rating and number of ratings, registered business name and address (registered companies only), company registration number where public (CIN, GSTIN), "ships from" and "fulfilled by".
+3. **Brand-store signals on the marketplace:** "Visit the X Store", an official brand storefront.
+4. **Cross-checks:** is the seller named on the brand's own "where to buy" or "authorised dealers" page, is the company still active in the public company registry, domain age for shops that are not on a big marketplace (already done).
+
+**First version, before submission (Day 4 and Day 5)**
+
+*Person A (engine)*
+- [ ] **Partner data:** a `brand_partners` list for the brands in the catalog, from brand "where to buy" pages (Firecrawl, same as M1), each with source URL and date; replaces the hand-made `authorised_sellers.json` (2 h)
+- [ ] **A `seller` check in `trust-check`:** relationship + seller name + result `ok | flag | unknown`, set by code, with evidence IDs; no company registry yet (2 h)
+- [ ] **Evaluate:** 30 labelled sellers (official, third-party, suspicious), precision and recall, added to SafeShelfBench as a "seller" task (1 h, Day 5)
+
+*Person B (extension)*
+- [ ] **Read the seller context from the page**, with no extra requests: seller link, "Sold by / Ships from", brand-store link, seller rating (Amazon, Flipkart); send it in the `trust-check` request as `seller_profile` (2 h, Day 4)
+- [ ] **UI:** a seller line in "Is it real?", a new **Seller** tab (relationship, company, source and date, "not a legal finding"), seller chips in the "what was sent" card; built on a mock `checks.seller` first (2 h, Day 4)
+- [ ] **Join:** the real `checks.seller` in the card and in the chat context, tests, cost-dialog wording (1.5 h, Day 5)
+
+**After submission (the full version):** company-registry connector (CIN, status, registered since), 100 labelled sellers, more brands, brand-store signals on Flipkart, a way for a brand to dispute a listing.
+
+**API changes (additive, tell the other person first)**
+- `trust-check` request, optional: `brand`, `seller_profile` `{name, url, rating, rating_count, business_name, business_address, fulfilled_by, ships_from, brand_store_url}`
+- `trust-check` answer: `checks.seller` `{result, relationship: official_brand | authorised_partner | marketplace_third_party | unknown, legal_entity: {name, registered_since, status}, sources: [...], last_verified, reason, evidence_ids}`. The first version fills `relationship`, `sources`, `last_verified` and `reason`; `legal_entity` stays empty.
+
+**Rules**
+- **Code decides, not the AI.** `ok` only when a brand source lists the seller. `flag` only when the seller is known not to be authorised **and** another check (copied photos, price) also flags. Everything else is `unknown`, shown as ❔, never as green.
+- **A third-party seller is not a warning by itself.** Most marketplace sellers are legitimate. Show it as information.
+- **Sources and dates are always shown**, so a brand can dispute a listing and a shopper can see how old the claim is.
+- **No personal data.** For an individual (not a registered company) show only "individual seller", never a home address.
+
+**Needs first:** M6 ("Is it real?"), M8 (the card), M9 (chat context).
+**Done when:** on a real Amazon.in listing from a brand's official store, the card shows "✅ Authorised partner: <seller>" with a source and date; an unknown third-party seller shows ❔ "Not on the brand's partner list: third-party seller" (not red); a fake shop with copied photos shows ⚠️ with the seller reason in the summary.
+**Risks:** few brands publish partner lists (so many results will honestly be ❔); scraping terms for some sites; lists go stale; fetching marketplace seller pages is avoided, so only what is already on the page is read; both days are already full (see the plan's "Phase 2 preview" for what gives way).
+**Minimum version:** the partner list plus the seller name and source shown; nothing else.

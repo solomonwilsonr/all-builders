@@ -1,0 +1,993 @@
+// Reads a product page and shows a SafeShelf button (floating on product pages, one per card on results pages) that opens a card. Page text is sent as data only.
+// A reloaded extension leaves an orphaned copy of this script in open tabs: clean it up, then start fresh.
+try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dead */ }
+{
+  const qs = (sel) => (sel ? document.querySelector(sel) : null);
+  const text = (sel) => qs(sel)?.textContent.trim() || null;
+  const num = (s) => {
+    const m = (s || "").replace(/,/g, "").match(/(\d+(\.\d+)?)/);
+    return m ? Number(m[1]) : undefined;
+  };
+
+  // schema.org Product data: the most stable source on most shops
+  const jsonLd = () => {
+    for (const s of document.querySelectorAll('script[type="application/ld+json"]')) {
+      try {
+        const j = JSON.parse(s.textContent);
+        const p = [].concat(j, j["@graph"] || []).find((i) => i && [].concat(i["@type"]).includes("Product"));
+        if (p) return p;
+      } catch (_) { /* not valid JSON, skip */ }
+    }
+    return null;
+  };
+
+  // One entry per shop. Selectors are best effort: shops change them, so each has fallbacks.
+  const GENERIC = {
+    isProduct: () => true,
+    title: "h1",
+    price: null,
+    seller: null,
+    images: "meta[property='og:image']",
+    anchor: "h1",
+    cards: null,
+  };
+  const SITES = [
+    {
+      match: (h) => /(^|\.)amazon\.(in|com)$/.test(h),
+      isProduct: () => /\/(dp|gp\/product)\/[A-Z0-9]{10}/.test(location.pathname),
+      title: "#productTitle",
+      price: "#corePrice_feature_div .a-offscreen, #apex_desktop .a-offscreen, .a-price .a-offscreen",
+      seller: "#sellerProfileTriggerId, #tabular-buybox [tabular-attribute-name='Sold by'] .tabular-buybox-text, #merchant-info",
+      mainImage: "#landingImage, #imgTagWrapperId img",
+      images: "#altImages img",
+      // Only these product areas are sent as text. The header (which shows your name and delivery address) is never read.
+      facts: "#bylineInfo, #acrPopover, #corePrice_feature_div, #productOverview_feature_div, #feature-bullets, #tabular-buybox, #buybox, #desktop_buybox, #productDescription",
+      // Brand, model number, manufacturer, country of origin, specs: the data the engine matches on.
+      details: "#prodDetails, #productDetails_feature_div, #productDetails_techSpec_section_1, #productDetails_techSpec_section_2, #productDetails_detailBullets_sections1, #technicalSpecifications_section_1, #detailBullets_feature_div",
+      anchor: "#corePrice_feature_div, #apex_desktop, #title_feature_div",
+      cards: { selector: "[data-component-type='s-search-result'][data-asin]:not([data-asin=''])", title: "h2", price: ".a-price .a-offscreen", link: "h2 a, a[href*='/dp/']", image: "img.s-image" },
+    },
+    {
+      match: (h) => /(^|\.)flipkart\.com$/.test(h),
+      isProduct: () => /\/p\/itm/.test(location.pathname) || location.search.includes("pid="),
+      title: "h1",
+      price: null, // class names are obfuscated and change often; use schema.org data, then the first rupee amount
+      seller: "#sellerName span, #sellerName",
+      images: "img[src*='rukminim']",
+      anchor: "h1",
+      cards: { selector: "div[data-id]", title: "a[title]", price: null, link: "a[href*='/p/']", image: "img[src*='rukminim']" },
+    },
+    {
+      match: (h) => h === "localhost",
+      isProduct: () => !!document.body.dataset.safeshelfListingId,
+      title: "#title",
+      price: "#price",
+      seller: "#seller",
+      images: "#gallery img",
+      anchor: "#price",
+      hiddenText: true, // demo pages carry a hidden prompt-injection test
+      cards: { selector: ".result[data-listing-id]", title: ".result-title", price: ".result-price", link: "a", image: "img" },
+    },
+  ];
+  const site = SITES.find((s) => s.match(location.hostname)) || GENERIC;
+
+  // Keeps personal details out of what is sent: delivery address, account name, emails, phone numbers.
+  const PRIVATE_LINE = /^(deliver(ing)? to\b|hello,|hi,|your account|sign in|[A-Za-z .]+ [1-9]\d{5}$)/i;
+  // Buttons and delivery noise that says nothing about the product.
+  const NOISE_LINE = /^(add to cart|buy now|quantity:?\s*\d*|this will be a gift|add to wish list|add additional items|payment|secure transaction|details|price history|overnight|in stock|free delivery\b.*|link device to your amazon.*)$/i;
+  // `seen` is shared between sections so a long line is sent once. Short lines are kept: they are labels paired with values.
+  const scrub = (t, seen = new Set()) =>
+    t.split("\n").map((l) => l.trim())
+      .filter((l) => l && (l.length > 2 || /[A-Za-z]/.test(l)) && !PRIVATE_LINE.test(l) && !NOISE_LINE.test(l))
+      .filter((l) => l.length < 25 || (!seen.has(l) && seen.add(l)))
+      .join("\n")
+      .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, "[email]")
+      .replace(/(?<!\d)(\+?91[ -]?)?[6-9]\d{9}(?!\d)/g, "[phone]");
+
+  // Drops tracking parameters. Amazon pages become https://host/dp/ASIN, Flipkart keeps its product id.
+  const cleanUrl = () => {
+    const u = new URL(location.href);
+    const asin = u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/);
+    if (/amazon\./.test(u.hostname) && asin) return `${u.origin}/dp/${asin[1]}`;
+    for (const k of [...u.searchParams.keys()]) {
+      if (/^(utm_|ref|pd_rd|pf_rd|content-id|fbclid|gclid|_encoding|dib|crid|qid|sr$|sprefix|keywords|th$|psc)/i.test(k)) u.searchParams.delete(k);
+    }
+    u.hash = "";
+    return u.toString();
+  };
+
+  // Text of the named sections. A section inside another selected section is skipped, so nothing is read twice.
+  const textOf = (selectors) => {
+    const els = selectors ? [...document.querySelectorAll(selectors)].filter((e) => e.innerText.trim()) : [];
+    return els.filter((e) => !els.some((o) => o !== e && o.contains(e))).map((e) => e.innerText.trim()).join("\n");
+  };
+  // Text of the product area only: the named sections if the shop has them, otherwise the block around the title.
+  const productText = () => {
+    const named = textOf(site.facts);
+    if (named) return named;
+    let n = qs(site.title);
+    while (n && n.parentElement && n.parentElement !== document.body && n.innerText.length < 1500) n = n.parentElement;
+    return (n || document.body).innerText;
+  };
+
+  // "Sold by" label followed by the seller name, for buy boxes whose ids we do not know.
+  const soldBy = () => {
+    const label = [...document.querySelectorAll("span, div, a, td, th")].find((e) => !e.children.length && /^Sold by\s*:?$/i.test(e.textContent.trim()));
+    for (let n = label, i = 0; n && i < 3; n = n.parentElement, i++) {
+      const v = n.nextElementSibling?.textContent.trim();
+      if (v && !/learn more/i.test(v)) return v;
+    }
+    return undefined;
+  };
+  const sellerName = () => {
+    const bad = /learn more|^$/i;
+    return [...document.querySelectorAll(site.seller || "x-none")].map((e) => e.textContent.trim()).find((t) => t && !bad.test(t)) || soldBy();
+  };
+
+  // Details tables (brand, model number, specs) found by their headings, since shops use different ids for them.
+  const detailSections = (already) => {
+    const heading = /^(product information|technical details|additional information|item details|product details|specifications)$/i;
+    const found = [];
+    for (const h of document.querySelectorAll("h1, h2, h3, h4, span.a-text-bold")) {
+      if (!heading.test(h.textContent.trim())) continue;
+      let n = h;
+      while (n.parentElement && n.parentElement !== document.body && n.innerText.length < 200) n = n.parentElement;
+      const t = n.innerText.trim().slice(0, 1500);
+      if (t && !already.includes(t.slice(0, 60))) found.push(t);
+      if (found.length === 2) break;
+    }
+    return found.join("\n");
+  };
+
+  const readPage = () => {
+    const ld = jsonLd();
+    const offer = [].concat(ld?.offers || [])[0];
+    const seen = new Set();
+    const details = scrub([textOf(site.details), detailSections("")].filter(Boolean).join("\n"), seen); // model, brand, origin, specs
+    const main = scrub(productText(), seen);
+    const area = main;
+    const rupee = area.match(/₹\s?([\d,]+(\.\d+)?)/);
+    const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
+    const mrp = qs(".a-price.a-text-price .a-offscreen")?.textContent.trim();
+    const hidden = site.hiddenText
+      ? " " + [...document.querySelectorAll("[aria-hidden='true'], [hidden]")].map((el) => el.textContent.trim()).filter(Boolean).join(" ")
+      : "";
+    // The main photo first (it can sit after the side thumbnails in the page), then the gallery. Only product photos: not icons or logos.
+    const main_images = (sel) => [...document.querySelectorAll(sel)].map((i) => (i.src || i.content || "").replace(/\._[A-Za-z0-9_,%-]+_\.(jpg|png|webp)/, ".$1")); // thumbnail url -> full-size url
+    const isPhoto = (u) => /^https?:/.test(u) && !/\/images\/G\/|icon|sprite|logo|pixel|\.gif(\?|$)/i.test(u);
+    const images = [...new Set([...(site.mainImage ? main_images(site.mainImage) : []), ...main_images(site.images || "img")].filter(isPhoto))].slice(0, 8);
+    return {
+      url: cleanUrl(),
+      title: text(site.title) || ld?.name || document.title,
+      price: num(text(site.price)) ?? num(String(offer?.price ?? offer?.lowPrice ?? "")) ?? num(rupee?.[1]),
+      currency: "INR",
+      seller: sellerName() || main.match(/^Sold by\s*\n(.+)$/m)?.[1],
+      image_urls: images.length ? images : [].concat(ld?.image || []).slice(0, 8),
+      // Technical details first: they identify the product. Marketing text last, so the cap cuts that, not the specs.
+      page_text: [asin && `ASIN: ${asin}`, mrp && `M.R.P.: ${mrp}`, details.slice(0, 2500), area.slice(0, 1500) + hidden].filter(Boolean).join("\n").slice(0, 4200),
+      listing_id: document.body.dataset.safeshelfListingId || null,
+      product_id: document.body.dataset.safeshelfProductId || null,
+    };
+  };
+
+  // Data for one product card on a results page (no page load needed)
+  const readCard = (card) => {
+    const c = site.cards;
+    const link = card.querySelector(c.link);
+    const rupee = card.innerText.match(/₹\s?([\d,]+(\.\d+)?)/);
+    const img = card.querySelector(c.image);
+    return {
+      url: link?.href || location.href,
+      title: (card.querySelector(c.title)?.textContent || link?.title || img?.alt || "").trim().slice(0, 300),
+      price: num(card.querySelector(c.price || "x-none")?.textContent) ?? num(rupee?.[1]),
+      currency: "INR",
+      image_urls: img?.src ? [img.src] : [],
+      page_text: card.innerText.slice(0, 1000),
+      listing_id: card.dataset.listingId || null,
+      product_id: null,
+    };
+  };
+
+  const PANEL_STYLE = `
+    .tabs { display:flex; flex-wrap:wrap; gap:4px; margin:8px 0; }
+    .tab { font:inherit; font-size:13px; padding:5px 12px; border:0; border-radius:999px; background:#e0e5ea; color:#10151b; cursor:pointer; }
+    .tab[aria-selected="true"] { background:#10151b; color:#fff; font-weight:700; }
+    .vrow { display:flex; gap:8px; margin:6px 0; } .vrow .i { flex:none; width:1.4em; text-align:center; }
+    .vrow .s { color:#3d4650; font-size:13px; } .vrow a { font-size:13px; color:#0b57d0; }
+    .vh { font-weight:700; font-size:18px; letter-spacing:-.01em; margin:12px 0 2px; } .vnote { color:#3d4650; font-size:13px; margin:4px 0; }
+    .notlive { background:#e0e5ea; border-radius:12px; padding:10px 12px; color:#10151b; font-size:14px; }
+    textarea.rep { width:100%; box-sizing:border-box; min-height:80px; font:inherit; font-size:14px; padding:8px 10px; border:0; border-radius:12px; color:#10151b; background:#e0e5ea; }
+  `;
+
+  const CTX_STYLE = `
+    .ctx { display:flex; gap:10px; border-radius:12px; padding:10px; margin:8px 0; background:#e0e5ea; color:#10151b; font:13px/1.4 system-ui,sans-serif; }
+    .ctx > img { width:56px; height:56px; object-fit:contain; background:#f8f9fb; border-radius:8px; flex:none; }
+    .ctx .body { min-width:0; flex:1; }
+    .ctx .t { font-weight:600; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .ctx .m { color:#3d4650; } .ctx s { color:#5b6470; }
+    .ctx .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+    .ctx .chip { border-radius:999px; padding:1px 10px; font-size:12px; background:#f8f9fb; }
+    .ctx .more { font:inherit; font-size:12px; padding:0; border:0; background:none; color:#0b57d0; cursor:pointer; text-decoration:underline; margin-top:4px; }
+    .ctx pre { white-space:pre-wrap; word-break:break-word; max-height:180px; overflow:auto; margin:6px 0 0; font:12px/1.4 ui-monospace,monospace; background:#f8f9fb; border-radius:8px; padding:8px; }
+    .ctx-h { font-size:13px; color:#3d4650; margin-top:8px; }
+  `;
+
+  const STYLE = `
+    :host { all:initial; display:flex; font:16px/1.5 system-ui,sans-serif; color:#10151b; }
+    :host(.float) { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:2147483647; flex-direction:row; align-items:center; gap:12px; }
+    :host(.float) .bar { flex-direction:column; gap:10px; padding:12px 10px 12px 12px; background:#10151b; border-radius:24px 0 0 24px; box-shadow:-4px 4px 18px rgba(0,0,0,.35); }
+    :host(.float) .fab { position:relative; width:48px; height:48px; padding:0; border-radius:50%; display:grid; place-items:center; background:#2b333c; }
+    :host(.float) .fab.unknown { background:#5a6672; }
+    .tip { position:absolute; right:calc(100% + 10px); top:50%; transform:translateY(-50%); background:#10151b; color:#fff; padding:6px 12px; border-radius:10px; font-size:13px; font-weight:600; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .12s ease; }
+    .fab:hover .tip, .fab:focus-visible .tip { opacity:1; }
+    .fab:focus-visible { outline:3px solid #8ab4f8; outline-offset:2px; }
+    .sec { border-radius:12px; padding:8px 12px; margin-top:10px; background:#e0e5ea; border-left:6px solid #4a5560; }
+    .sec.green { border-left-color:#0a6b2d; background:#dcefe2; } .sec.amber { border-left-color:#8a5a00; background:#f4e8cf; } .sec.red { border-left-color:#b3261e; background:#f6dcda; }
+    .sec h3 { margin:0 0 2px; } .verdict { font-weight:800; } .sec.green .verdict { color:#0a6b2d; } .sec.amber .verdict { color:#8a5a00; } .sec.red .verdict { color:#b3261e; } .sec.unknown .verdict { color:#4a5560; }
+    :host(.inline) { display:block; position:absolute; bottom:12px; right:12px; z-index:100; }
+    .fab { font:inherit; font-weight:700; padding:11px 20px; border:0; border-radius:999px; background:#10151b; color:#fff; cursor:pointer; transition:transform .12s ease; }
+    .fab:active { transform:scale(.97); }
+    :host(.inline) .fab { padding:3px 11px; font-size:12px; white-space:nowrap; }
+    :host(.inline) .bar { gap:6px; }
+    .box.chat { display:flex; flex-direction:column; gap:8px; }
+    .box.chat[hidden] { display:none; }
+    .log { display:flex; flex-direction:column; gap:8px; max-height:38vh; overflow:auto; }
+    .msg { padding:10px 12px; border-radius:14px; max-width:92%; }
+    .msg.user { align-self:flex-end; background:#0b57d0; color:#fff; } .msg.bot { align-self:flex-start; background:#e0e5ea; }
+    .chips { display:flex; gap:6px; flex-wrap:wrap; }
+    .chips button, .ask button, .ask select { font:inherit; font-size:14px; padding:6px 14px; border:0; border-radius:999px; background:#e0e5ea; color:#10151b; cursor:pointer; }
+    .ask button { background:#0b57d0; color:#fff; font-weight:600; }
+    .ask { display:flex; gap:6px; } .ask input { flex:1; min-width:0; font:inherit; font-size:14px; padding:8px 12px; border:0; border-radius:12px; color:#10151b; background:#e0e5ea; }
+    .evidence { margin-top:6px; }
+    .ev-h { font-weight:700; font-size:14px; color:#10151b; }
+    .ev-item { background:#e0e5ea; border-radius:10px; padding:6px 10px; margin:6px 0; }
+    .ev-title { font-size:12px; color:#3d4650; }
+    blockquote { margin:2px 0 4px; font-size:13px; }
+    a { color:#0b57d0; font-size:13px; }
+    .rchat { margin-top:16px; padding-top:2px; }
+    .tools { display:flex; gap:6px; align-items:center; }
+    .hist { display:flex; flex-direction:column; gap:8px; max-height:48vh; overflow:auto; }
+    .hist[hidden], .log[hidden], .chips[hidden], .ask[hidden] { display:none; }
+    .hist-item { background:#e0e5ea; border-radius:12px; padding:10px 12px; }
+    .hist-item .when { color:#3d4650; font-size:12px; }
+    .hist-item p { margin:4px 0 0; }
+    .bar { display:flex; gap:8px; align-items:center; }
+    .fab:disabled { opacity:.6; cursor:default; }
+    @media (prefers-reduced-motion: reduce) { .fab { transition:none; } .fab:active { transform:none; } }
+    :host(.pop) { position:fixed; top:0; left:0; z-index:2147483647; }
+    :host(.pop) .box { position:fixed; }
+    .fab.unknown { background:#4a5560 } .unknown .pill { color:#4a5560 }
+    .fab.green { background:#0a6b2d } .fab.amber { background:#8a5a00 } .fab.red { background:#b3261e }
+    ${CTX_STYLE}
+    ${PANEL_STYLE}
+    .box { box-sizing:border-box; width:min(400px,calc(100vw - 100px)); max-height:70vh; overflow:auto; background:#f8f9fb; border-radius:20px; padding:16px 18px; border-top:8px solid #4a5560; box-shadow:0 8px 32px rgba(0,0,0,.28); }
+    .box.green { border-top-color:#0a6b2d } .box.amber { border-top-color:#8a5a00 } .box.red { border-top-color:#b3261e }
+    .box[hidden] { display:none; }
+    .head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .brand { font-weight:700; font-size:20px; letter-spacing:-.02em; } .pill { font-weight:700; } .green .pill { color:#0a6b2d } .amber .pill { color:#8a5a00 } .red .pill { color:#b3261e }
+    h3 { font-size:16px; margin:12px 0 2px; } ul { margin:0; padding-left:20px; } p { margin:8px 0 0; }
+    .muted { color:#3d4650; font-size:13px; }
+    .demo { background:#e0e5ea; border-radius:10px; padding:6px 10px; font-size:13px; margin-bottom:8px; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    button.small { font:inherit; font-size:14px; font-weight:600; padding:8px 16px; border:0; border-radius:999px; background:#e0e5ea; color:#10151b; cursor:pointer; }
+    .row button.small:first-child { background:#10151b; color:#fff; }
+    button:focus-visible { outline:3px solid #0b57d0; outline-offset:2px; }
+  `;
+
+  const el = (tag, props = {}, ...kids) => {
+    const n = Object.assign(document.createElement(tag), props);
+    n.append(...kids);
+    return n;
+  };
+
+  // Small confirmation message in its own layer on <body>, so no shop CSS can hide or clip it.
+  let toastHost = null;
+  let toastTimer = null;
+  const toast = (message, actionLabel, onAction) => {
+    toastHost?.remove();
+    clearTimeout(toastTimer);
+    toastHost = el("div");
+    const root = toastHost.attachShadow({ mode: "open" });
+    const close = () => { toastHost?.remove(); toastHost = null; };
+    const action = actionLabel ? el("button", { type: "button", textContent: actionLabel, onclick: () => { onAction?.(); close(); } }) : "";
+    const dismiss = el("button", { type: "button", textContent: "Dismiss", onclick: close });
+    dismiss.setAttribute("aria-label", "Dismiss");
+    root.append(
+      el("style", { textContent: `
+        :host { all:initial; position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:2147483647; }
+        .t { display:flex; align-items:center; gap:12px; font:15px/1.4 system-ui,sans-serif; background:#10151b; color:#fff; padding:12px 16px; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.4); max-width:min(480px,92vw); }
+        button { font:inherit; font-size:14px; font-weight:600; padding:6px 14px; border:0; border-radius:999px; background:#fff; color:#10151b; cursor:pointer; }
+        button:focus-visible { outline:3px solid #8ab4f8; outline-offset:2px; }
+      ` }),
+      el("div", { className: "t", role: "status" }, el("span", { textContent: message }), action, dismiss),
+    );
+    document.body.append(toastHost);
+    toastTimer = setTimeout(close, 6000);
+  };
+
+  // Mini card of what is sent to the API: product photo, title, price, seller, and the exact fields on request.
+  const contextCard = (page) => {
+    const text = page.page_text || "";
+    const asin = text.match(/^ASIN: (\S+)/m)?.[1];
+    const mrp = text.match(/^M\.R\.P\.: (.+)$/m)?.[1];
+    const n = (page.image_urls || []).length;
+    // The exact fields that go to the API (the shop's own ids are removed before sending)
+    const sent = { url: page.url, title: page.title, price: page.price, currency: page.currency, seller: page.seller, image_urls: page.image_urls, page_text: text };
+    const pre = el("pre", { hidden: true, textContent: JSON.stringify(sent, null, 2) });
+    const more = el("button", { type: "button", className: "more", textContent: "More details" });
+    more.setAttribute("aria-expanded", "false");
+    more.onclick = () => {
+      pre.hidden = !pre.hidden;
+      more.textContent = pre.hidden ? "More details" : "Hide details";
+      more.setAttribute("aria-expanded", String(!pre.hidden));
+    };
+    const chip = (t) => el("span", { className: "chip", textContent: t });
+    const photo = el("img", { src: (page.image_urls || [])[0] || "", alt: "" });
+    photo.onerror = () => photo.remove();
+    return el("div", { className: "ctx" },
+      ...(n ? [photo] : []),
+      el("div", { className: "body" },
+        el("div", { className: "t", textContent: page.title || page.url }),
+        el("div", { className: "m" }, page.price != null ? `₹${page.price.toLocaleString("en-IN")} ` : "", ...(mrp ? [el("s", { textContent: mrp })] : []), page.seller ? ` · ${page.seller}` : ""),
+        el("div", { className: "chips" }, ...[page.seller && "seller", asin && `ASIN ${asin}`, `${n} photo link${n === 1 ? "" : "s"}`, `${text.length.toLocaleString()} characters of details`].filter(Boolean).map(chip)),
+        more, pre,
+      ));
+  };
+
+  // --- TEMP COST GUARD: shows an estimate in rupees and asks before a paid request. To remove: delete this block, the three `guard(` calls, and the cost rows in popup.html/popup.js. ---
+  const COST = {
+    // Gemini 3.6/3.8 Flash: about 2,000 input + 1,500 output tokens at $0.75 / $3.75 per 1M tokens, at an assumed Rs 88 per US$.
+    chat: { text: "about ₹0.6 (up to ₹1.3 if a second model is tried). ₹0 on a free-tier key.", mid: 0.63 },
+    // Copy search and identification run Gemini inside the engine; real token counts are not known yet.
+    duplicates: { text: "about ₹1 to ₹5 (rough guess: Gemini compares the product with similar ones).", mid: 3 },
+    identify: { text: "about ₹0.2 to ₹1 (rough guess: an embedding lookup).", mid: 0.5 },
+    // The check uses Gemini on Vertex AI (embeddings + listing comparison); real token counts are not known yet.
+    check: { text: "about ₹1 to ₹5 (rough guess: the check uses Gemini on Vertex AI to compare listings).", mid: 3 },
+  };
+  const approved = new Set(); // pages already approved: Check, Save and Ask share one cached check
+  const confirmCost = (what, estimate, page) => new Promise((resolve) => {
+    const host = el("div");
+    const root = host.attachShadow({ mode: "open" });
+    const finish = (ok) => { host.remove(); resolve(ok); };
+    const go = el("button", { type: "button", textContent: "Continue", onclick: () => finish(true) });
+    const no = el("button", { type: "button", textContent: "Cancel", onclick: () => finish(false) });
+    const dialog = el("div", { className: "d", role: "alertdialog" },
+      el("strong", { textContent: "This uses AI credits" }),
+      el("p", { textContent: `${what}. Estimated cost: ${estimate}` }),
+      ...(page ? [el("div", { className: "ctx-h", textContent: "What will be sent to SafeShelf:" }), contextCard(page)] : []),
+      el("div", { className: "r" }, go, no));
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-label", "Cost estimate");
+    root.append(el("style", { textContent: `
+      :host { all:initial; position:fixed; inset:0; z-index:2147483647; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.35); }
+      .d { font:15px/1.5 system-ui,sans-serif; background:#f8f9fb; color:#10151b; border-radius:20px; padding:20px 22px; max-width:min(420px,90vw); box-shadow:0 8px 32px rgba(0,0,0,.5); }
+      ${CTX_STYLE}
+      p { margin:8px 0 12px; } .r { display:flex; gap:8px; justify-content:flex-end; }
+      button { font:inherit; font-weight:600; padding:8px 18px; border:0; border-radius:999px; background:#e0e5ea; color:#10151b; cursor:pointer; }
+      button:first-child { background:#10151b; color:#fff; } button:focus-visible { outline:3px solid #0b57d0; outline-offset:2px; }
+    ` }), dialog);
+    dialog.addEventListener("keydown", (e) => { if (e.key === "Escape") finish(false); });
+    document.body.append(host);
+    go.focus();
+  });
+  // Resolves true when the request may go ahead. `key` remembers approval for a page; null asks every time.
+  const guard = async (kind, key, what, page) => {
+    try {
+      if ((await chrome.storage.local.get("costGuard")).costGuard === false) return true;
+      if (kind === "check" && (await chrome.runtime.sendMessage({ type: "safeshelf:cost-info" }))?.result?.mockApi) return true; // the local mock is free
+      if (key && approved.has(key)) return true;
+      if (!(await confirmCost(what, COST[kind].text, page))) return false;
+      if (key) approved.add(key);
+      const { spend = { total: 0, calls: 0 } } = await chrome.storage.local.get("spend");
+      await chrome.storage.local.set({ spend: { total: spend.total + COST[kind].mid, calls: spend.calls + 1 } });
+    } catch (_) { /* storage or messaging unavailable: do not block the shopper */ }
+    return true;
+  };
+  // --- END TEMP COST GUARD ---
+
+  // ---- Panels: one tab per SafeShelf API. Nothing is shown unless the API says the endpoint is live. ----
+  // A list of rows from a view-model (see panels.js)
+  const vmDom = (v) => el("div", {},
+    el("div", { className: "vh", textContent: v.title }),
+    ...(v.note ? [el("div", { className: "vnote", textContent: v.note })] : []),
+    ...(v.empty ? [el("div", { className: "vnote", textContent: v.empty })] : []),
+    ...v.rows.map((r) => r.heading ? el("div", { className: "vh", textContent: r.heading }) : el("div", { className: "vrow" }, el("span", { className: "i", textContent: r.icon }),
+      el("div", {}, el("div", { textContent: r.text }), ...(r.sub ? [el("div", { className: "s", textContent: r.sub })] : []),
+        ...(/^https?:/.test(r.link || "") ? [el("a", { href: r.link, target: "_blank", rel: "noopener", textContent: "Open source" })] : [])))),
+  );
+  const NOT_LIVE = "Not live on the SafeShelf API yet. Nothing is shown rather than example data. It will appear here once the API serves it.";
+  // Calls one API operation through the background worker and puts the result (or why there is none) into `into`.
+  const loadPanel = (into, op, args, key) => {
+    into.replaceChildren(el("div", { className: "vnote", textContent: "Loading…" }));
+    try {
+      chrome.runtime.sendMessage({ type: "safeshelf:call", op, args }, (res) => {
+        if (!res?.ok) return into.replaceChildren(el("div", { className: "notlive", textContent: `Could not load this: ${res?.error || chrome.runtime.lastError?.message}` }));
+        if (!res.result.live) return into.replaceChildren(el("div", { className: "notlive", textContent: NOT_LIVE }));
+        into.replaceChildren(vmDom(globalThis.SafeShelfPanels[key](res.result.data)));
+      });
+    } catch (_) { into.replaceChildren(el("div", { className: "notlive", textContent: "The extension was reloaded. Please refresh the page." })); }
+  };
+  // A button that runs a costly (AI) operation only after the cost dialog is accepted
+  const costlyButton = (label, kind, what, run) => {
+    const b = el("button", { type: "button", className: "small", textContent: label });
+    b.onclick = async () => { if (await guard(kind, null, what)) run(); }; // TEMP cost guard
+    return b;
+  };
+
+  // Past chats, kept in this browser only (newest first, at most 30).
+  const history = {
+    async get() { try { return (await chrome.storage.local.get("chatHistory")).chatHistory || []; } catch (_) { return []; } },
+    async set(list) { try { await chrome.storage.local.set({ chatHistory: list }); } catch (_) { /* storage unavailable: skip */ } },
+  };
+
+  // Finds where a quote appears on the page (reviews, descriptions) so the shopper can jump to the source.
+  const norm = (t) => t.replace(/\s+/g, " ").trim().toLowerCase();
+  const findOnPage = (quote) => {
+    const probe = norm(quote).slice(0, 60);
+    if (!probe) return null;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const p = n.parentElement;
+      if (!p || /^(SCRIPT|STYLE|NOSCRIPT)$/.test(p.tagName) || !p.getClientRects().length) continue;
+      if (norm(n.nodeValue).includes(probe)) return p.closest("[data-review-id], [data-hook='review'], .review, article, li") || p;
+    }
+    return null;
+  };
+  const flash = (target) => {
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    const before = target.getAttribute("style");
+    target.style.outline = "4px solid #f9ab00";
+    target.style.background = "#fff3cd";
+    setTimeout(() => (before === null ? target.removeAttribute("style") : target.setAttribute("style", before)), 4000);
+  };
+
+  const evidenceItem = (id, e) => {
+    if (!e) return el("div", { className: "muted", textContent: `${id} (details not available)` });
+    const show = el("button", { type: "button", className: "small", textContent: "Show on page" });
+    show.onclick = () => {
+      const target = findOnPage(e.quote);
+      if (target) flash(target);
+      else toast(`${id} is not on this page. It comes from: ${e.source}${e.date ? `, ${e.date}` : ""}.`);
+    };
+    return el("div", { className: "ev-item" },
+      el("div", { className: "ev-title", textContent: `${id} · ${e.source}${e.date ? ` · ${e.date}` : ""}${e.rating ? ` · ${"★".repeat(e.rating)}` : ""}` }),
+      el("blockquote", { textContent: `“${e.quote}”` }),
+      el("div", { className: "tools" }, show, ...(/^https?:/.test(e.url || "") ? [el("a", { href: e.url, target: "_blank", rel: "noopener", textContent: "Open source" })] : [])),
+    );
+  };
+  // Evidence under an answer: what each ID points to, and a button that scrolls to it on the page.
+  const evidenceBlock = (ids) => {
+    if (!ids.length) return el("div", { className: "muted", textContent: "No evidence cited." });
+    const block = el("div", { className: "evidence" }, el("div", { className: "ev-h", textContent: "Evidence" }));
+    try {
+      chrome.runtime.sendMessage({ type: "safeshelf:evidence", ids }, (res) => {
+        const byId = new Map((res?.ok ? res.result.items : []).map((e) => [e.evidence_id, e]));
+        block.append(...ids.map((id) => evidenceItem(id, byId.get(id))));
+      });
+    } catch (_) { block.append(...ids.map((id) => evidenceItem(id, null))); }
+    return block;
+  };
+
+  const level = (r) => {
+    const both = [r.safe.level, r.real.level];
+    return both.includes("red") ? "red" : both.includes("amber") ? "amber" : both.includes("unknown") ? "unknown" : "green";
+  };
+
+  const speak = (r) => {
+    const say = (name, c) => `${name}. ${c.word}. ${c.lines.join(". ")}.`;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(`${say("Is it safe?", r.safe)} ${say("Is it real?", r.real)} ${r.summary}`));
+  };
+
+  const section = (title, c) =>
+    el("div", { className: `sec ${c.level}` }, el("h3", {}, `${title} `, el("span", { className: "verdict", textContent: c.word })), el("ul", {}, ...c.lines.map((l) => el("li", { textContent: l }))));
+
+  // Side-rail icons: plain stroked paths, one family, drawn in the button's text colour.
+  const ICON_PATHS = {
+    check: "M12 3l7 3v5c0 5-3.2 8.2-7 10-3.8-1.8-7-5-7-10V6z M9 12l2 2 4-4",
+    save: "M7 3h10a1 1 0 011 1v17l-6-4-6 4V4a1 1 0 011-1z",
+    ask: "M4 5h16v11H9l-5 4z",
+  };
+  const icon = (kind) => {
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    for (const [k, v] of Object.entries({ viewBox: "0 0 24 24", width: "24", height: "24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true" })) svg.setAttribute(k, v);
+    const p = document.createElementNS(ns, "path");
+    p.setAttribute("d", ICON_PATHS[kind] || ICON_PATHS.check);
+    svg.append(p);
+    return svg;
+  };
+
+  // One button + result card. Used once as a floating button (product page) and once per product card (results pages).
+  // Nothing is sent to the API until the button is clicked.
+  const createWidget = (getPage, mode) => {
+    const host = el("div", { className: mode });
+    const root = host.attachShadow({ mode: "open" });
+    // Full wording on product pages, short wording on cards (less clutter); screen readers always get the full wording.
+    const label = (btn, full, short) => {
+      btn.setAttribute("aria-label", full);
+      if (mode === "inline") { btn.textContent = short; return; }
+      btn.replaceChildren(icon(btn.dataset.kind), el("span", { className: "tip", textContent: full }));
+    };
+    const fab = el("button", { type: "button", className: "fab" });
+    fab.dataset.kind = "check";
+    label(fab, "Check with SafeShelf", "Check");
+    fab.setAttribute("aria-expanded", "false");
+    const shelfBtn = el("button", { type: "button", className: "fab shelf" });
+    shelfBtn.dataset.kind = "save";
+    label(shelfBtn, "Save to My Shelf", "Save");
+    // Shelf Chat: only on a single product page, never on result cards
+    const chatBtn = mode === "float" ? el("button", { type: "button", className: "fab chat" }) : null;
+    if (chatBtn) { chatBtn.dataset.kind = "ask"; label(chatBtn, "Ask SafeShelf", "Ask"); chatBtn.setAttribute("aria-expanded", "false"); }
+    const chatBox = chatBtn ? el("section", { className: "box chat", hidden: true, ariaLabel: "Ask SafeShelf about this product" }) : null;
+    shelfBtn.setAttribute("aria-live", "polite");
+    const bar = el("div", { className: "bar" }, ...(chatBtn ? [chatBtn] : []), shelfBtn, fab); // separate buttons: chat, save, check
+    const box = el("section", { className: "box", hidden: true, ariaLabel: "SafeShelf safety check" });
+    box.setAttribute("aria-live", "polite");
+    // On results pages the popup lives in its own layer on <body>, so no card's CSS can clip, move or cover it.
+    const pop = mode === "inline" ? el("div", { className: "pop" }) : null;
+    if (pop) {
+      pop.attachShadow({ mode: "open" }).append(el("style", { textContent: STYLE }), box);
+      root.append(el("style", { textContent: STYLE }), bar);
+    } else {
+      root.append(el("style", { textContent: STYLE }), box, ...(chatBox ? [chatBox] : []), bar);
+    }
+    let checked = false;
+    let result = null;
+    let saved = false;
+    let setChatOpen = () => {};
+    let resetChat = () => {};
+
+    // Results-page popups are fixed overlays placed beside the button, so they never move page content.
+    const place = () => {
+      if (mode !== "inline" || box.hidden) return;
+      const r = fab.getBoundingClientRect();
+      const w = Math.min(400, innerWidth - 32);
+      const below = innerHeight - r.bottom;
+      box.style.width = `${w}px`;
+      box.style.left = `${Math.max(16, Math.min(r.right - w, innerWidth - w - 16))}px`;
+      if (below >= 260 || below >= r.top) {
+        box.style.top = `${r.bottom + 6}px`; box.style.bottom = "auto"; box.style.maxHeight = `${Math.max(160, below - 20)}px`;
+      } else {
+        box.style.bottom = `${innerHeight - r.top + 6}px`; box.style.top = "auto"; box.style.maxHeight = `${Math.max(160, r.top - 20)}px`;
+      }
+    };
+    const outside = (e) => { const p = e.composedPath(); if (!p.includes(host) && !p.includes(pop)) setOpen(false); };
+    const setOpen = (open) => {
+      box.hidden = !open;
+      fab.setAttribute("aria-expanded", String(open));
+      if (pop) {
+        if (open) document.body.append(pop); else pop.remove();
+        const act = open ? "addEventListener" : "removeEventListener";
+        window[act]("scroll", place, true);
+        window[act]("resize", place);
+        document[act]("click", outside, true);
+      }
+      if (open) place(); else speechSynthesis.cancel();
+    };
+
+    // Chat about the check result just shown: it knows this result and remembers the conversation.
+    const resultChat = (r) => {
+      const thread = []; // {role: "user" | "bot", text}
+      const sid = `SS-A-${Math.random().toString(36).slice(2, 10)}`;
+      const log = el("div", { className: "log", role: "log" });
+      log.setAttribute("aria-live", "polite");
+      const input = el("input", { type: "text", placeholder: "Ask about this result…" });
+      input.setAttribute("aria-label", "Your question about this result");
+      const lang = el("select", {}, el("option", { value: "en", textContent: "English" }), el("option", { value: "hi", textContent: "हिन्दी" }));
+      lang.setAttribute("aria-label", "Answer language");
+      const send = el("button", { type: "submit", textContent: "Send" });
+      const form = el("form", { className: "ask" }, input, lang, send);
+      const chips = el("div", { className: "chips" });
+      const add = (kind, text) => {
+        const m = el("div", { className: `msg ${kind}` }, el("span", { textContent: text }));
+        log.append(m);
+        log.scrollTop = log.scrollHeight;
+        return m;
+      };
+      const context = () => {
+        const p = getPage();
+        return { title: p.title, price: p.price, seller: p.seller, host: r.host, summary: r.summary,
+          safe: { level: r.safe.level, lines: r.safe.lines }, real: { level: r.real.level, lines: r.real.lines }, evidence_ids: r.evidence_ids || [],
+          matched_by: r.matched_by, checks: r.trust_checks, genuine_model_safety: r.genuine_model_safety };
+      };
+      const ask = async (q) => {
+        if (!q.trim()) return;
+        add("user", q);
+        thread.push({ role: "user", text: q });
+        input.value = "";
+        send.disabled = true;
+        const pending = add("bot", "Thinking…");
+        const finish = (text, extra = []) => { pending.replaceChildren(el("span", { textContent: text }), ...extra); send.disabled = false; log.scrollTop = log.scrollHeight; };
+        if (!(await guard("chat", null, "Ask about this result (your question, this result and the last few messages are sent)"))) { // TEMP cost guard
+          thread.pop();
+          return finish("Cancelled. Nothing was sent and nothing was charged.");
+        }
+        try {
+          chrome.runtime.sendMessage({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: q, language: lang.value, session_id: sid, context: context(), history: thread.slice(-7, -1) }, (res) => {
+            if (!res?.ok) { thread.pop(); return finish(`Could not get an answer: ${res?.error || chrome.runtime.lastError?.message}`); }
+            const a = res.result;
+            thread.push({ role: "bot", text: a.text });
+            const speakA = el("button", { type: "button", className: "small", textContent: "Listen" });
+            speakA.setAttribute("aria-label", "Read this answer aloud");
+            speakA.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang.value === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
+            finish(a.text, [evidenceBlock(a.evidence_ids), ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []), speakA]);
+          });
+        } catch (_) { thread.pop(); finish("The extension was reloaded. Please refresh the page."); }
+      };
+      for (const q of ["Why this result?", "Is it safe to buy?", "What should I check before buying?"]) {
+        chips.append(el("button", { type: "button", textContent: q, onclick: () => ask(q) }));
+      }
+      form.onsubmit = (e) => { e.preventDefault(); ask(input.value); };
+      return el("div", { className: "rchat" }, el("div", { className: "ctx-h", textContent: "Ask about this result" }), log, chips, form);
+    };
+
+    // Tabs under the result: one per SafeShelf API. Each loads when first opened, and only if the API serves it for real.
+    const panelTabs = (r, overviewNodes) => {
+      const similar = !r.product_id && r.similar_product_id; // a look-alike match: similar, not the same product
+      const pid = r.product_id || r.similar_product_id; // what the tabs look up
+      const noMatch = () => el("div", { className: "notlive", textContent: "SafeShelf found no product in its catalog that matches this listing, so there is nothing to look up for it." });
+      const similarBanner = () => el("div", { className: "notlive", textContent: `Showing data for a similar product (${r.similar_product_id}), not this exact listing. It doesn't prove anything about this listing.` });
+      const listing = () => { const { product_id, listing_id, ...rest } = getPage(); return rest; };
+      const lookup = (op, key) => { const d = el("div"); if (pid) loadPanel(d, op, { product_id: pid }, key); else d.append(noMatch()); return d; };
+      const build = {
+        overview: () => el("div", {}, ...overviewNodes),
+        marks: () => lookup("certifications", "certifications"),
+        copies: () => {
+          if (!pid) return noMatch();
+          const found = el("div");
+          return el("div", {}, lookup("relationships", "relationships"), el("div", { className: "tools" },
+            costlyButton("Find copies with AI", "duplicates", "Search for copies of this product", () => loadPanel(found, "duplicates", { product_id: pid }, "duplicates"))), found);
+        },
+        history: () => lookup("history", "history"),
+        safer: () => lookup("alternatives", "alternatives"),
+        details: () => {
+          if (!pid) return noMatch();
+          const how = el("div");
+          return el("div", {}, lookup("product", "product"), el("div", { className: "tools" },
+            costlyButton("How was it identified?", "identify", "Identify this listing again", () => loadPanel(how, "identify", { listing: listing() }, "identify"))), how);
+        },
+        report: () => {
+          if (!r.product_id) return el("div", { className: "notlive", textContent: "A report needs an exact product match, so one can't be filed for this listing yet." });
+          const d = el("div", {}, el("div", { className: "vnote", textContent: "Checking whether reporting is available…" }));
+          try {
+            chrome.runtime.sendMessage({ type: "safeshelf:status" }, (res) => {
+              if (!res?.ok || !res.result.find((o) => o.op === "report")?.live) return d.replaceChildren(el("div", { className: "notlive", textContent: NOT_LIVE }));
+              const ta = el("textarea", { className: "rep", placeholder: "What went wrong? Please don't include your name, phone or address." });
+              ta.setAttribute("aria-label", "Describe the problem");
+              const out = el("div");
+              const send = el("button", { type: "button", className: "small", textContent: "Send report" });
+              send.onclick = () => {
+                if (ta.value.trim().length < 10) return out.replaceChildren(el("div", { className: "vnote", textContent: "Please write at least 10 characters." }));
+                send.disabled = true;
+                loadPanel(out, "report", { product_id: pid, description: ta.value.trim() }, "report");
+              };
+              d.replaceChildren(el("div", { className: "vnote", textContent: "Your report goes to SafeShelf. Personal details are masked, but please don't include any." }), ta, send, out);
+            });
+          } catch (_) { d.replaceChildren(el("div", { className: "notlive", textContent: "The extension was reloaded. Please refresh the page." })); }
+          return d;
+        },
+      };
+      const names = [["overview", "Overview"], ["marks", "Marks"], ["copies", "Copies"], ["history", "History"], ["safer", "Safer options"], ["details", "Details"], ["report", "Report"]];
+      const bar = el("div", { className: "tabs", role: "tablist" });
+      const area = el("div", { role: "tabpanel" });
+      const made = {};
+      const buttons = names.map(([key, text]) => {
+        const b = el("button", { type: "button", className: "tab", textContent: text, role: "tab" });
+        b.onclick = () => {
+          buttons.forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+          made[key] ||= el("div", {}, ...(similar && ["marks", "copies", "history", "safer", "details"].includes(key) ? [similarBanner()] : []), build[key]());
+          area.replaceChildren(made[key]);
+          place();
+        };
+        b.onkeydown = (e) => {
+          const i = buttons.indexOf(b), n = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : null;
+          if (n !== null) { e.preventDefault(); buttons[(n + buttons.length) % buttons.length].focus(); }
+        };
+        return b;
+      });
+      bar.append(...buttons);
+      buttons[0].click();
+      return el("div", {}, bar, area);
+    };
+
+    const render = (r) => {
+      result = r;
+      const lvl = level(r);
+      fab.className = `fab ${lvl}`;
+      const word = lvl === "red" ? "Danger" : lvl === "amber" ? "Be careful" : lvl === "unknown" ? "Not enough evidence" : "OK so far";
+      label(fab, `SafeShelf: ${word}`, word);
+      box.className = `box ${lvl}`;
+      const speakBtn = el("button", { type: "button", className: "small", textContent: "Read it to me" });
+      speakBtn.onclick = () => speak(r);
+      const againBtn = el("button", { type: "button", className: "small", textContent: "Check again" });
+      againBtn.onclick = () => run();
+      const closeBtn = el("button", { type: "button", className: "small", textContent: "Close" });
+      closeBtn.onclick = () => { setOpen(false); fab.focus(); };
+      box.replaceChildren(
+        ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
+        el("div", { className: "head" }, el("span", { className: "brand", textContent: "SafeShelf" }), el("span", { className: "pill", textContent: r.host })),
+        panelTabs(r, [
+          el("p", { textContent: r.summary }),
+          el("div", { className: "ctx-h", textContent: "What was sent for this check:" }),
+          contextCard(getPage()),
+          section("Is it safe?", r.safe),
+          section("Is it real?", r.real),
+          el("p", { className: "muted", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),
+          resultChat(r),
+        ]),
+        el("div", { className: "row" }, speakBtn, againBtn, closeBtn),
+      );
+      place();
+    };
+
+    const run = async () => {
+      if (!(await guard("check", getPage().url, "Check this product", getPage()))) { // TEMP cost guard
+        checked = false;
+        box.className = "box";
+        box.replaceChildren(el("span", { textContent: "Check cancelled. Nothing was sent and nothing was charged." }));
+        return;
+      }
+      checked = true;
+      box.className = "box";
+      box.replaceChildren(el("span", { className: "brand", textContent: "SafeShelf is checking this product… the first check can take up to a minute." }));
+      try {
+        chrome.runtime.sendMessage({ type: "safeshelf:check", page: getPage() }, (res) => {
+          if (res?.ok) render(res.result);
+          else box.replaceChildren(el("span", { textContent: `SafeShelf could not check this page: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?` }));
+        });
+      } catch (_) { /* extension was reloaded; the new script takes over */ }
+    };
+
+    // Saving needs the product matched first. That lookup is silent: it never touches the Check button or the result card.
+    const identify = async (done) => {
+      if (!(await guard("check", getPage().url, "Identify this product (needed to save it or to chat)", getPage()))) return done(null, "Cancelled. Nothing was sent and nothing was charged."); // TEMP cost guard
+      try {
+        chrome.runtime.sendMessage({ type: "safeshelf:check", page: getPage() }, (res) => {
+          const why = res?.ok ? (res.result.product_id ? null : "SafeShelf does not know this product yet") : (res?.error || chrome.runtime.lastError?.message || "no answer");
+          if (why) shelfBtn.title = why;
+          done(res?.ok ? res.result : null, why);
+        });
+      } catch (_) { done(null, "The extension was reloaded. Refresh the page."); }
+    };
+
+    // Saves this page to My Shelf. Works with or without a check result, and with or without a matched product.
+    const save = (r) => {
+      try {
+        const page = getPage();
+        const pid = r?.product_id || page.product_id || null;
+        const meta = { title: page.title, url: page.url, host: r?.host || location.hostname, level: r ? level(r) : null };
+        chrome.runtime.sendMessage({ type: "safeshelf:save", product_id: pid, meta }, (res) => {
+          if (res?.ok) {
+            const item = res.result;
+            saved = true;
+            const note = item.synced ? "Saved to your SafeShelf account. We'll re-check recalls daily."
+              : item.api_error ? `The API did not accept it (${item.api_error}), so it is saved on this browser only.`
+              : "Saved on this browser.";
+            toast(note, "View shelf", () => chrome.runtime.sendMessage({ type: "safeshelf:open-shelf" }));
+            shelfBtn.disabled = false;
+            label(shelfBtn, "Saved. View shelf", "Saved");
+            shelfBtn.title = `${note} Click to view My Shelf.`;
+          } else {
+            label(shelfBtn, "Could not save. Retry", "Retry");
+            shelfBtn.title = res?.error || chrome.runtime.lastError?.message || "";
+            toast(`Could not save to My Shelf: ${shelfBtn.title || "unknown error"}`);
+            shelfBtn.disabled = false;
+          }
+        });
+      } catch (_) { shelfBtn.disabled = false; }
+    };
+    shelfBtn.onclick = () => {
+      if (saved) { chrome.runtime.sendMessage({ type: "safeshelf:open-shelf" }); return; }
+      shelfBtn.disabled = true;
+      label(shelfBtn, "Saving…", "…");
+      save(result); // no check needed: saving is free
+    };
+
+    const toggle = () => {
+      if (!box.hidden) return setOpen(false);
+      setChatOpen(false);
+      setOpen(true);
+      if (!checked) run();
+    };
+    const reset = () => {
+      checked = false;
+      result = null;
+      saved = false;
+      resetChat();
+      shelfBtn.disabled = false;
+      label(shelfBtn, "Save to My Shelf", "Save");
+      shelfBtn.title = "";
+      fab.className = "fab";
+      label(fab, "Check with SafeShelf", "Check");
+      setOpen(false);
+    };
+    if (chatBtn) {
+      const log = el("div", { className: "log", role: "log" });
+      log.setAttribute("aria-live", "polite");
+      const input = el("input", { type: "text", placeholder: "Ask about this product…" });
+      input.setAttribute("aria-label", "Your question");
+      const lang = el("select", {}, el("option", { value: "en", textContent: "English" }), el("option", { value: "hi", textContent: "हिन्दी" }));
+      lang.setAttribute("aria-label", "Answer language");
+      const sendBtn = el("button", { type: "submit", textContent: "Send" });
+      const form = el("form", { className: "ask" }, input, lang, sendBtn);
+      const closeChat = el("button", { type: "button", className: "small", textContent: "Close" });
+      closeChat.onclick = () => { setChatOpen(false); chatBtn.focus(); };
+      const chips = el("div", { className: "chips" });
+      const ctxHolder = el("div"); // page context the product was identified from, refreshed each time the chat opens
+      const convo = []; // this conversation so far: {role: "user" | "bot", text, evidence}
+      const historyBtn = el("button", { type: "button", className: "small", textContent: "History" });
+      const clearBtn = el("button", { type: "button", className: "small", textContent: "Clear" });
+      const histView = el("div", { className: "hist", hidden: true });
+      const clearNote = el("p", { className: "muted", role: "status" });
+
+      // Moves the current conversation into history, then empties the chat.
+      const archive = async () => {
+        if (convo.length) {
+          const page = getPage();
+          const list = await history.get();
+          await history.set([{ id: Date.now(), title: page.title || page.url, url: page.url, at: new Date().toISOString(), messages: convo.slice() }, ...list].slice(0, 30));
+          convo.length = 0;
+        }
+        log.replaceChildren();
+      };
+      const showHistory = async (show) => {
+        histView.hidden = !show;
+        log.hidden = chips.hidden = form.hidden = show;
+        historyBtn.textContent = show ? "Back to chat" : "History";
+        if (!show) return;
+        const list = await history.get();
+        const wipe = el("button", { type: "button", className: "small", textContent: "Delete all history" });
+        wipe.onclick = async () => { await history.set([]); showHistory(true); };
+        histView.replaceChildren(
+          ...(list.length ? [] : [el("p", { className: "muted", textContent: "No past chats yet. When you press Clear, the chat is saved here." })]),
+          ...list.map((h) => {
+            const del = el("button", { type: "button", className: "small", textContent: "Delete" });
+            del.setAttribute("aria-label", `Delete chat about ${h.title}`);
+            del.onclick = async () => { await history.set((await history.get()).filter((x) => x.id !== h.id)); showHistory(true); };
+            return el("div", { className: "hist-item" },
+              el("strong", { textContent: h.title }),
+              el("div", { className: "when", textContent: new Date(h.at).toLocaleString() }),
+              ...h.messages.map((m) => el("p", { textContent: `${m.role === "user" ? "You" : "SafeShelf"}: ${m.text}${m.evidence?.length ? ` (${m.evidence.join(", ")})` : ""}` })),
+              del,
+            );
+          }),
+          ...(list.length ? [wipe] : []),
+        );
+      };
+      historyBtn.onclick = () => showHistory(histView.hidden);
+      clearBtn.onclick = async () => {
+        const had = convo.length > 0;
+        await archive();
+        showHistory(false);
+        clearNote.textContent = had ? "Chat cleared and saved to History." : "";
+        input.focus();
+      };
+
+      const add = (kind, text, extra = []) => {
+        const m = el("div", { className: `msg ${kind}` }, el("span", { textContent: text }), ...extra);
+        log.append(m);
+        log.scrollTop = log.scrollHeight;
+        return m;
+      };
+      const getProductId = () => new Promise((done) => {
+        const pid = result?.product_id || getPage().product_id;
+        if (pid) done({ pid }); else identify((r, why) => done({ pid: r?.product_id || null, why }));
+      });
+      const ask = async (question) => {
+        if (!question.trim()) return;
+        showHistory(false);
+        clearNote.textContent = "";
+        add("user", question);
+        convo.push({ role: "user", text: question });
+        input.value = "";
+        sendBtn.disabled = true;
+        const pending = add("bot", "Thinking…");
+        if (!(await guard("chat", null, "Ask SafeShelf a question (only your question and the product ID are sent)"))) { // TEMP cost guard
+          pending.replaceChildren(el("span", { textContent: "Cancelled. Nothing was sent and nothing was charged." }));
+          convo.pop();
+          sendBtn.disabled = false;
+          return;
+        }
+        const { pid, why } = await getProductId();
+        const done = (text, extra = []) => { pending.replaceChildren(el("span", { textContent: text }), ...extra); sendBtn.disabled = false; log.scrollTop = log.scrollHeight; };
+        if (!pid) return done(`I could not match this product, so I can't answer about it yet${why ? ` (${why}${/running|answered|Failed to fetch/i.test(why) ? "; the SafeShelf API may be slow or down" : ""})` : ""}.`);
+        try {
+          chrome.runtime.sendMessage({ type: "safeshelf:chat", product_id: pid, message: question, language: lang.value }, (res) => {
+            if (!res?.ok) return done(`Could not get an answer: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?`);
+            const a = res.result;
+            convo.push({ role: "bot", text: a.text, evidence: a.evidence_ids });
+            const speakA = el("button", { type: "button", className: "small", textContent: "Listen" });
+            speakA.setAttribute("aria-label", "Read this answer aloud");
+            speakA.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang.value === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
+            done(a.text, [
+              evidenceBlock(a.evidence_ids),
+              ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []),
+              speakA,
+            ]);
+          });
+        } catch (_) { done("The extension was reloaded. Please refresh the page."); }
+      };
+      for (const q of ["Is this safe in a child's room?", "Is it genuine?", "Is there a safer option?"]) {
+        chips.append(el("button", { type: "button", textContent: q, onclick: () => ask(q) }));
+      }
+      form.onsubmit = (e) => { e.preventDefault(); ask(input.value); };
+      chatBox.append(
+        el("div", { className: "head" }, el("span", { className: "brand", textContent: "Ask SafeShelf" }), el("div", { className: "tools" }, historyBtn, clearBtn, closeChat)),
+        ctxHolder, log, histView, chips, form, clearNote,
+      );
+      chatBox.addEventListener("keydown", (e) => { if (e.key === "Escape") { setChatOpen(false); chatBtn.focus(); } });
+
+      setChatOpen = (open) => {
+        chatBox.hidden = !open;
+        chatBtn.setAttribute("aria-expanded", String(open));
+        if (open) { setOpen(false); ctxHolder.replaceChildren(el("div", { className: "ctx-h", textContent: "Page context used to identify this product:" }), contextCard(getPage())); input.focus(); } else speechSynthesis.cancel();
+      };
+      resetChat = () => { archive(); showHistory(false); clearNote.textContent = ""; setChatOpen(false); }; // a new product starts a fresh chat; the old one goes to History
+      chatBtn.onclick = () => setChatOpen(chatBox.hidden);
+    }
+    fab.onclick = toggle;
+    box.addEventListener("keydown", (e) => { if (e.key === "Escape") { setOpen(false); fab.focus(); } });
+    return { host, toggle, reset, remove() { host.remove(); pop?.remove(); } };
+  };
+
+  // Shops navigate without full page loads: floating button on product pages, one button per card on results pages.
+  let enabled = false; // stays off until the saved on/off choice has been read
+  const floating = createWidget(readPage, "float");
+  const inline = new Set();
+  let lastUrl = location.href;
+
+  const tick = () => {
+    if (!enabled) { // turned off from the toolbar menu: remove everything we added
+      speechSynthesis.cancel();
+      toastHost?.remove();
+      floating.host.remove();
+      inline.forEach((w) => w.remove());
+      inline.clear();
+      document.querySelectorAll("[data-safeshelf-card]").forEach((c) => delete c.dataset.safeshelfCard);
+      return;
+    }
+    if (site.isProduct()) {
+      inline.forEach((w) => w.remove());
+      inline.clear();
+      if (!floating.host.isConnected) document.body.append(floating.host);
+      if (location.href !== lastUrl) { lastUrl = location.href; floating.reset(); }
+      return;
+    }
+    lastUrl = location.href;
+    floating.host.remove();
+    floating.reset();
+    if (!site.cards) return;
+    for (const card of document.querySelectorAll(site.cards.selector)) {
+      if (card.dataset.safeshelfCard) continue;
+      card.dataset.safeshelfCard = "1";
+      if (getComputedStyle(card).position === "static") card.style.position = "relative"; // anchor for the corner button; no layout change
+      const w = createWidget(() => readCard(card), "inline");
+      inline.add(w);
+      card.append(w.host);
+    }
+  };
+  const timer = setInterval(tick, 1000);
+
+  const onMessage = (msg, _s, reply) => {
+    if (msg === "safeshelf:toggle") { tick(); if (floating.host.isConnected) floating.toggle(); }
+  };
+  chrome.runtime.onMessage.addListener(onMessage);
+  window.__safeshelf = {
+    cleanup() {
+      clearInterval(timer);
+      toastHost?.remove();
+      floating.host.remove();
+      inline.forEach((w) => w.remove());
+      document.querySelectorAll("[data-safeshelf-card]").forEach((c) => delete c.dataset.safeshelfCard);
+      chrome.runtime.onMessage.removeListener(onMessage);
+    },
+  };
+
+  const setEnabled = (value) => { enabled = value !== false; tick(); };
+  chrome.storage.local.get("enabled", ({ enabled: v }) => setEnabled(v));
+  const onStorage = (changes, area) => { if (area === "local" && changes.enabled) setEnabled(changes.enabled.newValue); };
+  chrome.storage.onChanged.addListener(onStorage);
+  const oldCleanup = window.__safeshelf.cleanup;
+  window.__safeshelf.cleanup = () => { chrome.storage.onChanged.removeListener(onStorage); oldCleanup(); };
+}
