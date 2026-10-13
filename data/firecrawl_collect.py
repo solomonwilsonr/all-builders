@@ -16,6 +16,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import time
 from pathlib import Path
 
@@ -141,11 +142,47 @@ def run(jobs_path: str, max_credits: int, dry_run: bool) -> None:
     print(f"credits used so far (all runs): {spent()}")
 
 
+CATALOG_QUERIES = ["65W GaN charger", "20W USB C fast charger", "33W fast charger type c", "power bank 20000mAh",
+                   "power bank 10000mAh fast charging", "room heater", "fan heater 2000W", "extension board surge protector",
+                   "smart TV 43 inch", "smart TV 55 inch 4K"]
+CATALOG_SITES = {"amazon.in": re.compile(r"amazon\.in/.*/?dp/[A-Z0-9]{10}"),
+                 "flipkart.com": re.compile(r"flipkart\.com/.+/p/itm\w+")}
+
+
+def plan_catalog(limit: int) -> None:
+    """Indian marketplace searches for the hero categories (catalog for identify, price and photo checks)."""
+    jobs = [{"type": "search", "query": f"site:{site} {query}", "limit": limit, "tag": "catalog_search"}
+            for query in CATALOG_QUERIES for site in CATALOG_SITES]
+    path = RAW / "firecrawl_catalog_search.jsonl"
+    path.write_text("".join(json.dumps(j) + "\n" for j in jobs))
+    print(f"wrote {len(jobs)} jobs -> {path} (estimated {sum(map(estimate, jobs))} credits)")
+
+
+def plan_catalog_scrapes(max_pages: int) -> None:
+    """Product pages found by the catalog searches, one scrape each (listing pages only, never reviews)."""
+    urls: list[str] = []
+    for saved in sorted((OUT / "catalog_search").glob("*.json")):
+        result = json.loads(saved.read_text())["result"]
+        data = result.get("data")
+        for item in data.get("web", []) if isinstance(data, dict) else (data or []):
+            url = (item.get("url") or "").split("?")[0].split("/ref=")[0]
+            if any(p.search(url) for p in CATALOG_SITES.values()) and url not in urls:
+                urls.append(url)
+    jobs = [{"type": "scrape", "url": url, "tag": "catalog_pages"} for url in urls[:max_pages]]
+    path = RAW / "firecrawl_catalog_pages.jsonl"
+    path.write_text("".join(json.dumps(j) + "\n" for j in jobs))
+    print(f"{len(urls)} product pages found; wrote {len(jobs)} scrape jobs -> {path}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="cmd", required=True)
     plan = sub.add_parser("plan-recall-twins")
     plan.add_argument("--limit", type=int, default=5, help="search results per recall")
+    cat = sub.add_parser("plan-catalog")
+    cat.add_argument("--limit", type=int, default=20, help="search results per query")
+    pages = sub.add_parser("plan-catalog-scrapes")
+    pages.add_argument("--max-pages", type=int, default=800)
     go = sub.add_parser("run")
     go.add_argument("--jobs", required=True)
     go.add_argument("--max-credits", type=int, required=True, help="hard cap for this run")
@@ -154,6 +191,10 @@ def main() -> None:
 
     if args.cmd == "plan-recall-twins":
         plan_recall_twins(args.limit)
+    elif args.cmd == "plan-catalog":
+        plan_catalog(args.limit)
+    elif args.cmd == "plan-catalog-scrapes":
+        plan_catalog_scrapes(args.max_pages)
     else:
         run(args.jobs, args.max_credits, args.dry_run)
 
