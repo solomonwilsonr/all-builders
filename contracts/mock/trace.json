@@ -1,7 +1,7 @@
 {
   "investigation_id": "SS-I-0001",
   "steps": [
-    {"n": 1, "tool": "identify", "model": "gemini-flash", "seconds": 1.2, "cost_usd": 0.0004, "summary": "Identified ExampleBrand CX-65"},
+    {"n": 1, "tool": "identify", "model": "gemini-flash", "seconds": 1.2, "cost_usd": 0.0004, "summary": "Identified Kelvo CX-65"},
     {"n": 2, "tool": "duplicates", "model": "gemini-flash", "seconds": 2.1, "cost_usd": 0.0011, "summary": "1 exact model, 1 possible rebrand, 1 look-alike"},
     {"n": 3, "tool": "safety", "model": "gemini-flash", "seconds": 1.8, "cost_usd": 0.0009, "summary": "9 overheating reports, 4 with photos"},
     {"n": 4, "tool": "trust-check", "model": null, "seconds": 0.6, "cost_usd": 0.0, "summary": "Copied photos, price 21% of genuine, website 19 days old"}

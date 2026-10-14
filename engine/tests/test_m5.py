@@ -2,7 +2,7 @@ from engine import marks, recalls, store
 from engine.normalize import normalise
 
 TV = {**normalise({"brand": "ViewMax", "model": "VM-55U8", "category": "television"}), "category": "television"}
-CHARGER = normalise({"brand": "ExampleBrand", "model": "CX-65", "category": "usb_charger"})
+CHARGER = normalise({"brand": "Kelvo", "model": "CX-65", "category": "usb_charger"})
 
 
 class FakeConn:
@@ -29,8 +29,8 @@ def test_claims_read_stars_and_numbers_without_gemini():
     found = marks.claims({"title": "ViewMax 55-inch TV, 5-Star Energy Rating", "label_text": "Reg ATV5188"},
                          use_gemini=False)
     assert found == [{"authority": marks.AU, "number": "ATV5188", "claimed_value": "5 stars"}]
-    bis = marks.claims({"brand": "ExampleBrand", "label_text": "Output 65W | R-41XXXXXX"}, use_gemini=False)
-    assert bis == [{"authority": marks.BIS, "number": "R-41XXXXXX", "claimed_value": "ExampleBrand"}]
+    bis = marks.claims({"brand": "Kelvo", "label_text": "Output 65W | R-41097318"}, use_gemini=False)
+    assert bis == [{"authority": marks.BIS, "number": "R-41097318", "claimed_value": "Kelvo"}]
 
 
 def test_more_stars_than_registered_is_a_star_rating_mismatch(monkeypatch):
@@ -54,9 +54,9 @@ def test_unknown_when_registry_cannot_answer(monkeypatch):
 
 
 def test_bis_mock_verifies_the_right_brand_only():
-    assert marks.check({"authority": marks.BIS, "number": "R-41XXXXXX"}, CHARGER)["result"] == "verified"
+    assert marks.check({"authority": marks.BIS, "number": "R-41097318"}, CHARGER)["result"] == "verified"
     other = normalise({"brand": "VoltNova", "model": "VN-65PD", "category": "usb_charger"})
-    assert marks.check({"authority": marks.BIS, "number": "R-41XXXXXX"}, other)["field"] == "brand"
+    assert marks.check({"authority": marks.BIS, "number": "R-41097318"}, other)["field"] == "brand"
 
 
 def test_recall_needs_the_exact_model_number():

@@ -6,7 +6,7 @@ import bot
 import pytest
 from fastapi.testclient import TestClient
 
-CHARGER = {"product_id": "SS-P-10291", "brand": "ExampleBrand", "model": "CX-65"}
+CHARGER = {"product_id": "SS-P-10291", "brand": "Kelvo", "model": "CX-65"}
 AMBER = {"verdict": "amber", "reviews_checked": 24, "official_status": {"recalled": False, "recall_ids": []},
          "ai_findings": [{"hazard_type": "fire_burn", "independent_reports": 6}]}
 FAKE_SHOP = {"summary": "Be careful: price is 21% of the genuine product's lowest price from an authorised seller; "
@@ -31,7 +31,7 @@ def test_language_follows_the_shopper():
 
 def test_amber_reply_in_english_names_reports_shop_and_alternative():
     text = bot.reply(CHARGER, AMBER, "en", trust=FAKE_SHOP, alternatives=ALTS)
-    assert text.startswith("⚠️ BE CAREFUL. 6 buyers reported overheating, fire or burns with ExampleBrand CX-65.")
+    assert text.startswith("⚠️ BE CAREFUL. 6 buyers reported overheating, fire or burns with Kelvo CX-65.")
     assert "not an official recall" in text
     assert "price is 21%" in text and "AI assistants" not in text.split("\n\n")[1]
     assert "hidden text aimed at AI assistants" in text
@@ -90,7 +90,7 @@ async def test_link_message_end_to_end_without_network(monkeypatch):
         return AMBER if path.endswith("safety") else ALTS
 
     async def fake_page(url):
-        return {"url": url, "title": "ExampleBrand CX-65 charger", "price": 299}
+        return {"url": url, "title": "Kelvo CX-65 charger", "price": 299}
 
     async def fake_text(to, text):
         sent.append(("text", text))

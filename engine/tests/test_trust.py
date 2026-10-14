@@ -60,9 +60,9 @@ def test_hidden_instructions_and_wording():
 
 
 def test_authorised_sellers():
-    assert trust.authorised("ExampleBrand", None, "https://demo.safeshelf.app/product/cx-65")
-    assert trust.authorised("ExampleBrand", "Appario Retail", "https://www.amazon.in/dp/X")
-    assert not trust.authorised("ExampleBrand", "Deals4U", "https://example-deals-store.test/x")
+    assert trust.authorised("Kelvo", None, "https://demo.safeshelf.app/product/cx-65")
+    assert trust.authorised("Kelvo", "Appario Retail", "https://www.amazon.in/dp/X")
+    assert not trust.authorised("Kelvo", "Deals4U", "https://example-deals-store.test/x")
 
 
 def test_listing_brand_and_mrp_from_the_page():

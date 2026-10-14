@@ -1,9 +1,9 @@
 from engine.normalize import normalise
 from engine.rules import decide, inherits_recall
 
-CX65 = normalise({"brand": "ExampleBrand", "model": "CX-65", "category": "usb_charger",
-                  "title": "ExampleBrand 65W GaN charger, 2 USB-C"})
-CX65_COPY = normalise({"brand": "Example Brand", "model": "cx 65", "category": "usb_charger",
+CX65 = normalise({"brand": "Kelvo", "model": "CX-65", "category": "usb_charger",
+                  "title": "Kelvo 65W GaN charger, 2 USB-C"})
+CX65_COPY = normalise({"brand": "KELVO ", "model": "cx 65", "category": "usb_charger",
                        "title": "65W fast charger 2 USB-C"})
 REBRAND = normalise({"brand": "VoltNova", "model": "VN-65PD", "category": "usb_charger",
                      "title": "VoltNova 65W charger, 2 USB-C"})
@@ -38,7 +38,7 @@ def test_rebrand_with_conflicting_specs_is_only_similar():
 
 
 def test_same_model_with_different_wattage_is_a_variant():
-    other = normalise({"brand": "ExampleBrand", "model": "CX-65", "category": "usb_charger", "title": "45W"})
+    other = normalise({"brand": "Kelvo", "model": "CX-65", "category": "usb_charger", "title": "45W"})
     d = decide(CX65, other, {"proposed_class": "exact_model"})
     assert (d.relationship, d.status) == ("model_variant", "unverified")
 

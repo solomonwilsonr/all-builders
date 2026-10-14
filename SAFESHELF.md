@@ -315,7 +315,7 @@ A fingerprint is a structured identity record, not just one image embedding.
 {
   "product_id": "SS-P-10291",
   "category": "usb_charger",
-  "brand": "ExampleBrand",
+  "brand": "Kelvo",
   "model": "CX-65",
   "gtin": null,
   "attributes": {
@@ -328,7 +328,7 @@ A fingerprint is a structured identity record, not just one image embedding.
     "label_text_hash": "a91f...",
     "housing_shape": "rounded_rectangle"
   },
-  "certifications_claimed": ["BIS R-41XXXXXX"],
+  "certifications_claimed": ["BIS R-41097318"],
   "image_embedding_ref": "EMB-921",
   "text_embedding_ref": "EMB-922",
   "identity_version": 3,
@@ -533,7 +533,7 @@ The intelligence is offered through reusable, versioned APIs, not built only int
     }
   ],
   "certifications": [
-    { "authority": "BIS", "number": "R-41XXXXXX", "result": "mismatch", "field": "brand" }
+    { "authority": "BIS", "number": "R-41097318", "result": "mismatch", "field": "brand" }
   ],
   "label": "AI finding - not a regulatory determination"
 }

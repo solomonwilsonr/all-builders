@@ -11,7 +11,7 @@ assert.strictEqual(P.relationships(mock("relationships")).rows.length, 3);
 assert.match(P.duplicates(mock("duplicates")).rows[1].sub, /Differ: different brand name/);
 assert.strictEqual(P.history(mock("history")).rows[1].icon, "⚠️");
 assert.match(P.alternatives(mock("alternatives")).rows[0].sub, /₹1,450/);
-assert.ok(P.product(mock("product")).rows.some((r) => /Brand: ExampleBrand/.test(r.text)));
+assert.ok(P.product(mock("product")).rows.some((r) => /Brand: Kelvo/.test(r.text)));
 assert.match(P.report(mock("report_created")).rows[0].text, /SS-R-0001/);
 assert.match(P.catalogScan(mock("catalog_scan")).title, /14 of your 2,300/);
 assert.match(P.trace(mock("trace")).rows[0].sub, /₹0\.04/);
