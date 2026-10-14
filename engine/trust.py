@@ -93,6 +93,8 @@ def website_check(url: str | None, today: date | None = None) -> dict:
     today = today or datetime.now(UTC).date()
     if not hostname:
         return {"result": "unknown", "reason": "no URL"}
+    if hostname in ("localhost", "127.0.0.1"):  # a page served from this computer: nothing to look up
+        return {"result": "unknown", "reason": "a local test page has no registration date"}
     if any(m in hostname for m in MARKETPLACES):
         return {"result": "skipped", "reason": "large marketplace; the seller, not the website, is what matters"}
     domain = registrable(hostname)
@@ -268,7 +270,7 @@ def safety_note(product_id: str) -> str:
 
 
 def trust_check(listing: dict) -> dict:
-    product_id, how = identity.resolve(listing)
+    product_id, how = identity.resolve(listing, needs_reference=True)
     genuine = store.latest_fingerprint(product_id) if product_id else None
     url, seller = listing.get("url"), listing.get("seller")
     if genuine:

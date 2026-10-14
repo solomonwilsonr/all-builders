@@ -7,7 +7,7 @@ REGION ?= asia-south1
 SQL_INSTANCE ?= $(GCP_PROJECT):$(REGION):safeshelf-db
 DEPLOY_MOCK ?= 0
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api bench
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api bench warm
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
 	node extension/tests/run_all.mjs
@@ -40,7 +40,7 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 		mkdir -p .build/bench && cp bench/results.json .build/bench/ && \
 		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
-		--allow-unauthenticated --min-instances 0 --memory 1Gi --timeout 300 \
+		--allow-unauthenticated --min-instances 1 --memory 1Gi --timeout 300 \
 		--add-cloudsql-instances $(SQL_INSTANCE) --set-secrets DB_PASSWORD=safeshelf-db-password:latest \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT)
 
@@ -56,3 +56,12 @@ bench:          ## M2 backtest: reviews from the bucket (once), Gemini labels (c
 	@mkdir -p data/raw/amazon_reviews && gcloud storage cp --no-clobber \
 		"gs://safeshelf-data-03d8d835/amazon_reviews_backtest/reviews_*.jsonl" data/raw/amazon_reviews/
 	cd engine && PYTHONPATH=.. uv run --python 3.12 python ../bench/backtest.py
+
+warm:           ## before a demo or recording: run every demo check once so the first click answers in seconds
+	@for body in \
+		'{"url":"https://demo.safeshelf.app/product/cx-65","title":"Kelvo CX-65 65W Dual-Port USB-C Fast Charger","price":1399,"currency":"INR","seller":"Kelvo Official Store"}' \
+		'{"url":"https://example-deals-store.test/65w-charger","title":"65W Super Fast Charger - Kelvo CX-65 Original","price":299,"currency":"INR","page_text":"Brand Kelvo\nModel CX-65"}'; do \
+		curl -s -o /dev/null -w "trust-check %{http_code} %{time_total}s\n" -X POST $(API_URL)/v1/listings/trust-check -H 'content-type: application/json' -d "$$body"; done
+	@for p in SS-P-10291 SS-P-30118 SS-P-50001 SS-P-60002; do \
+		curl -s -o /dev/null -w "safety $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/safety; \
+		curl -s -o /dev/null -w "certifications $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/certifications; done

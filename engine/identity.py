@@ -43,12 +43,16 @@ def same_brand(fp: dict, listing: dict, product_id: str) -> bool:
     return bool(other) and other in re.sub(r"[^a-z0-9]", "", (listing.get("title") or "").lower())
 
 
-def resolve(listing: dict, max_distance: float = 0.12) -> tuple[str | None, str]:
+def resolve(listing: dict, max_distance: float = 0.12, needs_reference: bool = False) -> tuple[str | None, str]:
     """Which known product does this listing claim to be? Read-only, so fake-shop listings never become products.
-    Returns (product_id, how): url, model_number, look_alike (brand-blind embedding) or (None, none)."""
+    Returns (product_id, how): url, model_number, look_alike (brand-blind embedding) or (None, none).
+    needs_reference: a product known only from this very page, as a shopper sent it (no marketplace: made by an
+    earlier identify of, say, a fake shop), is no reference for checking that page, so the model number decides.
+    Catalog and demo listings carry a marketplace and always count."""
     fp = fingerprint(listing)
     known = listing.get("url") and store.listing_by_url(listing["url"])
-    if known:
+    if known and (not needs_reference or any(row["url"] != listing["url"] or row["marketplace"]
+                                             for row in store.product_listings(known["product_id"]))):
         return known["product_id"], "url"
     same_id = [p for p in store.by_identifier(fp) if same_brand(fp, listing, p)]
     if same_id:

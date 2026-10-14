@@ -87,6 +87,9 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   // Drops tracking parameters. Amazon pages become https://host/dp/ASIN, Flipkart keeps its product id.
   const cleanUrl = () => {
     const u = new URL(location.href);
+    // Local demo pages name the shop address they stand for, so the API checks that address, not localhost.
+    const canonical = document.querySelector('link[rel="canonical"]')?.href;
+    if (/^(localhost|127\.0\.0\.1)$/.test(u.hostname) && canonical) return canonical;
     const asin = u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/);
     if (/amazon\./.test(u.hostname) && asin) return `${u.origin}/dp/${asin[1]}`;
     for (const k of [...u.searchParams.keys()]) {
