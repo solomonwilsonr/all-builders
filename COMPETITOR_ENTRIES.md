@@ -284,3 +284,59 @@ Method: same as the fifth scan (14 repo searches + 4 code searches) → 441 uniq
 - solomonwilsonr/all-builders (our own repo; it is private, and appears only because we are logged in)
 
 **Running totals (sixth scan): BFSI ~32 · Sustainability ~33 · Future of Work ~32 · Retail ~17 · Manufacturing ~16 · Media ~10–11 · ≈141 real public entries.** Still nobody on product safety, recalls, certification checks or fake shops.
+
+## Seventh scan (2026-10-14)
+Method: same searches as before → 443 unique repos. We screened 311 not yet listed here by README; 42 name the cup.
+
+**New real entries (~36):**
+
+| Theme | Repo | Idea |
+|---|---|---|
+| **Retail** | [Tilak369/returnwise](https://github.com/Tilak369/returnwise) | ReturnWise: agentic returns desk for fashion retail, including return abuse |
+| **Retail** | [jeejak/parcel-proof](https://github.com/jeejak/parcel-proof) | ParcelProof: will a seller's packing photo win a Shopee/TikTok Shop dispute? Live demo, no login |
+| **Retail** | [NiwinKumar/willow](https://github.com/NiwinKumar/willow) | Willow: did a skincare product *measurably* change your skin? Tells retailers which products work |
+| **Retail** | [ekko1500/priceone](https://github.com/ekko1500/priceone) (+ price-pulse-2) | PricePulse Myanmar: wholesale-to-retail pricing and margin intelligence for small businesses |
+| **Retail** | [hansendusenov/moodeats](https://github.com/hansendusenov/moodeats) | MoodEats: hyperlocal mood-based food discovery |
+| **Retail** | [kirav5/collab](https://github.com/kirav5/collab) | Your agent asks other people's agents for a service; private context stays on device |
+| **Retail** | [jeremyyhwu/agent-commons](https://github.com/jeremyyhwu/agent-commons) | Agent-to-agent negotiation rooms with verifiable result cards |
+| **Retail** | [shrinivashunnur08/NeedProof-AI](https://github.com/shrinivashunnur08/NeedProof-AI) | Natural-language shopping need → structured requirements → evidence-aware merchant comparison |
+| **Retail** | [juanlohika-dev/bloc-retailops-ai](https://github.com/juanlohika-dev/bloc-retailops-ai) | Retail operations command portal with a multi-agent mesh |
+| Retail? | [Matvibhor24/Garage-Copilot-AI](https://github.com/Matvibhor24/Garage-Copilot-AI) | Voice-first back office for small Indian garages (job cards, stock, customer approval) |
+| BFSI | [rishabh0499/ruko](https://github.com/rishabh0499/ruko) | Ruko: stops "digital arrest" scams at the moment of payment, then builds the case file |
+| BFSI | [Sivagireeswaran/cat-command-center](https://github.com/Sivagireeswaran/cat-command-center) | Catastrophe claim triage for property insurers (NASA FIRMS fire data, photo authenticity checks) |
+| BFSI | [semanticbase/factlock](https://github.com/semanticbase/factlock) | Monthly fund commentary by Gemini where the model never types a number |
+| BFSI | [AfkarIsh/ceylix-ai](https://github.com/AfkarIsh/ceylix-ai) | Ceylix AI (details thin) |
+| BFSI? | [amalskr/shield-ai](https://github.com/amalskr/shield-ai) | Suspicious SMS/WhatsApp checker with Gemini + Google Web Risk (Sinhala, Tamil) |
+| Manufacturing | [DivineTechie/DivineTechie](https://github.com/DivineTechie/DivineTechie) | TAKUMI: an old phone becomes a factory's eyes and ears; ADK agents draft work orders and trace bad units |
+| Manufacturing | [balamurugan12/shiftproof-ai-builder-cup-2026](https://github.com/balamurugan12/shiftproof-ai-builder-cup-2026) | ShiftProof: evidence-backed maintenance handovers |
+| Manufacturing | [ahmadhaer/BukuLokal-Ops-Copilot](https://github.com/ahmadhaer/BukuLokal-Ops-Copilot) | Operations copilot for small producers (Indonesia) |
+| Manufacturing? | [enertechscaleup/digital-twin-certification](https://github.com/enertechscaleup/digital-twin-certification) | TwinEvidence: measures the gap between a digital twin and real behaviour |
+| Media | [VirajSawad1021/MitraField](https://github.com/VirajSawad1021/MitraField) | Explainer-video workspace: a Gemini "director" agent routes each beat to the best engine |
+| Media | [affandymurad/wikigaleri](https://github.com/affandymurad/wikigaleri) | Wikimedia Commons gallery: find free media and reuse it with correct credit (ID/EN). Live |
+| Media? | [Newstein123/cognipath](https://github.com/Newstein123/cognipath) | Adaptive learning: learn only what you need |
+| Sustainability | [nityam02/yorisoi](https://github.com/nityam02/yorisoi) | Yorisoi: helps care workers write individual evacuation plans (Japan) |
+| Sustainability | [anshuman542018/wasterecast](https://github.com/anshuman542018/wasterecast) | Industrial waste-to-value screening |
+| Sustainability | [benben000000/waffle](https://github.com/benben000000/waffle) | StallSense: prep and food-waste intelligence for hawker stalls |
+| Sustainability | [jayeshrajani/RootCause](https://github.com/jayeshrajani/RootCause) | Crop distress triage and early warning |
+| Sustainability | [yadavithirwani/safeher](https://github.com/yadavithirwani/safeher) | Women's safety routing (lighting, transit, safe spaces, incidents) |
+| Sustainability | [zariffromlatif/terrapulse-ai](https://github.com/zariffromlatif/terrapulse-ai) | TerraPulse: compound disaster cascade digital twin for camps |
+| Sustainability | [cokrun/precision_palm](https://github.com/cokrun/precision_palm) | Zero-deforestation compliance for palm oil concessions |
+| Future of Work | [Gupta-4388/archproof-ai](https://github.com/Gupta-4388/archproof-ai) | RFP response copilot over enterprise knowledge |
+| Future of Work | [Guruprasad712/seyarkai_workspace](https://github.com/Guruprasad712/seyarkai_workspace) | Governed AI execution workspace (ADK, Vertex AI Search) |
+| Future of Work | [Neonplatypus/Workflow-Mining-Agent](https://github.com/Neonplatypus/Workflow-Mining-Agent) (+ amavia-connections copy) | Workflow mining agent |
+| Future of Work | [ctaxnagomi/deckergui-hubnet-google](https://github.com/ctaxnagomi/deckergui-hubnet-google) | DGUI HUB NET execution layer |
+| Future of Work | [yusufhasanaditta/porichoy](https://github.com/yusufhasanaditta/porichoy) | Professional-presence assistant (CV, LinkedIn, website) |
+| Future of Work | [williamchong/sideagent-hq](https://github.com/williamchong/sideagent-hq) | Sideagent |
+| Future of Work? | [lt020211/ai-builder-cup-lt](https://github.com/lt020211/ai-builder-cup-lt) | ML training-failure triage |
+
+**Placeholders (not counted):**
+- Gayuoff/DiGa_Labs
+- akikobayashi0309-supiki/abc2026-supiki ("pitch TBD", Firebase/Cloud Run skeleton)
+- srushtipatil09/AI_Builder_Cup_2026 (empty)
+- bhushannayak09/Sentinel-Nexus-AI-Builder-Cup (empty)
+
+**Running totals (seventh scan): Sustainability ~40 · Future of Work ~39 · BFSI ~37 · Retail ~27 · Manufacturing ~20 · Media ~13–14 · ≈177 real public entries.**
+
+**What it means for SafeShelf:**
+- Retail had the biggest jump (17 → ~27).
+- The closest new neighbours are ReturnWise (return abuse), ParcelProof (dispute photo proof) and Shield AI (message scam check with Web Risk). None of them covers product safety, recalls, certification checks or fake shops judged against the genuine product.
