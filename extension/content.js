@@ -46,6 +46,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       details: "#prodDetails, #productDetails_feature_div, #productDetails_techSpec_section_1, #productDetails_techSpec_section_2, #productDetails_detailBullets_sections1, #technicalSpecifications_section_1, #detailBullets_feature_div",
       anchor: "#corePrice_feature_div, #apex_desktop, #title_feature_div",
       cards: { selector: "[data-component-type='s-search-result'][data-asin]:not([data-asin=''])", title: "h2", price: ".a-price .a-offscreen", link: "h2 a, a[href*='/dp/']", image: "img.s-image" },
+      // The reviews shown on the page, for "Is it safe?" on products SafeShelf has no data for. Never the reviewer's name.
+      reviews: { item: "[data-hook='review']", title: "[data-hook='review-title'] span:not(.a-letter-space):not(.a-icon-alt)", body: "[data-hook='review-body']", rating: "[data-hook='review-star-rating'], [data-hook='cmps-review-star-rating']", date: "[data-hook='review-date']" },
     },
     {
       match: (h) => /(^|\.)flipkart\.com$/.test(h),
@@ -66,6 +68,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       images: "#gallery img",
       anchor: "#price",
       hiddenText: true, // demo pages carry a hidden prompt-injection test
+      reviews: { item: "article.review", title: "strong", body: "p", rating: ".stars", date: "time" },
       cards: { selector: ".result[data-listing-id]", title: ".result-title", price: ".result-price", link: "a", image: "img" },
     },
   ];
@@ -168,9 +171,30 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       image_urls: images.length ? images : [].concat(ld?.image || []).slice(0, 8),
       // Technical details first: they identify the product. Marketing text last, so the cap cuts that, not the specs.
       page_text: [asin && `ASIN: ${asin}`, mrp && `M.R.P.: ${mrp}`, details.slice(0, 2500), area.slice(0, 1500) + hidden].filter(Boolean).join("\n").slice(0, 4200),
+      reviews: readReviews(),
       listing_id: document.body.dataset.safeshelfListingId || null,
       product_id: document.body.dataset.safeshelfProductId || null,
     };
+  };
+
+  // Up to 30 reviews from the page: title, text, stars and date only. Emails and phone numbers are masked.
+  const readReviews = () => {
+    const r = site.reviews;
+    if (!r) return [];
+    const inside = (el, sel) => (sel ? el.querySelector(sel) : null);
+    const mask = (t) => t.replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, "[email]").replace(/(?<!\d)(\+?91[ -]?)?[6-9]\d{9}(?!\d)/g, "[phone]");
+    return [...document.querySelectorAll(r.item)].slice(0, 30).map((el) => {
+      const stars = inside(el, r.rating);
+      const rating = Number((stars?.getAttribute("aria-label") || stars?.textContent || "").match(/([\d.]+) out of 5/)?.[1]) || null;
+      const when = inside(el, r.date);
+      const parsed = new Date(when?.getAttribute("datetime") || (when?.textContent || "").replace(/^.*\bon\s+/i, "").trim());
+      return {
+        title: mask(inside(el, r.title)?.textContent.trim() || "").slice(0, 200) || null,
+        text: mask(inside(el, r.body)?.innerText.trim() || "").slice(0, 1500),
+        rating,
+        date: isNaN(parsed) ? null : parsed.toISOString().slice(0, 10),
+      };
+    }).filter((x) => x.text);
   };
 
   // Data for one product card on a results page (no page load needed)

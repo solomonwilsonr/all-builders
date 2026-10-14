@@ -111,6 +111,34 @@ paths:
       responses:
         '200': {description: Trust check, content: {application/json: {schema: {$ref: '#/components/schemas/TrustCheck'}}}}
 
+  /v1/listings/safety-check:
+    post:
+      summary: '"Is it safe?" for a listing with no SafeShelf product: recalls by brand and model, Safety Radar on the page reviews'
+      operationId: listingSafetyCheck
+      x-mock: listing_safety.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - {$ref: '#/components/schemas/ListingInput'}
+                - type: object
+                  properties:
+                    reviews:
+                      type: array
+                      description: The reviews shown on the page (no reviewer names)
+                      items:
+                        type: object
+                        required: [text]
+                        properties:
+                          title: {type: string}
+                          text: {type: string}
+                          rating: {type: number}
+                          date: {type: string, format: date}
+      responses:
+        '200': {description: Safety from the listing alone, content: {application/json: {schema: {$ref: '#/components/schemas/ListingSafety'}}}}
+
   /v1/reports:
     post:
       summary: Submit a consumer or analyst report (personal details are masked)
@@ -345,6 +373,21 @@ components:
       properties:
         product_id: {type: string}
         checks: {type: array, items: {$ref: '#/components/schemas/CertificationCheck'}}
+
+    ListingSafety:
+      type: object
+      required: [verdict, official_status, ai_findings, reviews_checked, label]
+      properties:
+        listing_url: {type: [string, 'null']}
+        brand: {type: [string, 'null']}
+        model: {type: [string, 'null']}
+        verdict: {type: string, enum: [red, amber, green, not_enough_evidence]}
+        official_status:
+          type: object
+          description: Same as Safety.official_status, plus the matching notices (exact model first, then for review)
+        ai_findings: {type: array, items: {type: object}}
+        reviews_checked: {type: integer, description: Reviews from this page read so far (this visit and earlier ones)}
+        label: {type: string}
 
     TrustCheck:
       type: object

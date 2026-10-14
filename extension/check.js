@@ -69,6 +69,33 @@ export async function askAgent({ product_id, message, language, session_id, cont
   return { text: answer?.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: answer?.evidence_ids || [], source };
 }
 
+// "Is it safe?" for a listing SafeShelf has no product for. null when the API cannot answer it (old server, mock).
+async function listingSafety(listing) {
+  try {
+    const { body, source } = await api("/v1/listings/safety-check", { method: "POST", body: JSON.stringify(listing) });
+    return source === "mock" ? null : body;
+  } catch (_) {
+    return null;
+  }
+}
+
+function pageSafetyLines(s) {
+  const st = s.official_status;
+  const what = [s.brand, s.model].filter(Boolean).join(" ");
+  const lines = [];
+  for (const r of st.recalls || []) {
+    lines.push(st.recall_ids.includes(r.recall_id) ? `Officially recalled: ${r.title}` : `A recall notice may cover this ${s.brand || ""} product (check the model): ${r.title}`.replace("  ", " "));
+  }
+  if (!st.recalled && what) lines.push(`No official recall found for ${what} (checked ${st.checked.join(", ")})`);
+  lines.push(...s.ai_findings.map((f) => `${f.independent_reports} buyer${f.independent_reports === 1 ? "" : "s"} on this page reported ${f.mechanism} (AI finding, under review)`));
+  if (!s.ai_findings.length) {
+    lines.push(s.reviews_checked
+      ? `Read ${s.reviews_checked} review${s.reviews_checked === 1 ? "" : "s"} on this page: no fire, burn or shock reports, but that is too few to call it safe`
+      : "No reviews on this page to read for safety reports");
+  }
+  return lines;
+}
+
 // One check per page at a time, remembered for 10 minutes: Check, Save and Ask all need it, and the real engine is slow.
 const recent = new Map();
 // fresh: "Check again" asks the API again instead of reusing the remembered answer.
@@ -86,16 +113,19 @@ async function runCheckNow(page) {
   const { body: trust, source } = await api("/v1/listings/trust-check", { method: "POST", body: JSON.stringify(listing) });
   const exact = !trust.matched_by || STRONG_MATCHES.has(trust.matched_by); // the mock has no matched_by
   const pid = exact ? trust.matched_product_id || product_id : product_id;
-  const safety = pid ? (await api(`/v1/products/${pid}/safety`)).body : null;
+  // Known product: its stored safety answer. Otherwise the listing alone: recalls by brand and model, and the reviews on the page.
+  const safety = pid ? (await api(`/v1/products/${pid}/safety`)).body : await listingSafety(listing);
 
   const safeLevel = !safety ? "unknown" : safety.verdict === "not_enough_evidence" ? "unknown" : safety.verdict;
-  const safeLines = safety
-    ? [
+  const safeLines = !safety
+    ? ["We could not match this exact product to one we have checked, so we make no safety claim for it"]
+    : pid ? [
         safety.official_status.recalled ? "Officially recalled" : `Not recalled (checked ${safety.official_status.checked.join(", ")})`,
         ...safety.ai_findings.map((f) => `${f.independent_reports} reports of ${f.mechanism} (${f.status.replace("_", " ")})`),
         ...(safety.reviews_checked != null && safeLevel === "unknown" ? [`Only ${safety.reviews_checked} reviews checked, too few for a safety verdict`] : []),
       ]
-    : ["We could not match this exact product to one we have checked, so we make no safety claim for it"];
+    : pageSafetyLines(safety);
+  const safetyEvidence = (pid ? [] : safety?.ai_findings || []).flatMap((f) => f.evidence_ids || []);
 
   const realLines = Object.entries(trust.checks).flatMap(([k, c]) =>
     c.result === "flag" ? [CHECK_WORDS[k]?.(c)] : c.result === "unknown" ? [`Could not verify ${CHECK_NAMES[k] || k}: ${c.reason || "no data"}`] : [],
@@ -120,7 +150,7 @@ async function runCheckNow(page) {
     safe: card(safeLevel, safeLines),
     real,
     summary,
-    evidence_ids: trust.evidence_ids || [],
+    evidence_ids: [...(trust.evidence_ids || []), ...safetyEvidence],
     // The engine's own answer, kept so follow-up questions can use it ("how was the price checked?")
     matched_by: trust.matched_by || null,
     trust_checks: trust.checks,

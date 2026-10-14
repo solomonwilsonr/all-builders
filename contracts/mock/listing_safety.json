@@ -1,0 +1,30 @@
+{
+  "listing_url": "https://www.amazon.in/dp/B0EXAMPLE1",
+  "brand": "Nexzvolt",
+  "model": "NV-20",
+  "verdict": "amber",
+  "official_status": {
+    "recalled": false,
+    "checked": ["CPSC"],
+    "recall_ids": [],
+    "recall_ids_under_review": [],
+    "recalls": []
+  },
+  "ai_findings": [
+    {
+      "hazard_type": "fire_burn",
+      "mechanism": "power bank swelled and got very hot while charging",
+      "severity": "high",
+      "independent_reports": 2,
+      "with_photos": 0,
+      "rate_per_1000_reviews": 250.0,
+      "first_seen": "2026-08-14",
+      "trend": "rising",
+      "status": "under_review",
+      "evidence_ids": ["EV-201", "EV-202"],
+      "counterevidence": "1 review says it does not overheat or fail"
+    }
+  ],
+  "reviews_checked": 8,
+  "label": "AI finding from the reviews on this page - not a regulatory determination"
+}

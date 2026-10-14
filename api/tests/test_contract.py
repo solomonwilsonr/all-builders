@@ -20,6 +20,8 @@ BODIES = {
     "identifyProduct": {"url": "https://example-deals-store.test/65w-charger"},
     "findDuplicates": {"product_id": "SS-P-10291"},
     "trustCheck": {"url": "https://example-deals-store.test/65w-charger"},
+    "listingSafetyCheck": {"url": "https://www.amazon.in/dp/B0DT3HZQ5K", "title": "JETech Case",
+                           "reviews": [{"text": "Fits well, clear after a month.", "rating": 5}]},
     "createReport": {"product_id": "SS-P-10291", "description": "Port melted"},
     "addShelfItem": {"product_id": "SS-P-10291"},
     "catalogScan": {"csv_url": "gs://safeshelf-demo/catalog.csv"},
