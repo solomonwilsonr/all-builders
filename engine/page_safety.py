@@ -6,7 +6,11 @@ Uses only what the shopper's page shows, and never creates a product (a fake sho
 - reviews: the reviews shown on the page, read by the same Safety Radar as stored products (engine.radar). They are
   kept as evidence under the listing's URL, so each review is labelled once and the chat can cite it.
 Code sets the verdict (radar.verdict). A handful of reviews with no hazard is "not enough evidence", never "safe".
+Two page-only additions, so the backtested rules for stored products stay as they are: a notice without model
+numbers is matched on the kind of product named in the page title (for review, never "recalled"), and two buyers'
+serious first-hand reports of any hazard type are enough for amber (a page shows only a few reviews).
 """
+import re
 from datetime import UTC, datetime
 
 from engine import identity, radar, recalls, safety, trust
@@ -17,6 +21,9 @@ LABEL = "AI finding from the reviews on this page - not a regulatory determinati
 # When the brand is only the title's first word, these are not brands: no recall search for them.
 NOT_BRANDS = {"new", "original", "super", "best", "premium", "pack", "set", "combo", "the", "fast", "smart", "mini",
               "pro", "portable", "wireless", "usb", "universal", "heavy", "multi", "electric", "digital"}
+# Title words that say nothing about what kind of product it is.
+NOT_KINDS = NOT_BRANDS | {"with", "pack", "for", "and", "black", "white", "blue", "inch", "fast", "charging", "watt",
+                          "home", "office", "kids", "type", "port", "ports", "plus", "ultra", "model", "edition"}
 
 
 def page_reviews(listing: dict) -> list[dict]:
@@ -35,6 +42,11 @@ def page_reviews(listing: dict) -> list[dict]:
         out.append({"title": str(review.get("title") or "")[:200] or None, "text": text[:1500],
                     "rating": review.get("rating"), "date": date})
     return out
+
+
+def kind_words(title: str) -> str:
+    """The page title's product words ("VRURC OD-B7 Wall Charger" -> "wall charger"), standing in for a category."""
+    return " ".join(w for w in re.findall(r"[a-z]{4,}", title.lower()) if w not in NOT_KINDS)
 
 
 def recall_status(brand: str, fp: dict) -> dict:
@@ -63,6 +75,9 @@ def searchable_brand(listing: dict, brand: str) -> str:
 def listing_safety(listing: dict) -> dict:
     brand = trust.listing_brand(listing)
     fp = identity.fingerprint({**listing, "brand": listing.get("brand") or brand})
+    if not fp["category"]:  # a family-only notice is matched on the kind of product the title names
+        title = listing.get("title") or ""
+        fp["category"] = kind_words(re.sub(re.escape(brand), "", title, flags=re.IGNORECASE) if brand else title)
     status = recall_status(searchable_brand(listing, brand), fp)
 
     key = f"listing:{listing.get('url') or listing.get('title') or ''}"
@@ -76,11 +91,15 @@ def listing_safety(listing: dict) -> dict:
     ai_findings = radar.findings(stored, labels)
     for finding in ai_findings:
         finding["evidence_ids"] = [review_evidence[e.removeprefix("REV-")] for e in finding["evidence_ids"]]
+    verdict = radar.verdict(status["recalled"], len(stored), ai_findings)
+    serious = sum(f["independent_reports"] for f in ai_findings if f["severity"] in ("medium", "high"))
+    if verdict in ("green", "not_enough_evidence") and serious >= 2:
+        verdict = "amber"
     return {
         "listing_url": listing.get("url"),
         "brand": brand or None,
         "model": fp["model"] or None,
-        "verdict": radar.verdict(status["recalled"], len(stored), ai_findings),
+        "verdict": verdict,
         "official_status": status,
         "ai_findings": ai_findings,
         "reviews_checked": len(stored),

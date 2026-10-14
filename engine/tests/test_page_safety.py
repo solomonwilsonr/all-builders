@@ -62,3 +62,22 @@ def test_exact_model_recall_makes_it_red(monkeypatch):
     stand_ins(monkeypatch, {}, [notice])
     answer = page_safety.listing_safety({"title": "VRURC OD-B7 wall charger", "page_text": "Brand VRURC"})
     assert answer["verdict"] == "red" and answer["official_status"]["recalls"][0]["recall_id"] == "CPSC-1"
+
+
+def test_two_serious_reports_of_different_hazards_make_it_amber(monkeypatch):
+    swell = {**FIRE, "hazard_type": "other", "mechanism": "battery swelled", "quote": "swelled"}
+    stand_ins(monkeypatch, {"Smoke from the port.": FIRE, "Battery swelled up.": swell})
+    answer = page_safety.listing_safety({"title": "Zapcell PB-20 power bank",
+                                         "reviews": [{"text": "Smoke from the port."}, {"text": "Battery swelled up."}]})
+    assert answer["verdict"] == "amber" and len(answer["ai_findings"]) == 2
+
+
+def test_family_notice_without_models_is_for_review_not_recalled(monkeypatch):
+    notice = {"id": "cpsc:23238", "title": "VRURC Portable Chargers Recalled Due to Fire Hazard", "url": None,
+              "notice_date": "2023-07-06", "scope_json": {"Products": [{"Model": ""}]}}
+    stand_ins(monkeypatch, {}, [notice])
+    monkeypatch.setattr(page_safety.recalls, "notice_models", lambda recall: set())
+    answer = page_safety.listing_safety({"title": "VRURC OD-B7 Wall Charger Power Bank", "page_text": "Brand VRURC"})
+    status = answer["official_status"]
+    assert not status["recalled"] and status["recall_ids_under_review"] == ["cpsc:23238"]
+    assert page_safety.kind_words("OD-B7 Wall Charger Power Bank with 2 ports") == "wall charger power bank"
