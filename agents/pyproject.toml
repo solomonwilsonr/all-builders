@@ -12,7 +12,11 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=8", "pyyaml>=6.0"]
+dev = [
+    "mcp>=2.3",
+    "pytest>=8",
+    "pyyaml>=6.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,18 @@
+[project]
+name = "safeshelf-whatsapp"
+version = "0.1.0"
+description = "SafeShelf WhatsApp bot (M12): link or photo in, safety and shop check out, text + voice note"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "httpx>=0.28",
+    "google-genai>=1.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

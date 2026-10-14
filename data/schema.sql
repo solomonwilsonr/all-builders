@@ -183,6 +183,21 @@ CREATE TABLE IF NOT EXISTS audit_events (
     at          TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- One row per traced API call of an investigation (engine/trace.py), shown in the Lab.
+CREATE TABLE IF NOT EXISTS investigation_steps (
+    investigation_id TEXT NOT NULL,
+    n                INT NOT NULL,
+    tool             TEXT NOT NULL,
+    models           TEXT[],
+    seconds          REAL,
+    input_tokens     INT,
+    output_tokens    INT,
+    cost_usd         REAL,
+    summary          TEXT,
+    at               TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (investigation_id, n)
+);
+
 -- Join tables
 CREATE TABLE IF NOT EXISTS evidence_claims        (evidence_id TEXT REFERENCES evidence(id), claim_type TEXT, claim_id TEXT);
 CREATE TABLE IF NOT EXISTS recall_products        (recall_id TEXT REFERENCES recalls(id), product_id TEXT REFERENCES products(id), match_class TEXT);

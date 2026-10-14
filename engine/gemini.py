@@ -3,6 +3,8 @@ import json
 import math
 import os
 import threading
+from concurrent.futures import ThreadPoolExecutor
+from contextvars import ContextVar
 
 from google import genai
 from google.genai import types
@@ -55,6 +57,37 @@ Rules:
 </product_b>"""
 
 
+# Per-request record of model calls, for the investigation trace (engine.trace). None = not recording.
+_usage: ContextVar[list | None] = ContextVar("gemini_usage", default=None)
+
+
+def track() -> list[dict]:
+    """Start recording model calls in this context; returns the list they are appended to."""
+    calls: list[dict] = []
+    _usage.set(calls)
+    return calls
+
+
+def _record(model: str, response) -> None:
+    calls = _usage.get()
+    if calls is not None:
+        meta = getattr(response, "usage_metadata", None)
+        embedded = sum(int(getattr(getattr(e, "statistics", None), "token_count", 0) or 0)
+                       for e in getattr(response, "embeddings", None) or [])
+        calls.append({"model": model, "input_tokens": (getattr(meta, "prompt_token_count", None) or 0) + embedded,
+                      "output_tokens": (getattr(meta, "candidates_token_count", None) or 0)
+                      + (getattr(meta, "thoughts_token_count", None) or 0)})
+
+
+# The SDK's own timeout does not always fire (14 Oct: a 30 s call hung for 21 minutes), so every call also runs
+# under a hard wall-clock limit here. A call that overruns is abandoned (its thread finishes in the background).
+_calls = ThreadPoolExecutor(max_workers=32, thread_name_prefix="gemini")
+
+
+def _bounded(fn, seconds: float, *args, **kwargs):
+    return _calls.submit(fn, *args, **kwargs).result(timeout=seconds)
+
+
 _clients: dict[str, genai.Client] = {}
 _clients_lock = threading.Lock()
 
@@ -65,8 +98,10 @@ def client(location: str = "global") -> genai.Client:
     with _clients_lock:
         if location not in _clients:
             # Without a timeout a stuck call waits forever (seen 13 Oct). Slow calls fall back to the next model.
+            # No SDK retries: falling back to the next model is the retry, and hidden backoff hid the hangs.
             _clients[location] = genai.Client(vertexai=True, project=PROJECT, location=location,
-                                              http_options=types.HttpOptions(timeout=30_000))
+                                              http_options=types.HttpOptions(
+                                                  timeout=30_000, retry_options=types.HttpRetryOptions(attempts=1)))
         return _clients[location]
 
 
@@ -79,12 +114,14 @@ def embed(texts: list[str]) -> list[list[float]]:
     """Unit-length text embeddings (truncated outputs aren't normalised by the API)."""
     out: list[list[float]] = []
     for start in range(0, len(texts), 50):
-        response = client(EMBED_LOCATION).models.embed_content(
+        response = _bounded(
+            client(EMBED_LOCATION).models.embed_content, 60,
             model=EMBED_MODEL,
             contents=texts[start:start + 50],
             config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY", output_dimensionality=EMBED_DIMS),
         )
         out += [_unit(e.values) for e in response.embeddings]
+        _record(EMBED_MODEL, response)
     return out
 
 
@@ -96,17 +133,20 @@ def structured(prompt: str | list, schema: dict, models: list[str] | None = None
     for model in models or COMPARE_MODELS:
         thinking = None if "lite" in model else types.ThinkingConfig(thinking_level="low")
         try:
-            response = client().models.generate_content(
+            response = _bounded(
+                client().models.generate_content, timeout_s + 5,
                 model=model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0, response_mime_type="application/json", response_json_schema=schema,
-                    thinking_config=thinking, http_options=types.HttpOptions(timeout=timeout_s * 1000)),
+                    thinking_config=thinking, http_options=types.HttpOptions(
+                        timeout=timeout_s * 1000, retry_options=types.HttpRetryOptions(attempts=1))),
             )
             result = json.loads(response.text)
-        except Exception as error:  # noqa: BLE001  timeout, 429, 5xx or bad JSON: try the next model
+        except Exception as error:  # noqa: BLE001  timeout (ours or the SDK's), 429, 5xx or bad JSON: next model
             errors.append(f"{model}: {type(error).__name__}")
             continue
+        _record(model, response)
         result["model"] = model
         return result
     raise RuntimeError("every model failed: " + "; ".join(errors))

@@ -5,6 +5,7 @@
 """M1: collect data with Firecrawl, inside a hard credit budget. Data collection only, never live.
 
     uv run data/firecrawl_collect.py plan-recall-twins            # write jobs from the CPSC candidates
+    uv run data/firecrawl_collect.py plan-realworld-confirm       # M16: re-open lead pages (realworld_finding.py)
     uv run data/firecrawl_collect.py run --jobs data/raw/firecrawl_jobs.jsonl --max-credits 20 --dry-run
     FIRECRAWL_API_KEY=fc-... uv run data/firecrawl_collect.py run --jobs ... --max-credits 20
 
@@ -174,6 +175,16 @@ def plan_catalog_scrapes(max_pages: int) -> None:
     print(f"{len(urls)} product pages found; wrote {len(jobs)} scrape jobs -> {path}")
 
 
+def plan_realworld_confirm() -> None:
+    """M16: re-open each lead page (realworld_finding.py candidates) once, to see if it is still on sale today."""
+    leads = [json.loads(l) for l in (RAW / "realworld" / "candidates.jsonl").read_text().splitlines() if l]
+    urls = list(dict.fromkeys(lead["url"].split("&srsltid=")[0].split("?srsltid=")[0] for lead in leads))
+    jobs = [{"type": "scrape", "url": url, "tag": "realworld_pages"} for url in urls]
+    path = RAW / "firecrawl_realworld_pages.jsonl"
+    path.write_text("".join(json.dumps(j) + "\n" for j in jobs))
+    print(f"wrote {len(jobs)} scrape jobs -> {path} (estimated {sum(map(estimate, jobs))} credits)")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -183,6 +194,7 @@ def main() -> None:
     cat.add_argument("--limit", type=int, default=20, help="search results per query")
     pages = sub.add_parser("plan-catalog-scrapes")
     pages.add_argument("--max-pages", type=int, default=800)
+    sub.add_parser("plan-realworld-confirm")
     go = sub.add_parser("run")
     go.add_argument("--jobs", required=True)
     go.add_argument("--max-credits", type=int, required=True, help="hard cap for this run")
@@ -195,6 +207,8 @@ def main() -> None:
         plan_catalog(args.limit)
     elif args.cmd == "plan-catalog-scrapes":
         plan_catalog_scrapes(args.max_pages)
+    elif args.cmd == "plan-realworld-confirm":
+        plan_realworld_confirm()
     else:
         run(args.jobs, args.max_credits, args.dry_run)
 
