@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import gemini, identity, marks, passport, safety, trace, trust
+from engine import chat, gemini, identity, marks, passport, safety, trace, trust
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -108,6 +108,7 @@ HANDLERS = {
     "getAlternatives": by_product(passport.alternatives),
     "createReport": create_report,
     "getBenchResults": bench_results,
+    "startAgentSession": chat.start_agent_session,
 }
 HANDLERS = {op: traced(op, handler) for op, handler in HANDLERS.items()}
 HANDLERS["getTrace"] = get_trace
