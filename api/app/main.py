@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import time
+from collections import defaultdict, deque
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
@@ -25,6 +26,10 @@ CONTRACTS_DIR = Path(os.environ.get("CONTRACTS_DIR", Path(__file__).resolve().pa
 MOCK = os.environ.get("MOCK", "1") == "1"
 API_KEY = os.environ.get("API_KEY")  # unset = no key check (local development)
 MAX_BODY = 1_000_000  # bytes; listings and reports are small
+# The API is public (the extension and the judges call it without a key), so engine calls that can spend Gemini
+# credit are rate-limited per caller and capped per day per instance (deploy uses --max-instances 3).
+RATE_PER_MIN = int(os.environ.get("SAFESHELF_RATE_PER_MIN", "30"))
+DAILY_CAP = int(os.environ.get("SAFESHELF_DAILY_CAP", "3000"))
 
 log = logging.getLogger("safeshelf.api")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -79,12 +84,49 @@ def check_key(request: Request) -> None:
         raise HTTPException(status_code=401, detail="Missing or wrong X-API-Key")
 
 
+class Limiter:
+    """Sliding one-minute window per caller plus a daily total. In memory: per instance, reset on restart."""
+
+    def __init__(self, per_minute: int, per_day: int):
+        self.per_minute, self.per_day = per_minute, per_day
+        self.hits: dict[str, deque] = defaultdict(deque)
+        self.day, self.today = "", 0
+
+    def check(self, caller: str, now: float) -> str | None:
+        """None if allowed, else the reason for a 429."""
+        window = self.hits[caller]
+        while window and now - window[0] > 60:
+            window.popleft()
+        day = time.strftime("%Y-%m-%d", time.gmtime(now))
+        if day != self.day:
+            self.day, self.today = day, 0
+        if len(window) >= self.per_minute:
+            return f"Too many requests: at most {self.per_minute} checks a minute. Try again shortly."
+        if self.today >= self.per_day:
+            return "The demo's daily limit of AI checks is reached. Try again tomorrow."
+        window.append(now)
+        self.today += 1
+        return None
+
+
+limiter = Limiter(RATE_PER_MIN, DAILY_CAP)
+
+
+def rate_limit(request: Request) -> None:
+    forwarded = request.headers.get("x-forwarded-for", "")
+    caller = forwarded.split(",")[0].strip() or "internal"  # MCP tools call the routes in-process
+    reason = limiter.check(caller, time.time())
+    if reason:
+        raise HTTPException(status_code=429, detail=reason, headers={"Retry-After": "60"})
+
+
 def make_route(operation_id: str, mock_name: str, status: int) -> Handler:
     async def route(request: Request) -> JSONResponse:
         check_key(request)
         params = dict(request.path_params)
         real = None if MOCK else REAL_HANDLERS.get(operation_id)
         if real:
+            rate_limit(request)  # only engine calls can spend Gemini credit; mocks are free
             body, source = await real(request, params), "real"
         else:
             body, source = mock_answer(mock_name, params), "mock"

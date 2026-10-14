@@ -80,3 +80,14 @@ def test_mcp_lists_tools_and_answers_from_the_api():
             "jsonrpc": "2.0", "id": 2, "method": "tools/call",
             "params": {"name": "safer_alternatives", "arguments": {"product_id": "SS-P-20019"}}})
         assert json.loads(call.json()["result"]["content"][0]["text"])["product_id"] == "SS-P-20019"
+
+
+def test_limiter_per_caller_and_per_day():
+    from app.main import Limiter
+
+    lim = Limiter(per_minute=2, per_day=3)
+    assert lim.check("a", 0) is None and lim.check("a", 1) is None
+    assert "a minute" in lim.check("a", 2)          # third in the same minute
+    assert lim.check("b", 3) is None                # other callers unaffected
+    assert lim.check("a", 70) is not None and "daily" in lim.check("a", 70)  # window cleared, day cap of 3 hit
+    assert lim.check("a", 86_400 * 2) is None        # a new day starts over

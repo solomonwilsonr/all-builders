@@ -25,7 +25,7 @@ logging.getLogger("google_adk").setLevel(logging.CRITICAL)
 log = logging.getLogger("shelf_chat")
 
 # Tried in order. Newest models are often busy (503), so a quick stable one comes first.
-MODELS = [m.strip() for m in os.environ.get("SAFESHELF_MODEL", "gemini-3.6-flash,gemini-2.5-flash,gemini-3.8-flash").split(",") if m.strip()]
+MODELS = [m.strip() for m in os.environ.get("SAFESHELF_MODEL", "gemini-3.6-flash,gemini-3.5-flash,gemini-3-flash-preview").split(",") if m.strip()]
 MODEL_TIMEOUT = float(os.environ.get("SAFESHELF_MODEL_TIMEOUT", "15"))  # seconds per model before trying the next
 HEDGE_AFTER = float(os.environ.get("SAFESHELF_HEDGE_AFTER", "6"))  # seconds before the next model is started in parallel
 COOLDOWN = 60  # seconds a busy model is skipped

@@ -42,7 +42,7 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 		mkdir -p .build/bench && cp bench/results.json .build/bench/ && \
 		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
-		--allow-unauthenticated --min-instances 1 --memory 1Gi --timeout 300 \
+		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 1Gi --timeout 300 \
 		--add-cloudsql-instances $(SQL_INSTANCE) --set-secrets DB_PASSWORD=safeshelf-db-password:latest \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT)
 

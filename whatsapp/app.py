@@ -32,7 +32,7 @@ API = os.environ.get("SAFESHELF_API_URL", "https://safeshelf-api-368488022657.as
 WA_TOKEN = os.environ.get("WA_TOKEN")
 WA_PHONE_ID = os.environ.get("WA_PHONE_ID")
 DRY_RUN = not (WA_TOKEN and WA_PHONE_ID)
-TTS_MODEL = os.environ.get("SAFESHELF_TTS_MODEL", "gemini-2.5-flash-tts")
+TTS_MODEL = os.environ.get("SAFESHELF_TTS_MODEL", "gemini-3.1-flash-tts-preview")  # 2.5 retires on Vertex 16 Oct
 VISION_MODELS = ["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
 MAX_PAGE_BYTES = 2_000_000
 
