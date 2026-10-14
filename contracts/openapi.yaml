@@ -258,7 +258,7 @@ components:
       required: [evidence_id, type, source, quote]
       properties:
         evidence_id: {type: string, example: EV-201}
-        type: {type: string, enum: [review, review_photo, registry, listing_text, recall_notice]}
+        type: {type: string, enum: [review, review_photo, registry, listing_text, recall_notice, check, ai_label]}
         source: {type: string, description: 'Where it came from, in plain words, e.g. "Customer review on Amazon.in"'}
         date: {type: string, format: date}
         rating: {type: integer}

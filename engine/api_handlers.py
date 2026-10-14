@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import chat, gemini, identity, marks, page_safety, passport, safety, trace, trust
+from engine import chat, evidence, gemini, identity, marks, page_safety, passport, safety, trace, trust
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -53,6 +53,13 @@ async def listing_safety_check(request: Request, params: dict[str, Any]) -> dict
     if not any(listing.get(k) for k in ("url", "title")):
         raise HTTPException(status_code=422, detail="Give at least a url or title")
     return await run_in_threadpool(page_safety.listing_safety, listing)
+
+
+async def get_evidence(request: Request, params: dict[str, Any]) -> list[dict]:
+    ids = request.query_params.get("ids") or ""
+    if not ids.strip():
+        raise HTTPException(status_code=422, detail="Give ids, e.g. ?ids=EV-1F3B0227,EV-08E9C38D")
+    return await run_in_threadpool(evidence.lookup, ids)
 
 
 def by_product(fn):
@@ -117,6 +124,7 @@ HANDLERS = {
     "createReport": create_report,
     "getBenchResults": bench_results,
     "startAgentSession": chat.start_agent_session,
+    "getEvidence": get_evidence,
 }
 HANDLERS = {op: traced(op, handler) for op, handler in HANDLERS.items()}
 HANDLERS["getTrace"] = get_trace
