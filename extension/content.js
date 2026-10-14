@@ -566,6 +566,16 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       if (open) place(); else speechSynthesis.cancel();
     };
 
+    // What a chat question is sent with: the check result and what the listing itself says.
+    // The listing text goes last, so the API's length cap cuts it first. Works for unmatched products too.
+    const chatContext = (r) => {
+      const p = getPage();
+      return { title: p.title, price: p.price, seller: p.seller, host: r.host, summary: r.summary,
+        safe: { level: r.safe.level, lines: r.safe.lines }, real: { level: r.real.level, lines: r.real.lines }, evidence_ids: r.evidence_ids || [],
+        matched_by: r.matched_by, checks: r.trust_checks, genuine_model_safety: r.genuine_model_safety,
+        listing_text: (p.page_text || "").slice(0, 1500) };
+    };
+
     // Chat about the check result just shown: it knows this result and remembers the conversation.
     const resultChat = (r) => {
       const thread = []; // {role: "user" | "bot", text}
@@ -585,12 +595,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         log.scrollTop = log.scrollHeight;
         return m;
       };
-      const context = () => {
-        const p = getPage();
-        return { title: p.title, price: p.price, seller: p.seller, host: r.host, summary: r.summary,
-          safe: { level: r.safe.level, lines: r.safe.lines }, real: { level: r.real.level, lines: r.real.lines }, evidence_ids: r.evidence_ids || [],
-          matched_by: r.matched_by, checks: r.trust_checks, genuine_model_safety: r.genuine_model_safety };
-      };
+      const context = () => chatContext(r);
       const ask = async (q) => {
         if (!q.trim()) return;
         add("user", q);
@@ -870,10 +875,12 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         log.scrollTop = log.scrollHeight;
         return m;
       };
-      const getProductId = () => new Promise((done) => {
-        const pid = result?.product_id || getPage().product_id;
-        if (pid) done({ pid }); else identify((r, why) => done({ pid: r?.product_id || null, why }));
+      // The check result for this page (cached for 10 minutes, so this is free after Check). Needed even when
+      // SafeShelf does not know the product: the chat then answers from the page and the check, with no safety claim.
+      const getCheck = () => new Promise((done) => {
+        if (result) done({ r: result }); else identify((r, why) => done({ r, why }));
       });
+      const sid = `SS-A-${Math.random().toString(36).slice(2, 10)}`;
       const ask = async (question) => {
         if (!question.trim()) return;
         showHistory(false);
@@ -883,17 +890,18 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         input.value = "";
         sendBtn.disabled = true;
         const pending = add("bot", "Thinking…");
-        if (!(await guard("chat", null, "Ask SafeShelf a question (only your question and the product ID are sent)"))) { // TEMP cost guard
+        if (!(await guard("chat", null, "Ask SafeShelf a question (your question, the check result and this page's product details are sent)"))) { // TEMP cost guard
           pending.replaceChildren(el("span", { textContent: "Cancelled. Nothing was sent and nothing was charged." }));
           convo.pop();
           sendBtn.disabled = false;
           return;
         }
-        const { pid, why } = await getProductId();
+        const { r, why } = await getCheck();
         const done = (text, extra = []) => { pending.replaceChildren(el("span", { textContent: text }), ...extra); sendBtn.disabled = false; log.scrollTop = log.scrollHeight; };
-        if (!pid) return done(`I could not match this product, so I can't answer about it yet${why ? ` (${why}${/running|answered|Failed to fetch/i.test(why) ? "; the SafeShelf API may be slow or down" : ""})` : ""}.`);
+        if (!r) return done(`I could not check this page, so I can't answer yet (${why || "no answer"}${/running|answered|Failed to fetch/i.test(why || "") ? "; the SafeShelf API may be slow or down" : ""}).`);
         try {
-          chrome.runtime.sendMessage({ type: "safeshelf:chat", product_id: pid, message: question, language: lang.value }, (res) => {
+          chrome.runtime.sendMessage({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: question, language: lang.value,
+            session_id: sid, context: chatContext(r), history: convo.slice(-7, -1).map((m) => ({ role: m.role, text: m.text })) }, (res) => {
             if (!res?.ok) return done(`Could not get an answer: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?`);
             const a = res.result;
             convo.push({ role: "bot", text: a.text, evidence: a.evidence_ids });
