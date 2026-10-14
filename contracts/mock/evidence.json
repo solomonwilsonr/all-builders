@@ -1,0 +1,29 @@
+[
+  {
+    "evidence_id": "EV-201",
+    "type": "review",
+    "source": "Customer review on the shop",
+    "date": "2026-07-02",
+    "rating": 1,
+    "quote": "The USB-C port overheated during charging and there is a burn mark now",
+    "url": null
+  },
+  {
+    "evidence_id": "EV-207",
+    "type": "review",
+    "source": "Customer review on the shop",
+    "date": "2026-07-09",
+    "rating": 1,
+    "quote": "Charger smelled burnt after an hour with my laptop",
+    "url": null
+  },
+  {
+    "evidence_id": "EV-215",
+    "type": "review",
+    "source": "Customer review on the shop",
+    "date": "2026-07-21",
+    "rating": 2,
+    "quote": "Gets hotter than my old charger",
+    "url": null
+  }
+]

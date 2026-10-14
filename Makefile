@@ -7,7 +7,16 @@ REGION ?= asia-south1
 SQL_INSTANCE ?= $(GCP_PROJECT):$(REGION):safeshelf-db
 DEPLOY_MOCK ?= 0
 
-.PHONY: api test db-up db-down load-data deploy-api bench
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api bench
+
+test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
+	node extension/tests/run_all.mjs
+
+agents:         ## Shelf Chat agent service on :8081 (needs GOOGLE_API_KEY in .env or agents/.env)
+	cd agents && uv run --python 3.12 uvicorn server:app --reload --port 8081
+
+demo-pages:     ## serve the demo shop pages on :8090
+	cd extension/demo && python3 -m http.server 8090
 
 api:            ## run the API locally on :8080 (MOCK=1 by default)
 	cd api && MOCK=$${MOCK:-1} PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --port 8080

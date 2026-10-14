@@ -195,6 +195,16 @@ paths:
       responses:
         '200': {description: Trace, content: {application/json: {schema: {type: object, required: [investigation_id, steps]}}}}
 
+  /v1/evidence:
+    get:
+      summary: Look up evidence records by ID (the source, quote and date behind an evidence ID)
+      operationId: getEvidence
+      x-mock: evidence.json
+      parameters:
+        - {name: ids, in: query, required: true, schema: {type: string, example: 'EV-201,EV-207'}, description: Comma-separated evidence IDs}
+      responses:
+        '200': {description: Evidence records, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Evidence'}}}}}
+
   /v1/bench/results:
     get:
       summary: Latest SafeShelfBench results, with baselines
@@ -215,6 +225,18 @@ components:
       schema: {type: string, example: SS-P-10291}
 
   schemas:
+    Evidence:
+      type: object
+      required: [evidence_id, type, source, quote]
+      properties:
+        evidence_id: {type: string, example: EV-201}
+        type: {type: string, enum: [review, review_photo, registry, listing_text, recall_notice]}
+        source: {type: string, description: 'Where it came from, in plain words, e.g. "Customer review on Amazon.in"'}
+        date: {type: string, format: date}
+        rating: {type: integer}
+        quote: {type: string, description: The exact text the finding is based on; the extension uses it to find and highlight the text on the page}
+        url: {type: string, nullable: true, description: Link to the original, when there is one}
+
     ListingInput:
       type: object
       description: Give a URL, or page data the extension already read. At least one field is needed.
