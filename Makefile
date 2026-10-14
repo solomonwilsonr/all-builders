@@ -7,6 +7,8 @@ REGION ?= asia-south1
 SQL_INSTANCE ?= $(GCP_PROJECT):$(REGION):safeshelf-db
 DEPLOY_MOCK ?= 0
 
+API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
+
 .PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api bench warm
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
