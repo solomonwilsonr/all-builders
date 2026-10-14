@@ -44,6 +44,14 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 		--add-cloudsql-instances $(SQL_INSTANCE) --set-secrets DB_PASSWORD=safeshelf-db-password:latest \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT)
 
+deploy-whatsapp: ## M12 bot to Cloud Run; needs secrets wa-token, wa-phone-id, wa-app-secret, wa-verify-token
+	@for s in wa-token wa-phone-id wa-app-secret wa-verify-token; do \
+		gcloud secrets describe $$s --project $(GCP_PROJECT) >/dev/null 2>&1 || { echo "missing secret $$s (see whatsapp/README.md)"; exit 1; }; done
+	gcloud run deploy safeshelf-whatsapp --source whatsapp --project $(GCP_PROJECT) --region $(REGION) \
+		--allow-unauthenticated --min-instances 0 --memory 512Mi --timeout 300 --no-cpu-throttling \
+		--set-secrets WA_TOKEN=wa-token:latest,WA_PHONE_ID=wa-phone-id:latest,WA_APP_SECRET=wa-app-secret:latest,WA_VERIFY_TOKEN=wa-verify-token:latest \
+		--set-env-vars GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_API_URL=https://safeshelf-api-368488022657.asia-south1.run.app
+
 bench:          ## M2 backtest: reviews from the bucket (once), Gemini labels (cached), bench/results.json + README
 	@mkdir -p data/raw/amazon_reviews && gcloud storage cp --no-clobber \
 		"gs://safeshelf-data-03d8d835/amazon_reviews_backtest/reviews_*.jsonl" data/raw/amazon_reviews/
