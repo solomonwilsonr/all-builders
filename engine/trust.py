@@ -7,6 +7,10 @@ Four checks against the genuine product (found by M3, read-only): copied photos,
 website, conflicting specs. Plus a scan for hidden instructions aimed at AI agents. Code sets every flag and writes
 the summary: always "Be careful: ..." with reasons, never "scam". The checks describe the listing; the shopper
 decides.
+
+When no genuine product is on file, the listing is checked on its own: who sells it (the brand's own store, an
+authorised seller or a third party), its price against the M.R.P. printed on the page, and the website. What looks
+right is listed in good_signs, so an unknown product gets reasons instead of a row of "could not verify".
 """
 import io
 import json
@@ -27,6 +31,7 @@ LABEL = "Evidence for the shopper - not a legal finding"
 PRICE_FLOOR = 0.40  # below 40% of the lowest credible price is not a discount
 NEW_DOMAIN_DAYS = 90
 PHASH_MAX_DISTANCE = 8
+MRP_DEEP_DISCOUNT = 0.40  # below 40% of the listing's own M.R.P.: inflated M.R.P.s are common, so unknown, not a flag
 MARKETPLACES = ("amazon.", "flipkart.", "meesho.", "myntra.", "snapdeal.", "jiomart.", "tatacliq.", "ebay.",
                 "walmart.", "etsy.", "aliexpress.", "temu.")
 TWO_PART_TLDS = ("co.in", "co.uk", "com.au", "net.in", "org.in", "co.nz")
@@ -157,6 +162,76 @@ def summary(checks: dict, hidden: bool) -> str:
     return "Be careful: " + "; ".join(reasons) + "."
 
 
+def listing_brand(listing: dict) -> str:
+    """The brand the listing claims: an explicit field, the page's "Brand" row or "Visit the X Store" link,
+    else the first word of the title."""
+    if listing.get("brand"):
+        return listing["brand"].strip()
+    text = listing.get("page_text") or ""
+    found = re.search(r"^\s*Brand(?: Name)?\s*:?[ \t]+(?!new\b)([^\n]{1,40}?)\s*$", text, re.MULTILINE | re.IGNORECASE) or \
+        re.search(r"Visit the (.+?) Store", text)
+    if found:
+        return found.group(1).strip()
+    words = (listing.get("title") or "").split()
+    return words[0].strip(",:-") if words else ""
+
+
+def listing_mrp(page_text: str | None) -> float | None:
+    found = re.search(r"M\.?\s*R\.?\s*P\.?[^\d\n]{0,12}([\d,]+(?:\.\d+)?)", page_text or "", re.IGNORECASE)
+    try:
+        return float(found.group(1).replace(",", "")) if found else None
+    except ValueError:
+        return None
+
+
+def seller_check(brand: str, seller: str | None, url: str | None) -> dict:
+    """Is the seller the brand itself or an authorised seller? A third party is not a warning, only not verified."""
+    if not seller:
+        return {"result": "unknown", "reason": "the page does not name the seller"}
+    b, s_ = norm_brand(brand), norm_brand(seller)
+    if len(b) >= 3 and s_.startswith(b):
+        return {"result": "ok", "seller": seller, "relationship": "brand", "brand": brand}
+    if brand and authorised(brand, seller, url):
+        return {"result": "ok", "seller": seller, "relationship": "authorised", "brand": brand}
+    return {"result": "unknown", "seller": seller, "relationship": "third_party", "brand": brand,
+            "reason": f"sold by {seller}, a third-party seller; SafeShelf cannot confirm it is authorised to sell "
+                      f"{brand or 'this brand'}"}
+
+
+def mrp_check(price: float | None, mrp: float | None, currency: str = "INR") -> dict:
+    """Price against the M.R.P. printed on the listing. The seller sets both, so this can only reassure a little."""
+    if not price or not mrp or price > mrp * 1.05:
+        return {"result": "unknown", "price": price, "mrp": mrp, "reason": "no M.R.P. on the page to compare with"}
+    ratio = round(price / mrp, 2)
+    if ratio < MRP_DEEP_DISCOUNT:
+        return {"result": "unknown", "price": price, "mrp": mrp, "ratio": ratio, "currency": currency,
+                "reason": f"{round(100 * (1 - ratio))}% below the M.R.P. on the page; discounts this deep are often "
+                          "an inflated M.R.P., so SafeShelf cannot tell"}
+    return {"result": "ok", "price": price, "mrp": mrp, "ratio": ratio, "currency": currency,
+            "reference": "the M.R.P. printed on the listing"}
+
+
+def good_signs(checks: dict, url: str | None) -> list[str]:
+    """Plain-words reasons for the checks that passed, for a listing with no genuine product on file."""
+    signs = []
+    seller = checks.get("seller") or {}
+    if seller.get("relationship") == "brand":
+        signs.append(f"Sold by the brand itself ({seller['seller']})")
+    elif seller.get("relationship") == "authorised":
+        signs.append(f"Sold by {seller['seller']}, an authorised seller of {seller['brand']}")
+    price = checks["price"]
+    if price["result"] == "ok" and price.get("mrp"):
+        off = round(100 * (1 - price["ratio"]))
+        signs.append(f"Price is {off}% below the M.R.P. on the page, a normal discount" if off else
+                     "Price matches the M.R.P. on the page")
+    website = checks["website_age"]
+    if website["result"] == "ok":
+        signs.append(f"Website registered {website['domain_registered_days_ago'] // 365} years ago")
+    elif website["result"] == "skipped" and host(url):
+        signs.append(f"Sold on {host(url)}, a large established marketplace")
+    return signs
+
+
 # ---------- the answer ----------
 
 REFERENCE_MARKETPLACES = ("amazon.in", "flipkart.com", "amazon.com")
@@ -207,8 +282,13 @@ def trust_check(listing: dict) -> dict:
                   "website_age": website_check(url),
                   "spec": spec_check(listing, genuine)}
     else:
-        unknown = {"result": "unknown", "reason": "no genuine product matched"}
-        checks = {"copied_photos": unknown, "price": unknown, "website_age": website_check(url), "spec": unknown}
+        # Nothing to compare photos or specs with: skipped, not "unknown", so the listing's own checks decide.
+        none = {"result": "skipped", "reason": "SafeShelf has no genuine product on file to compare with"}
+        checks = {"copied_photos": none,
+                  "price": mrp_check(listing.get("price"), listing_mrp(listing.get("page_text")),
+                                     listing.get("currency") or "INR"),
+                  "website_age": website_check(url), "spec": none,
+                  "seller": seller_check(listing_brand(listing), seller, url)}
     hidden = bool(HIDDEN.search(listing.get("page_text") or ""))
     answer = {
         "listing_url": url,
@@ -217,6 +297,7 @@ def trust_check(listing: dict) -> dict:
         "checks": checks,
         "hidden_instructions_found": hidden,
         "summary": summary(checks, hidden),
+        "good_signs": [] if genuine else good_signs(checks, url),
         "safety_of_genuine_model": safety_note(product_id) if product_id else "unknown product",
         "label": LABEL,
     }

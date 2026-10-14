@@ -24,7 +24,7 @@ async function rememberLocally(item, meta) {
 
 chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
   const jobs = {
-    "safeshelf:check": async () => { await mustBeOn(); return runCheck(msg.page); },
+    "safeshelf:check": async () => { await mustBeOn(); return runCheck(msg.page, Boolean(msg.fresh)); },
     "safeshelf:cost-info": async () => ({ mockApi: /\/\/(localhost|127\.0\.0\.1)/.test(API_BASE) }), // TEMP cost guard
     "safeshelf:call": async () => { await mustBeOn(); return callOp(msg.op, msg.args || {}); }, // any API operation, only if it is live
     "safeshelf:status": async () => opsStatus(),

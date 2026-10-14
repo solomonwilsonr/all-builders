@@ -63,3 +63,38 @@ def test_authorised_sellers():
     assert trust.authorised("ExampleBrand", None, "https://demo.safeshelf.app/product/cx-65")
     assert trust.authorised("ExampleBrand", "Appario Retail", "https://www.amazon.in/dp/X")
     assert not trust.authorised("ExampleBrand", "Deals4U", "https://example-deals-store.test/x")
+
+
+def test_listing_brand_and_mrp_from_the_page():
+    assert trust.listing_brand({"title": "JETech Case for iPhone 16e", "page_text": "Brand\tJETech\nColour Clear"}) == "JETech"
+    assert trust.listing_brand({"title": "Brand new charger", "page_text": "Brand new design"}) == "Brand"
+    assert trust.listing_brand({"title": "boAt Airdopes 141"}) == "boAt"
+    assert trust.listing_mrp("ASIN: B0DT3HZQ5K\nM.R.P.: ₹1,299\nBrand JETech") == 1299
+    assert trust.listing_mrp("MRP Rs. 999.00") == 999
+    assert trust.listing_mrp("no price here") is None
+
+
+def test_seller_check_brand_store_authorised_and_third_party():
+    assert trust.seller_check("JETech", "JETech India", None)["relationship"] == "brand"
+    assert trust.seller_check("VoltNova", "VoltNova Store", None)["relationship"] == "brand"
+    third = trust.seller_check("Apple", "Clicktech Retail Private Ltd", "https://www.amazon.in/dp/B0DGHZWBYB")
+    assert third["result"] == "unknown" and third["relationship"] == "third_party"
+    assert trust.seller_check("Mi", "Mirza Traders", None)["result"] == "unknown"  # too short to match by prefix
+    assert trust.seller_check("JETech", None, None)["result"] == "unknown"
+
+
+def test_mrp_check_reassures_only_for_normal_discounts():
+    assert trust.mrp_check(948, 1299)["result"] == "ok"
+    deep = trust.mrp_check(299, 1999)
+    assert deep["result"] == "unknown" and "85% below" in deep["reason"]
+    assert trust.mrp_check(948, None)["result"] == "unknown"
+    assert trust.mrp_check(2000, 1299)["result"] == "unknown"  # above the M.R.P.: not a usable reference
+
+
+def test_good_signs_for_an_unknown_product():
+    checks = {"seller": trust.seller_check("JETech", "JETech India", None), "price": trust.mrp_check(948, 1299),
+              "website_age": {"result": "skipped"}}
+    assert trust.good_signs(checks, "https://www.amazon.in/dp/B0DT3HZQ5K") == [
+        "Sold by the brand itself (JETech India)",
+        "Price is 27% below the M.R.P. on the page, a normal discount",
+        "Sold on amazon.in, a large established marketplace"]

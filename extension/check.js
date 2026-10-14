@@ -36,7 +36,7 @@ const CHECK_WORDS = {
   website_age: (c) => `Website registered only ${c.domain_registered_days_ago} days ago`,
   spec: (c) => c.conflicts?.length && `Spec conflicts: ${c.conflicts.join(", ")}`,
 };
-const CHECK_NAMES = { copied_photos: "photos", price: "price", website_age: "website age", spec: "specs" };
+const CHECK_NAMES = { copied_photos: "photos", price: "price", website_age: "website age", spec: "specs", seller: "seller" };
 
 // How the engine matched the listing. A look-alike is only a similar product, so it is never treated as this product.
 const STRONG_MATCHES = new Set(["url", "model_number"]);
@@ -71,9 +71,10 @@ export async function askAgent({ product_id, message, language, session_id, cont
 
 // One check per page at a time, remembered for 10 minutes: Check, Save and Ask all need it, and the real engine is slow.
 const recent = new Map();
-export function runCheck(page) {
+// fresh: "Check again" asks the API again instead of reusing the remembered answer.
+export function runCheck(page, fresh = false) {
   const hit = recent.get(page.url);
-  if (hit && Date.now() - hit.at < 10 * 60 * 1000) return hit.promise;
+  if (!fresh && hit && Date.now() - hit.at < 10 * 60 * 1000) return hit.promise;
   const promise = runCheckNow(page);
   recent.set(page.url, { at: Date.now(), promise });
   promise.catch(() => recent.delete(page.url)); // never remember a failure
@@ -100,6 +101,8 @@ async function runCheckNow(page) {
     c.result === "flag" ? [CHECK_WORDS[k]?.(c)] : c.result === "unknown" ? [`Could not verify ${CHECK_NAMES[k] || k}: ${c.reason || "no data"}`] : [],
   ).filter(Boolean);
   if (trust.hidden_instructions_found) realLines.push("Page has hidden text trying to instruct AI. Ignored.");
+  // For a product SafeShelf has no genuine version of, the engine also says what looked right (seller, M.R.P., site).
+  realLines.push(...(trust.good_signs || []));
   const real = card(realLevel(trust.checks), realLines.length ? realLines : ["No warning signs found"]);
 
   // No warning is not good news when checks could not run, so the API's reassuring sentence is not used then.

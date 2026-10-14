@@ -359,7 +359,9 @@ components:
             price: {type: object, required: [result]}
             website_age: {type: object, required: [result]}
             spec: {type: object, required: [result]}
+            seller: {type: object, required: [result], description: 'Only when no genuine product is on file: the brand itself, an authorised seller (ok) or a third party (unknown)'}
         hidden_instructions_found: {type: boolean}
+        good_signs: {type: array, items: {type: string}, description: 'Only when no genuine product is on file: plain-words reasons for the checks that passed'}
         summary: {type: string, description: 'Always "Be careful: ..." with reasons; never "scam"'}
         safety_of_genuine_model: {type: string}
         label: {type: string}

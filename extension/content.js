@@ -706,7 +706,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       const speakBtn = el("button", { type: "button", className: "small", textContent: "Read it to me" });
       speakBtn.onclick = () => speak(r);
       const againBtn = el("button", { type: "button", className: "small", textContent: "Check again" });
-      againBtn.onclick = () => run();
+      againBtn.onclick = () => run(true);
       const closeBtn = el("button", { type: "button", className: "small", textContent: "Close" });
       closeBtn.onclick = () => { setOpen(false); fab.focus(); };
       box.replaceChildren(
@@ -726,7 +726,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       place();
     };
 
-    const run = async () => {
+    const run = async (fresh = false) => {
       if (!(await guard("check", getPage().url, "Check this product", getPage()))) { // TEMP cost guard
         checked = false;
         box.className = "box";
@@ -737,7 +737,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       box.className = "box";
       box.replaceChildren(el("span", { className: "brand", textContent: "SafeShelf is checking this product… the first check can take up to a minute." }));
       try {
-        chrome.runtime.sendMessage({ type: "safeshelf:check", page: getPage() }, (res) => {
+        chrome.runtime.sendMessage({ type: "safeshelf:check", page: getPage(), fresh }, (res) => {
           if (res?.ok) render(res.result);
           else box.replaceChildren(el("span", { textContent: `SafeShelf could not check this page: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?` }));
         });
