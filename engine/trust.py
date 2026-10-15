@@ -197,6 +197,10 @@ def seller_check(brand: str, seller: str | None, url: str | None) -> dict:
         return {"result": "ok", "seller": seller, "relationship": "brand", "brand": brand}
     if brand and authorised(brand, seller, url):
         return {"result": "ok", "seller": seller, "relationship": "authorised", "brand": brand}
+    if len(b) >= 4 and b in s_:  # "PATANJALI NUTRELA NUTRITION" for Nutrela: plausibly the brand's store, not proven
+        return {"result": "unknown", "seller": seller, "relationship": "brand_named", "brand": brand,
+                "reason": f"sold by {seller}: the seller's name includes {brand}, so it may be the brand's own store, "
+                          "but SafeShelf cannot confirm it (shops can use a brand's name)"}
     return {"result": "unknown", "seller": seller, "relationship": "third_party", "brand": brand,
             "reason": f"sold by {seller}, a third-party seller; SafeShelf cannot confirm it is authorised to sell "
                       f"{brand or 'this brand'}"}

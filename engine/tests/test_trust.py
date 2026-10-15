@@ -115,3 +115,9 @@ def test_a_look_alike_is_never_the_price_reference(monkeypatch):
                              "currency": "INR", "page_text": "M.R.P.: ₹499"})
     assert out["checks"]["price"]["result"] != "flag"
     assert out["checks"]["copied_photos"]["result"] == "skipped"
+
+
+def test_a_seller_named_after_the_brand_is_said_but_not_trusted():
+    out = trust.seller_check("NUTRELA", "PATANJALI NUTRELA NUTRITION", "https://www.amazon.in/dp/B09BFX21D1")
+    assert out["result"] == "unknown" and out["relationship"] == "brand_named" and "may be the brand" in out["reason"]
+    assert trust.seller_check("Nutrela", "MegaDealz24", None)["relationship"] == "third_party"

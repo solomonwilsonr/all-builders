@@ -162,7 +162,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     const area = main;
     const rupee = area.match(MONEY);
     const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
-    const mrp = qs(".a-price.a-text-price .a-offscreen")?.textContent.trim();
+    // The M.R.P. in the main price box: Amazon marks it as the basis price. Not the struck-through price per 100 g
+    // (apex-priceperunit-value, misread as the M.R.P. on 15 Oct) nor a sponsored product's M.R.P. further down.
+    const mrp = (qs("#corePriceDisplay_desktop_feature_div .basisPrice .a-offscreen, #apex_desktop .basisPrice .a-offscreen, #corePrice_feature_div .basisPrice .a-offscreen")
+      || [...document.querySelectorAll("#corePriceDisplay_desktop_feature_div .a-price.a-text-price:not(.apex-priceperunit-value) .a-offscreen")].find((e) => !e.closest(".pricePerUnit"))
+      || (site.title === "#productTitle" ? null : qs(".a-price.a-text-price .a-offscreen")))?.textContent.trim();
     const hidden = site.hiddenText
       ? " " + [...document.querySelectorAll("[aria-hidden='true'], [hidden]")].map((el) => el.textContent.trim()).filter(Boolean).join(" ")
       : "";
