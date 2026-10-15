@@ -126,7 +126,53 @@
 
   const add = (kind, ...kids) => { const m = node("div", { className: `msg ${kind}` }, ...kids); $("log").append(m); $("log").scrollTop = $("log").scrollHeight; return m; };
 
-  async function call(body, timeoutMs = 150000) {
+  // Live version: POST /v1/agent/sessions/stream sends each step as it happens. onEvent sees start, step and verdict
+  // events; the promise gives the final answer. Servers without the stream get the plain call.
+  async function call(body, timeoutMs = 150000, onEvent = () => {}) {
+    const started = performance.now();
+    const res = await fetch(`${api()}/v1/agent/sessions/stream`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
+    if (res.status === 404 || res.status === 405) return callPlain(body, timeoutMs);
+    if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(`${res.status}: ${typeof j.detail === "string" ? j.detail : JSON.stringify(j.detail || j)}`); }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let cut;
+      while ((cut = buffer.indexOf("\n\n")) >= 0) {
+        const block = buffer.slice(0, cut);
+        buffer = buffer.slice(cut + 2);
+        const data = block.split("\n").filter((l) => l.startsWith("data:")).map((l) => l.slice(5)).join("\n");
+        if (!data) continue;
+        const event = JSON.parse(data);
+        const seconds = ((performance.now() - started) / 1000).toFixed(1);
+        if (event.type === "done") return { json: event.result, seconds };
+        if (event.type === "error") throw new Error(`${event.status}: ${event.detail}`);
+        onEvent(event, seconds);
+      }
+    }
+    throw new Error("The stream ended without an answer");
+  }
+
+  // Shows the agent's steps live inside a message while it works.
+  const live = (into, title) => {
+    const list = node("ol");
+    const head = node("div", { className: "meta", textContent: title });
+    into.replaceChildren(head, list);
+    const names = { page_reader: "Identifying the product", is_it_real: "Checking the shop and price", safety_radar: "Reading recalls and reviews",
+      twin_finder: "Looking for copies", recall_checker: "Checking recall notices", cert_verifier: "Checking safety marks", research_agent: "Searching official recall sites" };
+    return (event, seconds) => {
+      if (event.type === "start" && names[event.agent]) list.append(node("li", { className: "meta", textContent: `${names[event.agent]}…` }));
+      if (event.type === "step") list.append(node("li", { textContent: `${seconds}s · ${event.agent}: ${event.summary}` }));
+      if (event.type === "verdict") into.insertBefore(node("div", {}, node("span", { className: `verdict ${event.verdict.overall}`, textContent: WORDS[event.verdict.overall] || event.verdict.overall }),
+        node("span", { className: "meta", textContent: `  in ${seconds}s · explanation coming…` })), list);
+      $("log").scrollTop = $("log").scrollHeight;
+    };
+  };
+
+  async function callPlain(body, timeoutMs = 150000) {
     const started = performance.now();
     const res = await fetch(`${api()}/v1/agent/sessions`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
     const json = await res.json().catch(() => ({}));
@@ -173,7 +219,7 @@
       const about = linked ? { product_id: linked.product_id || "unmatched", context: { pasted_link: { title: linked.title, url: linked.url, price: linked.price }, verdict: linked.verdict, reviews_on_the_page: linked.reviews } }
         : { product_id: product() };
       const { json, seconds } = await call({ mode: "chat", ...about, message: q, language: $("lang").value, session_id: sid,
-        history: keep ? thread.slice(-keep) : [] }, /https?:\/\//.test(q) ? 200000 : 150000);
+        history: keep ? thread.slice(-keep) : [] }, /https?:\/\//.test(q) ? 200000 : 150000, live(pending, "Working…"));
       const m = json.messages?.[0] || {};
       thread.push({ role: "user", text: q }, { role: "assistant", text: m.text || "" });
       const badge = json.link?.verdict ? node("div", {}, node("span", { className: `verdict ${json.link.verdict.overall}`, textContent: WORDS[json.link.verdict.overall] || json.link.verdict.overall }),
@@ -204,7 +250,7 @@
     button.disabled = true;
     const card = add("sys", node("strong", { textContent: label }), node("div", { className: "meta", textContent: "Running…" }));
     try {
-      const { json, seconds } = await call(body, mode === "research" ? 290000 : 240000);
+      const { json, seconds } = await call(body, mode === "research" ? 290000 : 240000, live(card, `${label}: working…`));
       const m = json.messages?.[0] || {};
       const parts = [node("strong", { textContent: label })];
       if (json.verdict) {

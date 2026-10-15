@@ -75,6 +75,19 @@
     chrome.runtime.sendMessage({ type: "safeshelf:agent", body, timeout }, (res) => (res?.ok ? resolve(res.result) : reject(new Error(res?.error || chrome.runtime.lastError?.message || "no answer"))));
   });
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  // The Investigate pipeline live: onEvent sees each check finish and the verdict as soon as code sets it.
+  const agentLive = (body, onEvent, timeout = 240000) => new Promise((resolve, reject) => {
+    const port = chrome.runtime.connect({ name: "safeshelf-agent" });
+    let finished = false;
+    port.onMessage.addListener((m) => {
+      if (m.type === "event") return onEvent(m.event);
+      finished = true;
+      port.disconnect();
+      if (m.type === "done") resolve(m.result); else reject(new Error(m.error || "no answer"));
+    });
+    port.onDisconnect.addListener(() => { if (!finished) reject(new Error(chrome.runtime.lastError?.message || "connection closed")); });
+    port.postMessage({ body, timeout });
+  });
 
   let running = null;
 
@@ -145,7 +158,11 @@
       hidden.slice(0, 3).forEach((text) => observations.push({ kind: "hidden_text", text }));
       say(stopped ? "Stopped. Checking what was read so far…" : "Putting it all together…");
       const { product_id, listing_id, ...listing } = page;
-      const v = await agent({ mode: "investigate", session_id: sessionId, product_id: product_id || "unmatched", listing, page_evidence: { observations } });
+      const CHECKS = { is_it_real: "Shop and price checked", safety_radar: "Recalls and reviews read", twin_finder: "Copies looked up", recall_checker: "Recall notices checked", cert_verifier: "Safety marks checked" };
+      const v = await agentLive({ mode: "investigate", session_id: sessionId, product_id: product_id || "unmatched", listing, page_evidence: { observations } }, (e) => {
+        if (e.type === "step" && CHECKS[e.agent]) say(`${CHECKS[e.agent]}: ${e.summary}`);
+        if (e.type === "verdict") { now.textContent = `${WORDS[e.verdict.overall] || WORDS.unknown}. Writing the explanation…`; }
+      });
       const level = v.verdict?.overall || "unknown";
       out.innerHTML = "";
       const box = document.createElement("div");

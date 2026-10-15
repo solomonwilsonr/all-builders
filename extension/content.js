@@ -563,6 +563,37 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     return el("details", { className: "steps" }, el("summary", { textContent: `How SafeShelf answered (${shown.length} steps)` }),
       el("ol", {}, ...shown.map((s) => el("li", { textContent: `${agent(s.agent)}: ${STEP_WORDS[s.tool] ? STEP_WORDS[s.tool] + " - " : ""}${s.summary}${s.seconds ? ` (${s.seconds} s)` : ""}` }))));
   };
+  // Live agent session through the background worker: onEvent gets each step as it happens.
+  const agentLive = (body, onEvent, timeout) => new Promise((resolve, reject) => {
+    let port;
+    try { port = chrome.runtime.connect({ name: "safeshelf-agent" }); } catch (_) { return reject(new Error("The extension was reloaded. Please refresh the page.")); }
+    let finished = false;
+    port.onMessage.addListener((m) => {
+      if (m.type === "event") return onEvent?.(m.event);
+      finished = true;
+      port.disconnect();
+      if (m.type === "done") resolve(m.result); else reject(new Error(m.error || "no answer"));
+    });
+    port.onDisconnect.addListener(() => { if (!finished) reject(new Error(chrome.runtime.lastError?.message || "The connection to SafeShelf closed")); });
+    port.postMessage({ body, timeout });
+  });
+  const LIVE_WORDS = { safety: "Reading the safety record", product: "Reading the product", relationships: "Looking at copies and twins", certifications: "Checking safety marks",
+    history: "Reading the history", alternatives: "Comparing safer options", evidence: "Reading the exact quotes", read_link: "Reading the page" };
+  // A chat question, answered live: the pending bubble shows what the agent is doing, then done({ok, result}) as before.
+  const askLive = (payload, pending, done) => {
+    const { type, ...fields } = payload;
+    const say = (t) => pending.replaceChildren(el("span", { className: "muted", textContent: t }));
+    agentLive({ mode: "chat", ...fields }, (e) => {
+      if (e.type === "step" && e.tool !== "gemini") say(`${LIVE_WORDS[e.tool] || e.summary}…`);
+      if (e.type === "step" && e.tool === "gemini" && /call/.test(e.summary)) say(`${e.summary.replace("Decided to call", "Looking up:")}…`);
+      if (e.type === "verdict") say(`${e.verdict.overall === "red" ? "⛔" : e.verdict.overall === "amber" ? "⚠️" : e.verdict.overall === "green" ? "✅" : "❔"} Verdict ready, writing the answer…`);
+    }, /https?:\/\//.test(fields.message || "") ? 200000 : 150000)
+      .then((a) => {
+        const m = [...(a.messages || [])].reverse().find((x) => x.role === "assistant") || {};
+        done({ ok: true, result: { text: m.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: m.evidence_ids || [], steps: a.steps || [] } });
+      })
+      .catch((err) => done({ ok: false, error: err.message }));
+  };
   const agentCall = (body, timeout) => new Promise((resolve, reject) => {
     try {
       chrome.runtime.sendMessage({ type: "safeshelf:agent", body, timeout }, (res) => (res?.ok ? resolve(res.result) : reject(new Error(res?.error || chrome.runtime.lastError?.message || "no answer"))));
@@ -715,7 +746,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           return finish("Cancelled. Nothing was sent and nothing was charged.");
         }
         try {
-          chrome.runtime.sendMessage({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: q, language: lang.value, session_id: sid, context: context(), history: thread.slice(-7, -1) }, (res) => {
+          askLive({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: q, language: lang.value, session_id: sid, context: context(), history: thread.slice(-7, -1) }, pending, (res) => {
             if (!res?.ok) { thread.pop(); return finish(`Could not get an answer: ${res?.error || chrome.runtime.lastError?.message}`); }
             const a = res.result;
             thread.push({ role: "bot", text: a.text });
@@ -1050,8 +1081,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         const done = (text, extra = []) => { pending.replaceChildren(el("span", { textContent: text }), ...extra); sendBtn.disabled = false; log.scrollTop = log.scrollHeight; };
         if (!r) return done(`I could not check this page, so I can't answer yet (${why || "no answer"}${/running|answered|Failed to fetch/i.test(why || "") ? "; the SafeShelf API may be slow or down" : ""}).`);
         try {
-          chrome.runtime.sendMessage({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: question, language: lang.value,
-            session_id: sid, context: chatContext(r), history: convo.slice(-7, -1).map((m) => ({ role: m.role, text: m.text })) }, (res) => {
+          askLive({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: question, language: lang.value,
+            session_id: sid, context: chatContext(r), history: convo.slice(-7, -1).map((m) => ({ role: m.role, text: m.text })) }, pending, (res) => {
             if (!res?.ok) return done(`Could not get an answer: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?`);
             const a = res.result;
             convo.push({ role: "bot", text: a.text, evidence: a.evidence_ids });

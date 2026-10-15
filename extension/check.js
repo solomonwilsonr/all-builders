@@ -77,6 +77,38 @@ export async function agentSession(body, timeoutMs = 150000) {
   return answer;
 }
 
+// The same agents with each step sent as it happens (POST /v1/agent/sessions/stream, server-sent events).
+// onEvent gets start / step / verdict events; the promise gives the final answer. An API without the stream
+// (older server) gets the plain call.
+export async function agentStream(body, onEvent, timeoutMs = 150000) {
+  const headers = { "Content-Type": "application/json", ...(API_KEY && { "X-API-Key": API_KEY }) };
+  const res = await fetch(API_BASE + "/v1/agent/sessions/stream", { method: "POST", headers, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
+  if (res.status === 404 || res.status === 405) return agentSession(body, timeoutMs);
+  if (!res.ok) {
+    const detail = (await res.json().catch(() => ({}))).detail;
+    throw new Error(typeof detail === "string" ? detail : `the agent answered ${res.status}`);
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let cut;
+    while ((cut = buffer.indexOf("\n\n")) >= 0) {
+      const data = buffer.slice(0, cut).split("\n").filter((l) => l.startsWith("data:")).map((l) => l.slice(5)).join("\n");
+      buffer = buffer.slice(cut + 2);
+      if (!data) continue;
+      const event = JSON.parse(data);
+      if (event.type === "done") return event.result;
+      if (event.type === "error") throw new Error(event.detail || "The agent could not finish");
+      onEvent(event);
+    }
+  }
+  throw new Error("The agent stopped without an answer");
+}
+
 // "Is it safe?" for a listing SafeShelf has no product for. null when the API cannot answer it (old server, mock).
 async function listingSafety(listing) {
   try {

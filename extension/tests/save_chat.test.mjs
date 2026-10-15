@@ -2,7 +2,7 @@
 import assert from "node:assert";
 const store = {}; let calls = [];
 globalThis.chrome = { storage: { local: { get: async (k) => ({ [k]: store[k] }), set: async (o) => Object.assign(store, o) }, onChanged: { addListener() {} } },
-  runtime: { onMessage: { addListener: (fn) => (globalThis.__h = fn) }, onInstalled: { addListener() {} }, onStartup: { addListener() {} } }, action: { setBadgeText() {}, setBadgeBackgroundColor() {} }, tabs: {} };
+  runtime: { onMessage: { addListener: (fn) => (globalThis.__h = fn) }, onConnect: { addListener: (fn) => (globalThis.__c = fn) }, onInstalled: { addListener() {} }, onStartup: { addListener() {} } }, action: { setBadgeText() {}, setBadgeBackgroundColor() {} }, tabs: {} };
 let mode = "real";
 globalThis.fetch = async (url, o = {}) => {
   calls.push((o.method || "GET") + " " + url.replace(/^https?:\/\/[^/]+/, ""));

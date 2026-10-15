@@ -1,4 +1,4 @@
-import { runCheck, saveToShelf, askAgent, getEvidence, agentSession } from "./check.js";
+import { runCheck, saveToShelf, askAgent, getEvidence, agentSession, agentStream } from "./check.js";
 import { API_BASE, SHELF_SYNC } from "./config.js";
 import { callOp, opsStatus } from "./ops.js";
 
@@ -55,4 +55,22 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
     .then((result) => reply({ ok: true, result }))
     .catch((err) => reply({ ok: false, error: err.message }));
   return true; // answer asynchronously
+});
+
+// Live agent sessions: a page opens a "safeshelf-agent" port, sends {body, timeout}, and gets every step as it
+// happens ({type: "event"}), then {type: "done", result} or {type: "error", error}.
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name !== "safeshelf-agent") return;
+  let open = true;
+  port.onDisconnect.addListener(() => { open = false; });
+  const send = (m) => { if (open) port.postMessage(m); };
+  port.onMessage.addListener(async (msg) => {
+    try {
+      await mustBeOn();
+      const result = await agentStream(msg.body || {}, (event) => send({ type: "event", event }), Math.min(Number(msg.timeout) || 150000, 300000));
+      send({ type: "done", result });
+    } catch (err) {
+      send({ type: "error", error: err.message });
+    }
+  });
 });
