@@ -40,6 +40,7 @@ Give it a product listing and it answers two questions:
 - [x] ~27,800 products and 29,379 real reviews
 - [x] 2,537 US recalls + 6,116 JAPAC recalls (Japan, Australia, Korea, Taiwan, Singapore, ASEAN)
 - [x] India: 36 official notices, 2021–2026, from government press releases (India has no recall database): 4 CCPA recall orders (pressure cookers on Amazon, Flipkart and others), 7 CCPA "don't buy without the ISI mark" notices, 2 penalties, 1 toy-standards action, 22 BIS raids (incl. Amazon, Flipkart and FirstCry warehouses; chargers, power adaptors, LED TVs, water heaters, cables). Raids and notices can never mark a product "recalled", only send it to review. Loaded locally; **Cloud SQL still needs it** (see Next steps)
+- [x] Real Indian power-bank fires for the pitch and video (`data/india_incidents.json`, sources checked): IndiGo Delhi–Chennai diversion (11 Oct 2026), IndiGo Chandigarh evacuation with 6 hurt (5 May 2026), a Surat YouTuber's room burned out (June 2026)
 - [x] 8,470 Australian energy-registry records
 
 **Measured results**

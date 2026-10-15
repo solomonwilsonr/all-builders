@@ -1,0 +1,32 @@
+{
+ "_note": "Real Indian power-bank fires reported in the news, for the pitch, video and deck (not loaded into the recalls table: news, not regulator notices). Each was read in full from the source on 16 Oct 2026. No brand or model was named in any of them.",
+ "incidents": [
+  {
+   "date": "2026-10-11",
+   "product": "power bank",
+   "where": "IndiGo flight 6E 6115, Delhi to Chennai, at 35,000 ft",
+   "what": "A passenger's power bank caught fire in an overhead bin; crew put it out with extinguishers and the flight diverted to Hyderabad.",
+   "injuries": "none reported",
+   "source": "Metro (UK), citing IndiGo and NDTV",
+   "url": "https://metro.co.uk/2026/10/11/air-passengers-panic-power-bank-explodes-overhead-locker-35-000ft-29699040/"
+  },
+  {
+   "date": "2026-06",
+   "product": "wireless power bank (about Rs 4,000-4,500, \"a good company's\")",
+   "where": "Surat, a YouTuber's bedroom (Shivani Kapila, \"Little Gloves\")",
+   "what": "The power bank exploded while charging; the room, AC and her YouTube Play Buttons were destroyed by fire.",
+   "injuries": "none; family and dog escaped",
+   "source": "The Indian Express, 2 Jul 2026",
+   "url": "https://indianexpress.com/article/lifestyle/youtuber-power-bank-explodes-destroys-room-safety-prevention-emergency-medical-tips-experts-10767834/"
+  },
+  {
+   "date": "2026-05-05",
+   "product": "power bank",
+   "where": "IndiGo flight 6E-108, Hyderabad to Chandigarh, after landing at Chandigarh",
+   "what": "A power bank in a seat pocket near 39C ignited and kept smouldering; about 200 passengers were evacuated down all six slides.",
+   "injuries": "at least 6 hurt in the evacuation, one leg fracture needing surgery",
+   "source": "The Times of India, 6 May 2026, citing the DGCA",
+   "url": "https://timesofindia.indiatimes.com/city/chandigarh/the-burning-plane-how-blast-in-power-bank-filled-flight-cabin-with-smoke-6-injured-during-emergency-evacuation/articleshow/130844080.cms"
+  }
+ ]
+}
