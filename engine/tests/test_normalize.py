@@ -14,6 +14,9 @@ def test_units_and_ports():
 def test_model_candidates_skip_units_and_standards():
     assert model_candidates("Anker 535 Power Bank (PowerCore 20K) A1366 65W USB-C PD") == ["A1366"]
     assert model_candidates("VRURC OD-B7 wall plug charger 20W") == ["ODB7"]
+    # A bottle's size is not its model number: "700ml" matched another Lifelong product at 30x the price.
+    assert model_candidates("Lifelong Protein Shaker Bottle- 700ml (LLSHB04, Black)") == ["LLSHB04"]
+    assert model_candidates("Flask 1.5L 500ML 2kg 12oz 250g") == []
 
 
 def test_explicit_fields_win_over_text():
