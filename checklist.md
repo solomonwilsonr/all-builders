@@ -1,6 +1,6 @@
 # SafeShelf checklist
 
-**Last updated:** 16 Oct 2026 (Day 5 of 6)
+**Last updated:** 16 Oct 2026 (Day 5 of 6) · **Score: 71/100** ([how it's scored](#-score-out-of-100))
 **Deadline:** 18 Oct 2026, 11:59 PM IST · **Our target:** 17 Oct · **Feature freeze:** evening of 16 Oct
 
 Updated with every change. For the details behind each line, see [plan.md](plan.md).
@@ -118,16 +118,40 @@ Data checked against the local database on 16 Oct. Cloud SQL has the same data e
 ## Are we on track?
 **Mostly yes, with one big risk.**
 
-| Judging area | Weight | Where we stand |
-|---|---|---|
-| Technical merit and GenAI | 40% | 🟢 Strong: real agents, Gemini 3.x, measured results |
-| Problem fit and impact | 25% | 🟢 Good, not Strong: JAPAC focus, 26 languages and 6,152 JAPAC notices, but no impact number of our own, India data not live, all measured proof from US data |
-| Innovation | 25% | 🟢 Good, not Strong: copy-finding and first look are new, but the backtest headline (6/25, same as Gemini) undersells it and there's no checked real-world finding |
-| UX | 10% | 🟡 Extension and chat page redesigned (16 Oct); still at risk until judges have a hosted link |
+| Judging area | Weight | Score | Where we stand |
+|---|---|---|---|
+| Technical merit and GenAI | 40% | **32/40** | 🟢 Strong: real agents, Gemini 3.x, measured results. Lost points: the 16 Oct work isn't deployed; an Amazon.in check timed out |
+| Problem fit and impact | 25% | **17/25** | 🟢 Good, not Strong: JAPAC focus, 26 languages and 6,152 JAPAC notices, but no impact number of our own, India data not live, all measured proof from US data |
+| Innovation | 25% | **17/25** | 🟢 Good, not Strong: copy-finding and first look are new, but the backtest headline (6/25, same as Gemini) undersells it and there's no checked real-world finding |
+| UX | 10% | **5/10** | 🟡 Extension and chat page redesigned (16 Oct); judges have no hosted link yet and probably won't install an extension |
+| **Total** | 100% | **71/100** | |
 
 **The risk:** judges probably won't install a Chrome extension. The web page fixes that once it's deployed. The hackathon notes also warn that overbuilding loses.
 
 **Heads-up:** a check of a real Amazon India link ran for minutes and then dropped. Flipkart and title-only checks answer in under 20 s. Use those in the video until it's looked at.
+
+## 📈 Score out of 100
+Our own estimate, scored as a judge would see SafeShelf today against the four judging areas and weights. Only count a step once it's done **and** judges can see it (deployed, or in the video or deck). Re-score after each step and add a row to the history.
+
+**Where the next points come from** (lead items below):
+
+| Step | Adds | Score after |
+|---|---|---|
+| Now | | **71** |
+| 1. Deploys live: web page, India notices, WhatsApp | UX +3, Problem fit +2, Technical +2 | 78 |
+| 2. India "still on sale" check with a confirmed listing | Problem fit +3, Innovation +1 | 82 |
+| 3. Hand-checked US leads and Sunbeam finding | Innovation +3 | 85 |
+| 4. Lead with false alarms and the pooling chart | Innovation +2, Technical +1 | 88 |
+| 5. India evidence and region slide in the deck | Problem fit +2 | 90 |
+| 6. First look on a real Indian product in the video | Innovation +1, Technical +1 | 92 |
+
+Not counted: the after-submission items (Korea and Taiwan fix, fresher Singapore and ASEAN data, New Zealand, Shopee and Lazada). Each is worth about +1 to Problem fit, but none fits before the deadline.
+
+**History**
+
+| Date | Score | What changed |
+|---|---|---|
+| 16 Oct | 71 | First score: 16 Oct work built but not deployed; no hosted link |
 
 ## 🎯 To take a strong lead
 In order. Items 1–5 are data checks and wording, not new features, so they fit the freeze.
