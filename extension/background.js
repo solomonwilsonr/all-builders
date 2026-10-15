@@ -65,12 +65,18 @@ chrome.runtime.onConnect.addListener((port) => {
   port.onDisconnect.addListener(() => { open = false; });
   const send = (m) => { if (open) port.postMessage(m); };
   port.onMessage.addListener(async (msg) => {
+    // Chrome stops an extension worker after 30 s without an extension API call, which closed the port in the middle
+    // of a first look's quiet minute on the recall sites (16 Oct, live: cut at 45 s). A cheap call every 20 s and a
+    // ping for each piece of the stream (agentStream) keep it awake until the answer is in.
+    const awake = setInterval(() => chrome.runtime.getPlatformInfo?.(), 20000);
     try {
       await mustBeOn();
       const result = await agentStream(msg.body || {}, (event) => send({ type: "event", event }), Math.min(Number(msg.timeout) || 150000, 300000));
       send({ type: "done", result });
     } catch (err) {
       send({ type: "error", error: err.message });
+    } finally {
+      clearInterval(awake);
     }
   });
 });

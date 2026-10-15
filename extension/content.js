@@ -1111,12 +1111,14 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       const section = el("div", { className: "first" }, el("h3", {}, "First look", tag), lede, el("ol", {}, ...Object.values(items)), found);
       section.setAttribute("aria-live", "polite");
       const tick = (k, text, cls = "done") => { items[k].className = cls; items[k].replaceChildren(el("span", { textContent: text })); };
-      (async () => {
-        try { const { spend = { total: 0, calls: 0 } } = await chrome.storage.local.get("spend"); await chrome.storage.local.set({ spend: { total: spend.total + COST.firstLook.mid, calls: spend.calls + 1 } }); } catch (_) { /* TEMP cost guard tally */ }
+      // retrying: after a dropped connection or "Try again". Never forced fresh, so whatever the server already found
+      // and saved for this model is reused instead of being paid for twice.
+      const go = async (retrying) => {
+        if (!retrying) try { const { spend = { total: 0, calls: 0 } } = await chrome.storage.local.get("spend"); await chrome.storage.local.set({ spend: { total: spend.total + COST.firstLook.mid, calls: spend.calls + 1 } }); } catch (_) { /* TEMP cost guard tally */ }
         const { product_id, listing_id, ...listing } = await withMoreReviews(getPage(), 3, 60);
         const n = (listing.reviews || []).length;
         try {
-          const v = await agentLive({ mode: "discover", product_id: "unmatched", listing, fresh }, (e) => {
+          const v = await agentLive({ mode: "discover", product_id: "unmatched", listing, fresh: fresh && !retrying }, (e) => {
             if (run !== discoveryRun || e.type !== "step" && e.type !== "start") return;
             if (e.type === "step" && e.agent === "safety_radar") {
               const read = Number(e.summary.match(/from (\d+) reviews?/)?.[1] ?? n); // the server also keeps reviews from earlier visits
@@ -1125,7 +1127,10 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             if (e.type === "step" && e.agent === "is_it_real") tick("real", e.summary.replace(/^Is it real\? /, "Shop and price: "));
             if (e.type === "step" && e.agent === "reference") tick("reference", e.summary);
             if (e.type === "start" && e.tool === "recall_sites") items.sites.firstChild.textContent = "Searching official recall sites (up to a minute)…";
-            if (e.type === "step" && e.agent === "research_agent" && e.tool === "recall_sites") tick("sites", e.summary.replace(/^Research Agent: /, "Recall sites: "));
+            if (e.type === "step" && e.agent === "research_agent" && e.tool === "recall_sites") {
+              const WORDS = { not_found: "no notice", found: "searched", blocked: "blocked the check", captcha: "asked for a captcha", error: "could not be searched" };
+              tick("sites", e.summary.replace(/^Research Agent: /, "Recall sites: ").replace(/\b(not_found|found|blocked|captcha|error)\b/g, (w) => WORDS[w]));
+            }
             if (e.type === "step" && e.agent === "discovery" && e.tool === "saved") {
               tick("reference", e.summary);
               if (/recall-site search/.test(e.summary)) tick("sites", "Recall sites: reused that search");
@@ -1155,11 +1160,25 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           place();
         } catch (err) {
           if (run !== discoveryRun) return;
+          if (!retrying && /closed|disconnect/i.test(err.message)) { // the connection dropped: pick up once, by itself
+            lede.textContent = "The connection dropped; picking up where SafeShelf left off…";
+            return go(true);
+          }
           for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") tick(k, `${t}: stopped`, "skip");
           tag.textContent = "Stopped";
-          lede.textContent = `The first look could not finish (${err.message}). The result above is from this page only; press Check again to retry.`;
+          lede.textContent = `The first look could not finish (${err.message}). The result above is from this page only.`;
+          const again = el("button", { type: "button", className: "small", textContent: "Try again" });
+          again.onclick = () => {
+            tag.textContent = "Working";
+            lede.textContent = "Trying again; anything already found is reused…";
+            found.replaceChildren();
+            for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") { items[k].className = ""; items[k].replaceChildren(el("span", { textContent: `${t}…` })); }
+            go(true);
+          };
+          found.replaceChildren(el("div", { className: "tools" }, again));
         }
-      })();
+      };
+      go(false);
       return section;
     };
 

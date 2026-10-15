@@ -104,6 +104,7 @@ async function streamOnce(body, onEvent, timeoutMs) {
   for (;;) {
     const { value, done } = await reader.read();
     if (done) break;
+    onEvent({ type: "ping" }); // every piece, even the server's 15 s keep-alive comment, so the worker stays awake
     buffer += decoder.decode(value, { stream: true });
     let cut;
     while ((cut = buffer.indexOf("\n\n")) >= 0) {
