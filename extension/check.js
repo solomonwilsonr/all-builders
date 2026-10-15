@@ -198,7 +198,7 @@ async function runCheckNow(page) {
   const safetyWorry = { red: "This product has been recalled or has serious safety reports.", amber: "Buyers have reported safety problems that are under review." }[safeLevel];
   const realWorry = ["red", "amber"].includes(real.level) ? trust.summary : null;
   const summary = worst ? [safetyWorry, realWorry].filter(Boolean).join(" ") : [safeLevel, real.level].includes("unknown")
-    ? "Not enough evidence yet. SafeShelf could not verify everything, so no warning here does not mean the product is safe."
+    ? "SafeShelf could not verify everything, so no warning here does not mean the product is safe."
     : trust.summary;
 
   return {

@@ -48,6 +48,7 @@ Give it a product listing and it answers two questions:
 **Apps**
 - [x] Chrome extension: Amazon India, Japan, Australia, Singapore and Flipkart
 - [x] New look for the extension (16 Oct): one chat instead of two, with sources, Listen, Copy and Try again; the verdict comes first on the card; loading shows what is being checked; Investigate matches the card; "Check this page" in the toolbar menu
+- [x] Model numbers read right (16 Oct): "Convertible 5-in-1" was taken as model "IN1" on a Samsung fridge on Amazon.in, and long codes like RS76CG8003S9HL were missed; the shop's own "Model number" now comes first. **Needs `make deploy-api`** to reach the live API
 - [x] Chat page (`extension/demo/chat.html`) rebuilt for shoppers: example questions to start, live agent steps, paste or drop a screenshot, English/हिन्दी switch, works on a phone; developer controls moved to a Tools drawer
 - [x] WhatsApp bot built and tested: link or photo in, Hindi or English text + voice note out
 

@@ -16,7 +16,7 @@ NOT_MODELS = re.compile(
     r"\d+(\.\d+)?(W|MAH|V|A|MM|CM|M|IN|INCH|FT|PCS|PACK|K|GB|TB|HZ|ML|L|LTR|LITRE|LITER|G|GM|GMS|KG|OZ|LB|LBS)?)$"
 )
 MODEL_TOKEN = re.compile(
-    r"\b[A-Za-z]{1,6}-?\d{2,6}[A-Za-z0-9-]{0,6}\b"  # A1366, CX-65, VN-65PD
+    r"\b[A-Za-z]{1,6}-?\d{2,6}[A-Za-z0-9-]{0,10}\b"  # A1366, CX-65, VN-65PD, RS76CG8003S9HL
     r"|\b[A-Za-z]{1,6}-[A-Za-z]{0,2}\d{1,6}[A-Za-z0-9]{0,4}\b"  # OD-B7
     r"|\b\d{2,5}[A-Za-z]{1,3}\d{0,3}\b"
 )
@@ -31,9 +31,24 @@ def norm_model(model: str | None) -> str:
     return re.sub(r"[^A-Z0-9]", "", (model or "").upper())
 
 
+# "Convertible 5-in-1", "2 in 1 laptop": a feature, not a model number (it was read as model "IN1").
+N_IN_ONE = re.compile(r"\b\d+\s*-?\s*in\s*-?\s*\d+\b", re.IGNORECASE)
+# The model number the shop states in its details table: "Item model number ‎RS76CG8003S9HL", "Model Number: A1263".
+LABELLED_MODEL = re.compile(r"\b(?:item\s+)?model\s*(?:number|no\.?)\s*[:\-]?[\s\u200e\u200f]*([A-Za-z0-9][A-Za-z0-9\-/.]{2,24})", re.IGNORECASE)
+
+
+def labelled_model(text: str) -> str:
+    """The model number from a 'Model number' label in the page's details, if it looks like one."""
+    for match in LABELLED_MODEL.finditer(text or ""):
+        model = norm_model(match.group(1))
+        if len(model) >= 4 and re.search(r"\d", model) and re.search(r"[A-Z]", model) and not NOT_MODELS.match(model):
+            return model
+    return ""
+
+
 def model_candidates(text: str) -> list[str]:
     seen: list[str] = []
-    for token in MODEL_TOKEN.findall(text or ""):
+    for token in MODEL_TOKEN.findall(N_IN_ONE.sub(" ", text or "")):
         model = norm_model(token)
         if model and not NOT_MODELS.match(model) and model not in seen:
             seen.append(model)
@@ -65,7 +80,8 @@ def normalise(listing: dict) -> dict:
     attrs = attributes(text)
     attrs.update({k: v for k, v in (listing.get("attributes") or {}).items() if v is not None})
     candidates = model_candidates(listing.get("title") or text)
-    model = norm_model(listing.get("model")) or (candidates[0] if candidates else "")
+    # Explicit field first, then the shop's own "Model number" label, then the first code in the title.
+    model = norm_model(listing.get("model")) or labelled_model(listing.get("page_text") or "") or (candidates[0] if candidates else "")
     return {
         "brand": listing.get("brand") or "",
         "brand_norm": norm_brand(listing.get("brand")),

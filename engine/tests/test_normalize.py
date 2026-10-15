@@ -19,6 +19,20 @@ def test_model_candidates_skip_units_and_standards():
     assert model_candidates("Flask 1.5L 500ML 2kg 12oz 250g") == []
 
 
+def test_n_in_one_is_a_feature_and_long_codes_are_models():
+    # Amazon.in, 16 Oct: "Convertible 5-in-1" was read as model IN1 and the real model was missed.
+    title = "Samsung 653 L, 3 Star, Frost Free, Convertible 5-in-1 Digital Inverter Refrigerator (RS76CG8003S9HL, Silver)"
+    assert model_candidates(title) == ["RS76CG8003S9HL"]
+    assert model_candidates("2 in 1 Laptop HP 14-dy2050wm") == ["DY2050WM"]
+
+
+def test_labelled_model_number_wins_over_title_codes():
+    page = "Brand\tSamsung\nItem model number\t\u200eRS76CG8003S9HL\nCapacity\t653 litres"
+    fp = normalise({"brand": "Samsung", "title": "Samsung 653 L Refrigerator Model 2026", "page_text": page})
+    assert fp["model_norm"] == "RS76CG8003S9HL"
+    assert normalise({"title": "Kelvo CX-65 charger", "page_text": "Model Number: Kelvo"})["model_norm"] == "CX65"  # a label with no code is ignored
+
+
 def test_explicit_fields_win_over_text():
     fp = normalise({"brand": "VoltNova", "model": "VN-65PD", "title": "charger 60W", "attributes": {"power_watts": 65}})
     assert fp["model_norm"] == "VN65PD" and fp["attributes"]["power_watts"] == 65
