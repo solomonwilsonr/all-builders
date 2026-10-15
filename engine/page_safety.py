@@ -60,7 +60,7 @@ def recall_status(brand: str, fp: dict) -> dict:
             entry = {"recall_id": recall["id"], "title": recall["title"], "url": recall.get("url"),
                      "notice_date": str(recall["notice_date"]) if recall.get("notice_date") else None}
             (exact if match_class == "exact_model" else review).append(entry)
-    return {"recalled": bool(exact), "checked": ["CPSC"], "recall_ids": [r["recall_id"] for r in exact],
+    return {"recalled": bool(exact), "checked": recalls.authorities(), "recall_ids": [r["recall_id"] for r in exact],
             "recall_ids_under_review": [r["recall_id"] for r in review], "recalls": exact + review}
 
 

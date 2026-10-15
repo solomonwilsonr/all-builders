@@ -90,7 +90,7 @@ def official_status(product_id: str) -> dict:
         "SELECT recall_id, match_class FROM recall_products WHERE product_id = %s", (product_id,)).fetchall()
     exact = sorted({x["recall_id"] for x in links if x["match_class"] == "exact_model"})
     review = sorted({x["recall_id"] for x in links if x["match_class"] == "needs_review"} - set(exact))
-    return {"recalled": bool(exact), "checked": ["CPSC"], "recall_ids": exact, "recall_ids_under_review": review}
+    return {"recalled": bool(exact), "checked": recalls.authorities(), "recall_ids": exact, "recall_ids_under_review": review}
 
 
 def save_signals(product_id: str, ai_findings: list[dict]) -> None:

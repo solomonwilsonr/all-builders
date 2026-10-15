@@ -61,6 +61,12 @@ def description_models(recall: dict, products: list[dict]) -> set[str]:
     return models
 
 
+def authorities() -> list[str]:
+    """The regulators whose recall lists are loaded (CPSC, ACCC, CAA, KATS...), for "checked" in recall answers."""
+    rows = store.conn().execute("SELECT authority, count(*) AS n FROM recalls GROUP BY authority ORDER BY n DESC")
+    return [r["authority"] for r in rows.fetchall()] or ["CPSC"]
+
+
 def brand_recalls(brand: str) -> list[dict]:
     """Recalls whose notice mentions the brand (title or scope), newest first."""
     if len(norm_brand(brand)) < 3:
