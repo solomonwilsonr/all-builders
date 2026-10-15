@@ -159,10 +159,12 @@
       say(stopped ? "Stopped. Checking what was read so far…" : "Putting it all together…");
       const { product_id, listing_id, ...listing } = page;
       const CHECKS = { is_it_real: "Shop and price checked", safety_radar: "Recalls and reviews read", twin_finder: "Copies looked up", recall_checker: "Recall notices checked", cert_verifier: "Safety marks checked" };
-      const v = await agentLive({ mode: "investigate", session_id: sessionId, product_id: product_id || "unmatched", listing, page_evidence: { observations } }, (e) => {
+      const v = await agentLive({ mode: "investigate", session_id: sessionId, product_id: product_id || "unmatched", listing, page_evidence: { observations }, recall_sites: true }, (e) => {
         if (e.type === "step" && CHECKS[e.agent]) say(`${CHECKS[e.agent]}: ${e.summary}`);
-        if (e.type === "verdict") { now.textContent = `${WORDS[e.verdict.overall] || WORDS.unknown}. Writing the explanation…`; }
-      });
+        if (e.type === "verdict") { now.textContent = `${WORDS[e.verdict.overall] || WORDS.unknown}. Searching official recall sites for this market…`; }
+        if (e.type === "start" && e.tool === "recall_sites") say("Searching the official recall sites for this market (up to a minute)…");
+        if (e.type === "research") (e.reasons || []).forEach((r) => say(`Recall sites: ${r.text}`));
+      }, 280000);
       const level = v.verdict?.overall || "unknown";
       out.innerHTML = "";
       const box = document.createElement("div");
@@ -182,7 +184,7 @@
       out.append(box, summary, reasons, foot);
       now.textContent = `Done: ${box.textContent}`;
       // The Research Agent: a browser on SafeShelf's server searches official recall sites for this model.
-      if (v.product_id) {
+      if (v.product_id && !v.research) { // recall sites not searched yet (e.g. no Research Agent on this server)
         const deep = document.createElement("button");
         deep.type = "button";
         deep.textContent = "Check official recall sites (1-3 min)";

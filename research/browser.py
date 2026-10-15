@@ -40,6 +40,15 @@ SOURCES = {
     "accc": {"site": "ACCC Product Safety Australia",
              "start_url": "https://www.productsafety.gov.au/recalls?search_api_fulltext={q}", "search_box": None,
              "results": "main"},
+    # Japan's Consumer Affairs Agency recall database: the search box posts a form (its button runs a script).
+    "jp_caa": {"site": "Consumer Affairs Agency recall database (Japan)", "start_url": "https://www.recall.caa.go.jp/",
+               "search_box": "input[name='search']", "submit": "form", "results": "body"},
+    "nz": {"site": "Product Safety New Zealand", "start_url": "https://www.productsafety.govt.nz/recalls?q={q}",
+           "search_box": None, "results": "main"},
+    # Singapore's Consumer Product Safety Office answers headless browsers with 403 (checked 15 Oct): reported as
+    # "a person needs to look" rather than left out.
+    "sg": {"site": "Consumer Product Safety Office (Singapore)", "start_url": "https://www.consumerproductsafety.gov.sg/",
+           "search_box": None, "results": "main"},
 }
 DEFAULT_SOURCES = ["cpsc", "eu", "accc"]
 
@@ -142,7 +151,11 @@ async def scripted(page: Page, key: str, brand: str, model: str, steps: list) ->
     if src["search_box"]:
         box = page.locator(src["search_box"]).first
         await box.fill(query, timeout=10000)
-        await box.press("Enter")
+        if src.get("submit") == "form":
+            async with page.expect_navigation(wait_until="domcontentloaded", timeout=30000):
+                await page.evaluate("s => document.querySelector(s).form.submit()", src["search_box"])
+        else:
+            await box.press("Enter")
         steps.append({"action": "type", "narration": f"Typed \"{query}\" into the site's search box"})
         await page.wait_for_timeout(4500)
         if (why := await stopped(page, None)):

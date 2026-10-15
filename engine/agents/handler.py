@@ -18,7 +18,7 @@ import threading
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
 
-from engine import passport, trace
+from engine import passport, region, trace
 from engine.agents import concierge, copilot, pipeline, research, runtime, shopper
 
 log = logging.getLogger(__name__)
@@ -31,8 +31,10 @@ async def research_session(body: dict) -> dict:
             product = await asyncio.to_thread(passport.product, pid)
         except KeyError:
             raise HTTPException(status_code=404, detail=f"Unknown product {pid}") from None
+        where = next((m for m in (region.of(row.get("url")) for row in product.get("listings", [])) if m), None)
         body = {**body, "brand": product.get("brand"), "model": product.get("model"),
-                "kind": body.get("kind") or product.get("category")}
+                "kind": body.get("kind") or product.get("category"),
+                "sources": body.get("sources") or region.recall_sources(where)}
     if not (body.get("brand") or body.get("model")):
         raise HTTPException(status_code=422, detail="Give a product_id, or a brand and a model number")
     mode = "computer_use" if body.get("computer_use") else "scripted"

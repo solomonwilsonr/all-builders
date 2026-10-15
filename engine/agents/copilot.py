@@ -13,18 +13,13 @@ from fastapi import HTTPException
 from google.adk.agents import LlmAgent
 
 from engine import chat_core, evidence, identity, passport, safety, store
+from engine import region as markets
 from engine.agents import guard, runtime
 
 log = logging.getLogger(__name__)
 
-# Where a report goes, by where the product is sold. The shopper or analyst files it on the regulator's own site.
-REGULATORS = {
-    "us": {"name": "U.S. Consumer Product Safety Commission (SaferProducts.gov)",
-           "url": "https://www.saferproducts.gov/"},
-    "au": {"name": "ACCC Product Safety Australia", "url": "https://www.productsafety.gov.au/"},
-    "in": {"name": "National Consumer Helpline, India (with the BIS registration number if the label shows one)",
-           "url": "https://consumerhelpline.gov.in/"},
-}
+REGULATORS = markets.REGULATORS  # where a report goes, by market; the shopper files it on the regulator's own site
+
 
 FORM_SCHEMA = {
     "type": "object",
@@ -67,9 +62,18 @@ def copilot(model_name: str, language: str) -> LlmAgent:
         generate_content_config=runtime.config(), **runtime.callbacks(model_name))
 
 
+def market_of(listings: list[dict]) -> str:
+    """The JAPAC market of the product's listings (amazon.co.jp -> jp ...); a US-only product reports to the CPSC."""
+    for row in listings:
+        found = markets.of(row.get("url"))
+        if found in REGULATORS:
+            return found
+    return "us" if any("amazon.com/" in (row.get("url") or "") for row in listings) else "in"
+
+
 def region(product: dict) -> str:
-    hosts = " ".join(listing.get("url") or "" for listing in product.get("listings", []))
-    return "us" if "amazon.com/" in hosts else "au" if ".com.au" in hosts else "in"
+    """The regulator key for a product (engine/case_file.py and engine/owner.py use this)."""
+    return market_of(product.get("listings", []))
 
 
 def evidence_pack(product_id: str) -> dict:
@@ -123,7 +127,7 @@ async def draft(body: dict) -> dict:
     form["evidence_cited"] = [i for i in form.get("evidence_cited", []) if i in seen]
     if guard.overclaims(form.get("incident_description", "")):
         form["incident_description"] = pack["summary"]
-    regulator = REGULATORS[region({"listings": pack["listings"]})]
+    regulator = REGULATORS[market_of(pack["listings"])]
     return {
         "session_id": body.get("session_id") or runtime.current().investigation_id,
         "mode": "report_draft",

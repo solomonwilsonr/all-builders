@@ -32,7 +32,7 @@ from google.adk.events import Event, EventActions
 from google.genai import types
 from pydantic import ConfigDict
 
-from engine import chat_core, gemini, identity, marks, page_safety, passport, safety, store, trust
+from engine import chat_core, gemini, identity, marks, page_safety, passport, region, safety, store, trust
 from engine.agents import cache, guard, research, runtime
 
 log = logging.getLogger(__name__)
@@ -167,16 +167,31 @@ def cert_verifier(state: dict) -> dict | None:
     return out
 
 
-def research_agent(state: dict) -> dict | None:
-    if not state.get("deep"):
-        return None
+def market(state: dict, product: dict | None = None) -> str | None:
+    """The JAPAC market: the listing's shop, else the product's own listings."""
+    listing = state.get("listing") or {}
+    found = region.of(listing.get("url"), listing.get("currency"))
+    for row in (product or {}).get("listings", []) if not found else []:
+        found = found or region.of(row.get("url"))
+    return found
+
+
+def recall_search(state: dict) -> dict | None:
+    """The Research Agent on the recall sites of the listing's market (Japan's CAA for amazon.co.jp, ACCC and NZ for
+    Australia...). None when there is no brand or model number to search for."""
     product = (passport.product(_pid(state)) if _pid(state) else {}) or {}
     listing = state.get("listing") or {}
-    brand = product.get("brand") or trust.listing_brand(listing)
+    brand = product.get("brand") or listing.get("brand") or trust.listing_brand(listing)
     model = product.get("model") or identity.fingerprint(listing).get("model")
     if not (brand or model):
         return None
-    return research.check(brand, model, product.get("category") or "")
+    where = market(state, product)
+    found = research.check(brand, model, product.get("category") or "", region.recall_sources(where))
+    return {**found, "market": region.NAMES.get(where or "", "unknown market")}
+
+
+def research_agent(state: dict) -> dict | None:
+    return recall_search(state) if state.get("deep") else None
 
 
 def describe_real(b: dict) -> str:
@@ -377,7 +392,8 @@ async def investigate(body: dict) -> dict:
         runtime.publish({"type": "verdict", "verdict": cached["verdict"]})
         runtime.step("investigate", "cache", f"Same listing checked {round(time.time() - cached['checked_at'])} s ago; "
                      "reused that answer", 0)
-        return {**cached, "steps": cached["steps"] + runtime.current().steps[-1:], "from_cache": True}
+        cached = {**cached, "steps": cached["steps"] + runtime.current().steps[-1:], "from_cache": True}
+        return await with_recall_sites(cached, state) if body.get("recall_sites") and not state["deep"] else cached
     try:
         _, final = await runtime.run(pipeline, "Investigate this listing.", state, timeout_s=240)
     except Exception as error:  # noqa: BLE001
@@ -406,4 +422,34 @@ async def investigate(body: dict) -> dict:
         "checked_at": time.time(),
     }
     cache.put(key, result, CACHE_S)
+    if body.get("recall_sites") and not state["deep"]:
+        result = await with_recall_sites(result, state)
     return result
+
+
+async def with_recall_sites(result: dict, state: dict) -> dict:
+    """recall_sites: after the verdict is out, the Research Agent searches the market's regulators and the answer
+    gets their findings as extra reasons (a streaming screen shows them as they arrive). Colours stay as code set
+    them: a notice found by browsing is for a person to confirm."""
+    if not research.RESEARCH_URL:
+        return result
+    state = {**state, "page": result.get("checks", {}).get("page") or {"product_id": result.get("product_id")}}
+    runtime.publish({"type": "start", "agent": "research_agent", "tool": "recall_sites"})
+    started = time.monotonic()
+    try:
+        found = await asyncio.to_thread(recall_search, state)
+    except Exception as error:  # noqa: BLE001  the verdict stands without it
+        log.warning("recall sites failed: %s", type(error).__name__)
+        found = {"error": f"the recall sites could not be searched ({type(error).__name__})"}
+    if not found:
+        return result
+    runtime.saw(found)
+    runtime.step("research_agent", "recall_sites", research.summary(found) if "error" not in found else found["error"],
+                 time.monotonic() - started)
+    lines = [{"text": t, "evidence_ids": [i for i in ids if i]} for t, ids in research.reasons(found)] \
+        if "error" not in found else []
+    runtime.publish({"type": "research", "research": found, "reasons": lines})
+    verdict = {**result["verdict"], "reasons": result["verdict"]["reasons"] + lines}
+    return {**result, "verdict": verdict, "research": found, "steps": runtime.current().steps
+            if not result.get("from_cache") else result["steps"] + runtime.current().steps[-1:],
+            "checks": {**result.get("checks", {}), "research_agent": found}}
