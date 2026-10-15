@@ -29,6 +29,7 @@ CONTRACTS_DIR = Path(os.environ.get("CONTRACTS_DIR", Path(__file__).resolve().pa
 MOCK = os.environ.get("MOCK", "1") == "1"
 API_KEY = os.environ.get("API_KEY")  # unset = no key check (local development)
 MAX_BODY = 1_000_000  # bytes; listings and reports are small
+MAX_AGENT_BODY = 9_000_000  # the chat takes a screenshot: 6 MB of image is 8 MB as base64
 # The API is public (the extension and the judges call it without a key), so engine calls that can spend Gemini
 # credit are rate-limited per caller and capped per day per instance (deploy uses --max-instances 3).
 RATE_PER_MIN = int(os.environ.get("SAFESHELF_RATE_PER_MIN", "30"))
@@ -48,7 +49,6 @@ if not MOCK and (os.environ.get("DATABASE_URL") or os.environ.get("CLOUD_SQL_INS
 
 spec = yaml.safe_load((CONTRACTS_DIR / "openapi.yaml").read_text())
 app = FastAPI(title=spec["info"]["title"], version=spec["info"]["version"])
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
 @app.middleware("http")
@@ -56,8 +56,10 @@ async def guard_and_log(request: Request, call_next):
     """Body size and API key checks (also for /mcp), then one JSON log line per request for Cloud Logging.
     Logs the path and outcome only, never request bodies."""
     started = time.monotonic()
-    if int(request.headers.get("content-length") or 0) > MAX_BODY:
-        response = JSONResponse({"detail": "Request body too large"}, status_code=413)
+    limit = MAX_AGENT_BODY if request.url.path.startswith("/v1/agent/sessions") else MAX_BODY
+    if int(request.headers.get("content-length") or 0) > limit:
+        response = JSONResponse({"detail": f"Request body too large (at most {limit // 1_000_000} MB)"},
+                                status_code=413)
     elif API_KEY and request.url.path.startswith(("/mcp", "/a2a")) and request.headers.get("x-api-key") != API_KEY:
         response = JSONResponse({"detail": "Missing or wrong X-API-Key"}, status_code=401)
     elif request.url.path.startswith("/a2a") and request.method == "POST" and (reason := a2a_limit(request)):
@@ -70,6 +72,11 @@ async def guard_and_log(request: Request, call_next):
         "ms": round(1000 * (time.monotonic() - started)), "source": response.headers.get("x-safeshelf-source"),
         "investigation_id": request.headers.get("x-investigation-id")}))
     return response
+
+
+# Added after guard_and_log, so it is the outer layer: refusals (413, 401, 429) carry CORS headers too, and a
+# browser shows their reason instead of "Failed to fetch".
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
 def load_mock(name: str) -> Any:

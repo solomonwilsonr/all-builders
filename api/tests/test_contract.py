@@ -91,3 +91,17 @@ def test_limiter_per_caller_and_per_day():
     assert lim.check("b", 3) is None                # other callers unaffected
     assert lim.check("a", 70) is not None and "daily" in lim.check("a", 70)  # window cleared, day cap of 3 hit
     assert lim.check("a", 86_400 * 2) is None        # a new day starts over
+
+
+def test_a_screenshot_fits_and_refusals_carry_cors_headers():
+    """A phone screenshot (1.6 MB) for the chat was refused with no CORS header: the browser said "Failed to fetch"."""
+    origin = {"Origin": "http://localhost:8090"}
+    screenshot = {"mode": "chat", "product_id": "SS-P-10291", "image": "data:image/png;base64," + "A" * 2_000_000}
+    assert client.post("/v1/agent/sessions", json=screenshot, headers=origin).status_code != 413
+    too_big = client.post("/v1/agent/sessions", content=b"x" * 9_500_000,
+                          headers={**origin, "content-type": "application/json"})
+    assert too_big.status_code == 413 and "at most 9 MB" in too_big.json()["detail"]
+    assert too_big.headers["access-control-allow-origin"] == "*"
+    big_listing = client.post("/v1/listings/trust-check", content=b"x" * 1_500_000,
+                              headers={**origin, "content-type": "application/json"})
+    assert big_listing.status_code == 413 and big_listing.headers["access-control-allow-origin"] == "*"
