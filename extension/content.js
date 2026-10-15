@@ -47,7 +47,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       anchor: "#corePrice_feature_div, #apex_desktop, #title_feature_div",
       cards: { selector: "[data-component-type='s-search-result'][data-asin]:not([data-asin=''])", title: "h2", price: ".a-price .a-offscreen", link: "h2 a, a[href*='/dp/']", image: "img.s-image" },
       // The reviews shown on the page, for "Is it safe?" on products SafeShelf has no data for. Never the reviewer's name.
-      reviews: { item: "[data-hook='review']", title: "[data-hook='review-title'] span:not(.a-letter-space):not(.a-icon-alt)", body: "[data-hook='review-body']", rating: "[data-hook='review-star-rating'], [data-hook='cmps-review-star-rating']", date: "[data-hook='review-date']" },
+      reviews: { item: "[data-hook='review']", title: "[data-hook='review-title'] span:not(.a-letter-space):not(.a-icon-alt), [data-hook='reviewTitle']", body: "[data-hook='reviewRichContentContainer'], [data-hook='review-body'], [data-hook='reviewText']", rating: "[data-hook='review-star-rating'], [data-hook='cmps-review-star-rating']", date: "[data-hook='review-date']" }, // Amazon's 2025 and 2026 markup
     },
     {
       match: (h) => /(^|\.)flipkart\.com$/.test(h),
@@ -178,24 +178,53 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   };
 
   // Up to 30 reviews from the page: title, text, stars and date only. Emails and phone numbers are masked.
-  const readReviews = () => {
+  // root: this page, or another page of the same shop read in the background (the critical-reviews page).
+  const readReviews = (root = document) => {
     const r = site.reviews;
     if (!r) return [];
     const inside = (el, sel) => (sel ? el.querySelector(sel) : null);
     const mask = (t) => t.replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, "[email]").replace(/(?<!\d)(\+?91[ -]?)?[6-9]\d{9}(?!\d)/g, "[phone]");
-    return [...document.querySelectorAll(r.item)].slice(0, 30).map((el) => {
+    const words = (n) => (n ? (n.innerText || n.textContent || "").replace(/\s+/g, " ").trim() : "");
+    return [...root.querySelectorAll(r.item)].slice(0, 30).map((el) => {
       const stars = inside(el, r.rating);
       const rating = Number((stars?.getAttribute("aria-label") || stars?.textContent || "").match(/([\d.]+) out of 5/)?.[1]) || null;
       const when = inside(el, r.date);
       const parsed = new Date(when?.getAttribute("datetime") || (when?.textContent || "").replace(/^.*\bon\s+/i, "").trim());
       return {
-        title: mask(inside(el, r.title)?.textContent.trim() || "").slice(0, 200) || null,
-        text: mask(inside(el, r.body)?.innerText.trim() || "").slice(0, 1500),
+        title: mask(words(inside(el, r.title))).replace(/^[\d.]+ out of 5 stars\s*/, "").slice(0, 200) || null,
+        text: mask(words(inside(el, r.body))).slice(0, 1500),
         rating,
         date: isNaN(parsed) ? null : parsed.toISOString().slice(0, 10),
       };
     }).filter((x) => x.text);
   };
+
+  // Amazon shows only a few reviews on the product page, mostly positive. The product's critical (1-3 star) reviews
+  // page is read here, in the shopper's own browser where they are signed in and Amazon does not block it, and its
+  // reviews go first, since hazard reports live there. Remembered per product for the visit.
+  const criticalCache = new Map();
+  const criticalReviews = async () => {
+    const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
+    if (!asin || !/(^|\.)amazon\./.test(location.hostname)) return [];
+    if (!criticalCache.has(asin)) {
+      criticalCache.set(asin, (async () => {
+        try {
+          const res = await fetch(`/product-reviews/${asin}/?filterByStar=critical&sortBy=recent&reviewerType=all_reviews`, { credentials: "include" });
+          if (!res.ok || /\/ap\/signin/.test(res.url)) return [];
+          return readReviews(new DOMParser().parseFromString(await res.text(), "text/html"));
+        } catch (_) { return []; }
+      })());
+    }
+    return criticalCache.get(asin);
+  };
+  const withMoreReviews = async (page) => {
+    const extra = await criticalReviews();
+    if (!extra.length) return page;
+    const seen = new Set();
+    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(x.text) && seen.add(x.text)).slice(0, 30);
+    return { ...page, reviews };
+  };
+  window.__safeshelfMoreReviews = withMoreReviews;
 
   // Data for one product card on a results page (no page load needed)
   const readCard = (card) => {
@@ -888,7 +917,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       const investigateBtn = mode === "float" && window.__safeshelfInvestigate
         ? el("button", { type: "button", className: "small", textContent: "Investigate", title: "Let SafeShelf look through the photos, label, reviews and seller (read-only)" })
         : null;
-      if (investigateBtn) investigateBtn.onclick = () => { setOpen(false); window.__safeshelfInvestigate(getPage()); };
+      if (investigateBtn) investigateBtn.onclick = async () => { setOpen(false); window.__safeshelfInvestigate(await withMoreReviews(getPage())); };
       show(
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
         brandRow(r.host),
@@ -918,7 +947,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       box.className = "box";
       show(el("p", { className: "loading" }, el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), "SafeShelf is checking this product… the first check can take up to a minute."));
       try {
-        chrome.runtime.sendMessage({ type: "safeshelf:check", page: getPage(), fresh }, (res) => {
+        const page = mode === "float" ? await withMoreReviews(getPage()) : getPage();
+        chrome.runtime.sendMessage({ type: "safeshelf:check", page, fresh }, (res) => {
           if (res?.ok) render(res.result);
           else show(el("p", { textContent: `SafeShelf could not check this page: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?` }));
         });
@@ -929,7 +959,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     const identify = async (done) => {
       if (!(await guard("check", getPage().url, "Identify this product (needed to save it or to chat)", getPage()))) return done(null, "Cancelled. Nothing was sent and nothing was charged."); // TEMP cost guard
       try {
-        chrome.runtime.sendMessage({ type: "safeshelf:check", page: getPage() }, (res) => {
+        const page = mode === "float" ? await withMoreReviews(getPage()) : getPage();
+        chrome.runtime.sendMessage({ type: "safeshelf:check", page }, (res) => {
           const why = res?.ok ? (res.result.product_id ? null : "SafeShelf does not know this product yet") : (res?.error || chrome.runtime.lastError?.message || "no answer");
           if (why) shelfBtn.title = why;
           done(res?.ok ? res.result : null, why);
