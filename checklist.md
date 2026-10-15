@@ -1,0 +1,93 @@
+# SafeShelf checklist
+
+**Last updated:** 15 Oct 2026, evening (Day 4 of 6)
+**Deadline:** 18 Oct 2026, 11:59 PM IST · **Our target:** 17 Oct · **Feature freeze:** evening of 16 Oct
+
+Updated with every change. For the details behind each line, see [plan.md](plan.md).
+
+## In one line
+The engine, agents and data are built and working. What's missing is mostly what judges see: a web page they can open, the video, the deck and the submission.
+
+## What SafeShelf does
+Give it a product listing and it answers two questions:
+1. **Is it safe?** Official recalls, danger warnings in buyer reviews and photos, and whether the safety marks are real.
+2. **Is it real?** Copied photos, a price that's too low, a brand-new website, specs that don't match the genuine product, and hidden text meant to trick an AI.
+
+---
+
+## ✅ Done
+
+**Live on Google Cloud**
+- [x] API live on Cloud Run: 18 endpoints return real data
+- [x] Cloud SQL + pgvector, Gemini 3.x on Vertex, Cloud Storage, Secret Manager; public API is rate-limited
+- [x] Research Agent on its own Cloud Run service (headless browser for recall sites with no API)
+- [x] Off Gemini 2.5 before its 16 Oct retirement
+
+**Engine**
+- [x] Find copies: the same product under different brand names
+- [x] Safety Radar: reads reviews and review photos for danger (20/20 on hand-labelled reviews)
+- [x] Recall and safety-mark checks: only an exact model counts as "recalled"
+- [x] Is it real? checks: photos, price, website age, specs, hidden text
+- [x] Catalog Scan for businesses: precision 1.00, recall 0.98 on a 500-row test
+- [x] "Already bought it?" owner guidance and case file
+
+**Agents (Google ADK)**
+- [x] Investigate, Shelf Chat (English + Hindi), Safer Alternative, Report Draft, Shopper Agent, Research Agent
+- [x] Live agent steps; colours arrive in about 3 seconds
+- [x] MCP server and A2A agent card so other AI agents can use SafeShelf
+
+**Data**
+- [x] ~27,800 products and 29,379 real reviews
+- [x] 2,537 US recalls + 6,116 JAPAC recalls (Japan, Australia, Korea, Taiwan, Singapore, ASEAN)
+- [x] 8,470 Australian energy-registry records
+
+**Measured results**
+- [x] Backtest: SafeShelf catches as many recalls early as Gemini alone (6/25) with a third of the false alarms (5% vs 15%)
+- [x] Agent test set: 18/18 cases pass on the live API
+
+**Apps**
+- [x] Chrome extension: Amazon India, Japan, Australia, Singapore and Flipkart
+- [x] WhatsApp bot built and tested: link or photo in, Hindi or English text + voice note out
+
+---
+
+## 🔨 In progress
+- [ ] **Recall Catalog**: browse and search every loaded recall by country, regulator or hazard (`GET /v1/recalls`, `GET /v1/recalls/{id}`); also fixes dead image links and old ACCC links. Tests pass (7 new, 28 API). Next: commit, then deploy (`make deploy-api`).
+
+---
+
+## ❌ To do
+
+**Must have for submission**
+- [ ] 🚨 **Web page for judges.** The main experience lives in the Chrome extension and `web/` is empty. Judges need a link they can paste into a browser.
+- [ ] Connect the WhatsApp bot to a Meta test number and record the Hindi voice-note moment
+- [ ] 3-minute demo video
+- [ ] Deck from the official 16-slide template, exported to PDF
+- [ ] Merge `person-1` into `main`, update the README, make the GitHub repo public
+- [ ] Final `make bench` and `make eval-agents`; `make warm` before recording
+- [ ] Submit: deployed link, public repo, video, deck
+
+**Nice to have**
+- [ ] My Shelf backend (still a mock)
+- [ ] "Still on sale" count of recalled products
+- [ ] Hand-check the Sunbeam heated-blanket finding before claiming it
+- [ ] Accessibility pass (Lighthouse ≥ 95)
+
+---
+
+## Are we on track?
+**Mostly yes, with one big risk.**
+
+| Judging area | Weight | Where we stand |
+|---|---|---|
+| Technical merit and GenAI | 40% | 🟢 Strong: real agents, Gemini 3.x, measured results |
+| Problem fit and impact | 25% | 🟢 Good: JAPAC focus, Hindi, real recall data |
+| Innovation | 25% | 🟢 Good: copy-finding engine and backtest |
+| UX | 10% | 🟡 At risk until judges have a web page to try |
+
+**The risk:** judges probably won't install a Chrome extension, so they could miss the best part. The hackathon notes also warn that overbuilding loses.
+
+## Next steps
+1. **15 Oct:** commit the Recall Catalog and deploy it
+2. **16 Oct (before freeze):** build the web page for judges (the Recall Catalog can be one tab); connect the WhatsApp number
+3. **17 Oct:** no new features. Merge to `main`, record the video, make the deck, submit
