@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import chat, evidence, gemini, identity, marks, page_safety, passport, safety, trace, trust
+from engine import catalog, chat, evidence, gemini, identity, marks, page_safety, passport, safety, trace, trust
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -110,6 +110,14 @@ def traced(operation_id: str, handler):
     return wrapper
 
 
+async def catalog_scan(request: Request, params: dict[str, Any]) -> dict:
+    body = await request.json()
+    try:
+        return await run_in_threadpool(catalog.scan, body)
+    except ValueError as problem:  # missing or unreadable CSV, no title column
+        raise HTTPException(status_code=422, detail=str(problem)) from None
+
+
 HANDLERS = {
     "identifyProduct": identify_product,
     "findDuplicates": find_duplicates,
@@ -125,6 +133,7 @@ HANDLERS = {
     "getBenchResults": bench_results,
     "startAgentSession": chat.start_agent_session,
     "getEvidence": get_evidence,
+    "catalogScan": catalog_scan,
 }
 HANDLERS = {op: traced(op, handler) for op, handler in HANDLERS.items()}
 HANDLERS["getTrace"] = get_trace

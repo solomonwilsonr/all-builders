@@ -8,3 +8,4 @@ __pycache__/
 # local tool files, not part of the product
 .claude/
 skills-lock.json
+.codegraph/

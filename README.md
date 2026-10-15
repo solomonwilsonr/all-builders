@@ -18,6 +18,7 @@ Deadline: **Oct 18, 2026, 11:59 PM IST** (we aim for Oct 17).
 | [`BACKTEST.md`](BACKTEST.md) | Plan for the make-or-break backtest (do reviews warn before recalls?) |
 | [`TOOLS.md`](TOOLS.md) | Google tools, data sources and open-source tools we plan to use |
 | [`HACKATHON.md`](HACKATHON.md) | Rules, judging criteria, submission requirements, deck template, submission estimate |
+| [`IMPACT.md`](IMPACT.md) | Social impact and awareness plan, to pick up once the core setup is complete |
 | [`COMPETITOR_ENTRIES.md`](COMPETITOR_ENTRIES.md) | Public cup entries (~125, five scans) and the top-10 ranking with links |
 | `Submission Template _ AI Builder Cup.pptx` | Official deck template |
 

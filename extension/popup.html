@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SafeShelf</title>
+<link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h1>SafeShelf</h1>
-  <p class="lede">Check before you buy.</p>
+  <main class="card">
+  <div class="brand-row"><span class="mark" aria-hidden="true">✦</span><span class="brand">SafeShelf</span><span class="badge">AI</span></div>
+  <h1>Check before you buy.</h1>
+  <p class="lede">Safety and genuineness checks on the products you shop for.</p>
   <ul>
     <li><button id="power" type="button" role="switch" aria-checked="true" class="row"><span id="power-label">SafeShelf is on</span><span id="power-state" class="state">On</span></button></li>
     <li><button id="guard" type="button" role="switch" aria-checked="true" class="row"><span>Ask before paid requests</span><span id="guard-state" class="state">On</span></button></li>
@@ -15,6 +18,7 @@
     <li class="nav"><button id="shelf" type="button" class="primary">My Shelf</button></li>
     <li class="nav"><button id="lab" type="button">Judges' Lab</button></li>
   </ul>
+  </main>
   <script src="popup.js"></script>
 </body>
 </html>

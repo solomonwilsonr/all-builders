@@ -13,35 +13,15 @@ Accessories (mounts, cases, cables "for" a product) are left out.
 import glob
 import hashlib
 import json
-import re
 from pathlib import Path
 
 from psycopg.types.json import Jsonb
 
 from engine import gemini, identity, store
-from engine.normalize import brand_blind_text
+from engine.normalize import brand_blind_text, category_of
 
 RAW = Path(__file__).parent / "raw"
 VECTORS = RAW / "catalog_vectors.jsonl"
-CATEGORIES = {
-    "usb_charger": r"wall charger|usb[- ]?c charger|fast charger|gan charger|charging block|charger block|mobile charger",
-    "power_bank": r"power ?bank|portable charger|battery pack",
-    "heated_blanket": r"heated blanket|electric blanket|heated throw",
-    "space_heater": r"space heater|room heater|fan heater|heater",
-    "extension_cord": r"extension cord|extension board|power strip|surge protector|spike guard",
-    "television": r"smart tv|led tv|4k tv|television|uhd tv",
-}
-# Clear accessory words only: real chargers say "compatible with iPhone" or "with cable", so those stay in.
-ACCESSORY = re.compile(r"\b(mount|stand|remote|cover|case|bag|pouch|bracket|antenna|screen protector|skin|holder|"
-                       r"sticker|organi[sz]er|wall plate|dust plug)\b", re.IGNORECASE)
-
-
-def category_of(title: str) -> str | None:
-    if ACCESSORY.search(title or ""):
-        return None
-    return next((c for c, p in CATEGORIES.items() if re.search(p, title or "", re.IGNORECASE)), None)
-
-
 def from_amazon(row: dict, category: str | None = None) -> dict | None:
     """category given = keep it as is (recalled listings); otherwise from the title, accessories dropped."""
     category = category or category_of(row.get("title"))
