@@ -18,7 +18,7 @@ from datetime import UTC, datetime
 from engine import identity, radar, recalls, safety, trust
 from engine.normalize import norm_brand
 
-MAX_REVIEWS = 30  # the page shows fewer; more would only slow the first check
+MAX_REVIEWS = 60  # the quick check sends up to 30; a first-look discovery sends up to 60 critical reviews
 MAX_RECALLS = 15  # newest brand notices; each one without model fields costs one cached Gemini read
 LABEL = "AI finding from the reviews on this page - not a regulatory determination"
 # When the brand is only the title's first word, these are not brands: no recall search for them.

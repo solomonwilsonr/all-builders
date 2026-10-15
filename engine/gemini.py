@@ -2,6 +2,7 @@
 import json
 import math
 import os
+import re
 import threading
 import time
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
@@ -198,3 +199,32 @@ def compare(a: dict, b: dict) -> dict:
     """Gemini's structured comparison of two listings. The decision itself is engine.rules.decide."""
     return structured(COMPARE_PROMPT.format(a=json.dumps(a, ensure_ascii=False, indent=1),
                                             b=json.dumps(b, ensure_ascii=False, indent=1)), COMPARE_SCHEMA)
+
+
+# Search-grounded calls: 3-flash-preview answered in 21 s on 16 Oct; 3.5-flash timed out at 30 s.
+GROUNDED_MODELS = os.environ.get("SAFESHELF_GROUNDED_MODELS", "gemini-3-flash-preview,gemini-3.5-flash").split(",")
+
+
+def grounded(prompt: str, models: list[str] | None = None, timeout_s: int = 60) -> tuple[dict, list[dict], str]:
+    """Gemini with Google Search grounding. Returns (the JSON object in the answer, the web pages the search used as
+    [{title, url}], the model). The JSON shape is asked for in the prompt: a search tool and a response schema do not
+    always mix. Models are tried in turn; each call runs under a hard wall-clock limit like every other call here."""
+    errors: list[str] = []
+    for model in models or GROUNDED_MODELS:
+        try:
+            response = _bounded(
+                client().models.generate_content, timeout_s + 5, model=model, contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0, tools=[types.Tool(google_search=types.GoogleSearch())],
+                    http_options=types.HttpOptions(timeout=timeout_s * 1000,
+                                                   retry_options=types.HttpRetryOptions(attempts=1))))
+            _record(model, response)
+            found = re.search(r"\{.*\}", response.text or "", re.S)
+            data = json.loads(found.group(0)) if found else {}
+            meta = response.candidates[0].grounding_metadata if response.candidates else None
+            sources = [{"title": c.web.title or "", "url": c.web.uri or ""}
+                       for c in (getattr(meta, "grounding_chunks", None) or []) if getattr(c, "web", None)]
+            return data, sources, model
+        except Exception as error:  # noqa: BLE001  timeout, 429, 5xx or no JSON: try the next model
+            errors.append(f"{model}: {type(error).__name__}")
+    raise RuntimeError("every model failed: " + "; ".join(errors))

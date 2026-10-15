@@ -156,6 +156,24 @@ def add_evidence(source_type: str, source_ref: str, content: dict) -> str:
     return evidence_id
 
 
+def latest_evidence(source_type: str, source_ref: str, max_age_s: float) -> tuple[str, dict, float] | None:
+    """The newest evidence of this type and reference captured within max_age_s: (id, content, age in seconds)."""
+    row = conn().execute(
+        "SELECT id, content, EXTRACT(EPOCH FROM now() - captured_at) AS age FROM evidence "
+        "WHERE source_type = %s AND source_ref = %s AND captured_at > now() - make_interval(secs => %s) "
+        "ORDER BY captured_at DESC LIMIT 1", (source_type, source_ref, max_age_s)).fetchone()
+    return (row["id"], json.loads(row["content"]), float(row["age"])) if row else None
+
+
+def evidence_refs(source_type: str, max_age_s: float) -> list[tuple[str, float]]:
+    """Each reference with evidence of this type in the last max_age_s, and the age of its newest row (seconds)."""
+    rows = conn().execute(
+        "SELECT source_ref, EXTRACT(EPOCH FROM now() - max(captured_at)) AS age FROM evidence "
+        "WHERE source_type = %s AND captured_at > now() - make_interval(secs => %s) GROUP BY source_ref",
+        (source_type, max_age_s)).fetchall()
+    return [(r["source_ref"], float(r["age"])) for r in rows]
+
+
 def evidence_content(evidence_id: str) -> dict:
     row = conn().execute("SELECT content FROM evidence WHERE id = %s", (evidence_id,)).fetchone()
     return json.loads(row["content"]) if row else {}

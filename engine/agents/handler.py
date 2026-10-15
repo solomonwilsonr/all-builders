@@ -6,6 +6,9 @@
     report_draft   the regulator report copilot (never submits)
     shopper_step   the Shopper Agent's next step on the shopper's page
     research       the Research Agent on official recall sites (headless browser service)
+    discover       a first look at a product SafeShelf has never seen: Investigate + recall sites + the genuine
+                   product found with Google Search, saved by model number for the next shopper
+    recheck        Cloud Scheduler: search the recall sites again for saved models (needs the re-check token)
 
 Every step is returned in "steps" and written to the investigation trace under the session's investigation ID
 (the X-Investigation-Id header, else a new SS-I- ID), so the Lab shows what each agent did, with time and cost.
@@ -19,7 +22,7 @@ from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from engine import passport, region, trace
-from engine.agents import concierge, copilot, pipeline, research, runtime, shopper
+from engine.agents import concierge, copilot, discovery, pipeline, research, runtime, shopper
 
 log = logging.getLogger(__name__)
 
@@ -53,7 +56,8 @@ async def research_session(body: dict) -> dict:
 
 MODES = {"chat": concierge.chat_session, "investigate": pipeline.investigate,
          "alternatives": concierge.alternatives_session, "report_draft": copilot.draft,
-         "shopper_step": lambda body: asyncio.to_thread(shopper.next_step, body), "research": research_session}
+         "shopper_step": lambda body: asyncio.to_thread(shopper.next_step, body), "research": research_session,
+         "discover": discovery.discover, "recheck": discovery.recheck}
 
 
 def _prepare(body: dict, headers) -> tuple[str, str]:
@@ -62,7 +66,7 @@ def _prepare(body: dict, headers) -> tuple[str, str]:
     if mode not in MODES:
         raise HTTPException(status_code=422, detail=f"mode must be one of: {', '.join(MODES)}")
     investigation_id = headers.get("x-investigation-id") or (
-        body.get("session_id") if mode in ("investigate", "shopper_step", "research") and body.get("session_id")
+        body.get("session_id") if mode in ("investigate", "shopper_step", "research", "discover") and body.get("session_id")
         else None) or runtime.new_id()
     if not trace.VALID_ID.match(investigation_id):
         raise HTTPException(status_code=422, detail="session_id: letters, digits and ._:- only")
