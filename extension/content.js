@@ -953,7 +953,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       }
       checked = true;
       box.className = "box";
-      show(el("p", { className: "loading" }, el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), "SafeShelf is checking this product… the first check can take up to a minute."));
+      show(el("p", { className: "loading" }, el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), "SafeShelf is checking this product… usually a few seconds; a product it has never seen can take up to half a minute."));
       try {
         const page = mode === "float" ? await withMoreReviews(getPage()) : getPage();
         chrome.runtime.sendMessage({ type: "safeshelf:check", page, fresh }, (res) => {

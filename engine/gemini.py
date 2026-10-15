@@ -3,7 +3,8 @@ import json
 import math
 import os
 import threading
-from concurrent.futures import ThreadPoolExecutor
+import time
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextvars import ContextVar
 
 from google import genai
@@ -125,30 +126,71 @@ def embed(texts: list[str]) -> list[list[float]]:
     return out
 
 
+HEDGE_AFTER_S = float(os.environ.get("SAFESHELF_HEDGE_AFTER", "6"))
+COOL_S = 60  # a model that was slow or failed is tried last for this long
+_cooling: dict[str, float] = {}
+
+
+def _attempt(model: str, prompt, schema: dict, timeout_s: int):
+    thinking = None if "lite" in model else types.ThinkingConfig(thinking_level="low")
+    response = client().models.generate_content(
+        model=model, contents=prompt,
+        config=types.GenerateContentConfig(
+            temperature=0, response_mime_type="application/json", response_json_schema=schema,
+            thinking_config=thinking, http_options=types.HttpOptions(
+                timeout=timeout_s * 1000, retry_options=types.HttpRetryOptions(attempts=1))))
+    return response, json.loads(response.text)
+
+
 def structured(prompt: str | list, schema: dict, models: list[str] | None = None, timeout_s: int = 30) -> dict:
-    """JSON that follows schema, from the first model that answers in time; result["model"] says which.
-    Live API calls keep the 30 s default; bulk jobs with long answers pass a longer timeout.
-    prompt may be a list of parts (e.g. an image Part and text) for vision calls."""
-    errors = []
-    for model in models or COMPARE_MODELS:
-        thinking = None if "lite" in model else types.ThinkingConfig(thinking_level="low")
-        try:
-            response = _bounded(
-                client().models.generate_content, timeout_s + 5,
-                model=model,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0, response_mime_type="application/json", response_json_schema=schema,
-                    thinking_config=thinking, http_options=types.HttpOptions(
-                        timeout=timeout_s * 1000, retry_options=types.HttpRetryOptions(attempts=1))),
-            )
-            result = json.loads(response.text)
-        except Exception as error:  # noqa: BLE001  timeout (ours or the SDK's), 429, 5xx or bad JSON: next model
-            errors.append(f"{model}: {type(error).__name__}")
+    """JSON that follows schema; result["model"] says which model wrote it. Live API calls keep the 30 s default;
+    bulk jobs with long answers pass a longer timeout. prompt may be a list of parts (image + text) for vision.
+
+    Hedged: the first model starts; if it has not answered after a quarter of timeout_s (at least HEDGE_AFTER_S),
+    the next one starts too, and the first good answer wins. One model's latency swings from 3 s to minutes (13-15
+    Oct), and waiting out its whole timeout made a first "Is it safe?" check on a new product take 61 s. Slow calls
+    are abandoned, never awaited (the SDK can ignore its own timeout); a slow or failing model goes last for a while."""
+    now = time.monotonic()
+    queue = sorted(dict.fromkeys(models or COMPARE_MODELS), key=lambda m: _cooling.get(m, 0) > now)
+    hedge_after = max(HEDGE_AFTER_S, timeout_s / 4)
+    running: dict = {}  # future -> (model, started)
+    errors: list[str] = []
+    first = queue[0]
+
+    def launch() -> None:
+        model = queue.pop(0)
+        running[_calls.submit(_attempt, model, prompt, schema, timeout_s)] = (model, time.monotonic())
+
+    launch()
+    while running or queue:
+        if not running:
+            launch()
             continue
-        _record(model, response)
-        result["model"] = model
-        return result
+        now = time.monotonic()
+        overdue = min(started + timeout_s + 5 for _, started in running.values()) - now
+        done, _ = wait(list(running), timeout=max(0.05, min(overdue, hedge_after) if queue else overdue),
+                       return_when=FIRST_COMPLETED)
+        for future in done:
+            model, _ = running.pop(future)
+            try:
+                response, result = future.result()
+            except Exception as error:  # noqa: BLE001  429, 5xx or bad JSON: this model sits out a while
+                errors.append(f"{model}: {type(error).__name__}")
+                _cooling[model] = time.monotonic() + COOL_S
+                continue
+            if model != first:  # a backup beat the first model: start with another next time
+                _cooling[first] = time.monotonic() + COOL_S
+            _record(model, response)
+            result["model"] = model
+            return result
+        now = time.monotonic()
+        for future, (model, started) in list(running.items()):
+            if now - started > timeout_s + 5:  # abandoned: its thread finishes in the background
+                running.pop(future)
+                errors.append(f"{model}: no answer in {timeout_s}s")
+                _cooling[model] = now + COOL_S
+        if not done and queue and running:
+            launch()
     raise RuntimeError("every model failed: " + "; ".join(errors))
 
 

@@ -150,11 +150,17 @@ export function runCheck(page, fresh = false) {
 
 async function runCheckNow(page) {
   const { product_id, listing_id, ...listing } = page;
-  const { body: trust, source } = await api("/v1/listings/trust-check", { method: "POST", body: JSON.stringify(listing) });
+  // "Is it real?" and "Is it safe?" start together (one after the other took 13 s + 61 s on a new product).
+  // Safety is started for what the page says it is: its product id, else the listing alone; if "Is it real?" then
+  // matches a different known product, that product's stored safety answer is used instead.
+  const trustCall = api("/v1/listings/trust-check", { method: "POST", body: JSON.stringify(listing) });
+  const earlySafety = product_id ? api(`/v1/products/${product_id}/safety`).then((r) => r.body) : listingSafety(listing);
+  earlySafety.catch(() => {}); // awaited below only when it is the answer used
+  const { body: trust, source } = await trustCall;
   const exact = !trust.matched_by || STRONG_MATCHES.has(trust.matched_by); // the mock has no matched_by
   const pid = exact ? trust.matched_product_id || product_id : product_id;
   // Known product: its stored safety answer. Otherwise the listing alone: recalls by brand and model, and the reviews on the page.
-  const safety = pid ? (await api(`/v1/products/${pid}/safety`)).body : await listingSafety(listing);
+  const safety = pid && pid !== product_id ? (await api(`/v1/products/${pid}/safety`)).body : await earlySafety;
 
   const safeLevel = !safety ? "unknown" : safety.verdict === "not_enough_evidence" ? "unknown" : safety.verdict;
   const safeLines = !safety

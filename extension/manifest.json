@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SafeShelf",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Is it safe? Is it real? Checks the product page you are on.",
   "permissions": [
     "storage"
