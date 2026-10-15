@@ -12,7 +12,18 @@ API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
 # The Research Agent service (make deploy-research); empty = the API answers research requests with 503.
 RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research bench warm eval-agents
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research bench warm eval-agents web web-samples deploy-web
+
+web:            ## the judges' page on :8095 (calls the live API)
+	cd web && python3 -m http.server 8095
+
+web-samples:    ## re-record the judges' page samples from the live API (after deploy-api)
+	API_URL=$(API_URL) python3 web/record_samples.py
+
+deploy-web:     ## the judges' page to Firebase Hosting, with the latest bench results
+	cp bench/results.json web/data/bench.json && cp bench/agent_eval_results.json web/data/agent_eval.json && \
+		cp bench/catalog_results.json web/data/catalog.json
+	cd web && firebase deploy --only hosting --project $(GCP_PROJECT)
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
 	node extension/tests/run_all.mjs

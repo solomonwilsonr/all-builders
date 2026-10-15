@@ -1,0 +1,363 @@
+{
+ "recorded_at": "2026-10-16 00:48 IST",
+ "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
+ "events": [
+  {
+   "type": "open",
+   "mode": "investigate",
+   "investigation_id": "SS-I-7F504391",
+   "_ms": 147
+  },
+  {
+   "type": "start",
+   "agent": "page_reader",
+   "tool": "page",
+   "_ms": 147
+  },
+  {
+   "type": "step",
+   "n": 1,
+   "agent": "page_reader",
+   "tool": "page",
+   "summary": "No exact match; nearest similar product SS-P-AMZ-B09H6R7RHV (look-alike, not this product)",
+   "model": "gemini-embedding-001",
+   "seconds": 13.06,
+   "_ms": 13530
+  },
+  {
+   "type": "start",
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "_ms": 13530
+  },
+  {
+   "type": "start",
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "_ms": 13530
+  },
+  {
+   "type": "start",
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "_ms": 13530
+  },
+  {
+   "type": "start",
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "_ms": 13530
+  },
+  {
+   "type": "start",
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "_ms": 13530
+  },
+  {
+   "type": "start",
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "_ms": 13530
+  },
+  {
+   "type": "step",
+   "n": 2,
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 0.0,
+   "_ms": 14680
+  },
+  {
+   "type": "step",
+   "n": 3,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 0.51,
+   "_ms": 14680
+  },
+  {
+   "type": "step",
+   "n": 4,
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 1.11,
+   "_ms": 14680
+  },
+  {
+   "type": "step",
+   "n": 5,
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 1.14,
+   "_ms": 14681
+  },
+  {
+   "type": "step",
+   "n": 6,
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "summary": "Safety: verdict not_enough_evidence from 0 reviews",
+   "model": null,
+   "seconds": 1.15,
+   "_ms": 14681
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": "gemini-embedding-001",
+   "seconds": 4.67,
+   "_ms": 18203
+  },
+  {
+   "type": "start",
+   "agent": "verdict",
+   "tool": "verdict",
+   "_ms": 18203
+  },
+  {
+   "type": "step",
+   "n": 8,
+   "agent": "verdict",
+   "tool": "verdict",
+   "summary": "Code set the verdict: safety unknown, is it real unknown, overall unknown",
+   "model": null,
+   "seconds": 0.0,
+   "_ms": 18218
+  },
+  {
+   "type": "verdict",
+   "verdict": {
+    "safe": "unknown",
+    "real": "unknown",
+    "overall": "unknown",
+    "reasons": [
+     {
+      "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+      "evidence_ids": []
+     },
+     {
+      "text": "Only 0 review(s) read: too few to call it safe",
+      "evidence_ids": []
+     }
+    ],
+    "evidence_ids": []
+   },
+   "_ms": 18218
+  },
+  {
+   "type": "step",
+   "n": 9,
+   "agent": "verdict_writer",
+   "tool": "gemini",
+   "summary": "Wrote the answer",
+   "model": "gemini-3.5-flash-lite",
+   "seconds": 0.86,
+   "_ms": 19157
+  },
+  {
+   "type": "done",
+   "result": {
+    "session_id": "SS-I-7F504391",
+    "investigation_id": "SS-I-7F504391",
+    "mode": "investigate",
+    "product_id": null,
+    "language": "en",
+    "verdict": {
+     "safe": "unknown",
+     "real": "unknown",
+     "overall": "unknown",
+     "reasons": [
+      {
+       "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+       "evidence_ids": []
+      },
+      {
+       "text": "Only 0 review(s) read: too few to call it safe",
+       "evidence_ids": []
+      }
+     ],
+     "evidence_ids": []
+    },
+    "messages": [
+     {
+      "role": "assistant",
+      "text": "There are no official safety recalls listed for this product. However, there are zero reviews available, which is too few to call it safe.",
+      "evidence_ids": []
+     }
+    ],
+    "checks": {
+     "page": {
+      "product_id": null,
+      "matched_by": "none",
+      "similar_product_id": "SS-P-AMZ-B09H6R7RHV"
+     },
+     "is_it_real": {
+      "listing_url": "https://www.amazon.co.jp/example-kettle",
+      "matched_product_id": "SS-P-AMZ-B09H6R7RHV",
+      "matched_by": "look_alike",
+      "checks": {
+       "copied_photos": {
+        "result": "skipped",
+        "reason": "SafeShelf has no genuine product on file to compare with"
+       },
+       "price": {
+        "result": "unknown",
+        "price": 2480,
+        "mrp": null,
+        "reason": "no M.R.P. on the page to compare with"
+       },
+       "website_age": {
+        "result": "skipped",
+        "reason": "large marketplace; the seller, not the website, is what matters"
+       },
+       "spec": {
+        "result": "skipped",
+        "reason": "SafeShelf has no genuine product on file to compare with"
+       },
+       "seller": {
+        "result": "unknown",
+        "reason": "the page does not name the seller"
+       }
+      },
+      "hidden_instructions_found": false,
+      "summary": "No warning signs found in these checks.",
+      "good_signs": [
+       "Sold on amazon.co.jp, a large established marketplace"
+      ],
+      "safety_of_genuine_model": "no hazard findings, no recall",
+      "label": "Evidence for the shopper - not a legal finding",
+      "evidence_ids": [
+       "EV-1EEAF32B"
+      ]
+     },
+     "safety_radar": {
+      "listing_url": "https://www.amazon.co.jp/example-kettle",
+      "brand": "Zorvana",
+      "model": "KT12",
+      "verdict": "not_enough_evidence",
+      "official_status": {
+       "recalled": false,
+       "searched": true,
+       "checked": [
+        "ACCC",
+        "CPSC",
+        "KATS",
+        "CAA",
+        "ASEAN",
+        "BSMI",
+        "CPSO"
+       ],
+       "recall_ids": [],
+       "recall_ids_under_review": [],
+       "recalls": []
+      },
+      "ai_findings": [],
+      "reviews_checked": 0,
+      "label": "AI finding from the reviews on this page - not a regulatory determination"
+     },
+     "twin_finder": {
+      "skipped": true
+     },
+     "recall_checker": {
+      "skipped": true
+     },
+     "cert_verifier": {
+      "skipped": true
+     },
+     "research_agent": {
+      "skipped": true
+     }
+    },
+    "steps": [
+     {
+      "n": 1,
+      "agent": "page_reader",
+      "tool": "page",
+      "summary": "No exact match; nearest similar product SS-P-AMZ-B09H6R7RHV (look-alike, not this product)",
+      "model": "gemini-embedding-001",
+      "seconds": 13.06
+     },
+     {
+      "n": 2,
+      "agent": "twin_finder",
+      "tool": "twin_finder",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 0.0
+     },
+     {
+      "n": 3,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 0.51
+     },
+     {
+      "n": 4,
+      "agent": "cert_verifier",
+      "tool": "cert_verifier",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 1.11
+     },
+     {
+      "n": 5,
+      "agent": "research_agent",
+      "tool": "research_agent",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 1.14
+     },
+     {
+      "n": 6,
+      "agent": "safety_radar",
+      "tool": "safety_radar",
+      "summary": "Safety: verdict not_enough_evidence from 0 reviews",
+      "model": null,
+      "seconds": 1.15
+     },
+     {
+      "n": 7,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": "gemini-embedding-001",
+      "seconds": 4.67
+     },
+     {
+      "n": 8,
+      "agent": "verdict",
+      "tool": "verdict",
+      "summary": "Code set the verdict: safety unknown, is it real unknown, overall unknown",
+      "model": null,
+      "seconds": 0.0
+     },
+     {
+      "n": 9,
+      "agent": "verdict_writer",
+      "tool": "gemini",
+      "summary": "Wrote the answer",
+      "model": "gemini-3.5-flash-lite",
+      "seconds": 0.86
+     }
+    ],
+    "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
+    "checked_at": 1792091900.5519428
+   },
+   "_ms": 19157
+  }
+ ]
+}

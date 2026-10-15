@@ -60,6 +60,19 @@ def test_recall_is_red_and_label_mismatch_is_amber():
     assert v["real"] == "amber" and any("label photo" in r["text"] for r in v["reasons"])
 
 
+def test_borrowed_registry_mark_is_amber():
+    real_ok = {"checks": {"price": {"result": "ok"}}, "evidence_ids": []}
+    marks = {"checks": [{"authority": "BIS", "number": "R-41097318", "result": "mismatch", "field": "brand",
+                         "claimed_value": "VoltNova", "registry_value": "Kelvo",
+                         "reason": "the BIS licence belongs to another brand (mock registry)"}],
+             "label_numbers": [], "label_matches_claim": None}
+    v = pipeline.decide(state(AMBER, real_ok, cert_verifier=marks))
+    assert v["real"] == "amber" and any("belongs to another brand" in r["text"] and "Kelvo" in r["text"]
+                                        for r in v["reasons"])
+    valid = {"checks": [{"authority": "BIS", "number": "R-41097318", "result": "valid"}], "label_numbers": []}
+    assert pipeline.decide(state(AMBER, real_ok, cert_verifier=valid))["real"] != "amber"
+
+
 def test_label_numbers_are_read_from_what_the_agent_saw():
     seen = {"page_evidence": {"observations": [{"kind": "label", "text": "BIS Reg. No. R-41097318 Made in China"},
                                                {"kind": "review", "text": "R-99999999 is my order"}]}}

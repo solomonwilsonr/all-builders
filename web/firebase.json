@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": ["firebase.json", "README.md", ".env.example", "record_samples.py", "**/.*", "**/__pycache__/**"],
+    "headers": [
+      { "source": "samples/*.json", "headers": [{ "key": "Cache-Control", "value": "max-age=300" }] },
+      { "source": "data/*.json", "headers": [{ "key": "Cache-Control", "value": "max-age=300" }] }
+    ]
+  }
+}

@@ -1,0 +1,357 @@
+{
+ "recorded_at": "2026-10-16 00:37 IST",
+ "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
+ "events": [
+  {
+   "type": "open",
+   "mode": "investigate",
+   "investigation_id": "SS-I-6F3AD81D",
+   "_ms": 242
+  },
+  {
+   "type": "start",
+   "agent": "page_reader",
+   "tool": "page",
+   "_ms": 242
+  },
+  {
+   "type": "step",
+   "n": 1,
+   "agent": "page_reader",
+   "tool": "page",
+   "summary": "Matched the listing to SS-P-60002 (by url)",
+   "model": null,
+   "seconds": 2.02,
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "_ms": 14207
+  },
+  {
+   "type": "start",
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "_ms": 14207
+  },
+  {
+   "type": "start",
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "_ms": 14207
+  },
+  {
+   "type": "start",
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "_ms": 14207
+  },
+  {
+   "type": "start",
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "_ms": 14207
+  },
+  {
+   "type": "step",
+   "n": 2,
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "summary": "No related products on file",
+   "model": null,
+   "seconds": 7.28,
+   "_ms": 23313
+  },
+  {
+   "type": "step",
+   "n": 3,
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 8.27,
+   "_ms": 23313
+  },
+  {
+   "type": "step",
+   "n": 4,
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "summary": "Safety marks: no marks claimed",
+   "model": null,
+   "seconds": 8.58,
+   "_ms": 23313
+  },
+  {
+   "type": "step",
+   "n": 5,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "No recall notice linked",
+   "model": null,
+   "seconds": 8.93,
+   "_ms": 23313
+  },
+  {
+   "type": "step",
+   "n": 6,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": null,
+   "seconds": 9.02,
+   "_ms": 23313
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "summary": "Safety: verdict green from 24 reviews",
+   "model": null,
+   "seconds": 9.02,
+   "_ms": 23313
+  },
+  {
+   "type": "start",
+   "agent": "verdict",
+   "tool": "verdict",
+   "_ms": 23313
+  },
+  {
+   "type": "step",
+   "n": 8,
+   "agent": "verdict",
+   "tool": "verdict",
+   "summary": "Code set the verdict: safety green, is it real unknown, overall unknown",
+   "model": null,
+   "seconds": 0.01,
+   "_ms": 23313
+  },
+  {
+   "type": "verdict",
+   "verdict": {
+    "safe": "green",
+    "real": "unknown",
+    "overall": "unknown",
+    "reasons": [
+     {
+      "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+      "evidence_ids": []
+     }
+    ],
+    "evidence_ids": []
+   },
+   "_ms": 23316
+  },
+  {
+   "type": "step",
+   "n": 9,
+   "agent": "verdict_writer",
+   "tool": "gemini",
+   "summary": "Wrote the answer",
+   "model": "gemini-3.5-flash-lite",
+   "seconds": 0.98,
+   "_ms": 24250
+  },
+  {
+   "type": "done",
+   "result": {
+    "session_id": "SS-I-6F3AD81D",
+    "investigation_id": "SS-I-6F3AD81D",
+    "mode": "investigate",
+    "product_id": "SS-P-60002",
+    "language": "en",
+    "verdict": {
+     "safe": "green",
+     "real": "unknown",
+     "overall": "unknown",
+     "reasons": [
+      {
+       "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+       "evidence_ids": []
+      }
+     ],
+     "evidence_ids": []
+    },
+    "messages": [
+     {
+      "role": "assistant",
+      "text": "SafeShelf found no official product recalls for this item in the checked safety databases. This green status only means nothing was found in the checks performed.",
+      "evidence_ids": []
+     }
+    ],
+    "checks": {
+     "page": {
+      "product_id": "SS-P-60002",
+      "matched_by": "url",
+      "similar_product_id": null
+     },
+     "is_it_real": {
+      "listing_url": "https://demo.safeshelf.app/product/sv-65",
+      "matched_product_id": "SS-P-60002",
+      "matched_by": "url",
+      "checks": {
+       "copied_photos": {
+        "result": "unknown",
+        "reason": "no photos to compare",
+        "reference": "brand or authorised seller"
+       },
+       "price": {
+        "result": "ok",
+        "price": 1599,
+        "currency": "INR",
+        "lowest_credible_price": 1599.0,
+        "ratio": 1.0,
+        "reference": "brand or authorised seller"
+       },
+       "website_age": {
+        "result": "unknown",
+        "domain": "safeshelf.app",
+        "reason": "registration date not available",
+        "source": "RDAP"
+       },
+       "spec": {
+        "result": "ok",
+        "conflicts": []
+       }
+      },
+      "hidden_instructions_found": false,
+      "summary": "No warning signs found in these checks.",
+      "good_signs": [],
+      "safety_of_genuine_model": "no hazard findings, no recall",
+      "label": "Evidence for the shopper - not a legal finding",
+      "evidence_ids": [
+       "EV-28461A47"
+      ]
+     },
+     "safety_radar": {
+      "product_id": "SS-P-60002",
+      "verdict": "green",
+      "official_status": {
+       "recalled": false,
+       "checked": [
+        "ACCC",
+        "CPSC",
+        "KATS",
+        "CAA",
+        "ASEAN",
+        "BSMI",
+        "CPSO"
+       ],
+       "recall_ids": [],
+       "recall_ids_under_review": []
+      },
+      "ai_findings": [],
+      "certifications": [],
+      "reviews_checked": 24,
+      "label": "AI finding - not a regulatory determination"
+     },
+     "twin_finder": {
+      "product_id": "SS-P-60002",
+      "relationships": [],
+      "graph_version": 12
+     },
+     "recall_checker": {
+      "recalls": [],
+      "events": 1
+     },
+     "cert_verifier": {
+      "product_id": "SS-P-60002",
+      "checks": [],
+      "label_numbers": [],
+      "label_matches_claim": null
+     },
+     "research_agent": {
+      "skipped": true
+     }
+    },
+    "steps": [
+     {
+      "n": 1,
+      "agent": "page_reader",
+      "tool": "page",
+      "summary": "Matched the listing to SS-P-60002 (by url)",
+      "model": null,
+      "seconds": 2.02
+     },
+     {
+      "n": 2,
+      "agent": "twin_finder",
+      "tool": "twin_finder",
+      "summary": "No related products on file",
+      "model": null,
+      "seconds": 7.28
+     },
+     {
+      "n": 3,
+      "agent": "research_agent",
+      "tool": "research_agent",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 8.27
+     },
+     {
+      "n": 4,
+      "agent": "cert_verifier",
+      "tool": "cert_verifier",
+      "summary": "Safety marks: no marks claimed",
+      "model": null,
+      "seconds": 8.58
+     },
+     {
+      "n": 5,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "No recall notice linked",
+      "model": null,
+      "seconds": 8.93
+     },
+     {
+      "n": 6,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": null,
+      "seconds": 9.02
+     },
+     {
+      "n": 7,
+      "agent": "safety_radar",
+      "tool": "safety_radar",
+      "summary": "Safety: verdict green from 24 reviews",
+      "model": null,
+      "seconds": 9.02
+     },
+     {
+      "n": 8,
+      "agent": "verdict",
+      "tool": "verdict",
+      "summary": "Code set the verdict: safety green, is it real unknown, overall unknown",
+      "model": null,
+      "seconds": 0.01
+     },
+     {
+      "n": 9,
+      "agent": "verdict_writer",
+      "tool": "gemini",
+      "summary": "Wrote the answer",
+      "model": "gemini-3.5-flash-lite",
+      "seconds": 0.98
+     }
+    ],
+    "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
+    "checked_at": 1792091227.0053427
+   },
+   "_ms": 24250
+  }
+ ]
+}

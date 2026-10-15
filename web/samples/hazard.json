@@ -1,0 +1,519 @@
+{
+ "recorded_at": "2026-10-16 00:37 IST",
+ "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
+ "events": [
+  {
+   "type": "open",
+   "mode": "investigate",
+   "investigation_id": "SS-I-77BFDC8F",
+   "_ms": 241
+  },
+  {
+   "type": "start",
+   "agent": "page_reader",
+   "tool": "page",
+   "_ms": 242
+  },
+  {
+   "type": "step",
+   "n": 1,
+   "agent": "page_reader",
+   "tool": "page",
+   "summary": "Matched the listing to SS-P-10291 (by url)",
+   "model": null,
+   "seconds": 1.22,
+   "_ms": 14207
+  },
+  {
+   "type": "start",
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "_ms": 14207
+  },
+  {
+   "type": "start",
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "_ms": 14207
+  },
+  {
+   "type": "start",
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "_ms": 14208
+  },
+  {
+   "type": "start",
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "_ms": 14208
+  },
+  {
+   "type": "start",
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "_ms": 14208
+  },
+  {
+   "type": "start",
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "_ms": 14208
+  },
+  {
+   "type": "step",
+   "n": 2,
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "summary": "3 related product(s): exact model SS-P-20019, rebranded equivalent SS-P-30118, visually similar SS-P-40007",
+   "model": null,
+   "seconds": 0.71,
+   "_ms": 15253
+  },
+  {
+   "type": "step",
+   "n": 3,
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 1.49,
+   "_ms": 23195
+  },
+  {
+   "type": "step",
+   "n": 4,
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "summary": "Safety marks: BIS verified",
+   "model": null,
+   "seconds": 2.9,
+   "_ms": 23218
+  },
+  {
+   "type": "step",
+   "n": 5,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": null,
+   "seconds": 3.3,
+   "_ms": 23311
+  },
+  {
+   "type": "step",
+   "n": 6,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "No recall notice linked",
+   "model": null,
+   "seconds": 7.9,
+   "_ms": 23311
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "summary": "Safety: verdict amber from 24 reviews (6 fire/burn, 1 electric/shock reports)",
+   "model": null,
+   "seconds": 9.03,
+   "_ms": 23311
+  },
+  {
+   "type": "start",
+   "agent": "verdict",
+   "tool": "verdict",
+   "_ms": 23311
+  },
+  {
+   "type": "step",
+   "n": 8,
+   "agent": "verdict",
+   "tool": "verdict",
+   "summary": "Code set the verdict: safety amber, is it real unknown, overall amber",
+   "model": null,
+   "seconds": 0.02,
+   "_ms": 23311
+  },
+  {
+   "type": "verdict",
+   "verdict": {
+    "safe": "amber",
+    "real": "unknown",
+    "overall": "amber",
+    "reasons": [
+     {
+      "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+      "evidence_ids": []
+     },
+     {
+      "text": "6 buyer report(s) of melted on first day, plastic black and smelled of burning (AI finding, under review; 0 with photos)",
+      "evidence_ids": [
+       "EV-37A71FB5",
+       "EV-08E9C38D",
+       "EV-97A8AA0D",
+       "EV-E822ECF0"
+      ]
+     },
+     {
+      "text": "1 buyer report(s) of sparks from the USB-C port when plugging in cable (AI finding, under review; 0 with photos)",
+      "evidence_ids": [
+       "EV-2BF949BA"
+      ]
+     },
+     {
+      "text": "Same hardware as SS-P-20019 (exact model, verified)",
+      "evidence_ids": [
+       "EV-86530811"
+      ]
+     },
+     {
+      "text": "Same hardware as SS-P-30118 (rebranded equivalent, not yet verified)",
+      "evidence_ids": [
+       "EV-5A43E936"
+      ]
+     }
+    ],
+    "evidence_ids": [
+     "EV-37A71FB5",
+     "EV-08E9C38D",
+     "EV-97A8AA0D",
+     "EV-E822ECF0",
+     "EV-2BF949BA",
+     "EV-86530811",
+     "EV-5A43E936"
+    ]
+   },
+   "_ms": 23311
+  },
+  {
+   "type": "step",
+   "n": 9,
+   "agent": "verdict_writer",
+   "tool": "gemini",
+   "summary": "Wrote the answer",
+   "model": "gemini-3.5-flash-lite",
+   "seconds": 1.28,
+   "_ms": 24567
+  },
+  {
+   "type": "done",
+   "result": {
+    "session_id": "SS-I-77BFDC8F",
+    "investigation_id": "SS-I-77BFDC8F",
+    "mode": "investigate",
+    "product_id": "SS-P-10291",
+    "language": "en",
+    "verdict": {
+     "safe": "amber",
+     "real": "unknown",
+     "overall": "amber",
+     "reasons": [
+      {
+       "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+       "evidence_ids": []
+      },
+      {
+       "text": "6 buyer report(s) of melted on first day, plastic black and smelled of burning (AI finding, under review; 0 with photos)",
+       "evidence_ids": [
+        "EV-37A71FB5",
+        "EV-08E9C38D",
+        "EV-97A8AA0D",
+        "EV-E822ECF0"
+       ]
+      },
+      {
+       "text": "1 buyer report(s) of sparks from the USB-C port when plugging in cable (AI finding, under review; 0 with photos)",
+       "evidence_ids": [
+        "EV-2BF949BA"
+       ]
+      },
+      {
+       "text": "Same hardware as SS-P-20019 (exact model, verified)",
+       "evidence_ids": [
+        "EV-86530811"
+       ]
+      },
+      {
+       "text": "Same hardware as SS-P-30118 (rebranded equivalent, not yet verified)",
+       "evidence_ids": [
+        "EV-5A43E936"
+       ]
+      }
+     ],
+     "evidence_ids": [
+      "EV-37A71FB5",
+      "EV-08E9C38D",
+      "EV-97A8AA0D",
+      "EV-E822ECF0",
+      "EV-2BF949BA",
+      "EV-86530811",
+      "EV-5A43E936"
+     ]
+    },
+    "messages": [
+     {
+      "role": "assistant",
+      "text": "Several buyers report that the product melted on the first day, turned black, and smelled of burning, while another reports sparks from the USB-C port. These are AI findings under review, not a regulator's decision, and no official recall was found.",
+      "evidence_ids": [
+       "EV-37A71FB5",
+       "EV-08E9C38D",
+       "EV-97A8AA0D",
+       "EV-E822ECF0",
+       "EV-2BF949BA"
+      ]
+     }
+    ],
+    "checks": {
+     "page": {
+      "product_id": "SS-P-10291",
+      "matched_by": "url",
+      "similar_product_id": null
+     },
+     "is_it_real": {
+      "listing_url": "https://demo.safeshelf.app/product/cx-65",
+      "matched_product_id": "SS-P-10291",
+      "matched_by": "url",
+      "checks": {
+       "copied_photos": {
+        "result": "unknown",
+        "reason": "no photos to compare",
+        "reference": "brand or authorised seller"
+       },
+       "price": {
+        "result": "ok",
+        "price": 1399,
+        "currency": "INR",
+        "lowest_credible_price": 1399.0,
+        "ratio": 1.0,
+        "reference": "brand or authorised seller"
+       },
+       "website_age": {
+        "result": "unknown",
+        "domain": "safeshelf.app",
+        "reason": "registration date not available",
+        "source": "RDAP"
+       },
+       "spec": {
+        "result": "ok",
+        "conflicts": []
+       }
+      },
+      "hidden_instructions_found": false,
+      "summary": "No warning signs found in these checks.",
+      "good_signs": [],
+      "safety_of_genuine_model": "2 hazard findings under review, no recall",
+      "label": "Evidence for the shopper - not a legal finding",
+      "evidence_ids": [
+       "EV-319F71F2"
+      ]
+     },
+     "safety_radar": {
+      "product_id": "SS-P-10291",
+      "verdict": "amber",
+      "official_status": {
+       "recalled": false,
+       "checked": [
+        "ACCC",
+        "CPSC",
+        "KATS",
+        "CAA",
+        "ASEAN",
+        "BSMI",
+        "CPSO"
+       ],
+       "recall_ids": [],
+       "recall_ids_under_review": []
+      },
+      "ai_findings": [
+       {
+        "hazard_type": "fire_burn",
+        "mechanism": "melted on first day, plastic black and smelled of burning",
+        "severity": "high",
+        "independent_reports": 6,
+        "with_photos": 0,
+        "rate_per_1000_reviews": 250.0,
+        "first_seen": "2026-07-02",
+        "trend": "rising",
+        "status": "under_review",
+        "evidence_ids": [
+         "EV-37A71FB5",
+         "EV-08E9C38D",
+         "EV-97A8AA0D",
+         "EV-E822ECF0",
+         "EV-EEE5C926",
+         "EV-6265D4E0"
+        ],
+        "counterevidence": "2 reviews say it does not overheat or fail; 1 report is second-hand"
+       },
+       {
+        "hazard_type": "electric_shock",
+        "mechanism": "sparks from the USB-C port when plugging in cable",
+        "severity": "high",
+        "independent_reports": 1,
+        "with_photos": 0,
+        "rate_per_1000_reviews": 41.7,
+        "first_seen": "2026-09-04",
+        "trend": "rising",
+        "status": "under_review",
+        "evidence_ids": [
+         "EV-2BF949BA"
+        ],
+        "counterevidence": "2 reviews say it does not overheat or fail; 1 report is second-hand"
+       }
+      ],
+      "certifications": [
+       {
+        "authority": "BIS",
+        "number": "R-41097318",
+        "claimed_value": "Kelvo",
+        "checked_at": "2026-10-15T19:07:03+00:00",
+        "result": "verified",
+        "field": null,
+        "registry_value": "Kelvo",
+        "reason": "matches the BIS mock registry"
+       }
+      ],
+      "reviews_checked": 24,
+      "label": "AI finding - not a regulatory determination"
+     },
+     "twin_finder": {
+      "product_id": "SS-P-10291",
+      "relationships": [
+       {
+        "target_id": "SS-P-20019",
+        "relationship": "exact_model",
+        "status": "verified",
+        "confidence": 1.0,
+        "evidence_ids": [
+         "EV-86530811"
+        ]
+       },
+       {
+        "target_id": "SS-P-30118",
+        "relationship": "rebranded_equivalent",
+        "status": "unverified",
+        "confidence": 0.85,
+        "evidence_ids": [
+         "EV-5A43E936"
+        ]
+       },
+       {
+        "target_id": "SS-P-40007",
+        "relationship": "visually_similar",
+        "status": "unverified",
+        "confidence": 0.6,
+        "evidence_ids": [
+         "EV-CE889771"
+        ]
+       }
+      ],
+      "graph_version": 12
+     },
+     "recall_checker": {
+      "recalls": [],
+      "events": 6
+     },
+     "cert_verifier": {
+      "product_id": "SS-P-10291",
+      "checks": [
+       {
+        "authority": "BIS",
+        "number": "R-41097318",
+        "claimed_value": "Kelvo",
+        "checked_at": "2026-10-15T19:06:57+00:00",
+        "result": "verified",
+        "field": null,
+        "registry_value": "Kelvo",
+        "reason": "matches the BIS mock registry"
+       }
+      ],
+      "label_numbers": [],
+      "label_matches_claim": null
+     },
+     "research_agent": {
+      "skipped": true
+     }
+    },
+    "steps": [
+     {
+      "n": 1,
+      "agent": "page_reader",
+      "tool": "page",
+      "summary": "Matched the listing to SS-P-10291 (by url)",
+      "model": null,
+      "seconds": 1.22
+     },
+     {
+      "n": 2,
+      "agent": "twin_finder",
+      "tool": "twin_finder",
+      "summary": "3 related product(s): exact model SS-P-20019, rebranded equivalent SS-P-30118, visually similar SS-P-40007",
+      "model": null,
+      "seconds": 0.71
+     },
+     {
+      "n": 3,
+      "agent": "research_agent",
+      "tool": "research_agent",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 1.49
+     },
+     {
+      "n": 4,
+      "agent": "cert_verifier",
+      "tool": "cert_verifier",
+      "summary": "Safety marks: BIS verified",
+      "model": null,
+      "seconds": 2.9
+     },
+     {
+      "n": 5,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": null,
+      "seconds": 3.3
+     },
+     {
+      "n": 6,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "No recall notice linked",
+      "model": null,
+      "seconds": 7.9
+     },
+     {
+      "n": 7,
+      "agent": "safety_radar",
+      "tool": "safety_radar",
+      "summary": "Safety: verdict amber from 24 reviews (6 fire/burn, 1 electric/shock reports)",
+      "model": null,
+      "seconds": 9.03
+     },
+     {
+      "n": 8,
+      "agent": "verdict",
+      "tool": "verdict",
+      "summary": "Code set the verdict: safety amber, is it real unknown, overall amber",
+      "model": null,
+      "seconds": 0.02
+     },
+     {
+      "n": 9,
+      "agent": "verdict_writer",
+      "tool": "gemini",
+      "summary": "Wrote the answer",
+      "model": "gemini-3.5-flash-lite",
+      "seconds": 1.28
+     }
+    ],
+    "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
+    "checked_at": 1792091227.3251717
+   },
+   "_ms": 24569
+  }
+ ]
+}

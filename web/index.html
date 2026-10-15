@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SafeShelf</title>
+<meta name="description" content="Is it safe? Is it real? SafeShelf checks a product listing against official recalls, buyer reviews, safety-mark registries and the genuine product.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23dff0a8'/><text x='16' y='22' font-size='17' text-anchor='middle' fill='%2313233a'>✦</text></svg>">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the samples</a>
+<header class="top">
+  <div class="brand-row"><span class="mark" aria-hidden="true">✦</span><span class="brand">SafeShelf</span><span class="badge">Google Cloud AI Builder Cup 2026 · Retail &amp; Commerce</span></div>
+  <h1>Shopping sites tell you the price.<br>SafeShelf tells you if it's been recalled, or isn't real.</h1>
+  <p class="lede">Give it a product listing. Gemini agents read official recalls, buyer reviews, safety-mark registries and the genuine product, then <strong>plain code sets the colour</strong>, so a page's text or the model can't talk it into green.</p>
+  <ul class="facts" aria-label="Real data behind every answer">
+    <li><b>8,653</b> real official recalls<span>US CPSC + Japan, Australia, Korea, Taiwan, Singapore, ASEAN</span></li>
+    <li><b>29,379</b> real buyer reviews<span>read for fire, burn and shock reports</span></li>
+    <li><b>8,470</b> Australian energy-registry records<span>to check star-rating claims</span></li>
+    <li><b>18 / 18</b> agent test cases pass<span>on the live API, with known right answers</span></li>
+  </ul>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button role="tab" id="tab-try" aria-controls="panel-try" aria-selected="true">Try a sample</button>
+  <button role="tab" id="tab-own" aria-controls="panel-own" aria-selected="false" tabindex="-1">Check your own listing</button>
+  <button role="tab" id="tab-vs" aria-controls="panel-vs" aria-selected="false" tabindex="-1">SafeShelf vs Gemini alone</button>
+</nav>
+
+<main id="main">
+  <section id="panel-try" role="tabpanel" aria-labelledby="tab-try">
+    <p class="hint">Pick a listing. You'll see a real run of the live API replayed at its real speed. Then press <b>Run it live</b> to make Gemini do it again now. No sign-in.</p>
+    <div class="layout">
+      <ol class="samples" id="samples" aria-label="Sample listings"></ol>
+      <div class="run card" id="run" aria-live="polite">
+        <p class="empty">Pick a sample on the left.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-own" role="tabpanel" aria-labelledby="tab-own" hidden>
+    <form class="own card" id="own">
+      <h2>Check a listing you found</h2>
+      <p class="muted">Copy what the shop page says. Live run with Gemini; real marketplace links can take up to two minutes.</p>
+      <label>Product title <input type="text" name="title" required maxlength="300" placeholder="Anker PowerCore 10000 Power Bank A1263"></label>
+      <label>Link to the listing <input type="url" name="url" maxlength="500" placeholder="https://www.flipkart.com/…"></label>
+      <div class="row2">
+        <label>Price <input type="number" name="price" min="0" step="any" placeholder="1799"></label>
+        <label>Currency <select name="currency"><option>INR</option><option>JPY</option><option>AUD</option><option>SGD</option><option>NZD</option><option>KRW</option><option>USD</option></select></label>
+        <label>Seller <input type="text" name="seller" maxlength="120" placeholder="optional"></label>
+      </div>
+      <label>Anything else on the page <textarea name="page_text" rows="3" maxlength="4000" placeholder="optional: brand, model number, safety marks, the label text"></textarea></label>
+      <div class="actions"><button class="primary" type="submit">Check it live</button><span class="quota" data-quota></span></div>
+    </form>
+    <div class="run card" id="own-run" aria-live="polite" hidden></div>
+  </section>
+
+  <section id="panel-vs" role="tabpanel" aria-labelledby="tab-vs" hidden>
+    <div id="vs"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Colours are set by code from the evidence; AI findings marked "under review" are not regulatory determinations. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; recalls, reviews and registries are real data.</p>
+  <p><a href="https://safeshelf-api-368488022657.asia-south1.run.app/docs" target="_blank" rel="noopener">API docs</a> · <a href="https://safeshelf-api-368488022657.asia-south1.run.app/.well-known/agent-card.json" target="_blank" rel="noopener">A2A agent card</a> · Also a Chrome extension and a WhatsApp bot</p>
+</footer>
+</body>
+</html>

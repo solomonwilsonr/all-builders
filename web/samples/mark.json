@@ -1,0 +1,387 @@
+{
+ "recorded_at": "2026-10-16 00:37 IST",
+ "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
+ "events": [
+  {
+   "type": "open",
+   "mode": "investigate",
+   "investigation_id": "SS-I-0559F062",
+   "_ms": 240
+  },
+  {
+   "type": "start",
+   "agent": "page_reader",
+   "tool": "page",
+   "_ms": 240
+  },
+  {
+   "type": "step",
+   "n": 1,
+   "agent": "page_reader",
+   "tool": "page",
+   "summary": "Matched the listing to SS-P-30118 (by url)",
+   "model": null,
+   "seconds": 0.29,
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "_ms": 14206
+  },
+  {
+   "type": "start",
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "_ms": 14207
+  },
+  {
+   "type": "step",
+   "n": 2,
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "summary": "No related products on file",
+   "model": null,
+   "seconds": 12.71,
+   "_ms": 14207
+  },
+  {
+   "type": "step",
+   "n": 3,
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 12.73,
+   "_ms": 14207
+  },
+  {
+   "type": "step",
+   "n": 4,
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "summary": "Safety marks: BIS mismatch",
+   "model": null,
+   "seconds": 13.3,
+   "_ms": 14795
+  },
+  {
+   "type": "step",
+   "n": 5,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "No recall notice linked",
+   "model": null,
+   "seconds": 13.75,
+   "_ms": 21397
+  },
+  {
+   "type": "step",
+   "n": 6,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": null,
+   "seconds": 13.83,
+   "_ms": 23195
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "summary": "Safety: verdict not_enough_evidence from 0 reviews",
+   "model": null,
+   "seconds": 19.7,
+   "_ms": 23195
+  },
+  {
+   "type": "start",
+   "agent": "verdict",
+   "tool": "verdict",
+   "_ms": 23310
+  },
+  {
+   "type": "step",
+   "n": 8,
+   "agent": "verdict",
+   "tool": "verdict",
+   "summary": "Code set the verdict: safety unknown, is it real unknown, overall unknown",
+   "model": null,
+   "seconds": 0.02,
+   "_ms": 23311
+  },
+  {
+   "type": "verdict",
+   "verdict": {
+    "safe": "unknown",
+    "real": "unknown",
+    "overall": "unknown",
+    "reasons": [
+     {
+      "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+      "evidence_ids": []
+     },
+     {
+      "text": "Only 0 review(s) read: too few to call it safe",
+      "evidence_ids": []
+     }
+    ],
+    "evidence_ids": []
+   },
+   "_ms": 23311
+  },
+  {
+   "type": "step",
+   "n": 9,
+   "agent": "verdict_writer",
+   "tool": "gemini",
+   "summary": "Wrote the answer",
+   "model": "gemini-3.5-flash-lite",
+   "seconds": 1.25,
+   "_ms": 24510
+  },
+  {
+   "type": "done",
+   "result": {
+    "session_id": "SS-I-0559F062",
+    "investigation_id": "SS-I-0559F062",
+    "mode": "investigate",
+    "product_id": "SS-P-30118",
+    "language": "en",
+    "verdict": {
+     "safe": "unknown",
+     "real": "unknown",
+     "overall": "unknown",
+     "reasons": [
+      {
+       "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+       "evidence_ids": []
+      },
+      {
+       "text": "Only 0 review(s) read: too few to call it safe",
+       "evidence_ids": []
+      }
+     ],
+     "evidence_ids": []
+    },
+    "messages": [
+     {
+      "role": "assistant",
+      "text": "We checked for official recalls and found none listed by major safety authorities. However, there are only 0 reviews read, which is too few to call it safe.",
+      "evidence_ids": []
+     }
+    ],
+    "checks": {
+     "page": {
+      "product_id": "SS-P-30118",
+      "matched_by": "url",
+      "similar_product_id": null
+     },
+     "is_it_real": {
+      "listing_url": "https://demo.safeshelf.app/product/vn-65pd",
+      "matched_product_id": "SS-P-30118",
+      "matched_by": "url",
+      "checks": {
+       "copied_photos": {
+        "result": "unknown",
+        "reason": "no photos to compare",
+        "reference": "brand or authorised seller"
+       },
+       "price": {
+        "result": "ok",
+        "price": 999,
+        "currency": "INR",
+        "lowest_credible_price": 999.0,
+        "ratio": 1.0,
+        "reference": "brand or authorised seller"
+       },
+       "website_age": {
+        "result": "unknown",
+        "domain": "safeshelf.app",
+        "reason": "registration date not available",
+        "source": "RDAP"
+       },
+       "spec": {
+        "result": "ok",
+        "conflicts": []
+       }
+      },
+      "hidden_instructions_found": false,
+      "summary": "No warning signs found in these checks.",
+      "good_signs": [],
+      "safety_of_genuine_model": "no hazard findings, no recall",
+      "label": "Evidence for the shopper - not a legal finding",
+      "evidence_ids": [
+       "EV-26D46387"
+      ]
+     },
+     "safety_radar": {
+      "product_id": "SS-P-30118",
+      "verdict": "not_enough_evidence",
+      "official_status": {
+       "recalled": false,
+       "checked": [
+        "ACCC",
+        "CPSC",
+        "KATS",
+        "CAA",
+        "ASEAN",
+        "BSMI",
+        "CPSO"
+       ],
+       "recall_ids": [],
+       "recall_ids_under_review": []
+      },
+      "ai_findings": [],
+      "certifications": [
+       {
+        "authority": "BIS",
+        "number": "R-41097318",
+        "claimed_value": "VoltNova",
+        "checked_at": "2026-10-15T19:06:57+00:00",
+        "result": "mismatch",
+        "field": "brand",
+        "registry_value": "Kelvo",
+        "reason": "the BIS licence belongs to another brand (mock registry)"
+       }
+      ],
+      "reviews_checked": 0,
+      "label": "AI finding - not a regulatory determination"
+     },
+     "twin_finder": {
+      "product_id": "SS-P-30118",
+      "relationships": [],
+      "graph_version": 12
+     },
+     "recall_checker": {
+      "recalls": [],
+      "events": 1
+     },
+     "cert_verifier": {
+      "product_id": "SS-P-30118",
+      "checks": [
+       {
+        "authority": "BIS",
+        "number": "R-41097318",
+        "claimed_value": "VoltNova",
+        "checked_at": "2026-10-15T19:06:44+00:00",
+        "result": "mismatch",
+        "field": "brand",
+        "registry_value": "Kelvo",
+        "reason": "the BIS licence belongs to another brand (mock registry)"
+       }
+      ],
+      "label_numbers": [],
+      "label_matches_claim": null
+     },
+     "research_agent": {
+      "skipped": true
+     }
+    },
+    "steps": [
+     {
+      "n": 1,
+      "agent": "page_reader",
+      "tool": "page",
+      "summary": "Matched the listing to SS-P-30118 (by url)",
+      "model": null,
+      "seconds": 0.29
+     },
+     {
+      "n": 2,
+      "agent": "twin_finder",
+      "tool": "twin_finder",
+      "summary": "No related products on file",
+      "model": null,
+      "seconds": 12.71
+     },
+     {
+      "n": 3,
+      "agent": "research_agent",
+      "tool": "research_agent",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 12.73
+     },
+     {
+      "n": 4,
+      "agent": "cert_verifier",
+      "tool": "cert_verifier",
+      "summary": "Safety marks: BIS mismatch",
+      "model": null,
+      "seconds": 13.3
+     },
+     {
+      "n": 5,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "No recall notice linked",
+      "model": null,
+      "seconds": 13.75
+     },
+     {
+      "n": 6,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": null,
+      "seconds": 13.83
+     },
+     {
+      "n": 7,
+      "agent": "safety_radar",
+      "tool": "safety_radar",
+      "summary": "Safety: verdict not_enough_evidence from 0 reviews",
+      "model": null,
+      "seconds": 19.7
+     },
+     {
+      "n": 8,
+      "agent": "verdict",
+      "tool": "verdict",
+      "summary": "Code set the verdict: safety unknown, is it real unknown, overall unknown",
+      "model": null,
+      "seconds": 0.02
+     },
+     {
+      "n": 9,
+      "agent": "verdict_writer",
+      "tool": "gemini",
+      "summary": "Wrote the answer",
+      "model": "gemini-3.5-flash-lite",
+      "seconds": 1.25
+     }
+    ],
+    "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
+    "checked_at": 1792091227.2676077
+   },
+   "_ms": 24511
+  }
+ ]
+}

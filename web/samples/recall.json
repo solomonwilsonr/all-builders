@@ -1,0 +1,385 @@
+{
+ "recorded_at": "2026-10-16 00:39 IST",
+ "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
+ "events": [
+  {
+   "type": "open",
+   "mode": "investigate",
+   "investigation_id": "SS-I-4CB91A32",
+   "_ms": 210
+  },
+  {
+   "type": "start",
+   "agent": "page_reader",
+   "tool": "page",
+   "_ms": 210
+  },
+  {
+   "type": "step",
+   "n": 1,
+   "agent": "page_reader",
+   "tool": "page",
+   "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by model number)",
+   "model": null,
+   "seconds": 0.7,
+   "_ms": 950
+  },
+  {
+   "type": "start",
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "_ms": 950
+  },
+  {
+   "type": "start",
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "_ms": 950
+  },
+  {
+   "type": "start",
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "_ms": 950
+  },
+  {
+   "type": "start",
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "_ms": 950
+  },
+  {
+   "type": "start",
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "_ms": 950
+  },
+  {
+   "type": "start",
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "_ms": 950
+  },
+  {
+   "type": "step",
+   "n": 2,
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "summary": "No related products on file",
+   "model": null,
+   "seconds": 0.54,
+   "_ms": 1998
+  },
+  {
+   "type": "step",
+   "n": 3,
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 0.61,
+   "_ms": 1998
+  },
+  {
+   "type": "step",
+   "n": 4,
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "summary": "Safety marks: no marks claimed",
+   "model": null,
+   "seconds": 0.98,
+   "_ms": 1998
+  },
+  {
+   "type": "step",
+   "n": 5,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "3 linked recall notice(s)",
+   "model": null,
+   "seconds": 1.02,
+   "_ms": 1998
+  },
+  {
+   "type": "step",
+   "n": 6,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": null,
+   "seconds": 1.05,
+   "_ms": 1998
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "summary": "Safety: officially recalled; verdict red from 0 reviews",
+   "model": "gemini-3.5-flash",
+   "seconds": 13.37,
+   "_ms": 14294
+  },
+  {
+   "type": "start",
+   "agent": "verdict",
+   "tool": "verdict",
+   "_ms": 14294
+  },
+  {
+   "type": "step",
+   "n": 8,
+   "agent": "verdict",
+   "tool": "verdict",
+   "summary": "Code set the verdict: safety red, is it real unknown, overall red",
+   "model": null,
+   "seconds": 0.0,
+   "_ms": 14306
+  },
+  {
+   "type": "verdict",
+   "verdict": {
+    "safe": "red",
+    "real": "unknown",
+    "overall": "red",
+    "reasons": [
+     {
+      "text": "Officially recalled (notice cpsc:25338)",
+      "evidence_ids": []
+     }
+    ],
+    "evidence_ids": []
+   },
+   "_ms": 14306
+  },
+  {
+   "type": "step",
+   "n": 9,
+   "agent": "verdict_writer",
+   "tool": "gemini",
+   "summary": "Wrote the answer",
+   "model": "gemini-3.5-flash-lite",
+   "seconds": 0.88,
+   "_ms": 15190
+  },
+  {
+   "type": "done",
+   "result": {
+    "session_id": "SS-I-4CB91A32",
+    "investigation_id": "SS-I-4CB91A32",
+    "mode": "investigate",
+    "product_id": "SS-P-AMZ-B01B14ANLY",
+    "language": "en",
+    "verdict": {
+     "safe": "red",
+     "real": "unknown",
+     "overall": "red",
+     "reasons": [
+      {
+       "text": "Officially recalled (notice cpsc:25338)",
+       "evidence_ids": []
+      }
+     ],
+     "evidence_ids": []
+    },
+    "messages": [
+     {
+      "role": "assistant",
+      "text": "This item is officially recalled and is unsafe to use. SafeShelf's green rating only means nothing was found in what was checked.",
+      "evidence_ids": []
+     }
+    ],
+    "checks": {
+     "page": {
+      "product_id": "SS-P-AMZ-B01B14ANLY",
+      "matched_by": "model_number",
+      "similar_product_id": null
+     },
+     "is_it_real": {
+      "listing_url": "https://www.flipkart.com/anker-powercore-10000-a1263/p/itm0001",
+      "matched_product_id": "SS-P-AMZ-B01B14ANLY",
+      "matched_by": "model_number",
+      "checks": {
+       "copied_photos": {
+        "result": "unknown",
+        "reason": "no photos to compare",
+        "reference": "brand or authorised seller"
+       },
+       "price": {
+        "result": "unknown",
+        "price": 1799,
+        "currency": "INR",
+        "lowest_credible_price": null,
+        "reason": "no INR price from an authorised seller to compare with",
+        "reference": "brand or authorised seller"
+       },
+       "website_age": {
+        "result": "skipped",
+        "reason": "large marketplace; the seller, not the website, is what matters"
+       },
+       "spec": {
+        "result": "ok",
+        "conflicts": []
+       }
+      },
+      "hidden_instructions_found": false,
+      "summary": "No warning signs found in these checks.",
+      "good_signs": [],
+      "safety_of_genuine_model": "no hazard findings, recalled",
+      "label": "Evidence for the shopper - not a legal finding",
+      "evidence_ids": [
+       "EV-FA010A73"
+      ]
+     },
+     "safety_radar": {
+      "product_id": "SS-P-AMZ-B01B14ANLY",
+      "verdict": "red",
+      "official_status": {
+       "recalled": true,
+       "checked": [
+        "ACCC",
+        "CPSC",
+        "KATS",
+        "CAA",
+        "ASEAN",
+        "BSMI",
+        "CPSO"
+       ],
+       "recall_ids": [
+        "cpsc:25338"
+       ],
+       "recall_ids_under_review": [
+        "cpsc:24146",
+        "cpsc:25011"
+       ]
+      },
+      "ai_findings": [],
+      "certifications": [],
+      "reviews_checked": 0,
+      "label": "AI finding - not a regulatory determination"
+     },
+     "twin_finder": {
+      "product_id": "SS-P-AMZ-B01B14ANLY",
+      "relationships": [],
+      "graph_version": 12
+     },
+     "recall_checker": {
+      "recalls": [
+       {
+        "recall_id": "cpsc:24146",
+        "authority": "CPSC",
+        "notice_date": "2024-03-07",
+        "title": "Anker EverFrost Lithium-Ion Battery Powered Coolers Recalled Due to Battery Fire Hazard; Manufactured by Anker Innovations",
+        "url": "https://www.cpsc.gov/Recalls/2024/Anker-EverFrost-Lithium-Ion-Battery-Powered-Coolers-Recalled-Due-to-Battery-Fire-Hazard-Manufactured-by-Anker-Innovations",
+        "match": "possible match, under review"
+       },
+       {
+        "recall_id": "cpsc:25011",
+        "authority": "CPSC",
+        "notice_date": "2024-10-17",
+        "title": "Anker Power Banks Recalled Due to Fire and Burn Hazards; Manufactured by Anker Innovations",
+        "url": "https://www.cpsc.gov/Recalls/2025/Anker-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Manufactured-by-Anker-Innovations",
+        "match": "possible match, under review"
+       },
+       {
+        "recall_id": "cpsc:25338",
+        "authority": "CPSC",
+        "notice_date": "2025-06-12",
+        "title": "More than One Million Anker Power Banks Recalled Due to Fire and Burn Hazards; Manufactured by Anker Innovations",
+        "url": "https://www.cpsc.gov/Recalls/2025/More-than-One-Million-Anker-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Manufactured-by-Anker-Innovations",
+        "match": "matches a recall"
+       }
+      ],
+      "events": 1
+     },
+     "cert_verifier": {
+      "product_id": "SS-P-AMZ-B01B14ANLY",
+      "checks": [],
+      "label_numbers": [],
+      "label_matches_claim": null
+     },
+     "research_agent": {
+      "skipped": true
+     }
+    },
+    "steps": [
+     {
+      "n": 1,
+      "agent": "page_reader",
+      "tool": "page",
+      "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by model number)",
+      "model": null,
+      "seconds": 0.7
+     },
+     {
+      "n": 2,
+      "agent": "twin_finder",
+      "tool": "twin_finder",
+      "summary": "No related products on file",
+      "model": null,
+      "seconds": 0.54
+     },
+     {
+      "n": 3,
+      "agent": "research_agent",
+      "tool": "research_agent",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 0.61
+     },
+     {
+      "n": 4,
+      "agent": "cert_verifier",
+      "tool": "cert_verifier",
+      "summary": "Safety marks: no marks claimed",
+      "model": null,
+      "seconds": 0.98
+     },
+     {
+      "n": 5,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "3 linked recall notice(s)",
+      "model": null,
+      "seconds": 1.02
+     },
+     {
+      "n": 6,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": null,
+      "seconds": 1.05
+     },
+     {
+      "n": 7,
+      "agent": "safety_radar",
+      "tool": "safety_radar",
+      "summary": "Safety: officially recalled; verdict red from 0 reviews",
+      "model": "gemini-3.5-flash",
+      "seconds": 13.37
+     },
+     {
+      "n": 8,
+      "agent": "verdict",
+      "tool": "verdict",
+      "summary": "Code set the verdict: safety red, is it real unknown, overall red",
+      "model": null,
+      "seconds": 0.0
+     },
+     {
+      "n": 9,
+      "agent": "verdict_writer",
+      "tool": "gemini",
+      "summary": "Wrote the answer",
+      "model": "gemini-3.5-flash-lite",
+      "seconds": 0.88
+     }
+    ],
+    "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
+    "checked_at": 1792091366.9928217
+   },
+   "_ms": 15193
+  }
+ ]
+}

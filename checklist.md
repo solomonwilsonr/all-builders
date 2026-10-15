@@ -54,6 +54,8 @@ Give it a product listing and it answers two questions:
 ---
 
 ## 🔨 In progress
+- [ ] **Judges' web page** (`web/`): built and tested locally (desktop, phone, dark mode), not deployed yet. Six samples with known right answers: recall, fake shop, borrowed safety mark, buyer hazard reports, unknown product, and a clean control that must stay quiet. Each opens with a saved real run replayed at real speed, then **Run it live with Gemini** (10 a day per browser). Also "Check your own listing" and a **SafeShelf vs Gemini alone** tab with the backtest. To go live: `make deploy-api` (two engine fixes below), then `make web-samples`, then `make deploy-web` (Firebase Hosting; Firebase may need enabling on the project first).
+- [ ] **Two engine fixes, waiting for `make deploy-api`:** a safety mark the registry gives to another brand now makes "Is it real?" amber (before, it was found but ignored); Gemini's answer no longer mentions "green" when nothing is green.
 - [ ] **Recall Catalog**: browse and search every loaded recall by country, regulator or hazard (`GET /v1/recalls`, `GET /v1/recalls/{id}`); also fixes dead image links and old ACCC links. Tests pass (7 new, 28 API). Next: commit, then deploy (`make deploy-api`).
 
 ---
@@ -61,8 +63,8 @@ Give it a product listing and it answers two questions:
 ## ❌ To do
 
 **Must have for submission**
-- [ ] 🚨 **Web page for judges.** The main experience lives in the Chrome extension and `web/` is empty. Judges need a link they can paste into a browser.
-  - The new chat page needs no extension and calls the live API, so it can be hosted as this page (or one tab of it).
+- [ ] 🚨 **Web page for judges:** built (see In progress); needs the deploys and a final look on a phone.
+  - The new chat page needs no extension and calls the live API, so it could be added as another tab.
   - Ideas to copy from other teams (quick path with 3 examples, `?product=&lang=hi` deep links, verdict words, measured results, Verified vs AI reading): [MODULES.md P2-2](MODULES.md#p2-2-ideas-from-other-teams-entries)
 - [ ] Connect the WhatsApp bot to a Meta test number and record the Hindi voice-note moment
 - [ ] 3-minute demo video
@@ -89,9 +91,11 @@ Give it a product listing and it answers two questions:
 | Innovation | 25% | 🟢 Good: copy-finding engine and backtest |
 | UX | 10% | 🟡 Extension and chat page redesigned (16 Oct); still at risk until judges have a hosted link |
 
-**The risk:** judges probably won't install a Chrome extension, so they could miss the best part. The hackathon notes also warn that overbuilding loses.
+**The risk:** judges probably won't install a Chrome extension. The web page fixes that once it's deployed. The hackathon notes also warn that overbuilding loses.
+
+**Heads-up:** a check of a real Amazon India link ran for minutes and then dropped. Flipkart and title-only checks answer in under 20 s. Use those in the video until it's looked at.
 
 ## Next steps
 1. **15 Oct:** commit the Recall Catalog and deploy it
-2. **16 Oct (before freeze):** build the web page for judges (the Recall Catalog can be one tab); connect the WhatsApp number
+2. **16 Oct (before freeze):** `make deploy-api`, `make web-samples`, `make deploy-web`; connect the WhatsApp number
 3. **17 Oct:** no new features. Merge to `main`, record the video, make the deck, submit
