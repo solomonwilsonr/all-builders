@@ -15,6 +15,8 @@ from urllib.parse import urljoin, urlparse
 
 import httpx
 
+from engine import region
+
 URL = re.compile(r"https?://[^\s<>\"']+")
 MAX_BYTES = 3_000_000
 MAX_REDIRECTS = 4
@@ -121,8 +123,8 @@ def listing_from_html(url: str, html: str) -> dict:
     body = re.sub(r"<(script|style|noscript)[^>]*>.*?</\1>", " ", html, flags=re.IGNORECASE | re.DOTALL)
     visible = _text(body)
     listing = {"url": url, "title": title[:300] if title else None, "brand": brand, "price": price,
-               "currency": "INR" if (".in/" in url or "flipkart" in url or "₹" in visible[:200000]) else
-               (_meta(html, "product:price:currency") or None),
+               "currency": _meta(html, "product:price:currency") or _meta(html, "og:price:currency") or
+               region.CURRENCY.get(region.of(url) or ""),
                "image_urls": images, "reviews": amazon_reviews(html),
                "page_text": "\n".join(d for d in details if d) + "\n" + visible[:3000]}
     return {k: v for k, v in listing.items() if v not in (None, "", [])}

@@ -33,7 +33,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   };
   const SITES = [
     {
-      match: (h) => /(^|\.)amazon\.(in|com)$/.test(h),
+      match: (h) => /(^|\.)amazon\.(in|com|co\.jp|com\.au|sg)$/.test(h),
       isProduct: () => /\/(dp|gp\/product)\/[A-Z0-9]{10}/.test(location.pathname),
       title: "#productTitle",
       price: "#corePrice_feature_div .a-offscreen, #apex_desktop .a-offscreen, .a-price .a-offscreen",
@@ -145,6 +145,14 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     return found.join("\n");
   };
 
+  // The shop's market (SafeShelf is JAPAC-first): its currency, from the shop's address. Prices may carry any of
+  // the region's symbols.
+  const MARKETS = [[/\.co\.jp$|\.jp$/, "JPY"], [/\.com\.au$|\.au$/, "AUD"], [/\.co\.nz$|\.nz$/, "NZD"], [/\.sg$/, "SGD"],
+    [/\.my$/, "MYR"], [/\.co\.id$|\.id$/, "IDR"], [/\.co\.th$|\.th$/, "THB"], [/\.ph$/, "PHP"], [/\.vn$/, "VND"],
+    [/\.in$|(^|\.)flipkart\.com$/, "INR"], [/(^|\.)amazon\.com$/, "USD"]];
+  const shopCurrency = () => (MARKETS.find(([re]) => re.test(location.hostname)) || [null, "INR"])[1];
+  const MONEY = /(?:₹|Rs\.?|¥|￥|A\$|NZ\$|S\$|US\$|\$|RM|Rp|฿|₱|₫)\s?([\d,]+(\.\d+)?)/;
+
   const readPage = () => {
     const ld = jsonLd();
     const offer = [].concat(ld?.offers || [])[0];
@@ -152,7 +160,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     const details = scrub([textOf(site.details), detailSections("")].filter(Boolean).join("\n"), seen); // model, brand, origin, specs
     const main = scrub(productText(), seen);
     const area = main;
-    const rupee = area.match(/₹\s?([\d,]+(\.\d+)?)/);
+    const rupee = area.match(MONEY);
     const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
     const mrp = qs(".a-price.a-text-price .a-offscreen")?.textContent.trim();
     const hidden = site.hiddenText
@@ -166,7 +174,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       url: cleanUrl(),
       title: text(site.title) || ld?.name || document.title,
       price: num(text(site.price)) ?? num(String(offer?.price ?? offer?.lowPrice ?? "")) ?? num(rupee?.[1]),
-      currency: "INR",
+      currency: offer?.priceCurrency || shopCurrency(),
       seller: sellerName() || main.match(/^Sold by\s*\n(.+)$/m)?.[1],
       image_urls: images.length ? images : [].concat(ld?.image || []).slice(0, 8),
       // Technical details first: they identify the product. Marketing text last, so the cap cuts that, not the specs.
@@ -230,13 +238,13 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   const readCard = (card) => {
     const c = site.cards;
     const link = card.querySelector(c.link);
-    const rupee = card.innerText.match(/₹\s?([\d,]+(\.\d+)?)/);
+    const rupee = card.innerText.match(MONEY);
     const img = card.querySelector(c.image);
     return {
       url: link?.href || location.href,
       title: (card.querySelector(c.title)?.textContent || link?.title || img?.alt || "").trim().slice(0, 300),
       price: num(card.querySelector(c.price || "x-none")?.textContent) ?? num(rupee?.[1]),
-      currency: "INR",
+      currency: shopCurrency(),
       image_urls: img?.src ? [img.src] : [],
       page_text: card.innerText.slice(0, 1000),
       listing_id: card.dataset.listingId || null,
@@ -439,7 +447,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       ...(n ? [photo] : []),
       el("div", { className: "body" },
         el("div", { className: "t", textContent: page.title || page.url }),
-        el("div", { className: "m" }, page.price != null ? `₹${page.price.toLocaleString("en-IN")} ` : "", ...(mrp ? [el("s", { textContent: mrp })] : []), page.seller ? ` · ${page.seller}` : ""),
+        el("div", { className: "m" }, page.price != null ? `${(() => { try { return new Intl.NumberFormat(undefined, { style: "currency", currency: page.currency || "INR", maximumFractionDigits: 0 }).format(page.price); } catch (_) { return page.price; } })()} ` : "", ...(mrp ? [el("s", { textContent: mrp })] : []), page.seller ? ` · ${page.seller}` : ""),
         el("div", { className: "chips" }, ...[page.seller && "seller", asin && `ASIN ${asin}`, `${n} photo link${n === 1 ? "" : "s"}`, `${text.length.toLocaleString()} characters of details`].filter(Boolean).map(chip)),
         more, pre,
       ));

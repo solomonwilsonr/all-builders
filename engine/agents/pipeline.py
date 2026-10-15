@@ -238,7 +238,8 @@ def real_level(checks: dict) -> str:
 def money(amount, currency: str | None) -> str:
     if amount is None:
         return "price"
-    symbol = {"INR": "Rs ", "USD": "$", "AUD": "A$"}.get(currency or "INR", f"{currency} ")
+    symbol = {"INR": "Rs ", "USD": "US$", "AUD": "A$", "NZD": "NZ$", "SGD": "S$", "JPY": "¥", "MYR": "RM ",
+              "IDR": "Rp ", "THB": "฿", "PHP": "₱", "VND": "₫"}.get(currency or "INR", f"{currency} ")
     return f"{symbol}{float(amount):,.0f}"
 
 
