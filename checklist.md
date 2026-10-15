@@ -47,6 +47,8 @@ Give it a product listing and it answers two questions:
 
 **Apps**
 - [x] Chrome extension: Amazon India, Japan, Australia, Singapore and Flipkart
+- [x] New look for the extension (16 Oct): one chat instead of two, with sources, Listen, Copy and Try again; the verdict comes first on the card; loading shows what is being checked; Investigate matches the card; "Check this page" in the toolbar menu
+- [x] Chat page (`extension/demo/chat.html`) rebuilt for shoppers: example questions to start, live agent steps, paste or drop a screenshot, English/हिन्दी switch, works on a phone; developer controls moved to a Tools drawer
 - [x] WhatsApp bot built and tested: link or photo in, Hindi or English text + voice note out
 
 ---
@@ -60,6 +62,7 @@ Give it a product listing and it answers two questions:
 
 **Must have for submission**
 - [ ] 🚨 **Web page for judges.** The main experience lives in the Chrome extension and `web/` is empty. Judges need a link they can paste into a browser.
+  - The new chat page needs no extension and calls the live API, so it can be hosted as this page (or one tab of it).
   - Ideas to copy from other teams (quick path with 3 examples, `?product=&lang=hi` deep links, verdict words, measured results, Verified vs AI reading): [MODULES.md P2-2](MODULES.md#p2-2-ideas-from-other-teams-entries)
 - [ ] Connect the WhatsApp bot to a Meta test number and record the Hindi voice-note moment
 - [ ] 3-minute demo video
@@ -84,7 +87,7 @@ Give it a product listing and it answers two questions:
 | Technical merit and GenAI | 40% | 🟢 Strong: real agents, Gemini 3.x, measured results |
 | Problem fit and impact | 25% | 🟢 Good: JAPAC focus, Hindi, real recall data |
 | Innovation | 25% | 🟢 Good: copy-finding engine and backtest |
-| UX | 10% | 🟡 At risk until judges have a web page to try |
+| UX | 10% | 🟡 Extension and chat page redesigned (16 Oct); still at risk until judges have a hosted link |
 
 **The risk:** judges probably won't install a Chrome extension, so they could miss the best part. The hackathon notes also warn that overbuilding loses.
 

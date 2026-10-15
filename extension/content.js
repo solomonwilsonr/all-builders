@@ -265,10 +265,10 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   `;
 
   const PANEL_STYLE = `
-    .tabs { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:12px 0 10px; }
-    .tab { font:inherit; font-size:13px; font-weight:600; padding:6px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); cursor:pointer; transition:background-color .12s ease; }
-    .tab:hover { background:var(--soft); }
-    .tab[aria-selected="true"] { background:var(--lime); border-color:var(--lime-d); }
+    .tabs { display:flex; flex-wrap:wrap; justify-content:center; gap:2px; margin:14px 0 10px; padding:4px; border-radius:14px; background:var(--soft); }
+    .tab { font:inherit; font-size:13px; font-weight:600; padding:5px 10px; border:0; border-radius:10px; background:transparent; color:var(--muted); cursor:pointer; transition:background-color .12s ease; }
+    .tab:hover { color:var(--ink); }
+    .tab[aria-selected="true"] { background:#fff; color:var(--ink); box-shadow:0 1px 4px rgba(19,35,58,.14); }
     .vrow { display:flex; gap:8px; margin:6px 0; } .vrow .i { flex:none; width:1.4em; text-align:center; }
     .vrow .s { color:var(--muted); font-size:13px; } .vrow a { font-size:13px; color:var(--link); }
     .vh { font-weight:700; font-size:17px; letter-spacing:-.02em; margin:14px 0 2px; } .vnote { color:var(--muted); font-size:13px; margin:4px 0; }
@@ -329,9 +329,44 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .badge { font-size:11px; font-weight:600; padding:1px 7px; border-radius:6px; background:var(--soft); color:var(--muted); }
     .headline { margin:6px 0 0; text-align:center; font-size:24px; line-height:1.15; font-weight:700; letter-spacing:-.03em; color:var(--ink); }
     .headline.green { color:var(--green); } .headline.amber { color:var(--amber); } .headline.red { color:var(--red); } .headline.unknown { color:var(--unknown); }
-    .loading { display:flex; align-items:center; gap:10px; margin:0; }
-    .loading .mark { flex:none; display:grid; place-items:center; width:28px; height:28px; border-radius:9px; background:var(--lime); animation:pulse 1.2s ease-in-out infinite; }
     @keyframes pulse { 50% { transform:scale(.85); opacity:.6; } }
+
+    /* Card header: brand on the left, small icon buttons on the right */
+    .head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:-4px -6px 0 0; }
+    .head .brand-row { justify-content:flex-start; min-width:0; }
+    .head .badge { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:150px; }
+    .icons { display:flex; gap:2px; }
+    .ibtn { font:inherit; font-size:12px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; gap:4px; min-width:32px; height:32px; padding:0 8px; border:0; border-radius:10px; background:transparent; color:var(--muted); cursor:pointer; }
+    .ibtn:hover, .ibtn[aria-pressed="true"] { background:var(--soft); color:var(--ink); }
+    .ibtn svg { width:16px; height:16px; flex:none; }
+
+    /* The verdict at the top of the card */
+    .hero { text-align:center; margin-top:2px; }
+    .hero .ic { display:grid; place-items:center; width:48px; height:48px; margin:2px auto 6px; border-radius:16px; background:var(--unknown-bg); color:var(--unknown); }
+    .hero.green .ic { background:var(--green-bg); color:var(--green); } .hero.amber .ic { background:var(--amber-bg); color:var(--amber); } .hero.red .ic { background:var(--red-bg); color:var(--red); }
+    .hero .ic svg { width:26px; height:26px; }
+    .hero .headline { margin:0; }
+    .hero .sum { margin:6px auto 0; max-width:38ch; font-size:14px; }
+
+    /* While the check runs */
+    .wait { text-align:center; padding:8px 4px 4px; }
+    .wait .mark { display:inline-grid; place-items:center; width:40px; height:40px; border-radius:13px; background:var(--lime); font-size:18px; animation:pulse 1.2s ease-in-out infinite; }
+    .wait strong { display:block; font-size:18px; letter-spacing:-.02em; margin-top:8px; }
+    .wait .stage { color:var(--muted); font-size:13px; min-height:2.8em; margin:2px auto 4px; max-width:34ch; }
+    .skel { height:12px; border-radius:6px; margin:10px auto 0; background:linear-gradient(90deg, var(--soft) 25%, #e3e8ef 50%, var(--soft) 75%); background-size:200% 100%; animation:shimmer 1.4s linear infinite; }
+    @keyframes shimmer { to { background-position:-200% 0; } }
+
+    /* Cancelled or failed */
+    .state { text-align:center; padding:10px 4px 2px; } .state strong { display:block; font-size:17px; } .state p { color:var(--muted); font-size:14px; margin:6px 0 14px; }
+
+    /* Actions under the result */
+    .actions { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+    .actions .more { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+    button.primary { font:inherit; font-size:14px; font-weight:700; display:inline-flex; gap:8px; align-items:center; justify-content:center; padding:10px 16px; border:0; border-radius:14px; background:var(--ink); color:#fff; cursor:pointer; }
+    button.primary:hover { filter:brightness(1.2); }
+    button.primary svg { width:18px; height:18px; }
+    details.read { margin-top:10px; font-size:13px; } details.read summary { cursor:pointer; color:var(--muted); font-weight:600; }
+    .foot { color:var(--muted); font-size:12px; text-align:center; margin-top:10px; }
     .demo { background:var(--amber-bg); color:var(--amber); border-radius:12px; padding:6px 10px; font-size:13px; margin-bottom:10px; text-align:center; }
 
     /* Verdict sections */
@@ -342,31 +377,50 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .sec.green .verdict { color:var(--green); } .sec.amber .verdict { color:var(--amber); } .sec.red .verdict { color:var(--red); } .sec.unknown .verdict { color:var(--unknown); }
 
     /* Chat */
-    .box.chat { display:flex; flex-direction:column; gap:12px; }
+    .box.chat { display:flex; flex-direction:column; }
     .box.chat[hidden] { display:none; }
-    .chat > .tools { justify-content:center; gap:8px; }
-    .chat > .tools button { font:inherit; font-size:13px; font-weight:600; padding:7px 14px; border:1px solid rgba(255,255,255,.9); border-radius:14px; background:rgba(255,255,255,.55); color:var(--ink); cursor:pointer; box-shadow:0 2px 8px rgba(19,35,58,.08); backdrop-filter:blur(6px); }
-    .chat > .tools button:hover { background:var(--lime); border-color:var(--lime-d); }
     .chat .card { display:flex; flex-direction:column; gap:10px; }
-    .chat .headline { margin:0; font-size:22px; }
-    .chat .ctx-h { text-align:center; margin:0 0 6px; }
-    .sky { border-radius:18px; padding:14px 12px; background:linear-gradient(180deg, #cfe3f7 0%, #e9f0e6 55%, #8fc3b8 85%, #2e4f5c 100%); }
-    .sky .ctx { margin:0; border-color:#fff; box-shadow:0 4px 16px rgba(19,35,58,.14); }
-    .log { display:flex; flex-direction:column; gap:8px; max-height:38vh; overflow:auto; }
-    .msg { padding:10px 12px; border-radius:16px; max-width:92%; }
-    .msg.user { align-self:flex-end; background:var(--ink); color:#fff; border-bottom-right-radius:6px; } .msg.bot { align-self:flex-start; background:var(--soft); border-bottom-left-radius:6px; }
+    .chat .headline { margin:0; font-size:20px; text-align:left; }
+    .chat details.read { margin-top:0; }
+    .prod { display:flex; gap:10px; align-items:center; padding:8px 10px; border-radius:14px; background:var(--soft); font-size:13px; }
+    .prod img { width:40px; height:40px; object-fit:contain; border-radius:10px; background:#fff; flex:none; }
+    .prod .body { min-width:0; flex:1; }
+    .prod .t { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .prod .m { color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pill { flex:none; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--unknown-bg); color:var(--unknown); }
+    .pill.green { background:var(--green-bg); color:var(--green); } .pill.amber { background:var(--amber-bg); color:var(--amber); } .pill.red { background:var(--red-bg); color:var(--red); }
+    .log { display:flex; flex-direction:column; gap:8px; max-height:42vh; overflow:auto; }
+    .log:empty { display:none; }
+    .msg { padding:10px 12px; border-radius:16px; max-width:90%; font-size:14px; line-height:1.45; overflow-wrap:anywhere; }
+    .msg.user { align-self:flex-end; background:var(--ink); color:#fff; border-bottom-right-radius:6px; }
+    .msg.bot { align-self:flex-start; background:var(--soft); border-bottom-left-radius:6px; }
+    .msg.err { background:var(--red-bg); }
+    .txt p { margin:0 0 6px; } .txt p:last-child { margin:0; } .txt ul { margin:2px 0 6px; padding-left:18px; }
+    .typing { display:inline-flex; gap:3px; margin-right:8px; vertical-align:middle; }
+    .typing i { width:6px; height:6px; border-radius:50%; background:var(--muted); animation:blink 1.2s infinite both; }
+    .typing i:nth-child(2) { animation-delay:.2s; } .typing i:nth-child(3) { animation-delay:.4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity:.25; } 40% { opacity:1; } }
+    .acts { display:flex; flex-wrap:wrap; gap:2px; margin:6px 0 0 -8px; }
+    details.src { margin-top:8px; font-size:13px; } details.src summary { cursor:pointer; font-weight:600; }
+    .nosrc { margin-top:6px; color:var(--muted); font-size:12px; }
+    .intro { display:flex; flex-direction:column; gap:8px; }
+    .hello { color:var(--muted); font-size:13px; text-align:center; margin:0; }
     .chips { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
     .chips button { font:inherit; font-size:13px; padding:6px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); cursor:pointer; }
     .chips button:hover { background:#f4f9e6; border-color:var(--lime-d); }
-    .ask { display:flex; gap:4px; background:var(--soft); border-radius:16px; padding:4px; }
+    .ask { display:flex; align-items:center; gap:4px; background:var(--soft); border-radius:16px; padding:4px; border:2px solid transparent; }
+    .ask:focus-within { border-color:var(--lime-d); }
     .ask input { flex:1; min-width:0; font:inherit; font-size:14px; padding:8px 10px; border:0; border-radius:12px; color:var(--ink); background:transparent; }
-    .ask select, .ask button { font:inherit; font-size:13px; padding:6px 12px; border:0; border-radius:12px; background:#fff; color:var(--ink); cursor:pointer; }
-    .ask button { background:var(--ink); color:#fff; font-weight:600; }
-    .ask button:disabled { opacity:.5; cursor:default; }
-    .rchat { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:8px; }
-    .rchat .ctx-h { margin:0; text-align:center; }
+    .ask input:focus-visible { outline:none; }
+    .ask select { font:inherit; font-size:12px; font-weight:600; padding:6px; border:0; border-radius:10px; background:#fff; color:var(--ink); cursor:pointer; }
+    .ask .send { display:grid; place-items:center; flex:none; width:36px; height:36px; padding:0; border:0; border-radius:12px; background:var(--ink); color:#fff; cursor:pointer; }
+    .ask .send svg { width:18px; height:18px; }
+    .ask .send:disabled { opacity:.45; cursor:default; }
+    details.askd { margin-top:14px; padding-top:10px; border-top:1px solid var(--line); }
+    details.askd summary { cursor:pointer; font-weight:700; text-align:center; }
+    details.askd > div { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
     .hist { display:flex; flex-direction:column; gap:8px; max-height:48vh; overflow:auto; }
-    .hist[hidden], .log[hidden], .chips[hidden], .ask[hidden] { display:none; }
+    .hist[hidden], .log[hidden], .intro[hidden], .ask[hidden] { display:none; }
     .hist-item { background:var(--soft); border-radius:14px; padding:10px 12px; }
     .hist-item .when { color:var(--muted); font-size:12px; }
     .hist-item p { margin:4px 0 0; }
@@ -391,7 +445,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     button.small:hover { background:var(--soft); }
     .row button.small:first-child { background:var(--ink); border-color:var(--ink); color:#fff; }
     button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid var(--link); outline-offset:2px; }
-    @media (prefers-reduced-motion: reduce) { .fab, .tab { transition:none; } .fab:active { transform:none; } .loading .mark { animation:none; } }
+    @media (prefers-reduced-motion: reduce) { .fab, .tab { transition:none; } .fab:active { transform:none; } .wait .mark, .skel, .typing i { animation:none; } }
   `;
 
   const el = (tag, props = {}, ...kids) => {
@@ -428,6 +482,12 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     toastTimer = setTimeout(close, 6000);
   };
 
+  // The listing's price in the shop's currency, e.g. ₹1,399 or ¥2,990.
+  const money = (page) => {
+    if (page.price == null) return "";
+    try { return new Intl.NumberFormat(undefined, { style: "currency", currency: page.currency || "INR", maximumFractionDigits: 0 }).format(page.price); } catch (_) { return String(page.price); }
+  };
+
   // Mini card of what is sent to the API: product photo, title, price, seller, and the exact fields on request.
   const contextCard = (page) => {
     const text = page.page_text || "";
@@ -451,7 +511,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       ...(n ? [photo] : []),
       el("div", { className: "body" },
         el("div", { className: "t", textContent: page.title || page.url }),
-        el("div", { className: "m" }, page.price != null ? `${(() => { try { return new Intl.NumberFormat(undefined, { style: "currency", currency: page.currency || "INR", maximumFractionDigits: 0 }).format(page.price); } catch (_) { return page.price; } })()} ` : "", ...(mrp ? [el("s", { textContent: mrp })] : []), page.seller ? ` · ${page.seller}` : ""),
+        el("div", { className: "m" }, page.price != null ? `${money(page)} ` : "", ...(mrp ? [el("s", { textContent: mrp })] : []), page.seller ? ` · ${page.seller}` : ""),
         el("div", { className: "chips" }, ...[page.seller && "seller", asin && `ASIN ${asin}`, `${n} photo link${n === 1 ? "" : "s"}`, `${text.length.toLocaleString()} characters of details`].filter(Boolean).map(chip)),
         more, pre,
       ));
@@ -582,9 +642,9 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     );
   };
   // Evidence under an answer: what each ID points to, and a button that scrolls to it on the page.
-  const evidenceBlock = (ids) => {
+  const evidenceBlock = (ids, heading = true) => {
     if (!ids.length) return el("div", { className: "muted", textContent: "No evidence cited." });
-    const block = el("div", { className: "evidence" }, el("div", { className: "ev-h", textContent: "Evidence" }));
+    const block = el("div", { className: "evidence" }, ...(heading ? [el("div", { className: "ev-h", textContent: "Evidence" })] : []));
     try {
       chrome.runtime.sendMessage({ type: "safeshelf:evidence", ids }, (res) => {
         const byId = new Map((res?.ok ? res.result.items : []).map((e) => [e.evidence_id, e]));
@@ -623,7 +683,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   // A chat question, answered live: the pending bubble shows what the agent is doing, then done({ok, result}) as before.
   const askLive = (payload, pending, done) => {
     const { type, ...fields } = payload;
-    const say = (t) => pending.replaceChildren(el("span", { className: "muted", textContent: t }));
+    const say = (t) => pending.replaceChildren(typingDots(), el("span", { className: "muted", textContent: t }));
     agentLive({ mode: "chat", ...fields }, (e) => {
       if (e.type === "step" && e.tool !== "gemini") say(`${LIVE_WORDS[e.tool] || e.summary}…`);
       if (e.type === "step" && e.tool === "gemini" && /call/.test(e.summary)) say(`${e.summary.replace("Decided to call", "Looking up:")}…`);
@@ -660,6 +720,17 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     check: "M12 3l7 3v5c0 5-3.2 8.2-7 10-3.8-1.8-7-5-7-10V6z M9 12l2 2 4-4",
     save: "M7 3h10a1 1 0 011 1v17l-6-4-6 4V4a1 1 0 011-1z",
     ask: "M4 5h16v11H9l-5 4z",
+    warn: "M12 3l9.5 17h-19z M12 10v4 M12 17h.01",
+    stop: "M8 3h8l5 5v8l-5 5H8l-5-5V8z M9.5 9.5l5 5 M14.5 9.5l-5 5",
+    help: "M12 21a9 9 0 100-18 9 9 0 000 18z M9.5 9.5a2.5 2.5 0 015 .5c0 1.5-2.5 2-2.5 3.5 M12 17h.01",
+    close: "M6 6l12 12 M18 6L6 18",
+    history: "M3 12a9 9 0 103-6.7L3 8 M3 3v5h5 M12 7v5l3 2",
+    plus: "M12 5v14 M5 12h14",
+    copy: "M9 9h11v11H9z M5 15H4V4h11v1",
+    speaker: "M4 9v6h4l5 4V5L8 9z M16 9a4 4 0 010 6 M19 6a8 8 0 010 12",
+    send: "M22 2L11 13 M22 2l-7 20-4-9-9-4z",
+    search: "M11 18a7 7 0 100-14 7 7 0 000 14z M21 21l-5-5",
+    refresh: "M20 11a8 8 0 10-2.3 5.7 M20 4v7h-7",
   };
   const icon = (kind) => {
     const ns = "http://www.w3.org/2000/svg";
@@ -674,6 +745,121 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   // Centred "✦ SafeShelf [badge]" line at the top of every card.
   const brandRow = (badge) => el("div", { className: "brand-row" },
     el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), el("span", { className: "brand", textContent: "SafeShelf" }), el("span", { className: "badge", textContent: badge }));
+
+  const VERDICT_WORD = { red: "Danger", amber: "Be careful", unknown: "Not enough evidence", green: "OK so far" };
+  const VERDICT_ICON = { red: "stop", amber: "warn", unknown: "help", green: "check" };
+
+  // A small icon button. `text` shows a word next to the icon; the label is always there for screen readers and as a tooltip.
+  const iconBtn = (kind, label, text) => {
+    const b = el("button", { type: "button", className: "ibtn", title: label }, icon(kind), ...(text ? [text] : []));
+    b.setAttribute("aria-label", label);
+    return b;
+  };
+  // Card header: "✦ SafeShelf [badge]" on the left, small buttons (Close, History…) on the right.
+  const cardHead = (badge, ...buttons) => el("div", { className: "head" }, brandRow(badge), el("div", { className: "icons" }, ...buttons));
+  const typingDots = () => el("span", { className: "typing", ariaHidden: "true" }, el("i"), el("i"), el("i"));
+
+  // Light formatting for an answer: paragraphs, "- " or "1." lists and **bold**. Built from text nodes, never as HTML.
+  const rich = (text) => {
+    const inline = (s) => s.split(/(\*\*[^*]+\*\*)/).filter(Boolean).map((p) => (/^\*\*.+\*\*$/.test(p) ? el("strong", { textContent: p.slice(2, -2) }) : p));
+    const out = [];
+    let list = null;
+    for (const line of String(text || "").split("\n").map((l) => l.trim())) {
+      const item = line.match(/^(?:[-•*]|\d+[.)])\s+(.*)$/);
+      if (item) { if (!list) out.push(list = el("ul")); list.append(el("li", {}, ...inline(item[1]))); continue; }
+      list = null;
+      if (line) out.push(el("p", {}, ...inline(line)));
+    }
+    return el("div", { className: "txt" }, ...out);
+  };
+
+  // The product a chat is about: photo, title, price and, once checked, the verdict.
+  const productStrip = (page, r) => {
+    const photo = el("img", { src: (page.image_urls || [])[0] || "", alt: "" });
+    photo.onerror = () => photo.remove();
+    const lvl = r ? level(r) : null;
+    return el("div", { className: "prod" }, ...((page.image_urls || []).length ? [photo] : []),
+      el("div", { className: "body" }, el("div", { className: "t", textContent: page.title || page.url }), el("div", { className: "m", textContent: [money(page), page.seller].filter(Boolean).join(" · ") })),
+      ...(lvl ? [el("span", { className: `pill ${lvl}`, textContent: VERDICT_WORD[lvl] })] : []));
+  };
+
+  // An answer's sources, folded away; their quotes are looked up the first time they are opened.
+  const sourcesBlock = (ids) => {
+    if (!ids.length) return el("div", { className: "nosrc", textContent: "No sources cited for this answer." });
+    const d = el("details", { className: "src" }, el("summary", { textContent: `Sources (${ids.length})` }));
+    d.addEventListener("toggle", () => { if (d.open && d.children.length === 1) d.append(evidenceBlock(ids, false)); });
+    return d;
+  };
+
+  // A finished answer: the text, its sources, how SafeShelf answered, and Listen / Copy.
+  const answerNodes = (a, lang) => {
+    const listen = iconBtn("speaker", "Read this answer aloud", "Listen");
+    listen.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
+    const copy = iconBtn("copy", "Copy this answer", "Copy");
+    copy.onclick = () => navigator.clipboard?.writeText(a.text).then(() => { copy.lastChild.textContent = "Copied"; });
+    return [rich(a.text), sourcesBlock(a.evidence_ids || []), stepsBlock(a.steps),
+      ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []),
+      el("div", { className: "acts" }, listen, copy)];
+  };
+
+  // One chat thread: messages, suggestions and the question box. Used by the side chat on product pages and under the
+  // result on results-page cards. getCheck() resolves to {r} (the check result to ask about) or {why} there is none.
+  const chatUI = ({ suggestions, hello, placeholder, what, getCheck, context, onAsk = () => {} }) => {
+    const convo = []; // this conversation so far: {role: "user" | "bot", text, evidence}
+    const newSid = () => `SS-A-${Math.random().toString(36).slice(2, 10)}`;
+    let sid = newSid();
+    const log = el("div", { className: "log", role: "log" });
+    log.setAttribute("aria-live", "polite");
+    const input = el("input", { type: "text", placeholder, autocomplete: "off" });
+    input.setAttribute("aria-label", "Your question");
+    const lang = el("select", {}, el("option", { value: "en", textContent: "English" }), el("option", { value: "hi", textContent: "हिन्दी" }));
+    lang.setAttribute("aria-label", "Answer language");
+    const send = el("button", { type: "submit", className: "send" }, icon("send"));
+    send.setAttribute("aria-label", "Send");
+    const form = el("form", { className: "ask" }, input, lang, send);
+    const intro = el("div", { className: "intro" }, ...(hello ? [el("p", { className: "hello", textContent: hello })] : []),
+      el("div", { className: "chips" }, ...suggestions.map((q) => el("button", { type: "button", textContent: q, onclick: () => ask(q) }))));
+    const add = (kind, ...kids) => {
+      const m = el("div", { className: `msg ${kind}` }, ...kids);
+      log.append(m);
+      intro.hidden = true;
+      log.scrollTop = log.scrollHeight;
+      return m;
+    };
+    const ask = async (q) => {
+      if (!q.trim() || send.disabled) return;
+      onAsk();
+      const mine = add("user", q);
+      convo.push({ role: "user", text: q });
+      input.value = "";
+      send.disabled = true;
+      const pending = add("bot", typingDots(), el("span", { className: "muted", textContent: "Thinking…" }));
+      const done = (...kids) => { pending.replaceChildren(...kids); send.disabled = false; log.scrollTop = log.scrollHeight; };
+      // A failed question is taken back, with a button to ask it again.
+      const fail = (text) => {
+        convo.pop();
+        pending.classList.add("err");
+        const again = iconBtn("refresh", "Ask this again", "Try again");
+        again.onclick = () => { mine.remove(); pending.remove(); ask(q); };
+        done(rich(text), el("div", { className: "acts" }, again));
+      };
+      if (!(await guard("chat", null, what))) { // TEMP cost guard
+        convo.pop();
+        return done(el("span", { className: "muted", textContent: "Cancelled. Nothing was sent and nothing was charged." }));
+      }
+      const { r, why } = await getCheck();
+      if (!r) return fail(`I could not check this page, so I can't answer yet (${why || "no answer"}${/running|answered|Failed to fetch/i.test(why || "") ? "; the SafeShelf API may be slow or down" : ""}).`);
+      askLive({ product_id: r.product_id || "unmatched", message: q, language: lang.value, session_id: sid, context: context(r),
+        history: convo.slice(-7, -1).map((m) => ({ role: m.role, text: m.text })) }, pending, (res) => {
+        if (!res?.ok) return fail(`Could not get an answer: ${res?.error || "no answer"}.`);
+        convo.push({ role: "bot", text: res.result.text, evidence: res.result.evidence_ids });
+        done(...answerNodes(res.result, lang.value));
+      });
+    };
+    form.onsubmit = (e) => { e.preventDefault(); ask(input.value); };
+    const reset = () => { convo.length = 0; sid = newSid(); log.replaceChildren(); intro.hidden = false; };
+    return { log, intro, form, input, convo, reset };
+  };
 
   // One button + result card. Used once as a floating button (product page) and once per product card (results pages).
   // Nothing is sent to the API until the button is clicked.
@@ -702,6 +888,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     const box = el("section", { className: "box", hidden: true, ariaLabel: "SafeShelf safety check" });
     box.setAttribute("aria-live", "polite");
     const show = (...nodes) => box.replaceChildren(el("div", { className: "card" }, ...nodes)); // everything in the box sits on one white card
+    let stopTicker = () => {}; // stops the "Checking this product… 12 s" counter
     // On results pages the popup lives in its own layer on <body>, so no card's CSS can clip, move or cover it.
     const pop = mode === "inline" ? el("div", { className: "pop" }) : null;
     if (pop) {
@@ -752,57 +939,6 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         safe: { level: r.safe.level, lines: r.safe.lines }, real: { level: r.real.level, lines: r.real.lines }, evidence_ids: r.evidence_ids || [],
         matched_by: r.matched_by, checks: r.trust_checks, genuine_model_safety: r.genuine_model_safety,
         listing_text: (p.page_text || "").slice(0, 1500) };
-    };
-
-    // Chat about the check result just shown: it knows this result and remembers the conversation.
-    const resultChat = (r) => {
-      const thread = []; // {role: "user" | "bot", text}
-      const sid = `SS-A-${Math.random().toString(36).slice(2, 10)}`;
-      const log = el("div", { className: "log", role: "log" });
-      log.setAttribute("aria-live", "polite");
-      const input = el("input", { type: "text", placeholder: "Ask about this result…" });
-      input.setAttribute("aria-label", "Your question about this result");
-      const lang = el("select", {}, el("option", { value: "en", textContent: "English" }), el("option", { value: "hi", textContent: "हिन्दी" }));
-      lang.setAttribute("aria-label", "Answer language");
-      const send = el("button", { type: "submit", textContent: "Send" });
-      const form = el("form", { className: "ask" }, input, lang, send);
-      const chips = el("div", { className: "chips" });
-      const add = (kind, text) => {
-        const m = el("div", { className: `msg ${kind}` }, el("span", { textContent: text }));
-        log.append(m);
-        log.scrollTop = log.scrollHeight;
-        return m;
-      };
-      const context = () => chatContext(r);
-      const ask = async (q) => {
-        if (!q.trim()) return;
-        add("user", q);
-        thread.push({ role: "user", text: q });
-        input.value = "";
-        send.disabled = true;
-        const pending = add("bot", "Thinking…");
-        const finish = (text, extra = []) => { pending.replaceChildren(el("span", { textContent: text }), ...extra); send.disabled = false; log.scrollTop = log.scrollHeight; };
-        if (!(await guard("chat", null, "Ask about this result (your question, this result and the last few messages are sent)"))) { // TEMP cost guard
-          thread.pop();
-          return finish("Cancelled. Nothing was sent and nothing was charged.");
-        }
-        try {
-          askLive({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: q, language: lang.value, session_id: sid, context: context(), history: thread.slice(-7, -1) }, pending, (res) => {
-            if (!res?.ok) { thread.pop(); return finish(`Could not get an answer: ${res?.error || chrome.runtime.lastError?.message}`); }
-            const a = res.result;
-            thread.push({ role: "bot", text: a.text });
-            const speakA = el("button", { type: "button", className: "small", textContent: "Listen" });
-            speakA.setAttribute("aria-label", "Read this answer aloud");
-            speakA.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang.value === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
-            finish(a.text, [evidenceBlock(a.evidence_ids), stepsBlock(a.steps), ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []), speakA]);
-          });
-        } catch (_) { thread.pop(); finish("The extension was reloaded. Please refresh the page."); }
-      };
-      for (const q of ["Why this result?", "Is it safe to buy?", "Show me a safer one", "What should I check before buying?"]) {
-        chips.append(el("button", { type: "button", textContent: q, onclick: () => ask(q) }));
-      }
-      form.onsubmit = (e) => { e.preventDefault(); ask(input.value); };
-      return el("div", { className: "rchat" }, el("div", { className: "ctx-h", textContent: "Ask about this result" }), log, chips, form);
     };
 
     // Tabs under the result: one per SafeShelf API. Each loads when first opened, and only if the API serves it for real.
@@ -912,57 +1048,94 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       return el("div", {}, el("h3", { className: "vh", textContent: "Tell the regulator" }), el("div", { className: "tools" }, btn), out);
     };
 
+    const closeX = () => {
+      const b = iconBtn("close", "Close");
+      b.onclick = () => { setOpen(false); fab.focus(); };
+      return b;
+    };
+
+    // Results-page cards have no side chat, so their chat sits folded under the result.
+    const inlineChat = (r) => {
+      const chat = chatUI({ suggestions: ["Why this result?", "Is it safe to buy?", "Show me a safer one", "What should I check before buying?"], placeholder: "Ask about this result…",
+        what: "Ask about this result (your question, this result and the last few messages are sent)", getCheck: async () => ({ r }), context: chatContext });
+      return el("details", { className: "askd" }, el("summary", { textContent: "Ask about this result" }), el("div", {}, chat.log, chat.intro, chat.form));
+    };
+
     const render = (r) => {
+      stopTicker();
       result = r;
       const lvl = level(r);
+      const word = VERDICT_WORD[lvl];
       fab.className = `fab ${lvl}`;
-      const word = lvl === "red" ? "Danger" : lvl === "amber" ? "Be careful" : lvl === "unknown" ? "Not enough evidence" : "OK so far";
       label(fab, `SafeShelf: ${word}`, word);
       box.className = `box ${lvl}`;
-      const speakBtn = el("button", { type: "button", className: "small", textContent: "Read it to me" });
+      const speakBtn = el("button", { type: "button", className: "small", textContent: "Read aloud" });
       speakBtn.onclick = () => speak(r);
       const againBtn = el("button", { type: "button", className: "small", textContent: "Check again" });
       againBtn.onclick = () => run(true);
-      const closeBtn = el("button", { type: "button", className: "small", textContent: "Close" });
-      closeBtn.onclick = () => { setOpen(false); fab.focus(); };
       // Investigate (the Shopper Agent, investigate.js): only on a product page, never for a card on a results page.
       const investigateBtn = mode === "float" && window.__safeshelfInvestigate
-        ? el("button", { type: "button", className: "small", textContent: "Investigate", title: "Let SafeShelf look through the photos, label, reviews and seller (read-only)" })
+        ? el("button", { type: "button", className: "small", textContent: "Investigate the page", title: "Let SafeShelf look through the photos, label, reviews and seller (read-only)" })
         : null;
       if (investigateBtn) investigateBtn.onclick = async () => { setOpen(false); window.__safeshelfInvestigate(await withMoreReviews(getPage())); };
+      const askBtn = chatBtn ? el("button", { type: "button", className: "primary" }, icon("ask"), "Ask a question about it") : null;
+      if (askBtn) askBtn.onclick = () => setChatOpen(true);
       show(
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
-        brandRow(r.host),
-        el("h2", { className: `headline ${lvl}`, textContent: word }),
+        cardHead(r.host, closeX()),
+        el("div", { className: `hero ${lvl}` }, el("div", { className: "ic" }, icon(VERDICT_ICON[lvl])), el("h2", { className: `headline ${lvl}`, textContent: word }),
+          ...(r.summary ? [el("p", { className: "sum", textContent: r.summary })] : [])),
         panelTabs(r, [
-          el("p", { textContent: r.summary }),
-          el("div", { className: "ctx-h", textContent: "What was sent for this check:" }),
-          contextCard(getPage()),
           section("Is it safe?", r.safe),
           section("Is it real?", r.real),
-          el("p", { className: "muted", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),
-          resultChat(r),
+          el("details", { className: "read" }, el("summary", { textContent: "What SafeShelf read from this page" }), contextCard(getPage())),
+          el("p", { className: "foot", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),
+          ...(mode === "inline" ? [inlineChat(r)] : []),
         ]),
-        el("div", { className: "row" }, ...[investigateBtn, speakBtn, againBtn, closeBtn].filter(Boolean)),
+        el("div", { className: "actions" }, ...(askBtn ? [askBtn] : []), el("div", { className: "more" }, ...[investigateBtn, speakBtn, againBtn].filter(Boolean))),
       );
       place();
+    };
+
+    // While the check runs: what it covers and how long it has taken so far.
+    const waiting = () => {
+      stopTicker();
+      const STAGES = ["Reading the listing", "Looking for recalls and danger reports", "Checking the safety marks", "Comparing it with the genuine product",
+        "Still working: a product SafeShelf has never seen can take up to half a minute"];
+      const stage = el("div", { className: "stage", textContent: `${STAGES[0]}…` });
+      const started = Date.now();
+      const t = setInterval(() => {
+        const s = Math.round((Date.now() - started) / 1000);
+        stage.textContent = `${STAGES[Math.min(Math.floor(s / 3), STAGES.length - 1)]}… ${s} s`;
+      }, 1000);
+      stopTicker = () => clearInterval(t);
+      return el("div", { className: "wait" }, el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), el("strong", { textContent: "Checking this product" }), stage,
+        ...[92, 74, 84].map((w) => el("div", { className: "skel", style: `width:${w}%` })));
     };
 
     const run = async (fresh = false) => {
       if (!(await guard("check", getPage().url, "Check this product", getPage()))) { // TEMP cost guard
         checked = false;
         box.className = "box";
-        show(el("p", { className: "muted", textContent: "Check cancelled. Nothing was sent and nothing was charged." }));
+        const go = el("button", { type: "button", className: "primary", textContent: "Check now" });
+        go.onclick = () => run();
+        show(cardHead("Check", closeX()), el("div", { className: "state" }, el("p", { textContent: "Check cancelled. Nothing was sent and nothing was charged." }), go));
         return;
       }
       checked = true;
       box.className = "box";
-      show(el("p", { className: "loading" }, el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), "SafeShelf is checking this product… usually a few seconds; a product it has never seen can take up to half a minute."));
+      show(cardHead("Check", closeX()), waiting());
+      place();
       try {
         const page = mode === "float" ? await withMoreReviews(getPage()) : getPage();
         chrome.runtime.sendMessage({ type: "safeshelf:check", page, fresh }, (res) => {
-          if (res?.ok) render(res.result);
-          else show(el("p", { textContent: `SafeShelf could not check this page: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?` }));
+          if (res?.ok) return render(res.result);
+          stopTicker();
+          checked = false; // opening the card again tries again
+          const retry = el("button", { type: "button", className: "primary" }, icon("refresh"), "Try again");
+          retry.onclick = () => run(true);
+          show(cardHead("Check", closeX()), el("div", { className: "state" }, el("strong", { textContent: "SafeShelf couldn't check this page" }),
+            el("p", { textContent: `${res?.error || chrome.runtime.lastError?.message || "No answer"}. The API may be busy or starting up; trying again usually works.` }), retry));
         });
       } catch (_) { /* extension was reloaded; the new script takes over */ }
     };
@@ -1020,6 +1193,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       if (!checked) run();
     };
     const reset = () => {
+      stopTicker();
       checked = false;
       result = null;
       saved = false;
@@ -1032,44 +1206,45 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       setOpen(false);
     };
     if (chatBtn) {
-      const log = el("div", { className: "log", role: "log" });
-      log.setAttribute("aria-live", "polite");
-      const input = el("input", { type: "text", placeholder: "Ask about this product…" });
-      input.setAttribute("aria-label", "Your question");
-      const lang = el("select", {}, el("option", { value: "en", textContent: "English" }), el("option", { value: "hi", textContent: "हिन्दी" }));
-      lang.setAttribute("aria-label", "Answer language");
-      const sendBtn = el("button", { type: "submit", textContent: "Send" });
-      const form = el("form", { className: "ask" }, input, lang, sendBtn);
-      const closeChat = el("button", { type: "button", className: "small", textContent: "Close" });
+      // The check result for this page (cached for 10 minutes, so this is free after Check). Needed even when
+      // SafeShelf does not know the product: the chat then answers from the page and the check, with no safety claim.
+      const getCheck = () => new Promise((done) => {
+        if (result) done({ r: result }); else identify((r, why) => done({ r, why }));
+      });
+      const historyBtn = iconBtn("history", "Past chats");
+      historyBtn.setAttribute("aria-pressed", "false");
+      const newBtn = iconBtn("plus", "New chat");
+      const closeChat = iconBtn("close", "Close");
       closeChat.onclick = () => { setChatOpen(false); chatBtn.focus(); };
-      const chips = el("div", { className: "chips" });
-      const ctxHolder = el("div", { className: "sky" }); // page context the product was identified from, refreshed each time the chat opens
-      const convo = []; // this conversation so far: {role: "user" | "bot", text, evidence}
-      const historyBtn = el("button", { type: "button", className: "small", textContent: "History" });
-      const clearBtn = el("button", { type: "button", className: "small", textContent: "Clear" });
       const histView = el("div", { className: "hist", hidden: true });
-      const clearNote = el("p", { className: "muted", role: "status" });
+      const note = el("p", { className: "muted", role: "status" });
+      const about = el("div", { className: "intro" }); // the product strip and what is read from the page, refreshed each time the chat opens
+      const chat = chatUI({ suggestions: ["Is this safe in a child's room?", "Is it genuine?", "Is there a safer option?", "Draft a refund request"],
+        hello: "Answers come only from SafeShelf's evidence, with sources. Try one of these:", placeholder: "Ask about this product…",
+        what: "Ask SafeShelf a question (your question, the check result and this page's product details are sent)", getCheck, context: chatContext,
+        onAsk: () => { showHistory(false); note.textContent = ""; } });
 
-      // Moves the current conversation into history, then empties the chat.
+      // Moves the current conversation into Past chats, then starts a new one.
       const archive = async () => {
-        if (convo.length) {
+        if (chat.convo.length) {
           const page = getPage();
           const list = await history.get();
-          await history.set([{ id: Date.now(), title: page.title || page.url, url: page.url, at: new Date().toISOString(), messages: convo.slice() }, ...list].slice(0, 30));
-          convo.length = 0;
+          await history.set([{ id: Date.now(), title: page.title || page.url, url: page.url, at: new Date().toISOString(), messages: chat.convo.slice() }, ...list].slice(0, 30));
         }
-        log.replaceChildren();
+        chat.reset();
       };
       const showHistory = async (show) => {
         histView.hidden = !show;
-        log.hidden = chips.hidden = form.hidden = show;
-        historyBtn.textContent = show ? "Back to chat" : "History";
+        chat.log.hidden = chat.form.hidden = show;
+        chat.intro.hidden = show || !!chat.log.firstChild;
+        historyBtn.setAttribute("aria-pressed", String(show));
         if (!show) return;
         const list = await history.get();
-        const wipe = el("button", { type: "button", className: "small", textContent: "Delete all history" });
+        const wipe = el("button", { type: "button", className: "small", textContent: "Delete all past chats" });
         wipe.onclick = async () => { await history.set([]); showHistory(true); };
         histView.replaceChildren(
-          ...(list.length ? [] : [el("p", { className: "muted", textContent: "No past chats yet. When you press Clear, the chat is saved here." })]),
+          el("div", { className: "vh", textContent: "Past chats" }),
+          ...(list.length ? [] : [el("p", { className: "muted", textContent: "No past chats yet. Press New chat (+) and the current chat is kept here." })]),
           ...list.map((h) => {
             const del = el("button", { type: "button", className: "small", textContent: "Delete" });
             del.setAttribute("aria-label", `Delete chat about ${h.title}`);
@@ -1085,82 +1260,32 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         );
       };
       historyBtn.onclick = () => showHistory(histView.hidden);
-      clearBtn.onclick = async () => {
-        const had = convo.length > 0;
+      newBtn.onclick = async () => {
+        const had = chat.convo.length > 0;
         await archive();
         showHistory(false);
-        clearNote.textContent = had ? "Chat cleared and saved to History." : "";
-        input.focus();
+        note.textContent = had ? "New chat started. The last one is in Past chats." : "";
+        chat.input.focus();
       };
 
-      const add = (kind, text, extra = []) => {
-        const m = el("div", { className: `msg ${kind}` }, el("span", { textContent: text }), ...extra);
-        log.append(m);
-        log.scrollTop = log.scrollHeight;
-        return m;
-      };
-      // The check result for this page (cached for 10 minutes, so this is free after Check). Needed even when
-      // SafeShelf does not know the product: the chat then answers from the page and the check, with no safety claim.
-      const getCheck = () => new Promise((done) => {
-        if (result) done({ r: result }); else identify((r, why) => done({ r, why }));
-      });
-      const sid = `SS-A-${Math.random().toString(36).slice(2, 10)}`;
-      const ask = async (question) => {
-        if (!question.trim()) return;
-        showHistory(false);
-        clearNote.textContent = "";
-        add("user", question);
-        convo.push({ role: "user", text: question });
-        input.value = "";
-        sendBtn.disabled = true;
-        const pending = add("bot", "Thinking…");
-        if (!(await guard("chat", null, "Ask SafeShelf a question (your question, the check result and this page's product details are sent)"))) { // TEMP cost guard
-          pending.replaceChildren(el("span", { textContent: "Cancelled. Nothing was sent and nothing was charged." }));
-          convo.pop();
-          sendBtn.disabled = false;
-          return;
-        }
-        const { r, why } = await getCheck();
-        const done = (text, extra = []) => { pending.replaceChildren(el("span", { textContent: text }), ...extra); sendBtn.disabled = false; log.scrollTop = log.scrollHeight; };
-        if (!r) return done(`I could not check this page, so I can't answer yet (${why || "no answer"}${/running|answered|Failed to fetch/i.test(why || "") ? "; the SafeShelf API may be slow or down" : ""}).`);
-        try {
-          askLive({ type: "safeshelf:chat", product_id: r.product_id || "unmatched", message: question, language: lang.value,
-            session_id: sid, context: chatContext(r), history: convo.slice(-7, -1).map((m) => ({ role: m.role, text: m.text })) }, pending, (res) => {
-            if (!res?.ok) return done(`Could not get an answer: ${res?.error || chrome.runtime.lastError?.message}. Is the API running?`);
-            const a = res.result;
-            convo.push({ role: "bot", text: a.text, evidence: a.evidence_ids });
-            const speakA = el("button", { type: "button", className: "small", textContent: "Listen" });
-            speakA.setAttribute("aria-label", "Read this answer aloud");
-            speakA.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang.value === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
-            done(a.text, [
-              evidenceBlock(a.evidence_ids),
-              stepsBlock(a.steps),
-              ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []),
-              speakA,
-            ]);
-          });
-        } catch (_) { done("The extension was reloaded. Please refresh the page."); }
-      };
-      for (const q of ["Is this safe in a child's room?", "Is it genuine?", "Is there a safer option?", "Draft a refund request"]) {
-        chips.append(el("button", { type: "button", textContent: q, onclick: () => ask(q) }));
-      }
-      form.onsubmit = (e) => { e.preventDefault(); ask(input.value); };
-      chatBox.append(
-        el("div", { className: "tools" }, historyBtn, clearBtn, closeChat),
-        el("div", { className: "card" },
-          brandRow("AI"),
-          el("h2", { className: "headline", textContent: "Ask anything about this product" }),
-          ctxHolder, log, histView, chips, form, clearNote,
-        ),
-      );
+      chatBox.append(el("div", { className: "card" },
+        cardHead("AI", historyBtn, newBtn, closeChat),
+        el("h2", { className: "headline", textContent: "Ask about this product" }),
+        about, chat.log, histView, chat.intro, chat.form, note,
+      ));
       chatBox.addEventListener("keydown", (e) => { if (e.key === "Escape") { setChatOpen(false); chatBtn.focus(); } });
 
       setChatOpen = (open) => {
         chatBox.hidden = !open;
         chatBtn.setAttribute("aria-expanded", String(open));
-        if (open) { setOpen(false); ctxHolder.replaceChildren(el("div", { className: "ctx-h", textContent: "Page context used to identify this product:" }), contextCard(getPage())); input.focus(); } else speechSynthesis.cancel();
+        if (!open) return speechSynthesis.cancel();
+        setOpen(false);
+        const page = getPage();
+        about.replaceChildren(productStrip(page, result),
+          el("details", { className: "read" }, el("summary", { textContent: "What SafeShelf reads from this page" }), contextCard(page)));
+        chat.input.focus();
       };
-      resetChat = () => { archive(); showHistory(false); clearNote.textContent = ""; setChatOpen(false); }; // a new product starts a fresh chat; the old one goes to History
+      resetChat = () => { archive(); showHistory(false); note.textContent = ""; setChatOpen(false); }; // a new product starts a fresh chat; the old one goes to Past chats
       chatBtn.onclick = () => setChatOpen(chatBox.hidden);
     }
     fab.onclick = toggle;
@@ -1207,7 +1332,10 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   const timer = setInterval(tick, 1000);
 
   const onMessage = (msg, _s, reply) => {
-    if (msg === "safeshelf:toggle") { tick(); if (floating.host.isConnected) floating.toggle(); }
+    if (msg !== "safeshelf:toggle") return;
+    tick();
+    if (floating.host.isConnected) floating.toggle();
+    reply?.({ ok: floating.host.isConnected }); // the toolbar menu says why nothing opened
   };
   chrome.runtime.onMessage.addListener(onMessage);
   window.__safeshelf = {

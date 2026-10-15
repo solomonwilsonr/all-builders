@@ -46,3 +46,18 @@ document.getElementById("lab").addEventListener("click", () => {
   chrome.tabs.create({ url: chrome.runtime.getURL("lab.html") });
   window.close();
 });
+
+// Opens the check card on the product page in this tab (content.js answers whether there was one to open).
+document.getElementById("check").addEventListener("click", async () => {
+  const hint = document.getElementById("check-hint");
+  const say = (t) => { hint.textContent = t; hint.className = "hint warn"; };
+  if ((await chrome.storage.local.get("enabled")).enabled === false) return say("SafeShelf is off. Turn it on below, then press Check this page.");
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  try {
+    const res = await chrome.tabs.sendMessage(tab.id, "safeshelf:toggle");
+    if (res?.ok) return window.close();
+    say("This isn't a product page. Open one product, then press Check this page (results pages have a Check button on each card).");
+  } catch (_) {
+    say("SafeShelf doesn't work on this site yet. Open a product on Amazon or Flipkart.");
+  }
+});

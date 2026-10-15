@@ -56,18 +56,36 @@
     return out;
   };
 
+  // Same look as the check card (content.js): pastel frame, white card, navy ink, lime accent.
   const STYLE = `
     :host { all: initial; }
-    .ov { position: fixed; right: 16px; bottom: 16px; z-index: 2147483647; width: min(380px, calc(100vw - 32px)); max-height: 70vh; overflow: auto;
-      font: 14px/1.45 system-ui, sans-serif; color: #14213d; background: #fff; border: 2px solid #14213d; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.25); padding: 14px; }
-    h2 { margin: 0 0 6px; font-size: 16px; } .now { font-weight: 600; margin: 6px 0; } ol { margin: 6px 0; padding-left: 20px; max-height: 30vh; overflow: auto; }
-    li { margin: 2px 0; } li.skip { color: #8a1c1c; } .muted { color: #555; font-size: 12px; } .row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-    button { font: inherit; padding: 6px 12px; border-radius: 8px; border: 1px solid #14213d; background: #fff; color: #14213d; cursor: pointer; }
-    button:focus-visible { outline: 3px solid #4361ee; outline-offset: 2px; }
-    .verdict { padding: 8px 10px; border-radius: 8px; margin: 8px 0; font-weight: 600; }
-    .red { background: #fde2e1; } .amber { background: #fff3cd; } .green { background: #e3f6e8; } .unknown { background: #eceff3; }
-    @media (prefers-color-scheme: dark) { .ov { background: #111827; color: #f3f4f6; border-color: #f3f4f6; } button { background: #111827; color: #f3f4f6; border-color: #f3f4f6; }
-      .muted { color: #b8c0cc; } .red { background: #5c1d1d; } .amber { background: #5a4510; } .green { background: #173d26; } .unknown { background: #2a3140; } li.skip { color: #ffb4b4; } }`;
+    .ov { position: fixed; right: 84px; bottom: 16px; z-index: 2147483647; width: min(390px, calc(100vw - 100px)); max-height: 76vh; overflow: auto; box-sizing: border-box;
+      padding: 10px; border-radius: 28px; box-shadow: 0 18px 50px rgba(19,35,58,.28); font: 14px/1.45 "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: -.01em; color: #13233a;
+      background: radial-gradient(120% 70% at 0% 0%, #b9d4ee 0%, transparent 60%), radial-gradient(120% 70% at 100% 100%, #f6c9b4 0%, transparent 60%), linear-gradient(180deg, #d6e4f2, #f3ddd2); }
+    .card { background: #fdfcfa; border-radius: 22px; padding: 16px; }
+    .head { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+    .mark { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: #dff0a8; font-size: 13px; }
+    .badge { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 6px; background: #f1f3f6; color: #5a6a7c; }
+    .timer { margin-left: auto; font-size: 12px; font-weight: 600; color: #5a6a7c; font-variant-numeric: tabular-nums; }
+    h2 { margin: 10px 0 2px; font-size: 20px; letter-spacing: -.03em; }
+    .muted { color: #5a6a7c; font-size: 12px; margin: 0; }
+    .bar { height: 6px; border-radius: 3px; background: #f1f3f6; margin: 12px 0 8px; overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: #c9e383; transition: width .4s ease; }
+    .bar.busy i { width: 35% !important; animation: slide 1.2s ease-in-out infinite; }
+    @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
+    .now { font-weight: 600; margin: 4px 0 6px; }
+    ol { list-style: none; margin: 0; padding: 0; max-height: 28vh; overflow: auto; font-size: 13px; }
+    li { display: flex; gap: 8px; padding: 3px 0; } li::before { content: "✓"; flex: none; width: 1em; color: #0a6b2d; font-weight: 700; }
+    li.skip { color: #8a5a00; } li.skip::before { content: "–"; color: #8a5a00; }
+    .verdict { padding: 10px 12px; border-radius: 16px; margin: 12px 0 6px; font-weight: 700; font-size: 16px; }
+    .red { background: #fbe3e1; color: #b3261e; } .amber { background: #fbefd6; color: #8a5a00; } .green { background: #e3f3e7; color: #0a6b2d; } .unknown { background: #eceff3; color: #4a5560; }
+    .out ul { margin: 6px 0; padding-left: 18px; } .out p { margin: 6px 0; } .out a { color: #2f5fb3; font-weight: 600; }
+    .row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+    button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 12px; border: 1px solid #e3e7ec; background: #fff; color: #13233a; cursor: pointer; }
+    button:hover { background: #f1f3f6; }
+    button.stop { background: #13233a; border-color: #13233a; color: #fff; }
+    button:focus-visible { outline: 3px solid #2f5fb3; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } .bar.busy i { animation: none; } }`;
   const HIGHLIGHT = "outline: 4px solid #4361ee !important; outline-offset: 3px !important; transition: transform .25s; transform: scale(1.04);";
   const WORDS = { red: "⛔ Danger or not real", amber: "⚠️ Be careful: under review", green: "✅ Nothing found in what was checked", unknown: "❔ Not enough evidence yet" };
 
@@ -98,19 +116,25 @@
     const root = host.attachShadow({ mode: "open" });
     const ov = document.createElement("div");
     ov.className = "ov";
+    const started = Date.now();
     ov.setAttribute("role", "dialog");
     ov.setAttribute("aria-label", "SafeShelf is investigating this page");
-    ov.innerHTML = `<style>${STYLE}</style><h2>SafeShelf is investigating</h2><p class="muted">Looking at this page the way a careful buyer would. It never buys, signs in or fills in anything.</p>
-      <p class="now" aria-live="polite"></p><ol></ol><div class="out"></div><div class="row"><button type="button" class="stop">Stop (Esc)</button></div>`;
+    ov.innerHTML = `<style>${STYLE}</style><div class="card"><div class="head"><span class="mark" aria-hidden="true">✦</span><strong>SafeShelf</strong><span class="badge">Investigating</span><span class="timer">0 s</span></div>
+      <h2>Looking around this page</h2><p class="muted">Like a careful buyer: photos, the label, critical reviews and the seller. It never buys, signs in or fills in anything.</p>
+      <div class="bar"><i></i></div><p class="now" aria-live="polite">Starting…</p><ol></ol><div class="out"></div><div class="row"><button type="button" class="stop">Stop (Esc)</button></div></div>`;
     root.append(ov);
     document.body.append(host);
     const now = ov.querySelector(".now");
     const list = ov.querySelector("ol");
     const out = ov.querySelector(".out");
     const stopBtn = ov.querySelector(".stop");
+    const bar = ov.querySelector(".bar");
+    const timer = ov.querySelector(".timer");
+    const progress = (n) => { bar.querySelector("i").style.width = `${Math.round((n / MAX_STEPS) * 100)}%`; };
+    const clock = setInterval(() => { timer.textContent = `${Math.round((Date.now() - started) / 1000)} s`; }, 1000);
     let stopped = false;
-    const stop = () => { stopped = true; stopBtn.textContent = "Close"; stopBtn.onclick = close; };
-    const close = () => { host.remove(); document.removeEventListener("keydown", onKey, true); running = null; };
+    const stop = () => { stopped = true; clearInterval(clock); bar.classList.remove("busy"); stopBtn.textContent = "Close"; stopBtn.className = ""; stopBtn.onclick = close; };
+    const close = () => { clearInterval(clock); host.remove(); document.removeEventListener("keydown", onKey, true); running = null; };
     const onKey = (e) => { if (e.key === "Escape") { e.stopPropagation(); stopped ? close() : stop(); } };
     document.addEventListener("keydown", onKey, true);
     stopBtn.onclick = stop;
@@ -125,12 +149,13 @@
       li.scrollIntoView({ block: "nearest" });
     };
 
-    const started = Date.now();
     const sessionId = `SS-I-${Math.random().toString(16).slice(2, 10).toUpperCase()}`;
     const observations = [];
     const read = new Set();
     try {
       for (let step = 1; step <= MAX_STEPS && !stopped && Date.now() - started < BUDGET_MS; step++) {
+        progress(step);
+        if (step === 1) now.textContent = "Choosing what to look at first…";
         const elements = collect(read);
         const next = await agent({ mode: "shopper_step", session_id: sessionId, step, url: page.url, title: page.title, elements,
           observations: observations.map(({ kind, text }) => ({ kind, text: clean(text, 200) })) });
@@ -157,6 +182,7 @@
       const hidden = [...document.querySelectorAll("[aria-hidden='true'], [hidden], [style*='-9999px']")].map((e) => clean(e.textContent, 400)).filter((t) => t.length > 20);
       hidden.slice(0, 3).forEach((text) => observations.push({ kind: "hidden_text", text }));
       say(stopped ? "Stopped. Checking what was read so far…" : "Putting it all together…");
+      bar.classList.add("busy");
       const { product_id, listing_id, ...listing } = page;
       const CHECKS = { is_it_real: "Shop and price checked", safety_radar: "Recalls and reviews read", twin_finder: "Copies looked up", recall_checker: "Recall notices checked", cert_verifier: "Safety marks checked" };
       const v = await agentLive({ mode: "investigate", session_id: sessionId, product_id: product_id || "unmatched", listing, page_evidence: { observations }, recall_sites: true }, (e) => {
@@ -165,6 +191,8 @@
         if (e.type === "start" && e.tool === "recall_sites") say("Searching the official recall sites for this market (up to a minute)…");
         if (e.type === "research") (e.reasons || []).forEach((r) => say(`Recall sites: ${r.text}`));
       }, 280000);
+      bar.classList.remove("busy");
+      progress(MAX_STEPS);
       const level = v.verdict?.overall || "unknown";
       out.innerHTML = "";
       const box = document.createElement("div");

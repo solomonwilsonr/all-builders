@@ -21,6 +21,6 @@ Each one asks `/health` which endpoints are really live and shows "Not live on t
 | Card → Safer options | `alternatives` | read |
 | Card → Details | `products/{id}`; button "How was it identified?" → `identify` | read; AI (estimate shown) |
 | Card → Report | `reports` | write |
-| Chat under the result | `agent/sessions`, `evidence` | AI |
+| Ask (side chat on product pages; folded under the result on results-page cards) | `agent/sessions`, `evidence` | AI |
 | 📚 Save | `shelf/items` | write |
 | Lab (toolbar menu → Judges' Lab) | all endpoints' status, `bench/results`, `investigations/{id}/trace`, `catalog/scan`, product explorer | catalog scan warns about cost |
