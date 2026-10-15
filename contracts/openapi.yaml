@@ -267,6 +267,72 @@ paths:
       responses:
         '200': {description: Evidence records, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Evidence'}}}}}
 
+  /v1/recalls:
+    get:
+      summary: Recall Catalog - browse and search every official recall loaded (CPSC, ACCC, CAA, KATS...), newest first
+      description: >-
+        Official notices only; Safety Radar findings are not recalls and are not listed. Database only (no AI), so it
+        does not count against the AI-check rate limit. Words in q must all appear (title, hazard, products,
+        companies). hazard_type is a keyword match on the hazard text.
+      operationId: listRecalls
+      x-mock: recalls.json
+      parameters:
+        - {name: q, in: query, schema: {type: string, maxLength: 100, example: baby}}
+        - {name: authority, in: query, schema: {type: string, example: 'ACCC,CAA'}, description: Comma-separated regulators, as in `sources`}
+        - {name: country, in: query, schema: {type: string, example: Australia}, description: As in `sources`}
+        - {name: hazard_type, in: query, schema: {$ref: '#/components/schemas/HazardType'}}
+        - {name: from, in: query, schema: {type: string, format: date}, description: Notices on or after this date}
+        - {name: to, in: query, schema: {type: string, format: date}, description: Notices on or before this date}
+        - {name: page, in: query, schema: {type: integer, minimum: 1, default: 1}}
+        - {name: per_page, in: query, schema: {type: integer, minimum: 1, maximum: 50, default: 24}}
+      responses:
+        '200':
+          description: One page of recalls, plus every source with its count and latest notice (for filters and freshness)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [total, page, per_page, recalls, sources, hazard_types]
+                properties:
+                  total: {type: integer, description: Recalls matching the filters, across all pages}
+                  page: {type: integer}
+                  per_page: {type: integer}
+                  recalls: {type: array, items: {$ref: '#/components/schemas/Recall'}}
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      required: [authority, recalls]
+                      properties:
+                        authority: {type: string}
+                        country: {type: [string, 'null']}
+                        recalls: {type: integer}
+                        latest: {type: [string, 'null'], format: date}
+                  hazard_types: {type: array, items: {$ref: '#/components/schemas/HazardType'}}
+
+  /v1/recalls/{recall_id}:
+    get:
+      summary: One recall, with the SafeShelf products it covers (exact model matches only)
+      operationId: getRecall
+      x-mock: recall.json
+      parameters:
+        - {name: recall_id, in: path, required: true, schema: {type: string, example: 'oecd:AU:PS1067201'}}
+      responses:
+        '200':
+          description: Recall
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - {$ref: '#/components/schemas/Recall'}
+                  - type: object
+                    required: [safeshelf_products]
+                    properties:
+                      safeshelf_products:
+                        type: array
+                        description: Never a match still under human review
+                        items: {type: object, required: [product_id], properties: {product_id: {type: string}, brand: {type: string}, model: {type: string}}}
+
   /v1/bench/results:
     get:
       summary: Latest SafeShelfBench results, with baselines
@@ -298,6 +364,30 @@ components:
         rating: {type: integer}
         quote: {type: string, description: The exact text the finding is based on; the extension uses it to find and highlight the text on the page}
         url: {type: string, nullable: true, description: Link to the original, when there is one}
+
+    HazardType:
+      type: string
+      enum: [fire_burn, electric_shock, choking, chemical, mechanical_injury, other]
+
+    Recall:
+      type: object
+      required: [recall_id, authority, notice_date, title, hazard, hazard_types, products, companies, images, url]
+      properties:
+        recall_id: {type: string, example: 'cpsc:23240'}
+        authority: {type: string, example: ACCC}
+        country: {type: [string, 'null']}
+        notice_date: {type: [string, 'null'], format: date}
+        title: {type: string}
+        hazard: {type: string, description: The regulator's own words}
+        hazard_types: {type: array, items: {$ref: '#/components/schemas/HazardType'}}
+        products:
+          type: array
+          items: {type: object, properties: {name: {type: string}, model: {type: string}, description: {type: string}, units: {type: string}}}
+        companies: {type: array, items: {type: string}, description: Manufacturers, importers and distributors named}
+        images: {type: array, items: {type: object, required: [url], properties: {url: {type: string}, caption: {type: string}}}}
+        action: {type: string, description: What the regulator tells owners to do}
+        url: {type: [string, 'null'], description: The notice on the regulator's site}
+        source: {type: string, description: e.g. "OECD GlobalRecalls" when it came through the OECD portal}
 
     ListingInput:
       type: object

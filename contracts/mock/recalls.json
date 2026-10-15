@@ -1,0 +1,183 @@
+{
+  "total": 85,
+  "page": 1,
+  "per_page": 3,
+  "recalls": [
+    {
+      "recall_id": "cpsc:26792",
+      "authority": "CPSC",
+      "country": "United States",
+      "notice_date": "2026-09-24",
+      "title": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+      "hazard": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+      "hazard_types": [
+        "fire_burn"
+      ],
+      "products": [
+        {
+          "name": "NEWDERY power banks",
+          "model": "",
+          "description": "",
+          "units": "About 21,380"
+        }
+      ],
+      "companies": [
+        "Shenzhen Xinkewangda Electronics Co., Ltd., d/b/a NEWDERY, of China"
+      ],
+      "images": [
+        {
+          "url": "https://cpsc.gov/s3fs-public/NEWDERY1.png?VersionId=PA7LZmrWkOiKIP2IuxG.enYs4Q5eB9Mn",
+          "caption": "Recalled NEWDERY power bank (front)"
+        },
+        {
+          "url": "https://cpsc.gov/s3fs-public/NEWDERY2.png?VersionId=xND6xHyAzC66ZbsuYy5OZDvyndfFgVAi",
+          "caption": "Recalled NEWDERY power bank (back)"
+        }
+      ],
+      "action": "",
+      "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+      "source": "CPSC"
+    },
+    {
+      "recall_id": "cpsc:26740",
+      "authority": "CPSC",
+      "country": "United States",
+      "notice_date": "2026-09-03",
+      "title": "Truststone Group Recalls XO Poppy Power Trip Magnetic Wireless Power Banks Due to Fire and Burn Hazards; Sold Exclusively at TJX and Marshalls Stores",
+      "hazard": "The lithium-ion battery in the recalled power banks can overheat and ignite, posing fire and burn hazards to consumers.",
+      "hazard_types": [
+        "fire_burn"
+      ],
+      "products": [
+        {
+          "name": "XO Poppy Power Trip Magnetic Wireless Power Banks",
+          "model": "",
+          "description": "",
+          "units": "About 32,400"
+        }
+      ],
+      "companies": [
+        "Truststone Group LLC of New York"
+      ],
+      "images": [
+        {
+          "url": "https://cpsc.gov/s3fs-public/XOpoppyPowerBank_teddyBearPrint.png?VersionId=.cRK1F74HgJuBur4vcqUt8zZoK3NOLq.",
+          "caption": "Recalled XO Poppy Power Bank PY-PBK5M-TB2 (Teddy Bear Print)"
+        },
+        {
+          "url": "https://cpsc.gov/s3fs-public/XOpoppyPowerBank_BowPrint.png?VersionId=uVVdxV.mt1Fpve4yfck99yxtFUIGRbmM",
+          "caption": "Recalled XO Poppy Power Bank PY-PBK5M-BW8 (Bow Print)"
+        },
+        {
+          "url": "https://cpsc.gov/s3fs-public/XOpoppyPowerBank_Cream.png?VersionId=u.1Pfyvum2YSW6Eje3ZZldItRmed8y8W",
+          "caption": "Recalled XO Poppy Power Bank PY-PBK5M-CR2 (Cream)"
+        }
+      ],
+      "action": "",
+      "url": "https://cpsc.gov/Recalls/2026/Truststone-Group-Recalls-XO-Poppy-Power-Trip-Magnetic-Wireless-Power-Banks-Due-to-Fire-and-Burn-Hazards-Sold-Exclusively-at-TJX-and-Marshalls-Stores",
+      "source": "CPSC"
+    },
+    {
+      "recall_id": "oecd:TW:20260818",
+      "authority": "BSMI",
+      "country": "Chinese Taipei",
+      "notice_date": "2026-08-18",
+      "title": "Qbro Power Banks (Models POT-482S, POT-487S, POT-528)",
+      "hazard": "The lithium battery in the affected power banks can rupture and ignite, posing fire and burn hazards.",
+      "hazard_types": [
+        "fire_burn"
+      ],
+      "products": [
+        {
+          "name": "Qbro Power Banks (Models POT-482S, POT-487S, POT-528)",
+          "model": "",
+          "description": "The lithium battery in the affected power banks manufactured between September 1, 2025, and November 30, 2025, can rupture and ignite, posing fire and burn hazards. The affected products were sold through the distributor's official website and on Shopee (shopee.tw).",
+          "units": ""
+        }
+      ],
+      "companies": [
+        "Qfanyun inc."
+      ],
+      "images": [],
+      "action": "Consumers should immediately stop using the recalled product and contact Qfanyun inc. by phone: 0966000199.",
+      "url": "https://www.bsmi.gov.tw/SafetyGIP/wSite/ct?xItem=128826&ctNode=8206&mp=65",
+      "source": "OECD GlobalRecalls"
+    }
+  ],
+  "sources": [
+    {
+      "authority": "ACCC",
+      "country": "Australia",
+      "recalls": 2962,
+      "latest": "2026-10-13"
+    },
+    {
+      "authority": "CPSC",
+      "country": "United States",
+      "recalls": 2537,
+      "latest": "2026-10-08"
+    },
+    {
+      "authority": "KATS",
+      "country": "Korea (Republic of)",
+      "recalls": 2242,
+      "latest": "2026-09-16"
+    },
+    {
+      "authority": "CAA",
+      "country": "Japan",
+      "recalls": 677,
+      "latest": "2026-08-04"
+    },
+    {
+      "authority": "ASEAN",
+      "country": "Philippines",
+      "recalls": 51,
+      "latest": "2022-07-22"
+    },
+    {
+      "authority": "ASEAN",
+      "country": "Viet Nam",
+      "recalls": 50,
+      "latest": "2022-10-17"
+    },
+    {
+      "authority": "BSMI",
+      "country": "Chinese Taipei",
+      "recalls": 45,
+      "latest": "2026-09-16"
+    },
+    {
+      "authority": "ASEAN",
+      "country": "Indonesia",
+      "recalls": 36,
+      "latest": "2021-11-20"
+    },
+    {
+      "authority": "CPSO",
+      "country": "Singapore",
+      "recalls": 29,
+      "latest": "2022-09-29"
+    },
+    {
+      "authority": "ASEAN",
+      "country": "Thailand",
+      "recalls": 15,
+      "latest": "2022-10-27"
+    },
+    {
+      "authority": "ASEAN",
+      "country": "Malaysia",
+      "recalls": 9,
+      "latest": "2022-06-10"
+    }
+  ],
+  "hazard_types": [
+    "fire_burn",
+    "electric_shock",
+    "choking",
+    "chemical",
+    "mechanical_injury",
+    "other"
+  ]
+}

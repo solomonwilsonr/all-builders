@@ -57,6 +57,19 @@ def search(country: str, start: str, end: str) -> list[dict]:
     return found
 
 
+# Seen 2026-10-15: GlobalRecalls' image host and the ACCC preprod site no longer resolve; the live ACCC notice is at
+# the same path on www.
+DEAD_IMAGE_HOST = "://policiesapplications.oecd.org/"
+LINK_HOSTS = {"://preprod.productsafety.gov.au/": "://www.productsafety.gov.au/"}
+
+
+def notice_url(recall: dict) -> str | None:
+    url = recall.get("extUrl") or recall.get("uri")
+    for old, new in LINK_HOSTS.items():
+        url = url.replace(old, new) if url else url
+    return url
+
+
 def detail(uri: str) -> dict:
     return get("getrecall.xqy", uri=uri, uiLang="en")["recall"]
 
@@ -75,13 +88,14 @@ def to_row(recall: dict) -> dict:
         "scope_json": {
             "Products": [{"Name": recall.get("product.name"), "Description": description, "Model": "",
                           "Type": recall.get("product.type") or ""}],
-            "Images": [{"URL": i.get("imageUri"), "Caption": ""} for i in recall.get("images") or []],
+            "Images": [{"URL": i.get("imageUri"), "Caption": ""} for i in recall.get("images") or []
+                       if DEAD_IMAGE_HOST not in (i.get("imageUri") or DEAD_IMAGE_HOST).lower()],
             "Manufacturers": [{"Name": recall["manufacturer.name"]}] if recall.get("manufacturer.name") else [],
             "Distributors": [{"Name": recall["distributor.name"]}] if recall.get("distributor.name") else [],
             "Injuries": recall.get("injuries"), "Action": recall.get("action"), "Country": recall.get("countryName"),
             "Source": "OECD GlobalRecalls",
         },
-        "url": recall.get("extUrl") or recall.get("uri"),
+        "url": notice_url(recall),
     }
 
 

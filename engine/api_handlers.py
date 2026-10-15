@@ -15,6 +15,7 @@ from engine import (
     owner,
     page_safety,
     passport,
+    recall_catalog,
     safety,
     trace,
     trust,
@@ -124,6 +125,20 @@ def traced(operation_id: str, handler):
     return wrapper
 
 
+async def list_recalls(request: Request, params: dict[str, Any]) -> dict:
+    try:
+        return await run_in_threadpool(recall_catalog.search, dict(request.query_params))
+    except ValueError as problem:
+        raise HTTPException(status_code=422, detail=str(problem)) from None
+
+
+async def get_recall(request: Request, params: dict[str, Any]) -> dict:
+    try:
+        return await run_in_threadpool(recall_catalog.recall, params["recall_id"])
+    except KeyError as missing:
+        raise HTTPException(status_code=404, detail=f"Unknown recall {missing}") from None
+
+
 async def catalog_scan(request: Request, params: dict[str, Any]) -> dict:
     body = await request.json()
     try:
@@ -150,6 +165,8 @@ HANDLERS = {
     "startAgentSession": agent_handler.start_agent_session,
     "getEvidence": get_evidence,
     "catalogScan": catalog_scan,
+    "listRecalls": list_recalls,
+    "getRecall": get_recall,
 }
 HANDLERS = {op: traced(op, handler) for op, handler in HANDLERS.items()}
 HANDLERS["getTrace"] = get_trace

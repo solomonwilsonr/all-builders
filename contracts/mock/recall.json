@@ -1,0 +1,36 @@
+{
+  "recall_id": "cpsc:26792",
+  "authority": "CPSC",
+  "country": "United States",
+  "notice_date": "2026-09-24",
+  "title": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+  "hazard": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+  "hazard_types": [
+    "fire_burn"
+  ],
+  "products": [
+    {
+      "name": "NEWDERY power banks",
+      "model": "",
+      "description": "",
+      "units": "About 21,380"
+    }
+  ],
+  "companies": [
+    "Shenzhen Xinkewangda Electronics Co., Ltd., d/b/a NEWDERY, of China"
+  ],
+  "images": [
+    {
+      "url": "https://cpsc.gov/s3fs-public/NEWDERY1.png?VersionId=PA7LZmrWkOiKIP2IuxG.enYs4Q5eB9Mn",
+      "caption": "Recalled NEWDERY power bank (front)"
+    },
+    {
+      "url": "https://cpsc.gov/s3fs-public/NEWDERY2.png?VersionId=xND6xHyAzC66ZbsuYy5OZDvyndfFgVAi",
+      "caption": "Recalled NEWDERY power bank (back)"
+    }
+  ],
+  "action": "",
+  "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+  "source": "CPSC",
+  "safeshelf_products": []
+}

@@ -34,6 +34,8 @@ MAX_AGENT_BODY = 9_000_000  # the chat takes a screenshot: 6 MB of image is 8 MB
 # credit are rate-limited per caller and capped per day per instance (deploy uses --max-instances 3).
 RATE_PER_MIN = int(os.environ.get("SAFESHELF_RATE_PER_MIN", "30"))
 DAILY_CAP = int(os.environ.get("SAFESHELF_DAILY_CAP", "3000"))
+# Engine calls that only read the database: browsing the Recall Catalog must not use up the AI-check limit.
+UNMETERED = {"listRecalls", "getRecall"}
 
 log = logging.getLogger("safeshelf.api")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -144,7 +146,8 @@ def make_route(operation_id: str, mock_name: str, status: int) -> Handler:
         params = dict(request.path_params)
         real = None if MOCK else REAL_HANDLERS.get(operation_id)
         if real:
-            rate_limit(request)  # only engine calls can spend Gemini credit; mocks are free
+            if operation_id not in UNMETERED:
+                rate_limit(request)  # only engine calls can spend Gemini credit; mocks are free
             body, source = await real(request, params), "real"
         else:
             body, source = mock_answer(mock_name, params), "mock"
