@@ -146,13 +146,13 @@ def structured(prompt: str | list, schema: dict, models: list[str] | None = None
     """JSON that follows schema; result["model"] says which model wrote it. Live API calls keep the 30 s default;
     bulk jobs with long answers pass a longer timeout. prompt may be a list of parts (image + text) for vision.
 
-    Hedged: the first model starts; if it has not answered after a quarter of timeout_s (at least HEDGE_AFTER_S),
+    Hedged: the first model starts; if it has not answered after a sixth of timeout_s (at least HEDGE_AFTER_S),
     the next one starts too, and the first good answer wins. One model's latency swings from 3 s to minutes (13-15
     Oct), and waiting out its whole timeout made a first "Is it safe?" check on a new product take 61 s. Slow calls
     are abandoned, never awaited (the SDK can ignore its own timeout); a slow or failing model goes last for a while."""
     now = time.monotonic()
     queue = sorted(dict.fromkeys(models or COMPARE_MODELS), key=lambda m: _cooling.get(m, 0) > now)
-    hedge_after = max(HEDGE_AFTER_S, timeout_s / 4)
+    hedge_after = max(HEDGE_AFTER_S, timeout_s / 6)
     running: dict = {}  # future -> (model, started)
     errors: list[str] = []
     first = queue[0]
