@@ -6,7 +6,7 @@
 Updated with every change. For the details behind each line, see [plan.md](plan.md).
 
 ## In one line
-The engine, agents and data are built and working. What's missing is mostly what judges see: a web page they can open, the video, the deck and the submission.
+The engine, agents and data are built and working. What's missing is mostly what judges see: a web page they can open, the video, the deck and the submission. To lead rather than place, we also need **numbers of our own from JAPAC** (see [To take a strong lead](#-to-take-a-strong-lead)).
 
 ## What SafeShelf does
 Give it a product listing and it answers two questions:
@@ -38,13 +38,13 @@ Give it a product listing and it answers two questions:
 
 **Data**
 - [x] ~27,800 products and 29,379 real reviews
-- [x] 2,537 US recalls + 6,116 JAPAC recalls (Japan, Australia, Korea, Taiwan, Singapore, ASEAN)
+- [x] 8,689 recalls and notices: 2,537 US (CPSC) + 6,152 JAPAC: Australia 2,962 (ACCC), Korea 2,242 (KATS), Japan 677 (CAA), ASEAN 161, Taiwan 45 (BSMI), India 36, Singapore 29 (CPSO). By country, with gaps: [By region](#-by-region)
 - [x] India: 36 official notices, 2021–2026, from government press releases (India has no recall database): 4 CCPA recall orders (pressure cookers on Amazon, Flipkart and others), 7 CCPA "don't buy without the ISI mark" notices, 2 penalties, 1 toy-standards action, 22 BIS raids (incl. Amazon, Flipkart and FirstCry warehouses; chargers, power adaptors, LED TVs, water heaters, cables). Raids and notices can never mark a product "recalled", only send it to review. Loaded locally; **Cloud SQL still needs it** (see Next steps)
 - [x] Real Indian power-bank fires for the pitch and video (`data/india_incidents.json`, sources checked): IndiGo Delhi–Chennai diversion (11 Oct 2026), IndiGo Chandigarh evacuation with 6 hurt (5 May 2026), a Surat YouTuber's room burned out (June 2026)
 - [x] 8,470 Australian energy-registry records
 
 **Measured results**
-- [x] Backtest: SafeShelf catches as many recalls early as Gemini alone (6/25) with a third of the false alarms (5% vs 15%)
+- [x] Backtest (25 past US recalls, 40 never-recalled controls): SafeShelf catches as many recalls early as Gemini alone (6/25) with a third of the false alarms (2/40 vs 6/40). **Pooling copies of the same product is what makes it work: 1/25 without it, 6/25 with it**
 - [x] Agent test set: 18/18 cases pass on the live API
 
 **Apps**
@@ -52,9 +52,9 @@ Give it a product listing and it answers two questions:
 - [x] New look for the extension (16 Oct): one chat instead of two, with sources, Listen, Copy and Try again; the verdict comes first on the card; loading shows what is being checked; Investigate matches the card; "Check this page" in the toolbar menu
 - [x] Model numbers read right (16 Oct): "Convertible 5-in-1" was taken as model "IN1" on a Samsung fridge on Amazon.in, and long codes like RS76CG8003S9HL were missed; the shop's own "Model number" now comes first. **Needs `make deploy-api`** to reach the live API
 - [x] **First look for products SafeShelf has never seen** (16 Oct, extension 2.7.0): right after the quick check, the card shows a "First look" checklist that ticks off live: up to 60 critical reviews read, recall notices, the market's official recall sites, and the **genuine product found with Gemini + Google Search** (brand's own page, price, energy rating, marks, authorised sellers). Only a price under half the brand's own price changes a colour; web finds are labelled "not a registry check". Saved by model number, so the next shopper on that model gets it in seconds. Tested locally: Samsung and LG fridges, about 20 s. Also fixed: two-letter brands (LG, HP, Mi) were never searched for recalls, and "Frost-Free" matched an LG TV's "Free-Standing" recall. **Needs `make deploy-api`**; for the half-hourly recall re-check also run `make schedule-recheck` once, then `make deploy-api` again
-- [x] Chat page (`extension/demo/chat.html`) rebuilt for shoppers: example questions to start, live agent steps, paste or drop a screenshot, English/हिन्दी switch, works on a phone; developer controls moved to a Tools drawer
+- [x] Chat page (`extension/demo/chat.html`) rebuilt for shoppers: example questions to start, live agent steps, paste or drop a screenshot, language picker (26 languages, below), works on a phone; developer controls moved to a Tools drawer
 - [x] WhatsApp bot built and tested: link or photo in, Hindi or English text + voice note out
-- [x] **26 JAPAC languages** (16 Oct): English, Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Odia, Malayalam, Punjabi, Nepali, Sinhala, Japanese, Korean, Chinese (Simplified and Traditional), Indonesian, Malay, Thai, Vietnamese, Filipino, Burmese, Khmer, Lao. Pick one in the extension chat or the chat page (remembered; starts from the browser's language), or just write in it: a question in Tamil or Japanese script gets a Tamil or Japanese answer. "Listen" uses that language's voice and says so when the device has none. WhatsApp: write in your language or send its name (TAMIL, 日本語, BAHASA); English and Hindi replies are hand-written, the others are Gemini translations of the English reply, and the English is sent if translation fails. **Needs `make deploy-api`** (and the WhatsApp deploy) to reach the live services
+- [x] **26 JAPAC languages** (16 Oct): English, Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Odia, Malayalam, Punjabi, Nepali, Sinhala, Japanese, Korean, Chinese (Simplified and Traditional), Indonesian, Malay, Thai, Vietnamese, Filipino, Burmese, Khmer, Lao. Pick one in the extension chat or the chat page (remembered; starts from the browser's language; ⚠️ the extension's picker in `extension/content.js` is **not committed yet**), or just write in it: a question in Tamil or Japanese script gets a Tamil or Japanese answer. "Listen" uses that language's voice and says so when the device has none. WhatsApp: write in your language or send its name (TAMIL, 日本語, BAHASA); English and Hindi replies are hand-written, the others are Gemini translations of the English reply, and the English is sent if translation fails. **Needs `make deploy-api`** (and the WhatsApp deploy) to reach the live services
 - [x] Other JAPAC shops (16 Oct): the website-age check now looks up the shop itself on Japanese and South-East Asian addresses. Before, `item.rakuten.co.jp` was looked up as `co.jp`, and `.com.sg`, `.com.my`, `.co.id`, `.co.th` and `.com.ph` were wrong the same way. Shopee, Lazada, Rakuten, Tokopedia, Mercari, Qoo10, Kogan, Trade Me and others now count as big marketplaces, so the seller is judged rather than the website. On shops the extension can't read, the extension now tells people to send the link or a screenshot to chat or WhatsApp. **Needs `make deploy-api`** to reach the live API
 
 ---
@@ -62,7 +62,8 @@ Give it a product listing and it answers two questions:
 ## 🔨 In progress
 - [ ] **Judges' web page** (`web/`): built and tested locally (desktop, phone, dark mode), not deployed yet. Six samples with known right answers: recall, fake shop, borrowed safety mark, buyer hazard reports, unknown product, and a clean control that must stay quiet. Each opens with a saved real run replayed at real speed, then **Run it live with Gemini** (10 a day per browser). Also "Check your own listing" and a **SafeShelf vs Gemini alone** tab with the backtest. To go live: `make deploy-api` (two engine fixes below), then `make web-samples`, then `make deploy-web` (Firebase Hosting; Firebase may need enabling on the project first).
 - [ ] **Two engine fixes, waiting for `make deploy-api`:** a safety mark the registry gives to another brand now makes "Is it real?" amber (before, it was found but ignored); Gemini's answer no longer mentions "green" when nothing is green.
-- [ ] **Recall Catalog**: browse and search every loaded recall by country, regulator or hazard (`GET /v1/recalls`, `GET /v1/recalls/{id}`); also fixes dead image links and old ACCC links. Tests pass (7 new, 28 API). Next: commit, then deploy (`make deploy-api`).
+- [ ] **Recall Catalog**: browse and search every loaded recall by country, regulator or hazard (`GET /v1/recalls`, `GET /v1/recalls/{id}`); also fixes dead image links and old ACCC links. Committed (712e1de); waiting for `make deploy-api`.
+- [ ] **"Still on sale" leads** (`data/raw/realworld/review_sheet.json`): 34 leads for recalled products still listed, found with Firecrawl + Gemini. 3 are the exact recalled model still for sale, 17 more are possibly the same. All are US (eBay, amazon.com) and **none is hand-checked yet**, so nothing can be claimed yet.
 
 ---
 
@@ -79,18 +80,38 @@ Give it a product listing and it answers two questions:
 - [ ] Final `make bench` and `make eval-agents`; `make warm` before recording
 - [ ] Submit: deployed link, public repo, video, deck
 
-**Other JAPAC shops (after submission unless time allows)**
+**Other JAPAC shops and regions (after submission unless time allows)**
 Today: Amazon (India, Japan, Australia, Singapore, US) and Flipkart work fully. Any other shop works by screenshot, and by pasted link with less detail.
 - [ ] Extension on Shopee, Lazada, Rakuten, Myntra, Meesho, Tokopedia: add them to `manifest.json` and read title, price and brand from the shop's schema.org product data. Test on real pages first, because some shops may hide that data or block requests
 - [ ] Pasted links from those shops: Shopee, Lazada and Tokopedia build the page with JavaScript, so the server reads little. Read their schema.org data, or open the page in the Research Agent's headless browser
 - [ ] Reference prices and photos use only Amazon.in, Amazon.com and Flipkart (`REFERENCE_MARKETPLACES`). Add Amazon.co.jp, .com.au and .sg so non-Indian listings have a same-currency price to compare
+- [ ] Korea and Taiwan: `co.kr`, `com.tw` and `com.hk` are missing from `TWO_PART_TLDS` in `engine/trust.py` (the same website-age bug just fixed for Japan and SEA), and Coupang, Gmarket, 11st and momo are not on the marketplace list
+- [ ] Refresh the Singapore (CPSO) and ASEAN recall data: both stop in 2022
+- [ ] New Zealand recalls (MBIE / Product Safety NZ): none loaded, though AU/NZ is a focus market
 - [ ] Change the popup and README wording once more shops are supported
 
 **Nice to have**
 - [ ] My Shelf backend (still a mock)
-- [ ] "Still on sale" count of recalled products
-- [ ] Hand-check the Sunbeam heated-blanket finding before claiming it
 - [ ] Accessibility pass (Lighthouse ≥ 95)
+
+---
+
+## 🌏 By region
+Data checked against the local database on 16 Oct. Cloud SQL has the same data except the India notices.
+
+| Region | Recall data | Shops the extension reads | Answer languages | Biggest gap |
+|---|---|---|---|---|
+| 🇮🇳 India | 36 notices, 2021–Sep 2026 (CCPA 15, BIS 21). India has no recall database | Amazon.in, Flipkart | English + 13 (Hindi, Bengali, Tamil, Telugu…); WhatsApp voice notes in Hindi | Only 286 Indian listings in the catalog (134 Amazon.in, 152 Flipkart) against 27,525 amazon.com; India notices not in Cloud SQL; an Amazon.in link check timed out; Myntra and Meesho not read |
+| 🇯🇵 Japan | 677 (CAA), to Aug 2026 | Amazon.co.jp | Japanese | No Japanese listings or yen reference prices; Rakuten and Mercari recognised but not read |
+| 🇦🇺 Australia | 2,962 (ACCC), to 13 Oct 2026; 8,470 energy-registry records | Amazon.com.au | English | No AUD reference prices; Kogan not read |
+| 🇳🇿 New Zealand | **None** | none | English | No recall data at all |
+| 🇰🇷 Korea | 2,242 (KATS), to Sep 2026 | none | Korean | No shop read; `co.kr` website-age bug; Coupang not recognised |
+| 🇹🇼 Taiwan | 45 (BSMI), 2023–Sep 2026 | none | Traditional Chinese | No shop read; `com.tw` website-age bug |
+| 🇸🇬 Singapore | 29 (CPSO), **stops Sep 2022** | Amazon.sg | English, Malay, Chinese, Tamil | Data is four years old |
+| South-East Asia | 161 (ASEAN), **stops Oct 2022** | none (screenshot or link only) | Indonesian, Malay, Thai, Vietnamese, Filipino, Burmese, Khmer, Lao | Data is old; Shopee, Lazada and Tokopedia build pages with JavaScript, so pasted links give little |
+| 🇺🇸 US (base data) | 2,537 (CPSC), to Oct 2026 | Amazon.com | English | Not a target market, but it holds the backtest, most reviews and all 34 "still on sale" leads |
+
+**What this means:** our measured proof (backtest, still-on-sale leads) is all from US data, while the pitch is JAPAC. Judges will notice. The JAPAC strength is breadth: 6,152 notices from 7 regulators, 26 languages, and a first look that works on any product.
 
 ---
 
@@ -100,15 +121,26 @@ Today: Amazon (India, Japan, Australia, Singapore, US) and Flipkart work fully. 
 | Judging area | Weight | Where we stand |
 |---|---|---|
 | Technical merit and GenAI | 40% | 🟢 Strong: real agents, Gemini 3.x, measured results |
-| Problem fit and impact | 25% | 🟢 Good: JAPAC focus, 26 JAPAC languages, real recall data |
-| Innovation | 25% | 🟢 Good: copy-finding engine and backtest |
+| Problem fit and impact | 25% | 🟢 Good, not Strong: JAPAC focus, 26 languages and 6,152 JAPAC notices, but no impact number of our own, India data not live, all measured proof from US data |
+| Innovation | 25% | 🟢 Good, not Strong: copy-finding and first look are new, but the backtest headline (6/25, same as Gemini) undersells it and there's no checked real-world finding |
 | UX | 10% | 🟡 Extension and chat page redesigned (16 Oct); still at risk until judges have a hosted link |
 
 **The risk:** judges probably won't install a Chrome extension. The web page fixes that once it's deployed. The hackathon notes also warn that overbuilding loses.
 
 **Heads-up:** a check of a real Amazon India link ran for minutes and then dropped. Flipkart and title-only checks answer in under 20 s. Use those in the video until it's looked at.
 
+## 🎯 To take a strong lead
+In order. Items 1–5 are data checks and wording, not new features, so they fit the freeze.
+
+1. **Make it visible.** India notices into Cloud SQL → `make deploy-api` → `make web-samples` → `make deploy-web`; connect the WhatsApp number. Until then judges see none of the 16 Oct work. *(UX, Problem fit)*
+2. **An India "still on sale" check.** Take the 4 CCPA recall orders (pressure cookers) and the BIS-raided product types, and check whether those exact models are still listed on Amazon.in and Flipkart today. Even one confirmed listing gives us an Indian sentence for the deck: "A product India ordered recalled is still for sale on ___". Hand-check every row; name sellers only for exact-model matches. *(Problem fit, Innovation)*
+3. **Hand-check the 3 exact-model US leads and the Sunbeam blanket.** Claim only what a person confirmed. That turns the copy-finding engine from a claim into a finding. *(Innovation)*
+4. **Lead with the right numbers.** In the deck, video and web page: "a third of Gemini's false alarms at the same catch rate", and "pooling copies is what makes it work: 1/25 without it, 6/25 with it". That chart is our innovation proof, so don't headline the bare 6/25. *(Innovation)*
+5. **Tell the India story with India evidence.** Power-bank fires (IndiGo ×2, Surat) + BIS raids on Amazon and Flipkart warehouses + CCPA pressure-cooker recall orders = unsafe goods are on these platforms now, and India has no recall database to warn shoppers. Show the region table above as a slide, with gaps stated: stating limitations openly scores better than hiding them. *(Problem fit)*
+6. **Show the first look in the video** on a real Amazon.in or Flipkart product: Gemini + Google Search finds the genuine product, ticking off live, then the next shopper gets it in seconds. It's the most agentic moment we have. Check Amazon.in speed first (heads-up above). *(Innovation, Technical merit)*
+7. **Commit the extension's 26-language picker** (`extension/content.js`, uncommitted). *(housekeeping)*
+8. After submission: the Korea and Taiwan website-age fix, fresher Singapore and ASEAN data, New Zealand recalls, Shopee and Lazada reading (see To do).
+
 ## Next steps
-1. **15 Oct:** commit the Recall Catalog and deploy it
-2. **16 Oct (before freeze):** load the India notices into Cloud SQL (with `cloud-sql-proxy --port 5443` running: `cd engine && PYTHONPATH=.. uv run python ../data/load_india_notices.py --db <Cloud SQL URL on :5443>`), then `make deploy-api`, `make web-samples`, `make deploy-web`; connect the WhatsApp number
-3. **17 Oct:** no new features. Merge to `main`, record the video, make the deck, submit
+1. **16 Oct (before freeze):** commit the extension language picker; load the India notices into Cloud SQL (with `cloud-sql-proxy --port 5443` running: `cd engine && PYTHONPATH=.. uv run python ../data/load_india_notices.py --db <Cloud SQL URL on :5443>`), then `make deploy-api`, `make web-samples`, `make deploy-web`; connect the WhatsApp number; India "still on sale" check and hand-checks (lead items 2–3)
+2. **17 Oct:** no new features. Merge to `main`, record the video, make the deck, submit
