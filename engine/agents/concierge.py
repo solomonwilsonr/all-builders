@@ -7,7 +7,6 @@ returned in this request. If every model fails, the one-call chat (engine/chat.p
 import asyncio
 import json
 import logging
-import re
 
 from fastapi import HTTPException
 from google.adk.agents import LlmAgent
@@ -18,7 +17,6 @@ from engine import chat, chat_core, gemini, safety
 from engine.agents import cache, guard, links, pipeline, runtime, screenshot, tools
 
 log = logging.getLogger(__name__)
-DEVANAGARI = re.compile(r"[\u0900-\u097F]")
 
 HOW_TO_WORK = """
 
@@ -183,9 +181,7 @@ async def chat_session(body: dict) -> dict:
         raise HTTPException(status_code=422, detail="Give a message")
     message = message or "Is this safe? Is it real?"
     product_id = body.get("product_id")
-    language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
-    if DEVANAGARI.search(message):  # a question typed in Hindi gets a Hindi answer, whatever the picker says
-        language = "hi"
+    language = chat_core.language(body.get("language"), message)  # a question typed in Tamil gets a Tamil answer
     session_id = body.get("session_id") or runtime.new_id("SS-A-")
     context = body.get("context")
     if image:  # a screenshot or photo (a phone has no extension): read it, then check that listing
@@ -229,7 +225,7 @@ async def alternatives_session(body: dict) -> dict:
     product_id = body.get("product_id")
     if chat_core.is_unmatched(product_id):
         raise HTTPException(status_code=422, detail="Give the product_id of a product SafeShelf knows")
-    language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
+    language = chat_core.language(body.get("language"))
     prompt = (f"[Product: {product_id}] [Reply language: {chat_core.LANGUAGES[language]}]\n"
               f"Find safer products to buy instead of {product_id}.")
     try:

@@ -118,9 +118,7 @@
   .box textarea:focus-visible { outline:none; }
   .icon { display:grid; place-items:center; width:38px; height:38px; flex:none; border:0; border-radius:12px; background:transparent; color:var(--muted); cursor:pointer; }
   .icon:hover { background:var(--card); color:var(--ink); }
-  .seg { display:flex; flex:none; background:var(--card); border-radius:12px; padding:3px; align-self:center; }
-  .seg button { border:0; background:transparent; padding:5px 8px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; color:var(--muted); }
-  .seg button[aria-pressed="true"] { background:var(--lime); color:#13233a; }
+  .langpick { flex:none; align-self:center; max-width:8.5em; border:0; background:var(--card); color:var(--ink); border-radius:12px; padding:6px 8px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; }
   .send { background:var(--primary); color:var(--on-primary); }
   .send:hover { background:var(--primary); color:var(--on-primary); filter:brightness(1.2); }
   .send:disabled { opacity:.45; cursor:wait; }
@@ -191,9 +189,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12l-8.5 8.5a5 5 0 01-7-7L14 5a3.3 3.3 0 014.7 4.7l-8.5 8.5a1.7 1.7 0 01-2.4-2.4L16 8"/></svg></button>
         <input type="file" id="shot" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" hidden>
         <textarea id="q" rows="1" aria-label="Your question" placeholder="Ask about the product, or paste a link…" autocomplete="off"></textarea>
-        <div class="seg" role="group" aria-label="Answer language">
-          <button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिन्दी</button>
-        </div>
+        <select id="lang" class="langpick" aria-label="Answer language"></select>
         <button class="icon send" id="send" type="submit" aria-label="Send">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13 M22 2l-7 20-4-9-9-4z"/></svg></button>
       </form>
@@ -374,10 +370,32 @@
     parts.push(node("pre", { textContent: JSON.stringify(json, null, 2) }));
     return node("details", {}, node("summary", { textContent: "Technical details" }), ...parts);
   };
+  // Answer languages across JAPAC: [code the API takes, the name in its own script, speech locale]. Same codes as
+  // LANGUAGES in engine/chat_core.py.
+  const LANGS = {
+    "": [["en", "English", "en-IN"]],
+    "India and South Asia": [["hi", "हिन्दी", "hi-IN"], ["bn", "বাংলা", "bn-IN"], ["mr", "मराठी", "mr-IN"], ["te", "తెలుగు", "te-IN"],
+      ["ta", "தமிழ்", "ta-IN"], ["gu", "ગુજરાતી", "gu-IN"], ["ur", "اردو", "ur-IN"], ["kn", "ಕನ್ನಡ", "kn-IN"], ["or", "ଓଡ଼ିଆ", "or-IN"],
+      ["ml", "മലയാളം", "ml-IN"], ["pa", "ਪੰਜਾਬੀ", "pa-IN"], ["ne", "नेपाली", "ne-NP"], ["si", "සිංහල", "si-LK"]],
+    "East Asia": [["ja", "日本語", "ja-JP"], ["ko", "한국어", "ko-KR"], ["zh-Hans", "简体中文", "zh-CN"], ["zh-Hant", "繁體中文", "zh-TW"]],
+    "South-East Asia": [["id", "Bahasa Indonesia", "id-ID"], ["ms", "Bahasa Melayu", "ms-MY"], ["th", "ไทย", "th-TH"],
+      ["vi", "Tiếng Việt", "vi-VN"], ["fil", "Filipino", "fil-PH"], ["my", "မြန်မာ", "my-MM"], ["km", "ខ្មែរ", "km-KH"], ["lo", "ລາວ", "lo-LA"]],
+  };
+  const LANG_LIST = Object.values(LANGS).flat();
   const actions = (text, lang) => {
     if (!text) return null;
     const listen = node("button", { type: "button" }, icon("speaker"), "Listen");
-    listen.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = lang === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
+    listen.onclick = () => {
+      speechSynthesis.cancel();
+      const locale = (LANG_LIST.find(([c]) => c === lang) || LANG_LIST[0])[2], base = locale.split("-")[0];
+      const voice = speechSynthesis.getVoices().find((v) => v.lang.replace("_", "-").toLowerCase().split("-")[0] === base);
+      // No voice for this language on this device: an English voice would read nonsense, so say so instead.
+      if (!voice && base !== "en" && speechSynthesis.getVoices().length) { listen.lastChild.textContent = "No voice for this language on this device"; return; }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = locale;
+      if (voice) u.voice = voice;
+      speechSynthesis.speak(u);
+    };
     const copy = node("button", { type: "button" }, icon("copy"), "Copy");
     copy.onclick = () => navigator.clipboard?.writeText(text).then(() => { copy.lastChild.textContent = "Copied"; });
     return node("div", { className: "acts" }, listen, copy);
@@ -497,7 +515,7 @@
     $("chips").hidden = true;
     showAbout();
   };
-  const setLang = (v) => { langValue = v; document.querySelectorAll("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === v))); };
+  const setLang = (v) => { langValue = v; $("lang").value = v; try { localStorage.setItem("safeshelf-lang", v); } catch (_) { /* storage off: this visit only */ } };
   const setBusy = (on) => { busy = on; $("send").disabled = on; };
 
   // ---- Asking ----
@@ -521,7 +539,7 @@
       const m = json.messages?.[0] || {};
       thread.push({ role: "user", text: q || "(sent an image)" }, { role: "assistant", text: m.text || "" });
       pending.replaceChildren(...[json.link?.verdict ? verdictBadge(json.link.verdict) : null, rich(m.text || "(no answer)"), evidence(m.evidence_ids), steps(json.steps),
-        actions(m.text, lang), tech(json, seconds)].filter(Boolean));
+        actions(m.text, json.language || lang), tech(json, seconds)].filter(Boolean));
       if (json.link) {
         linked = json.link;
         const how = linked.page_read === "screenshot" ? "from your image (only what it shows was checked)"
@@ -630,7 +648,16 @@
     if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask($("q").value); }
   });
   $("ask").onsubmit = (e) => { e.preventDefault(); ask($("q").value); };
-  document.querySelectorAll("[data-lang]").forEach((b) => { b.onclick = () => setLang(b.dataset.lang); });
+  const option = ([code, name]) => { const o = node("option", { value: code, textContent: name }); o.lang = code; return o; };
+  $("lang").append(...Object.entries(LANGS).map(([region, list]) => (region ? node("optgroup", { label: region }, ...list.map(option)) : option(list[0]))));
+  $("lang").onchange = () => setLang($("lang").value);
+  { // the shopper's last pick, else the browser's language when SafeShelf speaks it, else English
+    let saved = null;
+    try { saved = localStorage.getItem("safeshelf-lang"); } catch (_) { /* storage off */ }
+    const nav = (navigator.language || "en").toLowerCase(), zh = /^zh-(tw|hk|mo|hant)/.test(nav) ? "zh-Hant" : "zh-Hans";
+    const guess = LANG_LIST.find(([c]) => c !== "en" && (nav.startsWith("zh") ? c === zh : nav.split("-")[0] === c.split("-")[0]));
+    langValue = $("lang").value = LANG_LIST.some(([c]) => c === saved) ? saved : guess ? guess[0] : "en"; // a guess is not saved
+  }
   $("attach").onclick = () => $("shot").click();
   $("shot").onchange = () => attach($("shot").files[0]);
   $("unattach").onclick = unattach;

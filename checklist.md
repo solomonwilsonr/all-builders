@@ -32,7 +32,7 @@ Give it a product listing and it answers two questions:
 - [x] "Already bought it?" owner guidance and case file
 
 **Agents (Google ADK)**
-- [x] Investigate, Shelf Chat (English + Hindi), Safer Alternative, Report Draft, Shopper Agent, Research Agent
+- [x] Investigate, Shelf Chat (26 JAPAC languages), Safer Alternative, Report Draft, Shopper Agent, Research Agent
 - [x] Live agent steps; colours arrive in about 3 seconds
 - [x] MCP server and A2A agent card so other AI agents can use SafeShelf
 
@@ -53,6 +53,7 @@ Give it a product listing and it answers two questions:
 - [x] Model numbers read right (16 Oct): "Convertible 5-in-1" was taken as model "IN1" on a Samsung fridge on Amazon.in, and long codes like RS76CG8003S9HL were missed; the shop's own "Model number" now comes first. **Needs `make deploy-api`** to reach the live API
 - [x] Chat page (`extension/demo/chat.html`) rebuilt for shoppers: example questions to start, live agent steps, paste or drop a screenshot, English/हिन्दी switch, works on a phone; developer controls moved to a Tools drawer
 - [x] WhatsApp bot built and tested: link or photo in, Hindi or English text + voice note out
+- [x] **26 JAPAC languages** (16 Oct): English, Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Odia, Malayalam, Punjabi, Nepali, Sinhala, Japanese, Korean, Chinese (Simplified and Traditional), Indonesian, Malay, Thai, Vietnamese, Filipino, Burmese, Khmer, Lao. Pick one in the extension chat or the chat page (remembered; starts from the browser's language), or just write in it: a question in Tamil or Japanese script gets a Tamil or Japanese answer. "Listen" uses that language's voice and says so when the device has none. WhatsApp: write in your language or send its name (TAMIL, 日本語, BAHASA); English and Hindi replies are hand-written, the others are Gemini translations of the English reply, and the English is sent if translation fails. **Needs `make deploy-api`** (and the WhatsApp deploy) to reach the live services
 - [x] Other JAPAC shops (16 Oct): the website-age check now looks up the shop itself on Japanese and South-East Asian addresses. Before, `item.rakuten.co.jp` was looked up as `co.jp`, and `.com.sg`, `.com.my`, `.co.id`, `.co.th` and `.com.ph` were wrong the same way. Shopee, Lazada, Rakuten, Tokopedia, Mercari, Qoo10, Kogan, Trade Me and others now count as big marketplaces, so the seller is judged rather than the website. On shops the extension can't read, the extension now tells people to send the link or a screenshot to chat or WhatsApp. **Needs `make deploy-api`** to reach the live API
 
 ---
@@ -98,7 +99,7 @@ Today: Amazon (India, Japan, Australia, Singapore, US) and Flipkart work fully. 
 | Judging area | Weight | Where we stand |
 |---|---|---|
 | Technical merit and GenAI | 40% | 🟢 Strong: real agents, Gemini 3.x, measured results |
-| Problem fit and impact | 25% | 🟢 Good: JAPAC focus, Hindi, real recall data |
+| Problem fit and impact | 25% | 🟢 Good: JAPAC focus, 26 JAPAC languages, real recall data |
 | Innovation | 25% | 🟢 Good: copy-finding engine and backtest |
 | UX | 10% | 🟡 Extension and chat page redesigned (16 Oct); still at risk until judges have a hosted link |
 

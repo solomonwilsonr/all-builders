@@ -25,7 +25,7 @@ class SessionRequest(BaseModel):
     mode: Literal["chat", "investigate"]
     product_id: str  # "unmatched" when the listing could not be matched to a known product
     message: str = ""
-    language: Literal["en", "hi"] = "en"
+    language: str = "en"  # a code from chat_core.LANGUAGES; anything else is answered in English
     session_id: str | None = None
     context: dict | None = None  # the check result the shopper just saw
     history: list[dict] | None = None  # earlier turns of this chat: {role, text}

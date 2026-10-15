@@ -27,6 +27,16 @@ def test_language_follows_the_shopper():
     assert bot.language("क्या यह सुरक्षित है?") == "hi"
     assert bot.language("english", "hi") == "en"
     assert bot.language("https://x.test", "hi") == "hi"
+    assert bot.language("TAMIL") == "ta" and bot.language("日本語") == "ja" and bot.language("bahasa") == "id"
+    assert bot.language("இது பாதுகாப்பானதா?") == "ta" and bot.language("ปลอดภัยไหม") == "th"
+    assert bot.language("हे सुरक्षित आहे का?", "mr") == "mr" and bot.language("hi") == "en"  # "hi" is a greeting
+    assert bot.parse({"type": "text", "text": {"body": "Tagalog"}})["kind"] == "switch"
+
+
+def test_other_languages_get_the_english_reply_to_translate():
+    assert bot.needs_translation("ta") and not bot.needs_translation("hi") and not bot.needs_translation("en")
+    assert bot.reply(CHARGER, AMBER, "ja", trust=FAKE_SHOP, alternatives=ALTS) == \
+        bot.reply(CHARGER, AMBER, "en", trust=FAKE_SHOP, alternatives=ALTS)
 
 
 def test_amber_reply_in_english_names_reports_shop_and_alternative():
@@ -110,3 +120,33 @@ async def test_link_message_end_to_end_without_network(monkeypatch):
 @pytest.fixture
 def anyio_backend():
     return "asyncio"
+
+
+@pytest.mark.anyio
+async def test_a_tamil_shopper_gets_tamil_text_and_voice_or_english_if_translation_fails(monkeypatch):
+    sent, asked = [], []
+
+    class Models:
+        async def generate_content(self, model, contents, config):
+            asked.append(contents)
+            if fail:
+                raise RuntimeError("busy")
+            return type("R", (), {"text": "தமிழ்: " + contents.rsplit("\n\n", 1)[1]})()
+
+    client = type("C", (), {"aio": type("A", (), {"models": Models()})()})()
+    monkeypatch.setattr(wa, "gemini", lambda: client)
+
+    async def fake_text(to, text):
+        sent.append(("text", text))
+
+    async def fake_voice(to, text, lang):
+        sent.append(("voice", lang))
+    monkeypatch.setattr(wa, "send_text", fake_text)
+    monkeypatch.setattr(wa, "send_voice", fake_voice)
+    wa._translated.clear()
+    fail = False
+    await wa.handle({"id": "wamid.ta", "from": "919800000001", "type": "text", "text": {"body": "TAMIL"}})
+    assert sent[-1][1].startswith("தமிழ்: Send me a product link") and "into Tamil" in asked[-1]
+    fail = True
+    assert await wa.translate("✅ CHECKED.", "ta") == "✅ CHECKED."
+    assert await wa.fixed("ta", "help") == sent[-1][1]  # fixed messages are translated once, then reused

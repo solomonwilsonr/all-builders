@@ -5,7 +5,8 @@
 
 A link -> the shop page is read -> identify + safety + trust-check + alternatives on the SafeShelf API.
 A photo -> Gemini reads the product or label -> identify + safety + alternatives.
-Reply: the text from bot.reply(), then the same words as a voice note (Gemini TTS, OGG/Opus for WhatsApp).
+Reply: the text from bot.reply() (translated by Gemini for languages other than English and Hindi), then the same
+words as a voice note (Gemini TTS, OGG/Opus for WhatsApp).
 
 Settings (environment): WA_TOKEN, WA_PHONE_ID, WA_VERIFY_TOKEN, WA_APP_SECRET, SAFESHELF_API_URL, API_KEY (if the
 API checks one), GOOGLE_CLOUD_PROJECT. With WA_TOKEN unset (DRY_RUN) replies are logged instead of sent, so the
@@ -40,7 +41,8 @@ log = logging.getLogger("safeshelf.whatsapp")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 app = FastAPI(title="SafeShelf WhatsApp bot")
 _seen: OrderedDict[str, None] = OrderedDict()  # Meta retries deliveries: answer each message id once
-_lang: dict[str, str] = {}                     # sender -> "en" | "hi" for this instance (no personal data stored)
+_lang: dict[str, str] = {}                     # sender -> language code for this instance (no personal data stored)
+_translated: dict[tuple[str, str], str] = {}   # (language, English text) -> translation, for the fixed messages
 _gemini: genai.Client | None = None
 
 PHOTO_SCHEMA = {
@@ -120,9 +122,9 @@ async def handle(message: dict) -> None:
     trace = "WA-" + hashlib.sha256((message.get("id") or "").encode()).hexdigest()[:16]
     try:
         if asked["kind"] in ("help", "switch"):
-            await send_text(sender, bot.TEXT[lang]["help"])
+            await send_text(sender, await fixed(lang, "help"))
             return
-        await send_text(sender, bot.TEXT[lang]["working"])
+        await send_text(sender, await fixed(lang, "working"))
         async with httpx.AsyncClient(base_url=API, timeout=120, headers=api_headers(trace)) as api:
             if asked["kind"] == "link":
                 listing = await read_shop_page(asked["url"])
@@ -135,7 +137,7 @@ async def handle(message: dict) -> None:
             else:
                 seen = await read_photo(asked["media_id"])
                 if not seen.get("is_product") or not (seen.get("brand") or seen.get("model") or seen.get("title")):
-                    await send_text(sender, bot.TEXT[lang]["unknown"])
+                    await send_text(sender, await fixed(lang, "unknown"))
                     return
                 listing = {k: v for k, v in seen.items() if k != "is_product" and v}
                 identity = await post(api, "/v1/products/identify", listing)
@@ -143,13 +145,40 @@ async def handle(message: dict) -> None:
                     get(api, f"/v1/products/{identity['product_id']}/safety"),
                     get(api, f"/v1/products/{identity['product_id']}/alternatives"))
                 text = bot.reply(identity, safety, lang, alternatives=alts, from_photo=True)
-        await send_text(sender, text)
-        await send_voice(sender, bot.voice_text(text), lang)
+        said = await translate(text, lang)
+        await send_text(sender, said)
+        await send_voice(sender, bot.voice_text(said), lang if said != text or lang in bot.TEXT else "en")
         log.info(json.dumps({"event": "answered", "kind": asked["kind"], "lang": lang, "trace": trace,
                              "verdict": safety.get("verdict")}))
     except Exception as error:  # noqa: BLE001  the shopper always gets an answer
         log.warning(json.dumps({"event": "failed", "trace": trace, "error": f"{type(error).__name__}: {error}"[:300]}))
-        await send_text(sender, bot.TEXT[lang]["unknown"])
+        await send_text(sender, await fixed(lang, "unknown"))
+
+
+async def fixed(lang: str, key: str) -> str:
+    """One of the bot's fixed messages (help, working, unknown) in the shopper's language."""
+    return bot.TEXT[lang][key] if lang in bot.TEXT else await translate(bot.TEXT["en"][key], lang)
+
+
+async def translate(text: str, lang: str) -> str:
+    """The English reply in another JAPAC language (Gemini). If every model fails the shopper gets the English."""
+    if not bot.needs_translation(lang) or lang not in bot.LANGUAGES:
+        return text
+    if (lang, text) in _translated:
+        return _translated[(lang, text)]
+    prompt = bot.TRANSLATE.format(language=bot.LANGUAGES[lang][0], text=text)
+    for model in VISION_MODELS:
+        try:
+            response = await asyncio.wait_for(gemini().aio.models.generate_content(
+                model=model, contents=prompt, config=types.GenerateContentConfig(temperature=0)), timeout=30)
+            if response.text and response.text.strip():
+                if text in {bot.TEXT["en"][k] for k in ("help", "working", "unknown")}:
+                    _translated[(lang, text)] = response.text.strip()
+                return response.text.strip()
+        except Exception:  # noqa: BLE001, S112  slow or failing model: try the next one
+            continue
+    log.warning(json.dumps({"event": "translate_failed", "lang": lang}))
+    return text
 
 
 def api_headers(trace: str) -> dict:
@@ -205,7 +234,7 @@ async def read_photo(media_id: str) -> dict:
 
 async def speak(text: str, lang: str) -> bytes:
     """Gemini TTS (24 kHz PCM) -> OGG/Opus, the format WhatsApp plays as a voice note."""
-    style = "Say clearly and calmly, in Hindi:" if lang == "hi" else "Say clearly and calmly:"
+    style = "Say clearly and calmly:" if lang == "en" else f"Say clearly and calmly, in {bot.LANGUAGES[lang][0]}:"
     response = await asyncio.wait_for(gemini().aio.models.generate_content(
         model=TTS_MODEL, contents=f"{style} {text}",
         config=types.GenerateContentConfig(

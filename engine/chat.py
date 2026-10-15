@@ -62,7 +62,7 @@ def answer(body: dict) -> dict:
     if not message:
         raise HTTPException(status_code=422, detail="Give a message")
     product_id = body.get("product_id")
-    language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
+    language = chat_core.language(body.get("language"), message)
     evidence = "{}" if chat_core.is_unmatched(product_id) else _evidence(product_id)
     prompt, seen = chat_core.prepare(product_id, message[:1000], language, evidence,
                                      body.get("context"), body.get("history"))

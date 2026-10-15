@@ -393,7 +393,7 @@ async def investigate(body: dict) -> dict:
     product_id = None if chat_core.is_unmatched(body.get("product_id")) else body.get("product_id")
     if not (product_id or any(listing.get(k) for k in ("url", "title"))):
         raise HTTPException(status_code=422, detail="Give a product_id or a listing (url or title)")
-    language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
+    language = chat_core.language(body.get("language"))
     state = {"listing": listing, "product_id": product_id, "language": language, "deep": bool(body.get("deep")),
              "page_evidence": body.get("page_evidence") or {}}
     key = "investigate:" + hashlib.sha1(json.dumps(state, sort_keys=True, default=str).encode()).hexdigest()

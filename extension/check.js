@@ -66,7 +66,7 @@ export async function askAgent({ product_id, message, language, session_id, cont
   // Until the API serves a real chat handler it answers with a made-up example. Never show that as an answer.
   if (source === "mock") throw new Error("Shelf Chat is not live on the SafeShelf API yet: it only returns an example answer.");
   const answer = [...(body.messages || [])].reverse().find((m) => m.role === "assistant");
-  return { text: answer?.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: answer?.evidence_ids || [], steps: body.steps || [], source };
+  return { text: answer?.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: answer?.evidence_ids || [], steps: body.steps || [], language: body.language, source };
 }
 
 // Any agent session (Investigate pipeline, Shopper Agent steps, Safer Alternative, report draft): POST /v1/agent/sessions.

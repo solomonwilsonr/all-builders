@@ -169,6 +169,7 @@ async def ask(product_id: str, message: str, language: str = "en", session_id: s
     Returns the contract shape: text plus only the evidence IDs the data really contains."""
     session_id = session_id or f"SS-A-{uuid.uuid4().hex[:8]}"
     evidence = "{}" if chat_core.is_unmatched(product_id) else (await _context(product_id))[0]  # no stored evidence for an unmatched listing
+    language = chat_core.language(language, message)
     prompt, seen = chat_core.prepare(product_id, message, language, evidence, context, history)
     now = time.monotonic()
     order = [m for m in MODELS if _cooling.get(m, 0) <= now] or MODELS  # skip models that just failed, unless all did

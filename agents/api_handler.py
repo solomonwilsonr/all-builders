@@ -66,7 +66,7 @@ async def start_agent_session(request: Request, params: dict) -> dict:
     if not message:
         raise HTTPException(status_code=422, detail="Give a message")
     product_id = body.get("product_id")
-    language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
+    language = chat_core.language(body.get("language"), message)
     evidence = "{}" if chat_core.is_unmatched(product_id) else await run_in_threadpool(_evidence, product_id)
     prompt, seen = chat_core.prepare(product_id, message, language, evidence, body.get("context"), body.get("history"))
     text = await run_in_threadpool(_generate, prompt)

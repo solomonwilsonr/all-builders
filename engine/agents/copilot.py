@@ -107,7 +107,7 @@ async def draft(body: dict) -> dict:
     product_id = body.get("product_id")
     if chat_core.is_unmatched(product_id):
         raise HTTPException(status_code=422, detail="Give the product_id of a product SafeShelf knows")
-    language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
+    language = chat_core.language(body.get("language"))
     try:
         pack = await asyncio.to_thread(evidence_pack, product_id)
     except KeyError:
