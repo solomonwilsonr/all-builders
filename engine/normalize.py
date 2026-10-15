@@ -40,11 +40,16 @@ def model_candidates(text: str) -> list[str]:
     return seen
 
 
+# A charger's label gives the mains input ("Input: 100-240V~ 1.5A") before the output ("Output: 20V 3.25A"); the
+# product's voltage is the output, so input ratings and voltage ranges are skipped.
+INPUT_RATING = re.compile(r"\binput\s*:?\s*.*?(?=\boutput\b|[\n;|]|$)|\b\d+\s*[-–~/]\s*\d+\s*v(?:ac)?\b~?")
+
 COUNT_WORDS = {"single": "1", "one": "1", "dual": "2", "two": "2", "twin": "2", "triple": "3", "three": "3"}
 
 
 def attributes(text: str) -> dict[str, float | int]:
     lowered = re.sub(r"\b(" + "|".join(COUNT_WORDS) + r")\b", lambda m: COUNT_WORDS[m.group(1)], (text or "").lower())
+    lowered = INPUT_RATING.sub(" ", lowered)
     found: dict[str, float | int] = {}
     for name, pattern in {**UNIT_PATTERNS, **PORT_PATTERNS}.items():
         match = re.search(pattern, lowered)

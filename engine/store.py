@@ -50,10 +50,14 @@ def upsert_product(product_id: str, fp: dict) -> None:
 
 
 def upsert_listing(listing_id: str, product_id: str, listing: dict) -> None:
+    """A listing seen again only fills in what was missing. What is stored stays: anyone can call identify with a
+    known URL, and a caller's title or price must never replace the genuine listing's (15 Oct: an identify call with
+    only the URL had emptied the demo listing, so the fake shop's Rs 299 was no longer compared with anything)."""
     raw = {k: listing.get(k) for k in ("title", "price", "currency", "seller", "image_urls") if listing.get(k)}
     conn().execute(
         """INSERT INTO listings (id, product_id, marketplace, url, title, raw) VALUES (%s, %s, %s, %s, %s, %s)
-           ON CONFLICT (id) DO UPDATE SET product_id = EXCLUDED.product_id, title = EXCLUDED.title, raw = EXCLUDED.raw""",
+           ON CONFLICT (id) DO UPDATE SET product_id = EXCLUDED.product_id,
+               title = coalesce(listings.title, EXCLUDED.title), raw = EXCLUDED.raw || listings.raw""",
         (listing_id, product_id, listing.get("marketplace"), listing.get("url"), listing.get("title"), Jsonb(raw)),
     )
 

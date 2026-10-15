@@ -31,3 +31,11 @@ def test_brand_blind_text_drops_the_brand():
 
 def test_count_words_become_port_counts():
     assert attributes("VoltNova 65W GaN Charger Dual USB-C")["ports_usb_c"] == 2
+
+
+def test_label_input_rating_is_not_the_voltage():
+    # The demo product page's label (extension/demo/product.html): the output is 20 V, not the 240 V mains input.
+    label = "Kelvo CX-65 Input: 100-240V~ 1.5A Output: 20V 3.25A (65W) BIS Reg. No. R-41097318"
+    assert attributes(label)["voltage"] == 20
+    assert attributes("Input: AC 100-240V\nOutput 5V/3A")["voltage"] == 5
+    assert "voltage" not in attributes("Works on 100-240V mains")
