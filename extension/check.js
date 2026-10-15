@@ -79,8 +79,18 @@ export async function agentSession(body, timeoutMs = 150000) {
 
 // The same agents with each step sent as it happens (POST /v1/agent/sessions/stream, server-sent events).
 // onEvent gets start / step / verdict events; the promise gives the final answer. An API without the stream
-// (older server) gets the plain call.
+// (older server) gets the plain call, and so does a dropped connection (a TypeError such as "network error"):
+// the server keeps a finished check for 10 minutes, so asking again is quick.
 export async function agentStream(body, onEvent, timeoutMs = 150000) {
+  try { return await streamOnce(body, onEvent, timeoutMs); }
+  catch (err) {
+    if (!(err instanceof TypeError)) throw err;
+    onEvent?.({ type: "retry" });
+    return agentSession(body, timeoutMs);
+  }
+}
+
+async function streamOnce(body, onEvent, timeoutMs) {
   const headers = { "Content-Type": "application/json", ...(API_KEY && { "X-API-Key": API_KEY }) };
   const res = await fetch(API_BASE + "/v1/agent/sessions/stream", { method: "POST", headers, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
   if (res.status === 404 || res.status === 405) return agentSession(body, timeoutMs);

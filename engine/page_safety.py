@@ -10,7 +10,9 @@ Two page-only additions, so the backtested rules for stored products stay as the
 numbers is matched on the kind of product named in the page title (for review, never "recalled"), and two buyers'
 serious first-hand reports of any hazard type are enough for amber (a page shows only a few reviews).
 """
+import contextvars
 import re
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 
 from engine import identity, radar, recalls, safety, trust
@@ -50,13 +52,22 @@ def kind_words(title: str) -> str:
     return " ".join(w for w in re.findall(r"[a-z]{4,}", title.lower()) if w not in NOT_KINDS)
 
 
+def _classify(fp: dict, recall: dict) -> str | None:
+    try:
+        return recalls.classify(fp, recall)
+    except RuntimeError:  # the notice could not be read by any model: say nothing rather than guess
+        return None
+
+
 def recall_status(brand: str, fp: dict) -> dict:
     exact, review = [], []
-    for recall in recalls.brand_recalls(brand)[:MAX_RECALLS]:
-        try:
-            match_class = recalls.classify(fp, recall)
-        except RuntimeError:  # the notice could not be read by any model: say nothing rather than guess
-            continue
+    notices = recalls.brand_recalls(brand)[:MAX_RECALLS]
+    # A big brand's first check reads up to 15 notices with Gemini (15 Oct: Samsung took 12 s one at a time). In
+    # parallel, each worker in a copy of this context, so the trace still sees its Gemini calls.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        classes = list(pool.map(lambda recall, ctx: ctx.run(_classify, fp, recall),
+                                notices, [contextvars.copy_context() for _ in notices]))
+    for recall, match_class in zip(notices, classes):
         if match_class:
             entry = {"recall_id": recall["id"], "title": recall["title"], "url": recall.get("url"),
                      "notice_date": str(recall["notice_date"]) if recall.get("notice_date") else None}

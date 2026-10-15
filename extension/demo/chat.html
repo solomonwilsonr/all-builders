@@ -133,7 +133,18 @@
 
   // Live version: POST /v1/agent/sessions/stream sends each step as it happens. onEvent sees start, step and verdict
   // events; the promise gives the final answer. Servers without the stream get the plain call.
+  // A dropped connection (Chrome: "network error", "Failed to fetch") is a TypeError: ask once more with the plain
+  // call. The server keeps a finished check for 10 minutes, so the second answer is quick.
   async function call(body, timeoutMs = 150000, onEvent = () => {}) {
+    try { return await callStream(body, timeoutMs, onEvent); }
+    catch (err) {
+      if (!(err instanceof TypeError)) throw err;
+      onEvent({ type: "retry" }, "");
+      return callPlain(body, timeoutMs);
+    }
+  }
+
+  async function callStream(body, timeoutMs, onEvent) {
     const started = performance.now();
     const res = await fetch(`${api()}/v1/agent/sessions/stream`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
     if (res.status === 404 || res.status === 405) return callPlain(body, timeoutMs);
@@ -171,6 +182,7 @@
     return (event, seconds) => {
       if (event.type === "start" && names[event.agent]) list.append(node("li", { className: "meta", textContent: `${names[event.agent]}…` }));
       if (event.type === "step") list.append(node("li", { textContent: `${seconds}s · ${event.agent}: ${event.summary}` }));
+      if (event.type === "retry") list.append(node("li", { className: "meta", textContent: "The connection dropped; asking again (the server keeps the finished check)…" }));
       if (event.type === "start" && event.tool === "recall_sites") list.append(node("li", { className: "meta", textContent: "Searching the official recall sites for this market…" }));
       if (event.type === "research") (event.reasons || []).forEach((r) => list.append(node("li", { textContent: `${seconds}s · recall sites: ${r.text}` })));
       if (event.type === "verdict") into.insertBefore(node("div", {}, node("span", { className: `verdict ${event.verdict.overall}`, textContent: WORDS[event.verdict.overall] || event.verdict.overall }),
