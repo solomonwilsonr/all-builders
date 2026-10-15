@@ -225,18 +225,20 @@ Method: `gh search repos` (7 queries, each by name/description and `in:readme`, 
 ## Strongest public entries so far (2026-10-12)
 Our prediction, based on the idea (impact, originality, depth of Gemini use) plus signs of progress from GitHub (commit count, recent activity, live link). Only about 125 entries are public out of an estimated 1,000+, so the real top 10 will include private teams. Commit counts measure effort, not quality.
 
+Commit counts refreshed 2026-10-16 (was → now).
+
 | # | Entry | Theme | Idea | Repo | Live demo | Commits |
 |---|---|---|---|---|---|---|
-| 1 | Gapline | Media | AI audio description (KO/EN) fitted into dialogue gaps; video and deck done | [emforce77/gapline](https://github.com/emforce77/gapline) | [link](https://scene-ad-958994530029.asia-northeast3.run.app) | 70 |
-| 2 | Decision Safety Network | BFSI | Scam interruption during the call + first-hour recovery (India) | [Chander-Shekhar/decision-safety-network](https://github.com/Chander-Shekhar/decision-safety-network) | none listed | 180 |
-| 3 | Kavach | BFSI/health | Fights rejected health-insurance claims: appeal + ombudsman forms | [cherrymekala/kavach](https://github.com/cherrymekala/kavach) | none listed | 46 |
-| 4 | NomadFinance | BFSI | Financial protection for migrant workers | [google-ai-builder-cup/NomadFinance](https://github.com/google-ai-builder-cup/NomadFinance) | [link](https://nomadfinance-prod.web.app) | 378 |
-| 5 | Harvest | Manufacturing | Gemini Live agent phones farmers, forecasts supply, negotiates prices | [RaymonddC/Harvest](https://github.com/RaymonddC/Harvest) | none listed | 66 |
-| 6 | ReadiCheck | BFSI | Gemini plays scammers (Live voice) to test bank customers | [MegaWiz-Dev-Team/readicheck](https://github.com/MegaWiz-Dev-Team/readicheck) | [link](https://readicheck-api-199079528714.asia-southeast1.run.app/demo) | 74 |
-| 7 | Taal | **Retail** | Stock about to be written off becomes tested customer offers | [Nandish3010/probable-fortnight](https://github.com/Nandish3010/probable-fortnight) | [link](https://taal-web-2obkp776ca-el.a.run.app) | 268 |
-| 8 | Luwas | Sustainability | Disaster command centre for Philippine villages, Gemini checks reports | [kd-s-t/luwas](https://github.com/kd-s-t/luwas) | none listed | 21 |
-| 9 | AIRA | Sustainability | A blind shopkeeper runs their own shop | [Saravana-Rajan/AIRA](https://github.com/Saravana-Rajan/AIRA) | [link](https://aira-shop.web.app) | 67 |
-| 10 | Andon Agent | Manufacturing | Root cause of assembly-line stops, claims checked by code | [Likhith-BlueLotus/andon-agent](https://github.com/Likhith-BlueLotus/andon-agent) | none listed | 57 |
+| 1 | Gapline | Media | AI audio description (KO/EN) fitted into dialogue gaps; video and deck done | [emforce77/gapline](https://github.com/emforce77/gapline) | [link](https://scene-ad-958994530029.asia-northeast3.run.app) | 70 (no change) |
+| 2 | Decision Safety Network | BFSI | Scam interruption during the call + first-hour recovery (India) | [Chander-Shekhar/decision-safety-network](https://github.com/Chander-Shekhar/decision-safety-network) | none listed | 180 → 275 |
+| 3 | Kavach | BFSI/health | Fights rejected health-insurance claims: appeal + ombudsman forms | [cherrymekala/kavach](https://github.com/cherrymekala/kavach) | none listed | 46 → 57 |
+| 4 | NomadFinance | BFSI | Financial protection for migrant workers | [google-ai-builder-cup/NomadFinance](https://github.com/google-ai-builder-cup/NomadFinance) | [link](https://nomadfinance-prod.web.app) | 378 → 394 |
+| 5 | Harvest | Manufacturing | Gemini Live agent phones farmers, forecasts supply, negotiates prices | [RaymonddC/Harvest](https://github.com/RaymonddC/Harvest) | none listed | 66 → 94 |
+| 6 | ReadiCheck | BFSI | Gemini plays scammers (Live voice) to test bank customers | [MegaWiz-Dev-Team/readicheck](https://github.com/MegaWiz-Dev-Team/readicheck) | [link](https://readicheck-api-199079528714.asia-southeast1.run.app/demo) | 74 (no change) |
+| 7 | Taal | **Retail** | Stock about to be written off becomes tested customer offers | [Nandish3010/probable-fortnight](https://github.com/Nandish3010/probable-fortnight) | [link](https://taal-web-2obkp776ca-el.a.run.app) | 268 → 478 |
+| 8 | Luwas | Sustainability | Disaster command centre for Philippine villages, Gemini checks reports | [kd-s-t/luwas](https://github.com/kd-s-t/luwas) | none listed | 21 → 77 |
+| 9 | AIRA | Sustainability | A blind shopkeeper runs their own shop | [Saravana-Rajan/AIRA](https://github.com/Saravana-Rajan/AIRA) | [link](https://aira-shop.web.app) | 67 → 176 |
+| 10 | Andon Agent | Manufacturing | Root cause of assembly-line stops, claims checked by code | [Likhith-BlueLotus/andon-agent](https://github.com/Likhith-BlueLotus/andon-agent) | none listed | 57 → 81 |
 
 **Also worth watching:**
 
@@ -340,3 +342,97 @@ Method: same searches as before → 443 unique repos. We screened 311 not yet li
 **What it means for SafeShelf:**
 - Retail had the biggest jump (17 → ~27).
 - The closest new neighbours are ReturnWise (return abuse), ParcelProof (dispute photo proof) and Shield AI (message scam check with Web Risk). None of them covers product safety, recalls, certification checks or fake shops judged against the genuine product.
+
+## Eighth scan (2026-10-16, two days before submission)
+Method: `gh search repos` (10 query variants, each matched by name, description and README, created since 2026-08-15, plus one search per theme) and `gh search code` (5 variants) → 598 unique repos. 411 were not yet listed here; we fetched each README and kept the 82 that name the cup or are named after it, then read those.
+
+**New real entries (59):**
+
+| Theme | Repo | Idea |
+|---|---|---|
+| **Retail** | [johnnyduo/skudesk_](https://github.com/johnnyduo/skudesk_) | SKUdesk: cheapest landed cost, resale price and arbitrage check, **only for identical products**. A Gemini "Identity Engine" gates every match and sets aside bait prices. Live, deck done. **Nearest to our genuine-product match, but for arbitrage, not safety** |
+| **Retail** | [guptameenu31/dealscout](https://github.com/guptameenu31/dealscout) | DealScout: describe a need and a budget; it researches real prices from Indian stores and says what is worth buying. Live |
+| **Retail** | [waltervetrivel/cart_pilot](https://github.com/waltervetrivel/cart_pilot) | CartPilot: agentic shopping assistant for Indian households (ADK, Cloud Run) |
+| **Retail** | [vipin-softway/personapulse](https://github.com/vipin-softway/personapulse) | PersonaPulse: test a product concept on ~100 AI customer personas built from real reviews |
+| **Retail** | [someshfengde/packproof](https://github.com/someshfengde/packproof) | PackProof: receiving desk compares the packing list with a delivery photo. Live (also entered in "Code Rush") |
+| **Retail** | [sourcesmithorg/stockloop](https://github.com/sourcesmithorg/stockloop) | StockLoop: restock proposals for neighbourhood shops, owner approves |
+| **Retail** | [gouravhanumante/rehearsal-ai-builder-cup](https://github.com/gouravhanumante/rehearsal-ai-builder-cup) | Rehearsal: a supplier delay → which customer orders are at risk. Live |
+| **Retail** | [supashot-ai-builder-cup/needl-service](https://github.com/supashot-ai-builder-cup/needl-service) (+ needl-ui) | Needl: scrapes e-commerce product pages (name, merchant, price, reviews) and sends them to Gemini. Purpose not stated yet. **Watch** |
+| Retail | [remyacode/margin-ai](https://github.com/remyacode/margin-ai) | "Multi-agent commerce intelligence" (README is one line) |
+| BFSI | [shinegun/scamshield-my](https://github.com/shinegun/scamshield-my) | ScamShield MY: warns during a Malay/Manglish scam call and holds the bank transfer. Live |
+| BFSI | [talha963/scamsheild](https://github.com/talha963/scamsheild) | ScamShield Live: real-time voice-scam interception (Pakistan, JazzCash/Easypaisa) |
+| BFSI | [nagappan03/nimbus-minds-second-look](https://github.com/nagappan03/nimbus-minds-second-look) | Second Look: checks the chat that asked you to pay before money moves |
+| BFSI | [farazkhan542/ring-breaker](https://github.com/farazkhan542/ring-breaker) | Ring Breaker: banks' agents find mule rings together over A2A without sharing customer data |
+| BFSI | [ris7055/agent-harness-detector](https://github.com/ris7055/agent-harness-detector) | HarnessGuard: detects banking sessions driven by AI-agent browsers |
+| BFSI | [iamsatyatiwari/rulepilot-ai](https://github.com/iamsatyatiwari/rulepilot-ai) | RulePilot: fraud advisory → rule gaps → candidate rules backtested on transactions |
+| BFSI | [sentinel-nexus/sentinel-nexus-ai-builder-cup](https://github.com/sentinel-nexus/sentinel-nexus-ai-builder-cup) | MarketSentinel: wash-trading and mule surveillance on prediction markets (BigQuery graph) |
+| BFSI | [bkdkubo/invoice-sentinel](https://github.com/bkdkubo/invoice-sentinel) | InvoiceSentinel: AP invoice fraud triage for Philippine SMEs (overlaps ChopDesk) |
+| BFSI | [aryuemaan/claimpilot](https://github.com/aryuemaan/claimpilot) | ClaimPilot: motor-insurance claims desk from a Telugu/Hindi/English voice note and photos (ADK) |
+| BFSI | [bikash-20/ai-builder-cup-2026](https://github.com/bikash-20/ai-builder-cup-2026) | FinGuard AI: fraud scoring, customer risk, KYC documents, assistant |
+| BFSI | [erickalwd/bambang-voice-aibuildercup](https://github.com/erickalwd/bambang-voice-aibuildercup) | Bambang: voice banking assistant for BRImo (Indonesia), RAG |
+| BFSI | [0xajay/signalcounsil](https://github.com/0xajay/signalcounsil) | SignalCouncil: stress-tests a trade thesis on NSE stocks |
+| BFSI? | [vibecode-ting/finpulse](https://github.com/vibecode-ting/finpulse) | FinPulse: shared budget and expense tracker PWA |
+| Manufacturing | [kirkjaa/cellpilot](https://github.com/kirkjaa/cellpilot) | CellPilot: three camera clips of a manual job → which steps a cobot could take over. Live |
+| Manufacturing | [preetham1930/carbontrail](https://github.com/preetham1930/carbontrail) | CarbonTrail: factory paperwork → EU CBAM emissions data for steel exporters (overlaps Pramaan). Live |
+| Manufacturing | [niharika021/elv-value-recovery](https://github.com/niharika021/elv-value-recovery) | CoreYield: parts recovery plan for India's vehicle scrapping centres. Live |
+| Manufacturing | [petrademia/vinkla-ai-builder-cup](https://github.com/petrademia/vinkla-ai-builder-cup) | Vinkla: supplier delay notices in any language → stock-outs → cheapest, lowest-carbon fix. Live |
+| Manufacturing | [puneetpahuja-eaton/aegisops-ai-builder-cup](https://github.com/puneetpahuja-eaton/aegisops-ai-builder-cup) | AegisOps: incident triage → review-only work orders. Live |
+| Manufacturing | [sushobhan-nayak/ai-builder-cup-2026](https://github.com/sushobhan-nayak/ai-builder-cup-2026) | GembaOS: council of Gemini agents over plant IT/OT data |
+| Manufacturing | [suvvvv/proofgap-ai](https://github.com/suvvvv/proofgap-ai) | ProofGap: after a machine alarm, which batches and orders are hit and which check to run next |
+| Manufacturing | [afazhriel/forgewise](https://github.com/afazhriel/forgewise) | ForgeWise: failure risk that separates model estimates from verified facts |
+| Manufacturing? | [gemillang/terrasentinel-ai](https://github.com/gemillang/terrasentinel-ai) | TerraSentinel: geotechnical monitoring and risk states |
+| Manufacturing? | [shriyashish-mishra/virtual-safety-inspection](https://github.com/shriyashish-mishra/virtual-safety-inspection) | Phone clip of a room → fire-safety verdict (blocked exit, door width), re-checked by a separate checker. Live |
+| Manufacturing | [professionalabhiyan/aeroguard-ai-enterprise](https://github.com/professionalabhiyan/aeroguard-ai-enterprise) | AeroGuard (README is one line) |
+| Media | [arvinthrajkumar/contextlens](https://github.com/arvinthrajkumar/contextlens) | ContextLens: checks a creator's video before it goes live for unlabelled brand deals, false health claims and borrowed clips. Live + Android APK. **Strong** |
+| Media | [sourabhmishra5221/readlayer](https://github.com/sourabhmishra5221/readlayer) | Gloss: read any article, video or podcast "your way", plus a Chrome extension. Live |
+| Media | [thaiebu/clipsense-hookscope-ai-builder-cup](https://github.com/thaiebu/clipsense-hookscope-ai-builder-cup) | Video coach for YouTube creators, with timestamped evidence |
+| Media | [parishrivastava632-sys/bytebound](https://github.com/parishrivastava632-sys/bytebound) | OmniMedia AI Studio: one recording → posts for every channel |
+| Future of Work | [leolee012039/orgflow](https://github.com/leolee012039/orgflow) | OrgFlow: org chart + policies → workflows, and where requests get stuck with no approver. Live + video. **Strong** |
+| Future of Work | [gohsunjin/dryrun](https://github.com/gohsunjin/dryrun) | Dry Run: a panel of AI stakeholders grills your pitch. Live |
+| Future of Work | [zakuro28/mnemo](https://github.com/zakuro28/mnemo) | Mnemo: company memory that flags decisions gone stale. Live |
+| Future of Work | [taqelah/speckeeper](https://github.com/taqelah/speckeeper) | Spec Keeper: Slack agent that checks what shipped matches what was agreed |
+| Future of Work | [francisnguyenanh/ripple-pitch-ai-builder-cup-2026](https://github.com/francisnguyenanh/ripple-pitch-ai-builder-cup-2026) | Ripple: a business-rule change in plain words → what it would change across systems |
+| Future of Work | [skrishnreddy/pandashield-ai-hackathon](https://github.com/skrishnreddy/pandashield-ai-hackathon) | PandaShield: scanner-verified security findings triaged by Gemini. Live |
+| Future of Work | [eshwargeek/ai_builder_cup](https://github.com/eshwargeek/ai_builder_cup) | NexusWork: AP and contract compliance with redline clauses (ADK, Document AI) |
+| Future of Work | [robinamirbahar/cothread](https://github.com/robinamirbahar/cothread) | CoThread: multiplayer AI chat for teams |
+| Future of Work | [viethoang119/neurix_enterprise](https://github.com/viethoang119/neurix_enterprise) | Neurix: ask questions over Slack |
+| Future of Work | [vibecode-ting/employee-milestone-notifications-ai](https://github.com/vibecode-ting/employee-milestone-notifications-ai) | Employee birthdays and anniversaries with Gemini-written greetings |
+| Future of Work? | [darshanskolekar/rackmind-ai](https://github.com/darshanskolekar/rackmind-ai) | RackMind: data-centre digital twin and SRE agent |
+| Future of Work? | [mocharil/rulelab](https://github.com/mocharil/rulelab) | RuleLab: drafts Indonesian regulations grounded in official law (same team as Organa) |
+| Future of Work? | [ai-builder-cup/wejian-ai-builder-cup](https://github.com/ai-builder-cup/wejian-ai-builder-cup) | We.Jian "Human Potential Navigator" (README is one line) |
+| Sustainability | [longrong1110/kebunsah](https://github.com/longrong1110/kebunsah) | KebunSah: EUDR paperwork for Malaysian palm smallholders, deforestation pre-screen (overlaps precision_palm) |
+| Sustainability | [ambufenn/seresealab](https://github.com/ambufenn/seresealab) | SereSeaShip Guard: seafood trade and cold-chain risk. Live |
+| Sustainability | [humna-ai/heritagelens-ai](https://github.com/humna-ai/heritagelens-ai) | HeritageLens: Pakistan cultural-heritage diagnosis for conservators. Live |
+| Sustainability | [farjanaferdausi-cs50ai/omniclean-ai](https://github.com/farjanaferdausi-cs50ai/omniclean-ai) | OmniClean: scan and sort waste with Gemini |
+| Sustainability | [ayantouqeer/valencepack](https://github.com/ayantouqeer/valencepack) | Sustainable-packaging advisor for EU exports |
+| Sustainability | [coexistshieldai/coexistshieldai](https://github.com/coexistshieldai/coexistshieldai) | CoExist Shield: early warning for human-wildlife conflict (SE Asia) |
+| Sustainability | [happyyyytingting/mind-relax](https://github.com/happyyyytingting/mind-relax) | Mind Relax: private AI journal for mental wellbeing |
+| Sustainability | [vsphanikumar/regen-x-low-cost-ai-compute](https://github.com/vsphanikumar/regen-x-low-cost-ai-compute) | REGEN-X: routes AI workloads to cheap renewable power |
+| Sustainability? | [ashutoshgautams/lantern](https://github.com/ashutoshgautams/lantern) | Lantern: walk a building once on video → offline step-by-step photo directions |
+
+**Already counted under another repo:** crystal32378/nightingale (Nightingale team's companion device), ekko1500/price-pulse-2, amavia-connections/workflow-mining-agent, venketraj/catsight-ai-buildercup-2026, sujanmolla09-bd/autonomous-agro-climate-multi-agent-pipeline, krl-team-project/ktp-asapify-fe (ASAPify front end).
+
+**Placeholders (not counted):** disandaperera2005/ai-builder-cup-submission, gh-onefinops/ai-builder-cup, himanshukakwani/investai-ai_builderscup, neeti26/aibuildercup, projectgitrepo/ai_builder_cup_2026, sagar-git-23/ai-builder-cup (all empty); syrzy-wna/spectraaitb-builder-cup (AI Studio template); shreyaanp/ai-builder-cup-2026 (chat app template).
+
+**Noise (not counted):** profile pages (abhisek11, gamersstop, neetisingh-ai, getkcoin-alt; CANOPY is still not public), ronyz1320 (Hummingbot cup), codeplusmath/buildercup (Google Builder Pop-Up café challenge).
+
+### Running count (eighth scan): **≈236 real public entries**
+| Theme | Seventh scan | New | Total |
+|---|---|---|---|
+| Future of Work | ~39 | 13 | **~52** |
+| BFSI | ~37 | 13 | **~50** |
+| Sustainability & Social Impact | ~40 | 9 | **~49** |
+| Retail & Commerce | ~27 | 9 | **~36** |
+| Manufacturing | ~20 | 11 | **~31** |
+| Media, Content & Digital | ~13–14 | 4 | **~18** |
+| **Total** | **≈177** | **59** | **≈236** |
+
+New public entries jumped from ~36 to 59 as teams open their repos ahead of the 18 Oct deadline, so expect another big batch by submission.
+
+**What it means for SafeShelf:**
+- Retail is now ~36 entries. Most are shopping assistants (DealScout, CartPilot), store operations (StockLoop, PackProof, Rehearsal) or pricing (SKUdesk, PricePulse).
+- Still **nobody** on product safety, recalls, certification checks or fake shops. A text search of all 82 new READMEs for recall, counterfeit, fake shop or listing, genuine and product safety found no overlap.
+- **SKUdesk** is the closest. Its Gemini Identity Engine decides whether two listings are the same product and flags bait prices, but it answers "where is it cheapest", not "is this listing safe or real".
+- **Needl** scrapes product pages and sends them to Gemini, but its purpose is not published yet. Re-check before the 18th.
+- **ContextLens** (Media) is the most similar in spirit: it checks a creator's video against advertising and health-claim rules before it goes live. It's for creators, though, not shoppers.
+- The quality bar is rising. Most strong new entries have a no-login live demo, a "judge quick path", measured precision and recall, and synthetic data that is clearly labelled.
