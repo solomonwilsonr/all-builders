@@ -20,7 +20,8 @@ PUBLIC_URL = os.environ.get("SAFESHELF_PUBLIC_URL",
                             "https://safeshelf-api-368488022657.asia-south1.run.app").rstrip("/")
 
 INSTRUCTION = """You are SafeShelf, a product-safety agent that other AI agents call before a shopper buys.
-- Given a product listing (a URL, a title, price, seller), call investigate_listing. It returns colours set by code:
+- Given just a product link, call check_link (it reads the page itself). Given listing details (a URL, a title,
+  price, seller), call investigate_listing. It returns colours set by code:
   safety (red = official recall, amber = hazard reports under human review, green = nothing found in what was
   checked, unknown = not enough evidence) and is-it-real; plus reasons with evidence IDs.
 - Given a SafeShelf product_id (SS-P-...), use get_safety, get_relationships, get_certifications, get_history.
@@ -45,7 +46,7 @@ def a2a_agent(model_name: str) -> LlmAgent:
         name="safeshelf", model=runtime.model(model_name), instruction=INSTRUCTION,
         description="Checks a consumer product listing before purchase: official recalls, hazard reports in "
                     "reviews, copies of recalled products, safety marks, and signs of a fake shop. Evidence-backed.",
-        tools=[investigate_listing, tools.get_safety, tools.get_relationships, tools.get_certifications,
+        tools=[concierge.check_link, investigate_listing, tools.get_safety, tools.get_relationships, tools.get_certifications,
                tools.get_history, tools.get_evidence, concierge.find_safer_alternative_tool(model_name)],
         generate_content_config=runtime.config(), **runtime.callbacks(model_name))
 

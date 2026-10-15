@@ -35,6 +35,7 @@ MRP_DEEP_DISCOUNT = 0.40  # below 40% of the listing's own M.R.P.: inflated M.R.
 MARKETPLACES = ("amazon.", "flipkart.", "meesho.", "myntra.", "snapdeal.", "jiomart.", "tatacliq.", "ebay.",
                 "walmart.", "etsy.", "aliexpress.", "temu.")
 TWO_PART_TLDS = ("co.in", "co.uk", "com.au", "net.in", "org.in", "co.nz")
+REFERENCE_MATCHES = {"url", "model_number"}
 HIDDEN = re.compile(
     r"ignore (all |any |your |the )?(previous|prior|above|earlier) instructions|you are an? (ai|assistant|agent)|"
     r"system prompt|(mark|rate|report|classify|label|show) (this|the) (product|shop|seller|listing) as "
@@ -272,7 +273,9 @@ def safety_note(product_id: str) -> str:
 
 def trust_check(listing: dict) -> dict:
     product_id, how = identity.resolve(listing, needs_reference=True)
-    genuine = store.latest_fingerprint(product_id) if product_id else None
+    # Only the same product is a reference for price, photos and specs. A look-alike is another product: comparing
+    # with it called a Rs 89 Lifelong shaker "far below the genuine Rs 2,699" (15 Oct), so the page's own checks run.
+    genuine = store.latest_fingerprint(product_id) if product_id and how in REFERENCE_MATCHES else None
     url, seller = listing.get("url"), listing.get("seller")
     if genuine:
         lowest, images, source = genuine_offer(product_id, genuine["brand"], listing.get("currency") or "INR")

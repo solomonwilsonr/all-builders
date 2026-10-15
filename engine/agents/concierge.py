@@ -10,10 +10,11 @@ import re
 
 from fastapi import HTTPException
 from google.adk.agents import LlmAgent
+from google.adk.tools import ToolContext
 from google.adk.tools.agent_tool import AgentTool
 
 from engine import chat, chat_core
-from engine.agents import guard, runtime, tools
+from engine.agents import guard, links, pipeline, runtime, tools
 
 log = logging.getLogger(__name__)
 DEVANAGARI = re.compile(r"[\u0900-\u097F]")
@@ -30,7 +31,10 @@ How you work:
 - For "is there a safer one / what should I buy instead / which genuine twin is cheapest", call find_safer_alternative.
 - For "draft a refund request" or "what do I tell the seller", write a short message the shopper can copy and send
   themselves, citing only the evidence; you never send anything.
-- If product_id is "unmatched", there is no stored evidence: do not call tools, answer from the check result."""
+- If product_id is "unmatched", there is no stored evidence: do not call tools, answer from the check result.
+- If the message contains a product link (http...), call check_link with it FIRST and answer about THAT product,
+  not the product_id in the message. Say what it is (name, price), the two colours (safety, is it real) and the
+  main reasons, citing evidence IDs. If the link can't be read, say so."""
 
 ALTERNATIVE_INSTRUCTION = """You are SafeShelf's Safer Alternative Finder. Given a product_id, call get_alternatives,
 and when it helps, get_relationships, to recommend at most two products to buy instead.
@@ -39,6 +43,34 @@ reports in M reviews read, authorised seller) and its price. A genuine twin mean
 rebrand; never call a look-alike the same product. No reviews read is not proof of safety: say so. Never promise
 safety. Cite the evidence IDs the tools returned in [brackets]. If there is no alternative, say so plainly.
 Reply in at most 4 short sentences."""
+
+
+async def check_link(url: str, tool_context: ToolContext) -> dict:
+    """Checks the product page behind a link the shopper pasted: reads the page (title, price, seller, reviews), then
+    runs SafeShelf's full investigation of it: is it safe (recalls, hazard reports), is it real (price, seller, website,
+    hidden AI instructions). Returns the product, the colours set by code and the reasons with evidence IDs."""
+    import time
+    started = time.monotonic()
+    try:
+        listing = await asyncio.to_thread(links.read, url)
+    except links.BlockedLink as problem:
+        return {"error": f"SafeShelf can't open that link: {problem}"}
+    read_ok = listing.pop("read", False)
+    runtime.step(tool_context.agent_name, "read_link",
+                 (f"Read the page: {listing.get('title', '')[:80]} · price {listing.get('price')} · "
+                  f"{len(listing.get('reviews', []))} reviews") if read_ok else "The page could not be read; checking by URL",
+                 time.monotonic() - started)
+    found = await pipeline.investigate({"listing": listing, "product_id": "unmatched",
+                                         "language": tool_context.state.get("language", "en")})
+    link = {"url": listing.get("url"), "title": listing.get("title"), "brand": listing.get("brand"),
+            "price": listing.get("price"), "currency": listing.get("currency"), "page_read": read_ok,
+            "reviews_on_page": len(listing.get("reviews", [])), "product_id": found.get("product_id"),
+            # what the page's buyers said, lowest stars first, so follow-up questions can be answered from it
+            "reviews": [{"rating": r.get("rating"), "title": r.get("title"), "text": (r.get("text") or "")[:400]}
+                        for r in sorted(listing.get("reviews", []), key=lambda r: r.get("rating") or 5)[:10]],
+            "verdict": found.get("verdict"), "investigation_id": found.get("investigation_id")}
+    runtime.current().results["checkLink"] = link
+    return {**link, "summary": found["messages"][0]["text"], "label": found.get("label")}
 
 
 def alternative_finder(model_name: str) -> LlmAgent:
@@ -61,7 +93,7 @@ def concierge(model_name: str) -> LlmAgent:
         name="shelf_chat",
         description="Answers a shopper's questions about one product, only from SafeShelf's stored evidence.",
         model=runtime.model(model_name), instruction=chat_core.INSTRUCTION + HOW_TO_WORK,
-        tools=[*tools.EVIDENCE_TOOLS, find_safer_alternative_tool(model_name)],
+        tools=[*tools.EVIDENCE_TOOLS, find_safer_alternative_tool(model_name), check_link],
         generate_content_config=runtime.config(),
         **runtime.callbacks(model_name))
 
@@ -86,18 +118,25 @@ async def chat_session(body: dict) -> dict:
         language = "hi"
     session_id = body.get("session_id") or runtime.new_id("SS-A-")
     unmatched = chat_core.is_unmatched(product_id)
+    url = links.first_url(message)
     prompt, seen = chat_core.prepare(
         product_id, message[:1000], language,
         "{}" if unmatched else "(not included here: read it with your tools)", body.get("context"), body.get("history"))
+    if url:  # a pasted link is about that product, whatever product the screen had selected
+        prompt = f"[The shopper pasted a product link: {url} - call check_link with it first.]\n" + prompt
     try:
-        text, _ = await runtime.run(concierge, prompt, timeout_s=40)
+        text, _ = await runtime.run(concierge, prompt, {"language": language}, timeout_s=120 if url else 40)
     except Exception as error:  # noqa: BLE001  every agent model failed: the one-call chat still answers
         log.warning("Concierge failed (%s); one-call chat answers", type(error).__name__)
         fallback = await asyncio.to_thread(chat.answer, {**body, "mode": "chat", "language": language})
         fallback["steps"] = runtime.current().steps + [{"n": len(runtime.current().steps) + 1, "agent": "shelf_chat",
                                                         "tool": "fallback", "summary": "Answered in one model call"}]
         return fallback
-    return _answer(product_id, language, session_id, text, seen | runtime.current().seen)
+    link = runtime.current().results.get("checkLink")
+    out = _answer(link["product_id"] if link else product_id, language, session_id, text, seen | runtime.current().seen)
+    if link:
+        out["link"] = link  # screens switch the chat to this product for follow-up questions
+    return out
 
 
 async def alternatives_session(body: dict) -> dict:

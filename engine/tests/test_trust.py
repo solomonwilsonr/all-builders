@@ -1,6 +1,7 @@
 from datetime import date
 
 import imagehash
+import pytest
 from PIL import Image, ImageDraw
 
 from engine import trust
@@ -101,3 +102,16 @@ def test_good_signs_for_an_unknown_product():
         "Sold by the brand itself (JETech India)",
         "Price is 27% below the M.R.P. on the page, a normal discount",
         "Sold on amazon.in, a large established marketplace"]
+
+
+def test_a_look_alike_is_never_the_price_reference(monkeypatch):
+    # 15 Oct: a Rs 89 Lifelong shaker was called "far below the genuine Rs 2,699" of a merely similar product.
+    monkeypatch.setattr(trust.identity, "resolve", lambda listing, needs_reference=True: ("SS-P-OTHER", "look_alike"))
+    monkeypatch.setattr(trust.store, "latest_fingerprint", lambda pid: pytest.fail("a look-alike is not the genuine product"))
+    monkeypatch.setattr(trust.store, "add_evidence", lambda *a: "EV-T")
+    monkeypatch.setattr(trust, "website_check", lambda url: {"result": "ok", "domain": "amazon.in", "domain_registered_days_ago": 9000})
+    monkeypatch.setattr(trust, "safety_note", lambda pid: "")
+    out = trust.trust_check({"url": "https://www.amazon.in/dp/B0CFFBZ23F", "title": "Lifelong Protein Shaker", "price": 89,
+                             "currency": "INR", "page_text": "M.R.P.: ₹499"})
+    assert out["checks"]["price"]["result"] != "flag"
+    assert out["checks"]["copied_photos"]["result"] == "skipped"
