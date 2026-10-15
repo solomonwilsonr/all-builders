@@ -9,6 +9,7 @@ dependencies = [
     "requests>=2.32",
     "pillow>=10",
     "imagehash>=4.3",
+    "google-adk[a2a]>=2.11",
 ]
 
 [dependency-groups]

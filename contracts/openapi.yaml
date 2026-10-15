@@ -195,7 +195,10 @@ paths:
 
   /v1/agent/sessions:
     post:
-      summary: Start a Shelf Chat or Investigate session
+      summary: Start an agent session (Shelf Chat, Investigate, Safer Alternative, report draft, Shopper Agent step, Research Agent)
+      description: >-
+        One endpoint, one mode per ADK agent (engine/agents). Every step is returned in `steps` and written to the
+        investigation trace under `investigation_id`. Colours are set by code, never by a model or by page text.
       operationId: startAgentSession
       x-mock: agent_session.json
       requestBody:
@@ -204,12 +207,24 @@ paths:
           application/json:
             schema:
               type: object
-              required: [mode, product_id]
+              required: [mode]
               properties:
-                mode: {type: string, enum: [chat, investigate]}
-                product_id: {type: string}
-                message: {type: string}
+                mode: {type: string, enum: [chat, investigate, alternatives, report_draft, shopper_step, research]}
+                product_id: {type: string, description: 'SS-P-… or "unmatched"; needed for chat, alternatives, report_draft'}
+                message: {type: string, description: chat only}
                 language: {type: string, enum: [en, hi], default: en}
+                session_id: {type: string}
+                context: {type: object, description: 'chat: the check result the shopper saw'}
+                history: {type: array, items: {type: object}, description: 'chat: earlier turns {role, text}'}
+                listing: {type: object, description: 'investigate: url, title, price, currency, seller, page_text, image_urls, reviews'}
+                page_evidence: {type: object, description: 'investigate: {observations: [{kind, text, rating}]} read by the Shopper Agent'}
+                deep: {type: boolean, description: 'investigate: also run the Research Agent on official recall sites'}
+                step: {type: integer, description: shopper_step}
+                elements: {type: array, items: {type: object}, description: 'shopper_step: numbered page elements {i, tag, kind, text, aria, href, already_read}'}
+                observations: {type: array, items: {type: object}, description: shopper_step}
+                brand: {type: string, description: research}
+                model: {type: string, description: research}
+                computer_use: {type: boolean, description: 'research: Gemini computer use drives the browser (slower)'}
       responses:
         '200': {description: Session, content: {application/json: {schema: {type: object, required: [session_id, messages]}}}}
 

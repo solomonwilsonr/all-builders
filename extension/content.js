@@ -797,6 +797,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       againBtn.onclick = () => run(true);
       const closeBtn = el("button", { type: "button", className: "small", textContent: "Close" });
       closeBtn.onclick = () => { setOpen(false); fab.focus(); };
+      // Investigate (the Shopper Agent, investigate.js): only on a product page, never for a card on a results page.
+      const investigateBtn = mode === "float" && window.__safeshelfInvestigate
+        ? el("button", { type: "button", className: "small", textContent: "Investigate", title: "Let SafeShelf look through the photos, label, reviews and seller (read-only)" })
+        : null;
+      if (investigateBtn) investigateBtn.onclick = () => { setOpen(false); window.__safeshelfInvestigate(getPage()); };
       show(
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
         brandRow(r.host),
@@ -810,7 +815,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           el("p", { className: "muted", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),
           resultChat(r),
         ]),
-        el("div", { className: "row" }, speakBtn, againBtn, closeBtn),
+        el("div", { className: "row" }, ...[investigateBtn, speakBtn, againBtn, closeBtn].filter(Boolean)),
       );
       place();
     };

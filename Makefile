@@ -2,14 +2,17 @@
 DATABASE_URL ?= postgresql://safeshelf:safeshelf@localhost:5442/safeshelf
 # Passed to recipes through the environment, never as an argument, so the password stays out of `ps`.
 export DATABASE_URL
+comma := ,
 GCP_PROJECT ?= $(shell gcloud config get-value project 2>/dev/null)
 REGION ?= asia-south1
 SQL_INSTANCE ?= $(GCP_PROJECT):$(REGION):safeshelf-db
 DEPLOY_MOCK ?= 0
 
 API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
+# The Research Agent service (make deploy-research); empty = the API answers research requests with 503.
+RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api bench warm
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research bench warm
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
 	node extension/tests/run_all.mjs
@@ -42,9 +45,21 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 		mkdir -p .build/bench && cp bench/results.json .build/bench/ && \
 		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
-		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 1Gi --timeout 300 \
-		--add-cloudsql-instances $(SQL_INSTANCE) --set-secrets DB_PASSWORD=safeshelf-db-password:latest \
-		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT)
+		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 2Gi --timeout 300 \
+		--add-cloudsql-instances $(SQL_INSTANCE) \
+		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest) \
+		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
+
+deploy-research: ## M9 Research Agent (headless Chromium) to Cloud Run; needs secret research-token (the API sends it)
+	@gcloud secrets describe research-token --project $(GCP_PROJECT) >/dev/null 2>&1 || { echo "missing secret research-token"; exit 1; }
+	rm -rf .build-research && mkdir -p .build-research/engine/agents && cp -R research .build-research/ && \
+		cp engine/__init__.py engine/chat_core.py .build-research/engine/ && \
+		cp engine/agents/__init__.py engine/agents/guard.py .build-research/engine/agents/ && \
+		cp research/Dockerfile .build-research/Dockerfile
+	gcloud run deploy safeshelf-research --source .build-research --project $(GCP_PROJECT) --region $(REGION) \
+		--allow-unauthenticated --min-instances 0 --max-instances 2 --memory 2Gi --cpu 2 --timeout 300 \
+		--concurrency 2 --set-secrets RESEARCH_TOKEN=research-token:latest \
+		--set-env-vars GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT)
 
 deploy-whatsapp: ## M12 bot to Cloud Run; needs secrets wa-token, wa-phone-id, wa-app-secret, wa-verify-token
 	@for s in wa-token wa-phone-id wa-app-secret wa-verify-token; do \
@@ -67,3 +82,4 @@ warm:           ## before a demo or recording: run every demo check once so the 
 	@for p in SS-P-10291 SS-P-30118 SS-P-50001 SS-P-60002; do \
 		curl -s -o /dev/null -w "safety $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/safety; \
 		curl -s -o /dev/null -w "certifications $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/certifications; done
+	@for p in SS-P-10291 SS-P-AMZ-B0BSKMH9GX; do \

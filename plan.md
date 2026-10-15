@@ -649,14 +649,14 @@ Held-out test half only: 2/9 flagged, 0/14 false alarms.
 | M4 Safety Radar | ✅ | Text + photo checks |
 | M5 Recalls + marks | ✅ | AU registry real, BIS mock |
 | M6 Is it real? | ✅ | 4 checks + hidden text + unknown-product path; seller context partial |
-| M7 API | ◐ | 15/17 real, MCP, trace, logging. **No A2A card; API key not enforced** |
+| M7 API | ◐ | 16/17 real, MCP, **A2A agent + card** (`/a2a/`, `/.well-known/agent-card.json`), trace, logging, rate limit. Shelf items still mock |
 | M8 Extension + accessibility | ◐ | Card, tabs, chat, keyboard, ARIA, read-aloud. Missing Gemini TTS, Hindi UI, plain-language mode, Lighthouse |
-| M9 Agents | ◐ | Shelf Chat live. **Investigate, Research Agent, Concierge pipeline not built** (computer use too slow; scripted clicks planned) |
+| M9 Agents | ✅ (local, 15 Oct) | ADK agents in `engine/agents/`, one endpoint (`/v1/agent/sessions`, 6 modes): tool-using Shelf Chat, Investigate pipeline (ParallelAgent checks, code verdict, VerdictWriter), Safer Alternative Finder, regulator report copilot (never submits), Shopper Agent (`extension/investigate.js`, blocklist, 15 steps / 60 s, Esc), Research Agent (`research/`, headless Chromium on CPSC / EU Safety Gate / ACCC; computer-use mode optional). **Deploy pending** |
 | M10 My Shelf, scan, report | ◐ | Report live; shelf local only; **no daily recall check, push, camera scan** |
 | M11 Website + account | ❌ | `web/` empty; Firebase not wired |
 | M12 WhatsApp bot | ◐ | Built and tested; **not deployed; no WhatsApp number** |
 | M13 Ask by voice | ❌ | |
-| M14a Business backend (Catalog Scan) | ❌ | Endpoint is mock |
+| M14a Business backend (Catalog Scan) | ◐ | `POST /v1/catalog/scan` real (precision 1.00, recall 0.98 on the 500-row test); re-time and deploy |
 | M14b Business screens | ◐ | Catalog Scan screen in the Lab only |
 | M15 Judges' Lab | ◐ | Extension page with status, explorer, bench, trace. **No guided path, Challenge cases, audit export** |
 | M16 Real-world finding | ◐ | Leads found; hand check and regulator report pending |
@@ -678,10 +678,11 @@ Tests: about 88 test functions across `engine/` (11 files), `api/` (contract), `
 | 5 | API key not enforced, CORS `*`, unauthenticated Cloud Run | Anyone can spend Gemini credits through the live API | Set `API_KEY` before the link goes public, or rate-limit the AI-backed endpoints |
 | 6 | `image_vector` unused; copied photos rely on pHash only | Re-encoded or cropped copies can be missed | Vertex multimodal embeddings (post-submission) |
 | 7 | `chat_core.py` exists twice (`engine/` and `agents/`) | Drift | Keep one copy; agents import the engine one |
-| 8 | Trace price table covers only `gemini-3.5-flash`; `trace.TOOLS` lacks `listingSafetyCheck`, `startAgentSession`, `getEvidence` | Cost shown as "unpriced"; raw operationIds in summaries | Add prices and tool names |
+| 8 | Trace price table covers only `gemini-3.5-flash` | Flash-lite and computer-use steps show as "unpriced" | Add official prices when confirmed (tool names fixed 15 Oct) |
 | 9 | Several schema tables unused (`trust_checks`, `sellers`, `price_observations`, …) | Confusing for reviewers | Mark as "reserved" in the schema comments |
 | 10 | Cost guard dialog in the extension is marked TEMP | Friction in the demo | Remove or default off for the recording |
 | 11 | `SafeShelf_Global.pdf` out of date | Mismatch with the build | Regenerate from SAFESHELF.md |
+| 13 | Research Agent: ACCC and the Australian energy registry block headless browsers (Akamai / CloudFront 403); Cloud Run IPs may also be blocked by CPSC | Those sites answer "a person needs to look" | Honest by design; mention in the video. Computer-use mode is slow (8–30 s a step) and `gemini-3.8-flash` sometimes returns 500 |
 | 12 | Real-world finding not hand-checked | Can't be claimed yet | Check the Sunbeam candidate; report only what a human confirmed; hide seller names except exact-model matches |
 
 ---

@@ -69,6 +69,13 @@ export async function askAgent({ product_id, message, language, session_id, cont
   return { text: answer?.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: answer?.evidence_ids || [], source };
 }
 
+// Any agent session (Investigate pipeline, Shopper Agent steps, Safer Alternative, report draft): POST /v1/agent/sessions.
+export async function agentSession(body) {
+  const { body: answer, source } = await api("/v1/agent/sessions", { method: "POST", body: JSON.stringify(body) });
+  if (source === "mock") throw new Error("SafeShelf's agents are not live on this API yet: it only returns an example answer.");
+  return answer;
+}
+
 // "Is it safe?" for a listing SafeShelf has no product for. null when the API cannot answer it (old server, mock).
 async function listingSafety(listing) {
   try {

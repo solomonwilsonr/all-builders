@@ -4,7 +4,8 @@ Routes come from contracts/openapi.yaml. Each endpoint answers with its real han
 if one is registered in REAL_HANDLERS, otherwise with its example from contracts/mock/.
 MOCK=1 forces every endpoint to the mock, so the screens always have something to show.
 The X-SafeShelf-Source response header says which one answered (real or mock).
-Other AI agents use the same answers as MCP tools at /mcp (app/mcp_server.py).
+Other AI agents use the same answers as MCP tools at /mcp (app/mcp_server.py) and talk to the SafeShelf agent
+over A2A at /a2a/ (engine/agents/a2a.py, real engine only).
 """
 import copy
 import json
@@ -12,13 +13,15 @@ import logging
 import os
 import time
 from collections import defaultdict, deque
+from collections.abc import Awaitable, Callable
+from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, Awaitable, Callable
+from typing import Any
 
 import yaml
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 from app import mcp_server
 
@@ -55,8 +58,10 @@ async def guard_and_log(request: Request, call_next):
     started = time.monotonic()
     if int(request.headers.get("content-length") or 0) > MAX_BODY:
         response = JSONResponse({"detail": "Request body too large"}, status_code=413)
-    elif API_KEY and request.url.path.startswith("/mcp") and request.headers.get("x-api-key") != API_KEY:
+    elif API_KEY and request.url.path.startswith(("/mcp", "/a2a")) and request.headers.get("x-api-key") != API_KEY:
         response = JSONResponse({"detail": "Missing or wrong X-API-Key"}, status_code=401)
+    elif request.url.path.startswith("/a2a") and request.method == "POST" and (reason := a2a_limit(request)):
+        response = JSONResponse({"detail": reason}, status_code=429, headers={"Retry-After": "60"})
     else:
         response = await call_next(request)
     log.info(json.dumps({
@@ -120,6 +125,12 @@ def rate_limit(request: Request) -> None:
         raise HTTPException(status_code=429, detail=reason, headers={"Retry-After": "60"})
 
 
+def a2a_limit(request: Request) -> str | None:
+    """A2A messages reach the agent (and Gemini) without passing make_route, so they share the same limiter."""
+    forwarded = request.headers.get("x-forwarded-for", "")
+    return limiter.check(forwarded.split(",")[0].strip() or "internal", time.time())
+
+
 def make_route(operation_id: str, mock_name: str, status: int) -> Handler:
     async def route(request: Request) -> JSONResponse:
         check_key(request)
@@ -171,4 +182,24 @@ def health() -> dict[str, Any]:
     return {"ok": True, "mock": MOCK, "real_endpoints": sorted(REAL_HANDLERS)}
 
 
+if REAL_HANDLERS:  # the A2A agent runs the real engine; with MOCK=1 there is nothing behind it
+    from engine.agents import a2a
+
+    @app.get("/.well-known/agent-card.json", include_in_schema=False)
+    @app.get("/.well-known/agent.json", include_in_schema=False)
+    def agent_card() -> RedirectResponse:
+        return RedirectResponse("/a2a/.well-known/agent-card.json")
+
+    app.mount("/a2a", a2a.mount)
+
 mcp_server.attach(app)  # last: it mounts at "/" behind every route above
+
+if REAL_HANDLERS:
+    _mcp_lifespan = app.router.lifespan_context
+
+    @asynccontextmanager
+    async def _lifespan(app_):
+        async with _mcp_lifespan(app_), a2a.lifespan():
+            yield
+
+    app.router.lifespan_context = _lifespan

@@ -18,7 +18,8 @@ VALID_ID = re.compile(r"^[A-Za-z0-9._:-]{1,64}$")
 TOOLS = {"identifyProduct": "identify", "findDuplicates": "duplicates", "getRelationships": "relationships",
          "getSafety": "safety", "getCertifications": "certifications", "trustCheck": "trust-check",
          "getProduct": "product", "getHistory": "history", "getAlternatives": "alternatives",
-         "createReport": "report", "getBenchResults": "bench"}
+         "createReport": "report", "getBenchResults": "bench", "listingSafetyCheck": "listing safety",
+         "startAgentSession": "agent session", "getEvidence": "evidence", "catalogScan": "catalog scan"}
 
 def cost(calls: list[dict]) -> float | None:
     if not calls:
@@ -52,10 +53,19 @@ def summarize(operation_id: str, body: dict) -> str:
         return f"{len(alts)} safer alternative(s)" + (f", best {alts[0]['brand']} {alts[0]['model']}" if alts else "")
     if operation_id == "getHistory":
         return f"{len(body.get('events', []))} history events, {len(body.get('recalls', []))} linked recall(s)"
+    if operation_id == "getProduct":
+        return f"Read the product: {body.get('brand')} {body.get('model')} ({body.get('category')})"
+    if operation_id == "getEvidence":
+        return f"Read {len(body.get('items', []))} evidence record(s) and their exact quotes"
+    if operation_id == "getRelationships":
+        kinds = [r["relationship"].replace("_", " ") for r in body.get("relationships", [])]
+        return f"{len(kinds)} related product(s): {', '.join(kinds)}" if kinds else "No related products on file"
     return TOOLS.get(operation_id, operation_id)
 
 
-def record(investigation_id: str, operation_id: str, seconds: float, calls: list[dict], body: dict) -> None:
+def record(investigation_id: str, operation_id: str, seconds: float, calls: list[dict], body: dict,
+           summary: str | None = None) -> None:
+    """summary: the caller's own line (agent steps); otherwise it is written from the answer."""
     conn = store.conn()
     conn.execute("""INSERT INTO investigations (id, status) VALUES (%s, 'open') ON CONFLICT (id) DO NOTHING""",
                  (investigation_id,))
@@ -66,7 +76,7 @@ def record(investigation_id: str, operation_id: str, seconds: float, calls: list
            FROM investigation_steps WHERE investigation_id = %s""",
         (investigation_id, TOOLS.get(operation_id, operation_id), sorted({c["model"] for c in calls}),
          round(seconds, 2), sum(c["input_tokens"] for c in calls), sum(c["output_tokens"] for c in calls),
-         cost(calls), summarize(operation_id, body)[:300], investigation_id))
+         cost(calls), (summary or summarize(operation_id, body))[:300], investigation_id))
 
 
 def get_trace(investigation_id: str) -> dict:

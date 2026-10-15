@@ -5,7 +5,19 @@ from typing import Any
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
-from engine import catalog, chat, evidence, gemini, identity, marks, page_safety, passport, safety, trace, trust
+from engine import (
+    catalog,
+    evidence,
+    gemini,
+    identity,
+    marks,
+    page_safety,
+    passport,
+    safety,
+    trace,
+    trust,
+)
+from engine.agents import handler as agent_handler
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -131,7 +143,7 @@ HANDLERS = {
     "getAlternatives": by_product(passport.alternatives),
     "createReport": create_report,
     "getBenchResults": bench_results,
-    "startAgentSession": chat.start_agent_session,
+    "startAgentSession": agent_handler.start_agent_session,
     "getEvidence": get_evidence,
     "catalogScan": catalog_scan,
 }

@@ -13,6 +13,7 @@ dependencies = [
     "pillow>=10",
     "imagehash>=4.3",
     "mcp>=2.3",  # /mcp (app/mcp_server.py), MCPServer API
+    "google-adk[a2a]>=2.11",
 ]
 
 [dependency-groups]

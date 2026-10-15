@@ -3,7 +3,7 @@ FROM python:3.12-slim
 WORKDIR /srv
 COPY api/pyproject.toml api/
 RUN pip install --no-cache-dir "fastapi>=0.115" "uvicorn[standard]>=0.30" "pyyaml>=6.0" \
-    "google-genai>=1.0" "psycopg[binary]>=3.2" "requests>=2.32" "pillow>=10" "imagehash>=4.3" "mcp>=2.3" "httpx>=0.28"
+    "google-genai>=1.0" "psycopg[binary]>=3.2" "requests>=2.32" "pillow>=10" "imagehash>=4.3" "mcp>=2.3" "httpx>=0.28" "google-adk[a2a]>=2.12"
 COPY api/app api/app
 COPY engine engine
 COPY contracts contracts

@@ -55,6 +55,18 @@ def describe(row: dict) -> dict:
     if kind == "recall_models":
         models = ", ".join(content.get("models") or []) or "no model numbers named"
         return {**item, "type": "recall_notice", "source": f"Official recall notice {ref}", "quote": f"Models: {models}"}
+    if kind == "research":
+        return {**item, "type": "recall_notice", "url": ref if ref.startswith("http") else None,
+                "source": f"Found on {content.get('site') or 'an official site'} by SafeShelf's Research Agent",
+                "quote": content.get("title") or content.get("summary") or ""}
+    if kind == "shopper_agent":
+        seen = "; ".join(f"{o.get('kind')}: {str(o.get('text') or '')[:120]}"
+                         for o in content.get("observations", [])[:6])
+        return {**item, "type": "check", "url": ref if ref.startswith("http") else None,
+                "source": "What SafeShelf's Shopper Agent opened and read on the page", "quote": seen}
+    if kind == "evidence_pack":
+        return {**item, "type": "check", "source": "SafeShelf evidence pack for a regulator report",
+                "quote": content.get("summary") or ""}
     view = content.get("view") or content
     return {**item, "type": "listing_text", "source": "Product listing", "url": ref if ref.startswith("http") else None,
             "quote": view.get("title") or view.get("description") or ""}

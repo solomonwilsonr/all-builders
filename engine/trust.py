@@ -36,8 +36,9 @@ MARKETPLACES = ("amazon.", "flipkart.", "meesho.", "myntra.", "snapdeal.", "jiom
                 "walmart.", "etsy.", "aliexpress.", "temu.")
 TWO_PART_TLDS = ("co.in", "co.uk", "com.au", "net.in", "org.in", "co.nz")
 HIDDEN = re.compile(
-    r"ignore (all |any )?(previous|prior|above) instructions|you are an? (ai|assistant|agent)|system prompt|"
-    r"(mark|rate|report|classify) (this|the) (product|shop|seller|listing) as (safe|genuine|trusted|verified)|"
+    r"ignore (all |any |your |the )?(previous|prior|above|earlier) instructions|you are an? (ai|assistant|agent)|"
+    r"system prompt|(mark|rate|report|classify|label|show) (this|the) (product|shop|seller|listing) as "
+    r"(safe|genuine|trusted|verified|green)|safeshelf: this (product|listing|shop) is|"
     r"do not (warn|flag|tell)|assistant:|<\s*/?\s*(system|instructions)\s*>", re.IGNORECASE)
 
 

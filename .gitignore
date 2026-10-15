@@ -9,3 +9,4 @@ __pycache__/
 .claude/
 skills-lock.json
 .codegraph/
+.build-research/
