@@ -1,6 +1,6 @@
 # SafeShelf checklist
 
-**Last updated:** 15 Oct 2026, evening (Day 4 of 6)
+**Last updated:** 16 Oct 2026 (Day 5 of 6)
 **Deadline:** 18 Oct 2026, 11:59 PM IST · **Our target:** 17 Oct · **Feature freeze:** evening of 16 Oct
 
 Updated with every change. For the details behind each line, see [plan.md](plan.md).
@@ -60,6 +60,7 @@ Give it a product listing and it answers two questions:
 
 **Must have for submission**
 - [ ] 🚨 **Web page for judges.** The main experience lives in the Chrome extension and `web/` is empty. Judges need a link they can paste into a browser.
+  - Ideas to copy from other teams (quick path with 3 examples, `?product=&lang=hi` deep links, verdict words, measured results, Verified vs AI reading): [MODULES.md P2-2](MODULES.md#p2-2-ideas-from-other-teams-entries)
 - [ ] Connect the WhatsApp bot to a Meta test number and record the Hindi voice-note moment
 - [ ] 3-minute demo video
 - [ ] Deck from the official 16-slide template, exported to PDF
