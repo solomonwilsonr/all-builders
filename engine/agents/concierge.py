@@ -5,6 +5,7 @@ safer one", hands over to the Safer Alternative Finder (an AgentTool). Answers m
 returned in this request. If every model fails, the one-call chat (engine/chat.py) answers instead.
 """
 import asyncio
+import json
 import logging
 import re
 
@@ -13,8 +14,8 @@ from google.adk.agents import LlmAgent
 from google.adk.tools import ToolContext
 from google.adk.tools.agent_tool import AgentTool
 
-from engine import chat, chat_core
-from engine.agents import guard, links, pipeline, runtime, tools
+from engine import chat, chat_core, safety
+from engine.agents import cache, guard, links, pipeline, runtime, tools
 
 log = logging.getLogger(__name__)
 DEVANAGARI = re.compile(r"[\u0900-\u097F]")
@@ -22,8 +23,9 @@ DEVANAGARI = re.compile(r"[\u0900-\u097F]")
 HOW_TO_WORK = """
 
 How you work:
-- The message names the product_id. Read its stored evidence with your tools before you answer. Call only what the
-  question needs, usually one or two tools: get_safety (recall status, hazard reports, safety marks),
+- The message names the product_id and already includes its stored safety record (recall status, hazard reports
+  with evidence IDs, safety marks). Answer from it directly when it answers the question: no tool call needed.
+  Call tools only for what it does not contain, usually one: get_safety (only if the record is missing),
   get_relationships (copies, rebrands, look-alikes), get_certifications (safety marks against registries),
   get_history (what changed and linked recalls), get_product (brand, model, specs). Call get_evidence (the exact
   quote behind an evidence ID) only when the shopper asks for the reviews' own words or the photos. Call the tools
@@ -51,8 +53,11 @@ async def check_link(url: str, tool_context: ToolContext) -> dict:
     hidden AI instructions). Returns the product, the colours set by code and the reasons with evidence IDs."""
     import time
     started = time.monotonic()
+    listing = cache.get("link:" + links.clean(url))
     try:
-        listing = await asyncio.to_thread(links.read, url)
+        if listing is None:
+            listing = await asyncio.to_thread(links.read, url)
+            cache.put("link:" + links.clean(url), listing, 600)
     except links.BlockedLink as problem:
         return {"error": f"SafeShelf can't open that link: {problem}"}
     page = listing.pop("read", "none")  # full / partial (the shop showed the server only part of it) / none
@@ -123,9 +128,13 @@ async def chat_session(body: dict) -> dict:
     session_id = body.get("session_id") or runtime.new_id("SS-A-")
     unmatched = chat_core.is_unmatched(product_id)
     url = links.first_url(message)
-    prompt, seen = chat_core.prepare(
-        product_id, message[:1000], language,
-        "{}" if unmatched else "(not included here: read it with your tools)", body.get("context"), body.get("history"))
+    stored = "{}"
+    if not unmatched and not url:  # the safety record up front: most questions then need one model turn, not three
+        record = await tools.call("shelf_chat", "getSafety", safety.safety, product_id)
+        stored = json.dumps({"safety": record}, ensure_ascii=False, default=str) if "error" not in record else \
+            "(not included: read it with your tools)"
+    prompt, seen = chat_core.prepare(product_id, message[:1000], language, stored, body.get("context"),
+                                     body.get("history"))
     if url:  # a pasted link is about that product, whatever product the screen had selected
         prompt = f"[The shopper pasted a product link: {url} - call check_link with it first.]\n" + prompt
     try:

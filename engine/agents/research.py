@@ -11,9 +11,11 @@ import os
 import requests
 
 from engine import store
+from engine.agents import cache
 
 RESEARCH_URL = os.environ.get("SAFESHELF_RESEARCH_URL", "").rstrip("/")
 TOKEN = os.environ.get("SAFESHELF_RESEARCH_TOKEN", "")
+CACHE_S = 24 * 3600
 TIMEOUT_S = int(os.environ.get("SAFESHELF_RESEARCH_TIMEOUT", "150"))
 log = logging.getLogger(__name__)
 
@@ -22,6 +24,10 @@ def check(brand: str, model: str, kind: str = "", sources: list[str] | None = No
     """Official recall sites searched for brand + model. {"skipped": True} when the service is not configured."""
     if not RESEARCH_URL:
         return {"skipped": True, "reason": "the Research Agent service is not configured here"}
+    key = f"research:{brand}|{model}|{','.join(sorted(sources or []))}|{mode}".lower()
+    cached = cache.get(key)
+    if cached:  # recall sites change slowly: one search per model a day
+        return {**cached, "from_cache": True}
     response = requests.post(f"{RESEARCH_URL}/research", timeout=TIMEOUT_S,
                              headers={"X-Research-Token": TOKEN} if TOKEN else {},
                              json={"brand": brand, "model": model, "kind": kind, "sources": sources, "mode": mode})
@@ -32,6 +38,7 @@ def check(brand: str, model: str, kind: str = "", sources: list[str] | None = No
             match["evidence_id"] = store.add_evidence(
                 "research", match.get("url") or source.get("start_url") or "",
                 {"site": source.get("site"), "query": source.get("query"), **match})
+    cache.put(key, body, CACHE_S)
     return body
 
 

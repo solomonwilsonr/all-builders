@@ -192,6 +192,15 @@ if REAL_HANDLERS:  # the A2A agent runs the real engine; with MOCK=1 there is no
 
     app.mount("/a2a", a2a.mount)
 
+    from engine.agents import handler as agent_handler
+
+    @app.post("/v1/agent/sessions/stream", include_in_schema=False)
+    async def agent_session_stream(request: Request):
+        """The agents with live steps (server-sent events); same request body as POST /v1/agent/sessions."""
+        check_key(request)
+        rate_limit(request)
+        return await agent_handler.stream_agent_session(request)
+
 mcp_server.attach(app)  # last: it mounts at "/" behind every route above
 
 if REAL_HANDLERS:

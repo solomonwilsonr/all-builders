@@ -17,8 +17,10 @@ appears where judgement or words are needed. What the Shopper Agent saw on the p
 stored as evidence. Page text never sets a colour: hidden instructions are reported as a warning sign.
 """
 import asyncio
+import hashlib
 import json
 import logging
+import os
 import re
 import time
 from collections.abc import Callable
@@ -31,9 +33,10 @@ from google.genai import types
 from pydantic import ConfigDict
 
 from engine import chat_core, gemini, identity, marks, page_safety, passport, safety, store, trust
-from engine.agents import guard, research, runtime
+from engine.agents import cache, guard, research, runtime
 
 log = logging.getLogger(__name__)
+CACHE_S = 600  # a repeat investigation of the same listing within 10 minutes is answered from memory
 STRONG_MATCHES = {"url", "model_number", "product_id"}  # a look-alike is a similar product, never this one
 LEVELS = ["red", "amber", "unknown", "green"]  # worst first
 MARK_NUMBER = re.compile(r"\b(?:R-\d{8}|IS\s?\d{3,5}|CM/L-\d{7,10})\b", re.IGNORECASE)
@@ -48,6 +51,7 @@ class Check(BaseAgent):
 
     async def _run_async_impl(self, ctx):
         state = dict(ctx.session.state)
+        runtime.publish({"type": "start", "agent": self.name, "tool": self.key})
 
         def go():
             calls = gemini.track()
@@ -66,6 +70,8 @@ class Check(BaseAgent):
         summary = (body["error"] if "error" in body else "Skipped: nothing to check this with" if body.get("skipped")
                    else self.describe(body))
         runtime.step(self.name, self.key, summary, time.monotonic() - started, calls, body)
+        if self.key == "verdict":  # the colours are final now: screens show them before the explanation is written
+            runtime.publish({"type": "verdict", "verdict": body})
         yield Event(invocation_id=ctx.invocation_id, author=self.name,
                     content=types.Content(role="model", parts=[types.Part(text=summary)]),
                     actions=EventActions(state_delta={self.key: body}))
@@ -324,12 +330,17 @@ def writer_instruction(ctx) -> str:
         real=v.get("real"), overall=v.get("overall"), reasons=json.dumps(v.get("reasons", []), ensure_ascii=False))
 
 
-def verdict_writer(model_name: str) -> LlmAgent:
+# Rewording findings that code already wrote needs no deep reasoning: Flash-Lite takes 1-2 s instead of 6-11 s.
+WRITER_MODEL = os.environ.get("SAFESHELF_WRITER_MODEL", "gemini-3.5-flash-lite")
+
+
+def verdict_writer(_model_name: str) -> LlmAgent:
     return LlmAgent(
         name="verdict_writer", description="Explains the code's verdict in plain words with evidence IDs.",
-        model=runtime.model(model_name), instruction=writer_instruction, include_contents="none",
-        output_key="verdict_text", generate_content_config=runtime.config(),
-        **runtime.callbacks(model_name, last_resort=lambda ctx: fallback_text(ctx.state.get("verdict") or {})))
+        model=runtime.model(WRITER_MODEL), instruction=writer_instruction, include_contents="none",
+        output_key="verdict_text", generate_content_config=types.GenerateContentConfig(
+            temperature=0.2, http_options=types.HttpOptions(timeout=runtime.TURN_TIMEOUT_S * 1000)),
+        **runtime.callbacks(WRITER_MODEL, last_resort=lambda ctx: fallback_text(ctx.state.get("verdict") or {})))
 
 
 def pipeline(model_name: str) -> SequentialAgent:
@@ -359,6 +370,14 @@ async def investigate(body: dict) -> dict:
     language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
     state = {"listing": listing, "product_id": product_id, "language": language, "deep": bool(body.get("deep")),
              "page_evidence": body.get("page_evidence") or {}}
+    key = "investigate:" + hashlib.sha1(json.dumps(state, sort_keys=True, default=str).encode()).hexdigest()
+    cached = cache.get(key)
+    if cached:  # the same listing and page evidence within CACHE_S: answer at once
+        runtime.saw(cached)
+        runtime.publish({"type": "verdict", "verdict": cached["verdict"]})
+        runtime.step("investigate", "cache", f"Same listing checked {round(time.time() - cached['checked_at'])} s ago; "
+                     "reused that answer", 0)
+        return {**cached, "steps": cached["steps"] + runtime.current().steps[-1:], "from_cache": True}
     try:
         _, final = await runtime.run(pipeline, "Investigate this listing.", state, timeout_s=240)
     except Exception as error:  # noqa: BLE001
@@ -370,7 +389,7 @@ async def investigate(body: dict) -> dict:
         text = fallback_text(verdict)
     seen = runtime.current().seen
     page = final.get("page") or {}
-    return {
+    result = {
         "session_id": runtime.current().investigation_id,
         "investigation_id": runtime.current().investigation_id,
         "mode": "investigate",
@@ -384,4 +403,7 @@ async def investigate(body: dict) -> dict:
         "steps": runtime.current().steps,
         "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory "
                  "determinations.",
+        "checked_at": time.time(),
     }
+    cache.put(key, result, CACHE_S)
+    return result
