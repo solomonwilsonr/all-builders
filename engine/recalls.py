@@ -68,9 +68,16 @@ def authorities() -> list[str]:
 
 
 def brand_recalls(brand: str) -> list[dict]:
-    """Recalls whose notice mentions the brand (title or scope), newest first."""
-    if len(norm_brand(brand)) < 3:
+    """Recalls whose notice mentions the brand (title or scope), newest first. A two-letter brand (LG, HP, Mi) is
+    matched in the title only, as a whole word with its own capitals: "%lg%" would match "Bulgaria" and the scope
+    text is full of state codes like "MI". It was not searched at all before 16 Oct."""
+    name = norm_brand(brand)
+    if len(name) < 2:
         return []
+    if len(name) < 3:
+        return store.conn().execute(
+            """SELECT id, notice_date, title, hazard, scope_json, url FROM recalls
+               WHERE title ~ %s ORDER BY notice_date DESC""", (r"\m" + re.escape(brand.strip()) + r"\M",)).fetchall()
     return store.conn().execute(
         """SELECT id, notice_date, title, hazard, scope_json, url FROM recalls
            WHERE title ILIKE %s OR scope_json::text ILIKE %s ORDER BY notice_date DESC""",
@@ -91,7 +98,8 @@ def classify(fp: dict, recall: dict) -> str | None:
         return "needs_review" if (recall["scope_json"] or {}).get("Kind") in NOT_RECALLS else "exact_model"
     category_words = re.findall(r"[a-z]{4,}", (fp.get("category") or "").replace("_", " ").lower())
     named = (recall["title"] or "").lower()
-    return "needs_review" if any(w.rstrip("s") in named for w in category_words) else None
+    # Whole words ("charger" matches "Chargers"), not any substring: "free" was found inside "Free-Standing".
+    return "needs_review" if any(re.search(rf"\b{re.escape(w.rstrip('s'))}", named) for w in category_words) else None
 
 
 def link(product_id: str) -> list[dict]:

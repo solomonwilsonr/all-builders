@@ -11,8 +11,10 @@ DEPLOY_MOCK ?= 0
 API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
 # The Research Agent service (make deploy-research); empty = the API answers research requests with 503.
 RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)' 2>/dev/null)
+# The token the hourly re-check job sends (secret recheck-token, made by `make schedule-recheck`); empty until then.
+RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research bench warm eval-agents web web-samples deploy-web
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web
 
 web:            ## the judges' page on :8095 (calls the live API)
 	cd web && python3 -m http.server 8095
@@ -60,8 +62,24 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
 		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 2Gi --timeout 300 \
 		--add-cloudsql-instances $(SQL_INSTANCE) \
-		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest) \
+		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest) \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
+
+schedule-recheck: ## every 30 min: recall sites searched again for one saved first-look model (then run make deploy-api)
+	@gcloud secrets describe recheck-token --project $(GCP_PROJECT) >/dev/null 2>&1 || \
+		openssl rand -hex 24 | tr -d '\n' | gcloud secrets create recheck-token --project $(GCP_PROJECT) --data-file=-
+	@sa=$$(gcloud run services describe safeshelf-api --project $(GCP_PROJECT) --region $(REGION) --format 'value(spec.template.spec.serviceAccountName)'); \
+		sa=$${sa:-$$(gcloud projects describe $(GCP_PROJECT) --format 'value(projectNumber)')-compute@developer.gserviceaccount.com}; \
+		gcloud secrets add-iam-policy-binding recheck-token --project $(GCP_PROJECT) --member serviceAccount:$$sa \
+			--role roles/secretmanager.secretAccessor >/dev/null
+	@gcloud services enable cloudscheduler.googleapis.com --project $(GCP_PROJECT)
+	@body=$$(mktemp); printf '{"mode":"recheck","limit":1,"token":"%s"}' \
+		"$$(gcloud secrets versions access latest --secret recheck-token --project $(GCP_PROJECT))" > $$body; \
+		verb=create; gcloud scheduler jobs describe safeshelf-recheck --project $(GCP_PROJECT) --location $(REGION) >/dev/null 2>&1 && verb=update; \
+		gcloud scheduler jobs $$verb http safeshelf-recheck --project $(GCP_PROJECT) --location $(REGION) --schedule '*/30 * * * *' \
+			--uri $(API_URL)/v1/agent/sessions --http-method POST --headers Content-Type=application/json \
+			--attempt-deadline 300s --message-body-from-file $$body; status=$$?; rm -f $$body; exit $$status
+	@echo "Scheduled. Now run: make deploy-api (it passes the token to the API)"
 
 deploy-research: ## M9 Research Agent (headless Chromium) to Cloud Run; needs secret research-token (the API sends it)
 	@gcloud secrets describe research-token --project $(GCP_PROJECT) >/dev/null 2>&1 || { echo "missing secret research-token"; exit 1; }

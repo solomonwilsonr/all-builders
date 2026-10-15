@@ -30,7 +30,9 @@ def test_a_fair_price_is_said_and_changes_no_colour():
     text = " | ".join(r["text"] for r in lines)
     assert not flag
     assert "brand's own site lists Samsung RS76CG8003S9HL (www.samsung.com)" in text
-    assert "in line with the brand's own price" in text
+    assert "matches the brand's own price" in text
+    lines, _ = discovery.compare({**FRIDGE, "price": 55990}, REF)
+    assert any("30% below the brand's own price Rs 79,990 (a normal discount)" in r["text"] for r in lines)
     assert "registry itself was not checked" in text  # a web finding is never passed off as a registry check
     assert all(r["evidence_ids"] == ["EV-REF1"] for r in lines)
 

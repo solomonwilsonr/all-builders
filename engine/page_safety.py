@@ -26,7 +26,12 @@ NOT_BRANDS = {"new", "original", "super", "best", "premium", "pack", "set", "com
               "pro", "portable", "wireless", "usb", "universal", "heavy", "multi", "electric", "digital"}
 # Title words that say nothing about what kind of product it is.
 NOT_KINDS = NOT_BRANDS | {"with", "pack", "for", "and", "black", "white", "blue", "inch", "fast", "charging", "watt",
-                          "home", "office", "kids", "type", "port", "ports", "plus", "ultra", "model", "edition"}
+                          "home", "office", "kids", "type", "port", "ports", "plus", "ultra", "model", "edition",
+                          # appliance marketing words: "Frost-Free" matched an LG TV's "Free-Standing" recall (16 Oct)
+                          "frost", "free", "double", "single", "door", "doors", "side", "inverter", "star", "stars",
+                          "rated", "energy", "saving", "cooling", "convertible", "enabled", "wifi", "steel", "shiny",
+                          "silver", "grey", "gray", "gold", "green", "inox", "refined", "litre", "litres", "liter",
+                          "capacity", "large", "compact", "design", "series", "technology", "stand", "standing"}
 
 
 def page_reviews(listing: dict) -> list[dict]:
@@ -72,7 +77,7 @@ def recall_status(brand: str, fp: dict) -> dict:
             entry = {"recall_id": recall["id"], "title": recall["title"], "url": recall.get("url"),
                      "notice_date": str(recall["notice_date"]) if recall.get("notice_date") else None}
             (exact if match_class == "exact_model" else review).append(entry)
-    return {"recalled": bool(exact), "searched": len(norm_brand(brand)) >= 3,  # no brand: nothing was searched
+    return {"recalled": bool(exact), "searched": len(norm_brand(brand)) >= 2,  # no brand: nothing was searched
             "checked": recalls.authorities(), "recall_ids": [r["recall_id"] for r in exact],
             "recall_ids_under_review": [r["recall_id"] for r in review], "recalls": exact + review}
 

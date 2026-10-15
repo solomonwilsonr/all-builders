@@ -2,7 +2,7 @@
 const { read, el } = require("./helpers.cjs");
 const assert = require("assert");
 const src = read("content.js");
-const code = src.slice(src.indexOf("    const panelTabs = (r, overviewNodes) => {"), src.indexOf("    const render = (r) => {"));
+const code = src.slice(src.indexOf("    const panelTabs = (r, overviewNodes) => {"), src.indexOf("    const render = (r, fresh = false) => {"));
 
 function run(r) {
   const log = [];

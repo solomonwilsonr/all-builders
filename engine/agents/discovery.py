@@ -121,8 +121,11 @@ def compare(listing: dict, ref: dict) -> tuple[list[dict], bool]:
             say(f"Price {pipeline.money(price, ref['currency'])} is less than half the brand's own price "
                 f"{pipeline.money(genuine, ref['currency'])}")
         else:
-            say(f"Price {pipeline.money(price, ref['currency'])} is in line with the brand's own price "
-                f"{pipeline.money(genuine, ref['currency'])}")
+            below = round((1 - price / genuine) * 100)
+            how = (f"is {below}% below the brand's own price" if below >= 5 else
+                   f"is {-below}% above the brand's own price" if below <= -5 else "matches the brand's own price")
+            say(f"Price {pipeline.money(price, ref['currency'])} {how} {pipeline.money(genuine, ref['currency'])}"
+                + (" (a normal discount)" if below >= 5 else ""))
     claimed, stated = stars(f"{listing.get('title') or ''} {listing.get('page_text') or ''}"), stars(ref.get("energy_rating"))
     if claimed and stated and claimed != stated:
         say(f"The listing says {claimed} Star, but the brand states {stated} Star for this model")
@@ -172,11 +175,14 @@ async def discover(body: dict) -> dict:
     brand, model = subject(listing)
     key = model_key(brand, model)
     saved = await asyncio.to_thread(store.latest_evidence, "discovery", key, SAVED_S) if key and not body.get("fresh") else None
-    inner = {**body, "mode": "investigate", "listing": listing, "product_id": "unmatched"}
+    # The brand discovery found goes to the checks too, so the recall search and Is it real? use the same one.
+    inner = {**body, "mode": "investigate", "listing": {**listing, **({"brand": brand} if brand and not listing.get("brand") else {})},
+             "product_id": "unmatched"}
     if saved:  # another shopper's lookup of this model: only this listing's own checks run again
         _, found, age = saved
-        runtime.step("discovery", "saved", f"{brand} {model} was looked up {ago(age)} ago; reused the genuine product "
-                     "and the recall-site search", 0)
+        reused = [what for what, there in (("the genuine product", found.get("reference")),
+                                           ("the recall-site search", found.get("research"))) if there]
+        runtime.step("discovery", "saved", f"{brand} {model} was looked up {ago(age)} ago; reused {' and '.join(reused)}", 0)
         result = await pipeline.investigate({**inner, "recall_sites": False})
         ref, searched = found.get("reference"), found.get("research")
         if ref:

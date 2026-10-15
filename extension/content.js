@@ -213,27 +213,38 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
   // Amazon shows only a few reviews on the product page, mostly positive. The product's critical (1-3 star) reviews
   // page is read here, in the shopper's own browser where they are signed in and Amazon does not block it, and its
-  // reviews go first, since hazard reports live there. Remembered per product for the visit.
+  // reviews go first, since hazard reports live there. Remembered per product and page for the visit.
+  // The quick check reads page 1; a first look at a product SafeShelf has never seen reads pages 1-3 (up to 60).
   const criticalCache = new Map();
-  const criticalReviews = async () => {
-    const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
-    if (!asin || !/(^|\.)amazon\./.test(location.hostname)) return [];
-    if (!criticalCache.has(asin)) {
-      criticalCache.set(asin, (async () => {
+  const criticalPage = (asin, n) => {
+    const key = `${asin}|${n}`;
+    if (!criticalCache.has(key)) {
+      criticalCache.set(key, (async () => {
         try {
-          const res = await fetch(`/product-reviews/${asin}/?filterByStar=critical&sortBy=recent&reviewerType=all_reviews`, { credentials: "include" });
+          const res = await fetch(`/product-reviews/${asin}/?filterByStar=critical&sortBy=recent&reviewerType=all_reviews&pageNumber=${n}`, { credentials: "include" });
           if (!res.ok || /\/ap\/signin/.test(res.url)) return [];
           return readReviews(new DOMParser().parseFromString(await res.text(), "text/html"));
         } catch (_) { return []; }
       })());
     }
-    return criticalCache.get(asin);
+    return criticalCache.get(key);
   };
-  const withMoreReviews = async (page) => {
-    const extra = await criticalReviews();
+  const criticalReviews = async (pages = 1) => {
+    const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
+    if (!asin || !/(^|\.)amazon\./.test(location.hostname)) return [];
+    const out = [];
+    for (let n = 1; n <= pages; n++) {
+      const got = await criticalPage(asin, n);
+      out.push(...got);
+      if (got.length < 10) break; // a short page is the last one
+    }
+    return out;
+  };
+  const withMoreReviews = async (page, pages = 1, limit = 30) => {
+    const extra = await criticalReviews(pages);
     if (!extra.length) return page;
     const seen = new Set();
-    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(x.text) && seen.add(x.text)).slice(0, 30);
+    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(x.text) && seen.add(x.text)).slice(0, limit);
     return { ...page, reviews };
   };
   window.__safeshelfMoreReviews = withMoreReviews;
@@ -365,6 +376,19 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     button.primary { font:inherit; font-size:14px; font-weight:700; display:inline-flex; gap:8px; align-items:center; justify-content:center; padding:10px 16px; border:0; border-radius:14px; background:var(--ink); color:#fff; cursor:pointer; }
     button.primary:hover { filter:brightness(1.2); }
     button.primary svg { width:18px; height:18px; }
+    /* First look: a product SafeShelf has never seen */
+    .first { margin-top:12px; border-radius:16px; padding:10px 14px; background:#fff; border:1px solid var(--line); }
+    .first h3 { margin:0 0 2px; display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:15px; }
+    .first .tag { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--lime); color:var(--ink); }
+    .first .lede { color:var(--muted); font-size:13px; margin:0 0 4px; }
+    .first ol { list-style:none; margin:4px 0 0; padding:0; font-size:13px; }
+    .first li { display:flex; gap:8px; align-items:baseline; padding:3px 0; color:var(--muted); }
+    .first li::before { content:""; flex:none; width:9px; height:9px; border-radius:50%; border:2px solid currentColor; border-top-color:transparent; animation:spin .8s linear infinite; }
+    .first li.done { color:var(--ink); } .first li.done::before { content:"✓"; width:auto; height:auto; border:0; animation:none; color:var(--green); font-weight:700; }
+    .first li.skip::before { content:"–"; width:auto; height:auto; border:0; animation:none; }
+    .first ul.found { margin:8px 0 0; padding-left:18px; font-size:13px; } .first ul.found li { display:list-item; padding:2px 0; color:var(--ink); } .first ul.found li::before { content:none; }
+    .upd { display:inline-block; margin-top:8px; font-size:12px; font-weight:700; padding:2px 10px; border-radius:999px; background:var(--lime); color:var(--ink); }
+    @keyframes spin { to { transform:rotate(360deg); } }
     details.read { margin-top:10px; font-size:13px; } details.read summary { cursor:pointer; color:var(--muted); font-weight:600; }
     .foot { color:var(--muted); font-size:12px; text-align:center; margin-top:10px; }
     .demo { background:var(--amber-bg); color:var(--amber); border-radius:12px; padding:6px 10px; font-size:13px; margin-bottom:10px; text-align:center; }
@@ -445,7 +469,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     button.small:hover { background:var(--soft); }
     .row button.small:first-child { background:var(--ink); border-color:var(--ink); color:#fff; }
     button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid var(--link); outline-offset:2px; }
-    @media (prefers-reduced-motion: reduce) { .fab, .tab { transition:none; } .fab:active { transform:none; } .wait .mark, .skel, .typing i { animation:none; } }
+    @media (prefers-reduced-motion: reduce) { .fab, .tab { transition:none; } .fab:active { transform:none; } .wait .mark, .skel, .typing i, .first li::before { animation:none; } }
   `;
 
   const el = (tag, props = {}, ...kids) => {
@@ -525,7 +549,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     duplicates: { text: "about ₹1 to ₹5 (rough guess: Gemini compares the product with similar ones).", mid: 3 },
     identify: { text: "about ₹0.2 to ₹1 (rough guess: an embedding lookup).", mid: 0.5 },
     // The check uses Gemini on Vertex AI (embeddings + listing comparison); real token counts are not known yet.
-    check: { text: "about ₹1 to ₹5 (rough guess: the check uses Gemini on Vertex AI to compare listings).", mid: 3 },
+    check: { text: "about ₹1 to ₹5 (rough guess: the check uses Gemini on Vertex AI to compare listings). A product SafeShelf has never seen also gets a first look right after: about ₹3 to ₹8 more (Google Search and the recall sites).", mid: 3 },
+    firstLook: { mid: 5 },
   };
   const approved = new Set(); // pages already approved: Check, Save and Ask share one cached check
   const confirmCost = (what, estimate, page) => new Promise((resolve) => {
@@ -702,6 +727,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   });
 
   const level = (r) => {
+    if (r.discovery?.overall) return r.discovery.overall; // the first look's colour, set by code on the server
     const both = [r.safe.level, r.real.level];
     return both.includes("red") ? "red" : both.includes("amber") ? "amber" : both.includes("unknown") ? "unknown" : "green";
   };
@@ -938,6 +964,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       return { title: p.title, price: p.price, seller: p.seller, host: r.host, summary: r.summary,
         safe: { level: r.safe.level, lines: r.safe.lines }, real: { level: r.real.level, lines: r.real.lines }, evidence_ids: r.evidence_ids || [],
         matched_by: r.matched_by, checks: r.trust_checks, genuine_model_safety: r.genuine_model_safety,
+        ...(r.discovery ? { first_look: r.discovery } : {}), // what the first look found online and on the recall sites
         listing_text: (p.page_text || "").slice(0, 1500) };
     };
 
@@ -1061,7 +1088,82 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       return el("details", { className: "askd" }, el("summary", { textContent: "Ask about this result" }), el("div", {}, chat.log, chat.intro, chat.form));
     };
 
-    const render = (r) => {
+    // The verdict at the top of the card. `note` says when a first look changed it.
+    let heroEl = null;
+    const hero = (lvl, summary, note) => el("div", { className: `hero ${lvl}` }, el("div", { className: "ic" }, icon(VERDICT_ICON[lvl])),
+      el("h2", { className: `headline ${lvl}`, textContent: VERDICT_WORD[lvl] }), ...(summary ? [el("p", { className: "sum", textContent: summary })] : []),
+      ...(note ? [el("span", { className: "upd", textContent: note })] : []));
+
+    // First look: a product SafeShelf has never seen is looked up right away (agent mode "discover"): up to 60
+    // critical reviews, recall notices, the market's official recall sites, and the genuine product found online.
+    // Each lookup ticks off as it finishes; if the colour changes, the card says so. The server saves the lookup by
+    // model number, so the next shopper on this model gets it at once.
+    let discoveryRun = 0; // a newer check or another product makes an older first look's answer stale
+    const FIRST_LOOK = [["reviews", "Reading buyer reviews and recall notices"], ["real", "Checking the shop and price"],
+      ["reference", "Finding the genuine product online"], ["sites", "Searching official recall sites"]];
+    const firstLook = (r, fresh) => {
+      const run = ++discoveryRun;
+      const before = level(r);
+      const items = Object.fromEntries(FIRST_LOOK.map(([k, t]) => [k, el("li", {}, el("span", { textContent: `${t}…` }))]));
+      const tag = el("span", { className: "tag", textContent: "Working" });
+      const lede = el("p", { className: "lede", textContent: "SafeShelf is seeing this product for the first time, so it is looking it up now. This usually takes under a minute; you can keep browsing." });
+      const found = el("div");
+      const section = el("div", { className: "first" }, el("h3", {}, "First look", tag), lede, el("ol", {}, ...Object.values(items)), found);
+      section.setAttribute("aria-live", "polite");
+      const tick = (k, text, cls = "done") => { items[k].className = cls; items[k].replaceChildren(el("span", { textContent: text })); };
+      (async () => {
+        try { const { spend = { total: 0, calls: 0 } } = await chrome.storage.local.get("spend"); await chrome.storage.local.set({ spend: { total: spend.total + COST.firstLook.mid, calls: spend.calls + 1 } }); } catch (_) { /* TEMP cost guard tally */ }
+        const { product_id, listing_id, ...listing } = await withMoreReviews(getPage(), 3, 60);
+        const n = (listing.reviews || []).length;
+        try {
+          const v = await agentLive({ mode: "discover", product_id: "unmatched", listing, fresh }, (e) => {
+            if (run !== discoveryRun || e.type !== "step" && e.type !== "start") return;
+            if (e.type === "step" && e.agent === "safety_radar") {
+              const read = Number(e.summary.match(/from (\d+) reviews?/)?.[1] ?? n); // the server also keeps reviews from earlier visits
+              tick("reviews", `Read ${read} buyer review${read === 1 ? "" : "s"} and the recall notices SafeShelf holds`);
+            }
+            if (e.type === "step" && e.agent === "is_it_real") tick("real", e.summary.replace(/^Is it real\? /, "Shop and price: "));
+            if (e.type === "step" && e.agent === "reference") tick("reference", e.summary);
+            if (e.type === "start" && e.tool === "recall_sites") items.sites.firstChild.textContent = "Searching official recall sites (up to a minute)…";
+            if (e.type === "step" && e.agent === "research_agent" && e.tool === "recall_sites") tick("sites", e.summary.replace(/^Research Agent: /, "Recall sites: "));
+            if (e.type === "step" && e.agent === "discovery" && e.tool === "saved") {
+              tick("reference", e.summary);
+              if (/recall-site search/.test(e.summary)) tick("sites", "Recall sites: reused that search");
+            }
+          }, 280000);
+          if (run !== discoveryRun) return;
+          for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") tick(k, `${t}: not available this time`, "skip");
+          const verdict = v.verdict || {};
+          const lvl = ["red", "amber", "green", "unknown"].includes(verdict.overall) ? verdict.overall : "unknown";
+          r.discovery = { overall: lvl, safe: verdict.safe, real: verdict.real, reasons: (verdict.reasons || []).map((x) => x.text),
+            evidence_ids: verdict.evidence_ids || [], reference: v.reference || null, from_saved: !!v.discovery?.from_saved };
+          tag.textContent = "Done";
+          lede.textContent = v.discovery?.from_saved
+            ? `This model was looked up ${v.discovery.saved_minutes_ago < 90 ? `${v.discovery.saved_minutes_ago} minutes` : `${Math.round(v.discovery.saved_minutes_ago / 60)} hours`} ago, so that lookup was reused with this page's own checks. What SafeShelf found:`
+            : "What SafeShelf found:";
+          found.replaceChildren(el("ul", { className: "found" }, ...(verdict.reasons || []).map((x) => el("li", { textContent: x.text }))), sourcesBlock(verdict.evidence_ids || []));
+          const word = VERDICT_WORD[lvl];
+          fab.className = `fab ${lvl}`;
+          label(fab, `SafeShelf: ${word}`, word);
+          box.className = `box ${lvl}`;
+          const changed = lvl !== before;
+          const summary = !changed ? r.summary : ["red", "amber"].includes(lvl) ? "The first look found warning signs: see First look below." : "The first look found no warning signs in what it checked.";
+          const updated = hero(lvl, summary, changed ? `Updated after the first look (was ${VERDICT_WORD[before]})` : null);
+          heroEl?.replaceWith(updated);
+          heroEl = updated;
+          if (box.hidden) toast(`SafeShelf finished its first look at this product: ${word}.`, "Show", () => setOpen(true));
+          place();
+        } catch (err) {
+          if (run !== discoveryRun) return;
+          for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") tick(k, `${t}: stopped`, "skip");
+          tag.textContent = "Stopped";
+          lede.textContent = `The first look could not finish (${err.message}). The result above is from this page only; press Check again to retry.`;
+        }
+      })();
+      return section;
+    };
+
+    const render = (r, fresh = false) => {
       stopTicker();
       result = r;
       const lvl = level(r);
@@ -1080,12 +1182,15 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       if (investigateBtn) investigateBtn.onclick = async () => { setOpen(false); window.__safeshelfInvestigate(await withMoreReviews(getPage())); };
       const askBtn = chatBtn ? el("button", { type: "button", className: "primary" }, icon("ask"), "Ask a question about it") : null;
       if (askBtn) askBtn.onclick = () => setChatOpen(true);
+      // Only on a product page, for a product SafeShelf has no exact match for, and never for example data.
+      const deeper = mode === "float" && !r.product_id && r.source !== "mock" ? firstLook(r, fresh) : null;
+      heroEl = hero(lvl, r.summary);
       show(
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
         cardHead(r.host, closeX()),
-        el("div", { className: `hero ${lvl}` }, el("div", { className: "ic" }, icon(VERDICT_ICON[lvl])), el("h2", { className: `headline ${lvl}`, textContent: word }),
-          ...(r.summary ? [el("p", { className: "sum", textContent: r.summary })] : [])),
+        heroEl,
         panelTabs(r, [
+          ...(deeper ? [deeper] : []),
           section("Is it safe?", r.safe),
           section("Is it real?", r.real),
           el("details", { className: "read" }, el("summary", { textContent: "What SafeShelf read from this page" }), contextCard(getPage())),
@@ -1129,7 +1234,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       try {
         const page = mode === "float" ? await withMoreReviews(getPage()) : getPage();
         chrome.runtime.sendMessage({ type: "safeshelf:check", page, fresh }, (res) => {
-          if (res?.ok) return render(res.result);
+          if (res?.ok) return render(res.result, fresh);
           stopTicker();
           checked = false; // opening the card again tries again
           const retry = el("button", { type: "button", className: "primary" }, icon("refresh"), "Try again");
@@ -1194,6 +1299,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     };
     const reset = () => {
       stopTicker();
+      discoveryRun++; // a first look still running belongs to the old product
       checked = false;
       result = null;
       saved = false;

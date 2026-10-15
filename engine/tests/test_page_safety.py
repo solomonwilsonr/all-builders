@@ -81,3 +81,5 @@ def test_family_notice_without_models_is_for_review_not_recalled(monkeypatch):
     status = answer["official_status"]
     assert not status["recalled"] and status["recall_ids_under_review"] == ["cpsc:23238"]
     assert page_safety.kind_words("OD-B7 Wall Charger Power Bank with 2 ports") == "wall charger power bank"
+    # An LG fridge is not covered by an LG TV's "Free-Standing" recall (16 Oct)
+    assert page_safety.kind_words("242 L 3 Star Frost-Free Smart Inverter Double Door Refrigerator") == "refrigerator"
