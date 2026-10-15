@@ -229,7 +229,8 @@ paths:
               properties:
                 mode: {type: string, enum: [chat, investigate, alternatives, report_draft, shopper_step, research]}
                 product_id: {type: string, description: 'SS-P-… or "unmatched"; needed for chat, alternatives, report_draft'}
-                message: {type: string, description: chat only}
+                message: {type: string, description: 'chat only; may be empty when image is given. A pasted link is checked; if the shop blocks the server, by the product name shared with the link or in the link itself'}
+                image: {type: string, description: 'chat: a screenshot of a product page, or a photo of a product or its label, as a data URL (data:image/png|jpeg|webp|heic;base64,…, at most 6 MB). Gemini reads it and the listing it shows is investigated; the answer''s link.page_read is "screenshot"'}
                 language: {type: string, enum: [en, hi], default: en}
                 session_id: {type: string}
                 context: {type: object, description: 'chat: the check result the shopper saw'}

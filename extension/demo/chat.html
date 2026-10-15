@@ -55,8 +55,11 @@
     <div class="chips" id="chips"></div>
     <form class="ask" id="ask">
       <input type="text" id="q" aria-label="Your question" placeholder="Ask about the selected product…" autocomplete="off">
+      <button type="button" id="attach" title="Send a screenshot of a product page, or a photo of the product or its label">Image</button>
+      <input type="file" id="shot" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" hidden>
       <button class="primary" id="send" type="submit">Send</button>
     </form>
+    <div class="row" id="attached" hidden><img id="thumb" alt="Attached image" style="max-height:48px;border-radius:4px"><span class="hint">Image attached: SafeShelf reads it instead of visiting the shop.</span><button type="button" id="unattach">Remove</button></div>
     <div class="row"><button type="button" id="clear">New chat</button><span class="hint" id="sid"></span></div>
   </section>
 
@@ -211,28 +214,64 @@
   const meta = (json, seconds) => node("div", { className: "meta", textContent: `${seconds}s · ${json.investigation_id || json.session_id || ""}${json._mock ? " · MOCK answer, not real" : ""}` });
   const traceLink = (id) => { if (!id) return null; const b = node("button", { type: "button", className: "ev", textContent: `trace ${id}` }); b.onclick = () => { $("trace").value = id; loadTrace(); }; return b; };
 
+  // A screenshot or photo for the chat (a phone has no extension). Big images are re-encoded as JPEG to stay under
+  // the API's 6 MB; the text in a screenshot stays readable at 2000 px.
+  let image = null;
+  const MAX_IMAGE = 4_000_000;
+  const readImage = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("the image could not be read"));
+    reader.onload = () => {
+      if (file.size <= MAX_IMAGE) return resolve(reader.result);
+      const img = new Image();
+      img.onerror = () => reject(new Error("the image could not be opened"));
+      img.onload = () => {
+        const scale = Math.min(1, 2000 / Math.max(img.width, img.height));
+        const canvas = Object.assign(document.createElement("canvas"), { width: Math.round(img.width * scale), height: Math.round(img.height * scale) });
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  const attach = async (file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    try { image = await readImage(file); } catch (err) { add("sys", node("span", { className: "meta", textContent: `Image not attached: ${err.message}` })); return; }
+    $("thumb").src = image;
+    $("attached").hidden = false;
+    $("q").placeholder = "Ask about the image, or just press Send…";
+  };
+  const unattach = () => { image = null; $("attached").hidden = true; $("shot").value = ""; };
+
   async function ask(q) {
     q = q.trim();
-    if (!q) return;
-    add("user", q);
+    if (!q && !image) return;
+    const sent = image;
+    add("user", ...[sent ? node("img", { src: sent, alt: "Image sent", style: "max-height:120px;display:block;border-radius:4px" }) : null, q || null].filter(Boolean));
     $("q").value = "";
+    unattach();
     $("send").disabled = true;
-    const pending = add("bot", "Thinking…");
+    const pending = add("bot", sent ? "Reading the image…" : "Thinking…");
     const keep = Number($("hist").value);
     try {
-      const about = linked ? { product_id: linked.product_id || "unmatched", context: { pasted_link: { title: linked.title, url: linked.url, price: linked.price }, verdict: linked.verdict, reviews_on_the_page: linked.reviews } }
-        : { product_id: product() };
-      const { json, seconds } = await call({ mode: "chat", ...about, message: q, language: $("lang").value, session_id: sid,
-        history: keep ? thread.slice(-keep) : [] }, /https?:\/\//.test(q) ? 200000 : 150000, live(pending, "Working…"));
+      const about = linked && !sent ? { product_id: linked.product_id || "unmatched", context: { pasted_link: { title: linked.title, url: linked.url, price: linked.price }, verdict: linked.verdict, reviews_on_the_page: linked.reviews } }
+        : { product_id: sent ? "unmatched" : product() };
+      const { json, seconds } = await call({ mode: "chat", ...about, message: q, ...(sent ? { image: sent } : {}), language: $("lang").value, session_id: sid,
+        history: keep ? thread.slice(-keep) : [] }, sent || /https?:\/\//.test(q) ? 200000 : 150000, live(pending, "Working…"));
       const m = json.messages?.[0] || {};
-      thread.push({ role: "user", text: q }, { role: "assistant", text: m.text || "" });
+      thread.push({ role: "user", text: q || "(sent an image)" }, { role: "assistant", text: m.text || "" });
       const badge = json.link?.verdict ? node("div", {}, node("span", { className: `verdict ${json.link.verdict.overall}`, textContent: WORDS[json.link.verdict.overall] || json.link.verdict.overall }),
         node("span", { className: "meta", textContent: `  safety ${json.link.verdict.safe} · is it real ${json.link.verdict.real}` })) : null;
       pending.replaceChildren(...[badge, node("div", { textContent: m.text || "(no text)" }), evidence(m.evidence_ids), steps(json.steps), meta(json, seconds), traceLink(json.investigation_id), raw(json)].filter(Boolean));
       if (json.link) {
         linked = json.link;
-        const what = `${linked.title || linked.url}${linked.price ? ` (Rs ${linked.price})` : ""}`;
-        add("sys", node("span", { className: "meta", textContent: `Now chatting about: ${what}, from your link${linked.page_read === "full" ? "" : linked.page_read === "partial" ? " (the shop showed SafeShelf only part of the page: no price or reviews)" : " (the page could not be read)"}. Follow-up questions are about this product. "New chat" goes back to the product picker.` }));
+        const what = `${linked.title || linked.url}${linked.price ? ` (${linked.currency || "Rs"} ${linked.price})` : ""}`;
+        const how = linked.page_read === "screenshot" ? "from your image (only what it shows was checked)"
+          : `from your link${linked.page_read === "full" ? "" : linked.page_read === "partial" ? " (the shop showed SafeShelf only part of the page: no price or reviews)"
+            : linked.name_from ? ` (the page could not be read: checked by the name in your ${linked.name_from === "message" ? "message" : "link"}; send a screenshot for price and reviews)`
+            : " (the page could not be read)"}`;
+        add("sys", node("span", { className: "meta", textContent: `Now chatting about: ${what}, ${how}. Follow-up questions are about this product. "New chat" goes back to the product picker.` }));
         $("q").placeholder = `Ask about ${(linked.title || "this product").slice(0, 60)}…`;
       }
     } catch (err) { pending.replaceChildren(node("div", { textContent: `Error: ${err.message}` })); }
@@ -300,7 +339,14 @@
 
   for (const q of CHIPS) $("chips").append(node("button", { type: "button", textContent: q, onclick: () => ask(q) }));
   $("ask").onsubmit = (e) => { e.preventDefault(); ask($("q").value); };
-  $("clear").onclick = () => { $("log").replaceChildren(); newSession(); };
+  $("attach").onclick = () => $("shot").click();
+  $("shot").onchange = () => attach($("shot").files[0]);
+  $("unattach").onclick = unattach;
+  $("q").addEventListener("paste", (e) => { // a screenshot pasted straight into the question box
+    const file = [...(e.clipboardData?.files || [])].find((f) => f.type.startsWith("image/"));
+    if (file) { e.preventDefault(); attach(file); }
+  });
+  $("clear").onclick = () => { $("log").replaceChildren(); unattach(); newSession(); };
   $("loadTrace").onclick = loadTrace;
   document.querySelectorAll("[data-agent]").forEach((b) => { b.onclick = () => runAgent(b.dataset.agent, b); });
   $("api").value = store.get("ss-api", $("api").value);

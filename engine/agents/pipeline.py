@@ -94,8 +94,9 @@ def read_page(state: dict) -> dict:
         if not out["product_id"]:
             out["matched_by"] = "none"
     if page.get("observations"):  # what the Shopper Agent opened and read, kept as evidence the answer can cite
-        out["page_evidence_id"] = store.add_evidence(
-            "shopper_agent", listing.get("url") or "", {"url": listing.get("url"), "observations": page["observations"]})
+        out["page_evidence_id"] = store.add_evidence(  # the Shopper Agent's, or a screenshot sent to chat
+            page.get("source") or "shopper_agent", listing.get("url") or "",
+            {"url": listing.get("url"), "observations": page["observations"]})
     return out
 
 
@@ -263,6 +264,8 @@ def decide(state: dict) -> dict:
         elif status.get("recall_ids_under_review"):
             say("A recall notice may cover this product; a person must check the model "
                 f"({', '.join(status['recall_ids_under_review'])})")
+        elif status.get("searched") is False:
+            say("Recall notices could not be searched: no brand or model number to search for")
         else:
             say(f"No official recall found (checked {', '.join(status.get('checked') or ['CPSC'])})")
         for f in s.get("ai_findings", []):

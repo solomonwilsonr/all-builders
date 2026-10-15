@@ -14,6 +14,7 @@ import re
 from datetime import UTC, datetime
 
 from engine import identity, radar, recalls, safety, trust
+from engine.normalize import norm_brand
 
 MAX_REVIEWS = 30  # the page shows fewer; more would only slow the first check
 MAX_RECALLS = 15  # newest brand notices; each one without model fields costs one cached Gemini read
@@ -60,7 +61,8 @@ def recall_status(brand: str, fp: dict) -> dict:
             entry = {"recall_id": recall["id"], "title": recall["title"], "url": recall.get("url"),
                      "notice_date": str(recall["notice_date"]) if recall.get("notice_date") else None}
             (exact if match_class == "exact_model" else review).append(entry)
-    return {"recalled": bool(exact), "checked": recalls.authorities(), "recall_ids": [r["recall_id"] for r in exact],
+    return {"recalled": bool(exact), "searched": len(norm_brand(brand)) >= 3,  # no brand: nothing was searched
+            "checked": recalls.authorities(), "recall_ids": [r["recall_id"] for r in exact],
             "recall_ids_under_review": [r["recall_id"] for r in review], "recalls": exact + review}
 
 

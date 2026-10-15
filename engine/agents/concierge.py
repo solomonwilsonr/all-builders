@@ -14,8 +14,8 @@ from google.adk.agents import LlmAgent
 from google.adk.tools import ToolContext
 from google.adk.tools.agent_tool import AgentTool
 
-from engine import chat, chat_core, safety
-from engine.agents import cache, guard, links, pipeline, runtime, tools
+from engine import chat, chat_core, gemini, safety
+from engine.agents import cache, guard, links, pipeline, runtime, screenshot, tools
 
 log = logging.getLogger(__name__)
 DEVANAGARI = re.compile(r"[\u0900-\u097F]")
@@ -47,6 +47,42 @@ safety. Cite the evidence IDs the tools returned in [brackets]. If there is no a
 Reply in at most 4 short sentences."""
 
 
+SEND_MORE = ("suggest sending a screenshot of the product page (or opening it with the SafeShelf extension on a "
+             "computer), which SafeShelf reads without visiting the shop")
+NOTES = {
+    "partial": "The shop showed SafeShelf's server only part of this page (no price or reviews), so price and reviews "
+               f"were not checked. Say so, and {SEND_MORE}.",
+    "none": "The page could not be opened, so only the link itself was checked. Say so, ask for the product's brand "
+            f"and model number, and {SEND_MORE}.",
+    "message": "The page could not be opened (shops often block servers), so SafeShelf checked the product by the "
+               "name in the shopper's message: recalls and safety marks were searched by that name, but price, seller "
+               f"and reviews were not checked. Say so, and {SEND_MORE}.",
+    "link": "The page could not be opened (shops often block servers), so SafeShelf checked the product by the name "
+            "in the link itself: recalls and safety marks were searched by that name, but price, seller and reviews "
+            f"were not checked. Say so, and {SEND_MORE}.",
+    "screenshot": "SafeShelf read this from the shopper's image, not from the shop's page: only what was visible was "
+                  "checked (reviews_on_page says how many reviews). Say so in a few words.",
+}
+
+
+async def investigate_listing(listing: dict, page: str, language: str, page_evidence: dict | None = None,
+                              note: str | None = None) -> dict:
+    """The full investigation of a listing the chat got from a link or an image, as the chat's check result."""
+    found = await pipeline.investigate({"listing": listing, "product_id": "unmatched", "language": language,
+                                        **({"page_evidence": page_evidence} if page_evidence else {})})
+    link = {"url": listing.get("url"), "title": listing.get("title"), "brand": listing.get("brand"),
+            "price": listing.get("price"), "currency": listing.get("currency"), "page_read": page,
+            "name_from": note if note in ("message", "link") else None,  # the page unread: where the name came from
+            "reviews_on_page": len(listing.get("reviews", [])), "product_id": found.get("product_id"),
+            # what the page's buyers said, lowest stars first, so follow-up questions can be answered from it
+            "reviews": [{"rating": r.get("rating"), "title": r.get("title"), "text": (r.get("text") or "")[:400]}
+                        for r in sorted(listing.get("reviews", []), key=lambda r: r.get("rating") or 5)[:10]],
+            "verdict": found.get("verdict"), "investigation_id": found.get("investigation_id")}
+    runtime.current().results["checkLink"] = link
+    note = NOTES.get(note or page)
+    return {**link, "summary": found["messages"][0]["text"], "label": found.get("label"), **({"note": note} if note else {})}
+
+
 async def check_link(url: str, tool_context: ToolContext) -> dict:
     """Checks the product page behind a link the shopper pasted: reads the page (title, price, seller, reviews), then
     runs SafeShelf's full investigation of it: is it safe (recalls, hazard reports), is it real (price, seller, website,
@@ -61,25 +97,48 @@ async def check_link(url: str, tool_context: ToolContext) -> dict:
     except links.BlockedLink as problem:
         return {"error": f"SafeShelf can't open that link: {problem}"}
     page = listing.pop("read", "none")  # full / partial (the shop showed the server only part of it) / none
+    named_by = None
+    if page == "none":  # shops often block servers: the name shared with the link, else the name in the link itself
+        pasted = tool_context.state.get("pasted") or ""
+        for named_by, name in (("message", links.shared_name(pasted)),
+                               ("link", links.name_from_url(links.first_url(pasted) or url))):
+            if name:
+                listing = {**listing, "title": name}
+                break
+        else:
+            named_by = None
     runtime.step(tool_context.agent_name, "read_link",
                  (f"Read the page ({page}): {listing.get('title', '')[:80]} · price {listing.get('price')} · "
                   f"{len(listing.get('reviews', []))} reviews") if page != "none" else
-                 "The page could not be read; checking by URL", time.monotonic() - started)
-    found = await pipeline.investigate({"listing": listing, "product_id": "unmatched",
-                                         "language": tool_context.state.get("language", "en")})
-    link = {"url": listing.get("url"), "title": listing.get("title"), "brand": listing.get("brand"),
-            "price": listing.get("price"), "currency": listing.get("currency"), "page_read": page,
-            "reviews_on_page": len(listing.get("reviews", [])), "product_id": found.get("product_id"),
-            # what the page's buyers said, lowest stars first, so follow-up questions can be answered from it
-            "reviews": [{"rating": r.get("rating"), "title": r.get("title"), "text": (r.get("text") or "")[:400]}
-                        for r in sorted(listing.get("reviews", []), key=lambda r: r.get("rating") or 5)[:10]],
-            "verdict": found.get("verdict"), "investigation_id": found.get("investigation_id")}
-    runtime.current().results["checkLink"] = link
-    note = {"partial": "The shop showed SafeShelf's server only part of this page (no price or reviews), so "
-                       "price and reviews were not checked. Say so, and suggest opening the page with the SafeShelf "
-                       "extension, which reads it in the shopper's own browser.",
-            "none": "The page could not be opened, so only the link itself was checked. Say so."}.get(page)
-    return {**link, "summary": found["messages"][0]["text"], "label": found.get("label"), **({"note": note} if note else {})}
+                 f"The page could not be read; checking by the name in the {named_by}: {listing['title'][:80]}"
+                 if named_by else "The page could not be read; checking by URL", time.monotonic() - started)
+    return await investigate_listing(listing, page, tool_context.state.get("language", "en"), note=named_by)
+
+
+async def check_image(image: str, language: str) -> dict:
+    """Reads the shopper's screenshot or photo, then investigates the listing it shows. Raises BadImage."""
+    import time
+    data, mime_type = screenshot.decode(image)
+    started = time.monotonic()
+
+    def read():
+        calls = gemini.track()
+        return screenshot.read(data, mime_type), calls
+    try:
+        seen, calls = await asyncio.to_thread(read)
+    except Exception as error:  # noqa: BLE001  every model failed: the chat says it could not read the image
+        log.warning("screenshot not read: %s", type(error).__name__)
+        runtime.step("shelf_chat", "read_image", "The image could not be read", time.monotonic() - started)
+        return {"error": "SafeShelf could not read the image. Ask the shopper to send it again, or the product's "
+                         "brand and model number."}
+    listing = screenshot.to_listing(seen)
+    runtime.step("shelf_chat", "read_image", screenshot.describe(seen, listing), time.monotonic() - started, calls)
+    if not listing:
+        return {"error": "The image shows no product SafeShelf can identify. Ask for a screenshot of the product "
+                         "page, or a photo of the product's label."}
+    observed = screenshot.label_observations(seen)
+    return await investigate_listing(listing, "screenshot", language,
+                                     {"source": "screenshot", "observations": observed} if observed else None)
 
 
 def alternative_finder(model_name: str) -> LlmAgent:
@@ -119,29 +178,43 @@ def _answer(product_id, language, session_id, text: str, seen: set[str], mode: s
 
 async def chat_session(body: dict) -> dict:
     message = (body.get("message") or "").strip()
-    if not message:
+    image = body.get("image")
+    if not message and not image:
         raise HTTPException(status_code=422, detail="Give a message")
+    message = message or "Is this safe? Is it real?"
     product_id = body.get("product_id")
     language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
     if DEVANAGARI.search(message):  # a question typed in Hindi gets a Hindi answer, whatever the picker says
         language = "hi"
     session_id = body.get("session_id") or runtime.new_id("SS-A-")
+    context = body.get("context")
+    if image:  # a screenshot or photo (a phone has no extension): read it, then check that listing
+        try:
+            context = await check_image(image, language)
+        except screenshot.BadImage as problem:
+            raise HTTPException(status_code=422, detail=f"image: {problem}") from None
+        product_id = context.get("product_id") or "unmatched"
     unmatched = chat_core.is_unmatched(product_id)
-    url = links.first_url(message)
+    url = None if image else links.first_url(message)
     stored = "{}"
     if not unmatched and not url:  # the safety record up front: most questions then need one model turn, not three
         record = await tools.call("shelf_chat", "getSafety", safety.safety, product_id)
         stored = json.dumps({"safety": record}, ensure_ascii=False, default=str) if "error" not in record else \
             "(not included: read it with your tools)"
-    prompt, seen = chat_core.prepare(product_id, message[:1000], language, stored, body.get("context"),
-                                     body.get("history"))
+    prompt, seen = chat_core.prepare(product_id, message[:1000], language, stored, context, body.get("history"))
+    if image:
+        prompt = "[The shopper sent an image; SafeShelf read it and checked that listing (the check result below).]\n" \
+            + prompt
     if url:  # a pasted link is about that product, whatever product the screen had selected
         prompt = f"[The shopper pasted a product link: {url} - call check_link with it first.]\n" + prompt
     try:
-        text, _ = await runtime.run(concierge, prompt, {"language": language}, timeout_s=120 if url else 40)
+        text, _ = await runtime.run(concierge, prompt, {"language": language, "pasted": message[:1000]},
+                                    timeout_s=120 if url else 40)
     except Exception as error:  # noqa: BLE001  every agent model failed: the one-call chat still answers
         log.warning("Concierge failed (%s); one-call chat answers", type(error).__name__)
-        fallback = await asyncio.to_thread(chat.answer, {**body, "mode": "chat", "language": language})
+        fallback = await asyncio.to_thread(chat.answer, {**body, "mode": "chat", "language": language,
+                                                         "message": message, "product_id": product_id,
+                                                         "context": context})
         fallback["steps"] = runtime.current().steps + [{"n": len(runtime.current().steps) + 1, "agent": "shelf_chat",
                                                         "tool": "fallback", "summary": "Answered in one model call"}]
         return fallback

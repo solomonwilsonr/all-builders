@@ -11,7 +11,7 @@ import re
 import socket
 from datetime import datetime
 from html import unescape
-from urllib.parse import urljoin, urlparse
+from urllib.parse import unquote, urljoin, urlparse
 
 import httpx
 
@@ -31,6 +31,38 @@ class BlockedLink(ValueError):
 def first_url(text: str) -> str | None:
     match = URL.search(text or "")
     return match.group(0).rstrip(".,);]") if match else None
+
+
+# What shop apps add around a shared link ("Check out this deal on Amazon!", ": Amazon.in: Home & Kitchen").
+SHARE_NOISE = re.compile(
+    r"check (?:this|it) out|check out this (?:deal|product|item)?|(?:have a )?look at this|i found this|"
+    r"\b(?:on|at|via|from) (?:amazon|flipkart)(?:\.[a-z.]+)?\b|:\s*amazon\.[a-z.]+\s*:[^\n]*|\bamazon\.[a-z.]+\b",
+    re.IGNORECASE)
+NOT_A_NAME = {"is", "are", "can", "could", "should", "would", "will", "does", "do", "did", "what", "which", "how",
+              "why", "when", "where", "who", "please", "pls", "tell", "check", "hey", "hi", "hello", "ok", "safe",
+              "real", "fake", "genuine", "kya", "क्या", "यह", "ये"}
+
+
+def shared_name(message: str) -> str | None:
+    """The product name a shop app's Share button puts next to the link ("Lifelong Protein Shaker LLSHB04 ...
+    https://amzn.in/d/x"), or None when the words around the link are only a question or a greeting."""
+    text = SHARE_NOISE.sub(" ", URL.sub(" ", message or ""))
+    names = []
+    for chunk in re.split(r"\n+", text):
+        chunk = re.sub(r"[^?\n]*\?", " ", chunk)  # questions are the shopper's, not the product's name
+        chunk = re.sub(r"\s+", " ", chunk).strip(" -:|,.!\"'")
+        words = chunk.split()
+        if len(words) >= 2 and words[0].lower().strip(",") not in NOT_A_NAME:
+            names.append(chunk)
+    return max(names, key=len)[:200] if names else None
+
+
+def name_from_url(url: str) -> str | None:
+    """The product name shops put in their links: amazon.in/Lifelong-Protein-Shaker-LLSHB04/dp/B0CFFBZ23F,
+    flipkart.com/lifelong-shaker/p/itm123. None for links without one (amzn.in/d/x, /dp/ASIN)."""
+    match = re.search(r"/([^/?#]+)/(?:dp|gp/product|p)/[A-Za-z0-9]", urlparse(url or "").path)
+    words = re.sub(r"[-_+]+", " ", unquote(match.group(1))).split() if match else []
+    return " ".join(words)[:200] if len(words) >= 2 else None
 
 
 def check_public(url: str) -> None:
