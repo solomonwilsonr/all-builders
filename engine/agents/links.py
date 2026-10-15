@@ -145,5 +145,9 @@ def read(url: str) -> dict:
     except BlockedLink:
         raise
     except httpx.HTTPError:
-        return {"url": url, "read": False}
-    return {**listing_from_html(clean(final), html), "read": True}
+        return {"url": url, "read": "none"}
+    listing = listing_from_html(clean(final), html)
+    # Big shops show servers less than they show shoppers (seen 15 Oct: Amazon gave Cloud Run the title but no price
+    # or reviews). Then the answer says so instead of reading "0 reviews" as a finding.
+    full = bool(listing.get("price")) or bool(listing.get("reviews"))
+    return {**listing, "read": "full" if full else "partial"}

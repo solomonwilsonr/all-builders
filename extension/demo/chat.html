@@ -182,7 +182,7 @@
       if (json.link) {
         linked = json.link;
         const what = `${linked.title || linked.url}${linked.price ? ` (Rs ${linked.price})` : ""}`;
-        add("sys", node("span", { className: "meta", textContent: `Now chatting about: ${what}, from your link${linked.page_read ? "" : " (the page could not be read)"}. Follow-up questions are about this product. "New chat" goes back to the product picker.` }));
+        add("sys", node("span", { className: "meta", textContent: `Now chatting about: ${what}, from your link${linked.page_read === "full" ? "" : linked.page_read === "partial" ? " (the shop showed SafeShelf only part of the page: no price or reviews)" : " (the page could not be read)"}. Follow-up questions are about this product. "New chat" goes back to the product picker.` }));
         $("q").placeholder = `Ask about ${(linked.title || "this product").slice(0, 60)}…`;
       }
     } catch (err) { pending.replaceChildren(node("div", { textContent: `Error: ${err.message}` })); }

@@ -55,22 +55,26 @@ async def check_link(url: str, tool_context: ToolContext) -> dict:
         listing = await asyncio.to_thread(links.read, url)
     except links.BlockedLink as problem:
         return {"error": f"SafeShelf can't open that link: {problem}"}
-    read_ok = listing.pop("read", False)
+    page = listing.pop("read", "none")  # full / partial (the shop showed the server only part of it) / none
     runtime.step(tool_context.agent_name, "read_link",
-                 (f"Read the page: {listing.get('title', '')[:80]} · price {listing.get('price')} · "
-                  f"{len(listing.get('reviews', []))} reviews") if read_ok else "The page could not be read; checking by URL",
-                 time.monotonic() - started)
+                 (f"Read the page ({page}): {listing.get('title', '')[:80]} · price {listing.get('price')} · "
+                  f"{len(listing.get('reviews', []))} reviews") if page != "none" else
+                 "The page could not be read; checking by URL", time.monotonic() - started)
     found = await pipeline.investigate({"listing": listing, "product_id": "unmatched",
                                          "language": tool_context.state.get("language", "en")})
     link = {"url": listing.get("url"), "title": listing.get("title"), "brand": listing.get("brand"),
-            "price": listing.get("price"), "currency": listing.get("currency"), "page_read": read_ok,
+            "price": listing.get("price"), "currency": listing.get("currency"), "page_read": page,
             "reviews_on_page": len(listing.get("reviews", [])), "product_id": found.get("product_id"),
             # what the page's buyers said, lowest stars first, so follow-up questions can be answered from it
             "reviews": [{"rating": r.get("rating"), "title": r.get("title"), "text": (r.get("text") or "")[:400]}
                         for r in sorted(listing.get("reviews", []), key=lambda r: r.get("rating") or 5)[:10]],
             "verdict": found.get("verdict"), "investigation_id": found.get("investigation_id")}
     runtime.current().results["checkLink"] = link
-    return {**link, "summary": found["messages"][0]["text"], "label": found.get("label")}
+    note = {"partial": "The shop showed SafeShelf's server only part of this page (no price or reviews), so "
+                       "price and reviews were not checked. Say so, and suggest opening the page with the SafeShelf "
+                       "extension, which reads it in the shopper's own browser.",
+            "none": "The page could not be opened, so only the link itself was checked. Say so."}.get(page)
+    return {**link, "summary": found["messages"][0]["text"], "label": found.get("label"), **({"note": note} if note else {})}
 
 
 def alternative_finder(model_name: str) -> LlmAgent:
