@@ -98,6 +98,24 @@ paths:
       responses:
         '200': {description: Alternatives, content: {application/json: {schema: {type: object, required: [product_id, alternatives]}}}}
 
+  /v1/products/{product_id}/case-file:
+    get:
+      summary: Exportable case file - findings with their evidence and quotes, the code rule behind the verdict, awaiting human review (never sent)
+      operationId: getCaseFile
+      x-mock: case_file.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Case file (JSON plus a printable markdown copy), content: {application/json: {schema: {type: object, required: [case_file_id, product_id, verdict, decided_by, findings, review_gate, markdown]}}}}
+
+  /v1/products/{product_id}/owner-guidance:
+    get:
+      summary: Already bought it? What to do now - stop or take care, recall remedy, return, report, safer options
+      operationId: getOwnerGuidance
+      x-mock: owner_guidance.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Steps for an owner, content: {application/json: {schema: {type: object, required: [product_id, verdict, situation, headline, steps]}}}}
+
   /v1/listings/trust-check:
     post:
       summary: '"Is it real?": copied photos, impossible price, website age, impossible specs'

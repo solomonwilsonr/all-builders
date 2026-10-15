@@ -1,0 +1,58 @@
+{
+  "product_id": "SS-P-10291",
+  "verdict": "amber",
+  "situation": "hazard_reports",
+  "headline": "Not recalled, but other buyers report safety problems. Check yours.",
+  "steps": [
+    {
+      "n": 1,
+      "title": "Check yours for: USB-C port overheating during charging",
+      "detail": "9 buyers reported this, 4 with photos. Don't use it unattended, overnight, or on a bed or sofa, and unplug it when you're not using it. Stop using it if it gets very hot, smells of burning, swells or shows scorch marks.",
+      "evidence_ids": [
+        "EV-201",
+        "EV-207",
+        "EV-215"
+      ]
+    },
+    {
+      "n": 2,
+      "title": "If yours shows the same problem, stop using it and ask for a return",
+      "detail": "Contact the seller or marketplace while the return window is open, and describe what you saw. A photo helps."
+    },
+    {
+      "n": 3,
+      "title": "Report what happened to you",
+      "detail": "If it hurt someone, overheated, sparked or broke dangerously, report it. SafeShelf can pre-fill the regulator's form from its case file; you check it and submit it yourself.",
+      "url": "https://consumerhelpline.gov.in/"
+    },
+    {
+      "n": 4,
+      "title": "Save it to My Shelf",
+      "detail": "SafeShelf tells you if it is recalled later."
+    }
+  ],
+  "recalls": [],
+  "regulator": {
+    "name": "National Consumer Helpline, India (with the BIS registration number if the label shows one)",
+    "url": "https://consumerhelpline.gov.in/"
+  },
+  "safer_alternatives": [
+    {
+      "product_id": "SS-P-60002",
+      "relationship": "similar_product",
+      "brand": "SafeVolt",
+      "model": "SV-65",
+      "seller": "SafeVolt Official",
+      "seller_authorised": true,
+      "price": 1499,
+      "currency": "INR",
+      "hazard_reports": 0,
+      "reviews_read": 24,
+      "certifications_valid": true,
+      "differences": [],
+      "url": "https://example-deals-store.test/safevolt-65w",
+      "reason": "similar usb charger, no official recall; 0 hazard reports in 24 reviews read; authorised seller"
+    }
+  ],
+  "label": "Guidance from AI findings and official recalls - not a regulatory determination or legal advice"
+}

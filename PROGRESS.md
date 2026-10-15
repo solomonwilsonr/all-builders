@@ -152,6 +152,13 @@ All code is on the `person-1` branch. Tests: 38 engine + 19 API, all passing.
 - **Sunbeam heated blanket (B0BSKMH9GX, never recalled):** 74 own-experience fire/burn reports (3 with damage confirmed in photos) and 13 shock reports in 7,430 reviews. Strongest candidate; check by hand on Day 5 and report to the regulator.
 - Recalled products still listed today (Firecrawl): e.g. the recalled AmazonBasics ceramic heater on amazon.com.
 
+### 4.7 After the verdict: owners and reviewers (15 Oct)
+- **Already bought it?** `GET /v1/products/{id}/owner-guidance` (`engine/owner.py`): numbered steps for someone who owns the product. Stop and get the remedy (recall), check yours for the reported problem (top 3 hazards), return it, report it, save to My Shelf, safer options. Only code rules on the safety answer, no new Gemini text; each step links its evidence IDs. Sunbeam blanket: amber, 7 steps, ~20 s the first time (safer options), then fast.
+- **Case file:** `GET /v1/products/{id}/case-file` (`engine/case_file.py`): one exportable record built from the regulator evidence pack: verdict plus the code rule that set it ("Gemini read the reviews; it did not set the verdict"), findings with exact quotes and evidence IDs, recalls, same-hardware listings, where to file it, and `review_gate` (awaiting human review, never sent). Also returned as a printable Markdown copy.
+- **Lab opens on a real product:** the explorer is pre-filled with the Sunbeam blanket, so a judge presses one button, with no setup or sign-in. New buttons: "Already bought it?", "Case file", "Download case file".
+- Both endpoints are also MCP tools (`owner_guidance`, `case_file`) and in `make warm`.
+- **Sunbeam check:** CPSC recall 23157 covers Sunbeam **Queen** blankets, model **32810027** (sold Sep 2022–Jan 2023 via Star Elite). Ours is the **Twin** Royal Ultra, model BSF9GTS-R595-13A00, so it is **not** that recall. The notice gives the model number only in a photo caption, so the recall check had marked it "possible match, under review". Fixed: `recalls.notice_models` now also reads model numbers from photo captions (added to what Gemini reads in the description, never instead of it). The stale link row was removed from the local database; **Cloud SQL still has it** (one row: `cpsc:23157` / `SS-P-AMZ-B0BSKMH9GX`, `needs_review`). Still hand-check the label photo on Day 5.
+
 ## 5. Next steps (from 13 Oct)
 1. **Teammate:** switch the extension to the live API; send the demo page photos and the fake shop URL (`example-deals-store.test`).
 2. **Agree with the teammate:** an optional `reviews` field so the extension can send the reviews on the page for a live Radar check.

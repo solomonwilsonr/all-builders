@@ -7,6 +7,7 @@ const USED = {
   relationships: "Card → Copies; Explorer", duplicates: "Card → Copies → Find copies with AI", history: "Card → History; Explorer",
   alternatives: "Card → Safer options; Explorer", product: "Card → Details; Explorer", identify: "Card → Details → How was it identified?",
   report: "Card → Report", addShelfItem: "📚 Save to My Shelf", startAgentSession: "Chat under the result", getEvidence: "Evidence under chat answers",
+  caseFile: "Lab → Case file (download)", ownerGuidance: "Lab → Already bought it?",
   catalogScan: "Lab → Catalog scan", trace: "Lab → Investigation trace", bench: "Lab → SafeShelfBench",
 };
 const NOT_LIVE = "Not live on the SafeShelf API yet. Nothing is shown rather than example data.";
@@ -19,12 +20,13 @@ function show(into, v) {
         ...(/^https?:/.test(r.link || "") ? [el("a", { href: r.link, target: "_blank", rel: "noopener", textContent: "Open source" })] : [])))));
 }
 
-function load(into, op, args, key) {
+function load(into, op, args, key, onData) {
   into.replaceChildren(el("div", { className: "vnote", textContent: "Loading…" }));
   chrome.runtime.sendMessage({ type: "safeshelf:call", op, args }, (res) => {
     if (!res?.ok) return into.replaceChildren(el("div", { className: "nl", textContent: `Could not load this: ${res?.error || chrome.runtime.lastError?.message}` }));
     if (!res.result.live) return into.replaceChildren(el("div", { className: "nl", textContent: NOT_LIVE }));
     show(into, P[key](res.result.data));
+    onData?.(res.result.data);
   });
 }
 
@@ -47,9 +49,20 @@ document.querySelectorAll("[data-op]").forEach((b) => {
   b.onclick = () => {
     const pid = $("pid").value.trim();
     if (!pid) return show($("explore"), { title: "Enter a product ID first", rows: [] });
-    load($("explore"), b.dataset.op, { product_id: pid }, b.dataset.key);
+    $("case-dl").hidden = true;
+    load($("explore"), b.dataset.op, { product_id: pid }, b.dataset.key, b.dataset.key === "caseFile" ? offerDownload : undefined);
   };
 });
+// The case file's printable copy, saved as a Markdown file.
+function offerDownload(d) {
+  const b = $("case-dl");
+  b.hidden = !d.markdown;
+  b.onclick = () => {
+    const a = el("a", { href: URL.createObjectURL(new Blob([d.markdown], { type: "text/markdown" })), download: `safeshelf-case-${d.product_id}.md` });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+}
 $("bench").onclick = () => load($("bench-out"), "bench", {}, "bench");
 $("trace").onclick = () => {
   const id = $("inv").value.trim();

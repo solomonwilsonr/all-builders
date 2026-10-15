@@ -86,6 +86,18 @@ async def safer_alternatives(product_id: str, investigation_id: str | None = Non
 
 
 @mcp.tool(annotations=READ_ONLY)
+async def owner_guidance(product_id: str, investigation_id: str | None = None) -> dict:
+    """For someone who already owns the product: what to do now (stop or take care, recall remedy, return, report)."""
+    return await _call("GET", f"/v1/products/{product_id}/owner-guidance", investigation_id)
+
+
+@mcp.tool(annotations=READ_ONLY)
+async def case_file(product_id: str, investigation_id: str | None = None) -> dict:
+    """Exportable case file: findings with evidence IDs and quotes, the code rule behind the verdict. Never sent."""
+    return await _call("GET", f"/v1/products/{product_id}/case-file", investigation_id)
+
+
+@mcp.tool(annotations=READ_ONLY)
 async def product_history(product_id: str, investigation_id: str | None = None) -> dict:
     """Everything that ever changed about this product (identity, links, hazard findings, reports) and its recalls."""
     return await _call("GET", f"/v1/products/{product_id}/history", investigation_id)

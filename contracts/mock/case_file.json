@@ -1,0 +1,93 @@
+{
+  "case_file_id": "EV-9C41D2E0",
+  "product_id": "SS-P-10291",
+  "created_at": "2026-10-15T09:00:00Z",
+  "product": {
+    "product_id": "SS-P-10291",
+    "brand": "Kelvo",
+    "model": "CX-65",
+    "category": "usb_charger",
+    "attributes": {
+      "power_watts": 65
+    }
+  },
+  "listings": [
+    {
+      "marketplace": "demo",
+      "url": "https://example-deals-store.test/65w-charger"
+    }
+  ],
+  "verdict": "amber",
+  "decided_by": {
+    "verdict": "code",
+    "rule": "Amber because at least one medium- or high-severity hazard has two or more independent first-hand reports, or one with a photo. Not recalled.",
+    "ai_role": "Gemini read the reviews and photos; it did not set the verdict"
+  },
+  "official_status": {
+    "recalled": false,
+    "checked": [
+      "CPSC"
+    ],
+    "recall_ids": [],
+    "recall_ids_under_review": []
+  },
+  "findings": [
+    {
+      "hazard_type": "fire_burn",
+      "mechanism": "USB-C port overheating during charging",
+      "severity": "high",
+      "independent_reports": 9,
+      "with_photos": 4,
+      "first_seen": "2026-07-02",
+      "trend": "rising",
+      "status": "under_review",
+      "evidence_ids": [
+        "EV-201",
+        "EV-207",
+        "EV-215"
+      ],
+      "counterevidence": "Most reports involve third-party cables",
+      "quotes": [
+        {
+          "evidence_id": "EV-201",
+          "date": "2026-07-02",
+          "rating": 1,
+          "quote": "The port melted on the first day, photo attached."
+        },
+        {
+          "evidence_id": "EV-207",
+          "date": "2026-08-11",
+          "rating": 1,
+          "quote": "Got too hot to touch while charging my laptop and smelled of burning plastic."
+        }
+      ]
+    }
+  ],
+  "linked_recalls": [],
+  "same_hardware": [
+    {
+      "target_id": "SS-P-20019",
+      "relationship": "exact_model",
+      "status": "verified",
+      "confidence": 0.98,
+      "evidence_ids": [
+        "EV-101",
+        "EV-102"
+      ]
+    }
+  ],
+  "reviews_checked": 212,
+  "review_gate": {
+    "status": "awaiting_human_review",
+    "requires_human_approval": true,
+    "submitted": false,
+    "next_step": "A person checks each finding against its evidence, then files the report on the regulator's own site."
+  },
+  "regulator": {
+    "name": "National Consumer Helpline, India (with the BIS registration number if the label shows one)",
+    "url": "https://consumerhelpline.gov.in/"
+  },
+  "privacy": "No reviewer names or contact details are included.",
+  "label": "AI findings for review by a person - not a regulatory determination",
+  "markdown": "# SafeShelf case file EV-9C41D2E0\n\n**Product:** Kelvo CX-65 (usb charger) · `SS-P-10291`\n**Created:** 2026-10-15T09:00:00Z\n**Verdict:** Amber: hazard reports worth a person's review\n**Why (rule set by code):** Amber because at least one medium- or high-severity hazard has two or more independent first-hand reports, or one with a photo. Not recalled.\n**Status:** awaiting review by a person. Nothing has been sent to anyone.\n\n## Hazard findings\n\n### fire burn: USB-C port overheating during charging\n9 independent report(s), 4 with photos, severity high, first seen 2026-07-02, trend rising.\nEvidence: EV-201, EV-207, EV-215\n\n> \"The port melted on the first day, photo attached.\" (EV-201, 2026-07-02)\n> \"Got too hot to touch while charging my laptop and smelled of burning plastic.\" (EV-207, 2026-08-11)\n\n## Same hardware sold under other listings\n\n- SS-P-20019: exact model (verified)\n\n## Where to file it\n\nNational Consumer Helpline, India (with the BIS registration number if the label shows one): https://consumerhelpline.gov.in/\n\nReviewer names and contact details are not included.\n\n_AI findings for review by a person - not a regulatory determination_"
+}

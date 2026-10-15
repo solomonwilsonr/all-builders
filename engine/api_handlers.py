@@ -6,11 +6,13 @@ from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
 from engine import (
+    case_file,
     catalog,
     evidence,
     gemini,
     identity,
     marks,
+    owner,
     page_safety,
     passport,
     safety,
@@ -141,6 +143,8 @@ HANDLERS = {
     "getProduct": by_product(passport.product),
     "getHistory": by_product(passport.history),
     "getAlternatives": by_product(passport.alternatives),
+    "getCaseFile": by_product(case_file.case_file),
+    "getOwnerGuidance": by_product(owner.owner_guidance),
     "createReport": create_report,
     "getBenchResults": bench_results,
     "startAgentSession": agent_handler.start_agent_session,

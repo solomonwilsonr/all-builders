@@ -72,3 +72,18 @@ def test_family_named_without_models_goes_to_review(monkeypatch):
     monkeypatch.setattr(recalls, "notice_models", lambda recall: set())
     vrurc = normalise({"brand": "VRURC", "model": "T1159", "category": "portable_charger"})
     assert recalls.classify(vrurc, notice) == "needs_review"
+
+
+def test_model_numbers_are_read_from_photo_captions(monkeypatch):
+    scope = {"Images": [
+        {"Caption": "Recalled Sunbeam Queen Size Electric Heated Blanket"},
+        {"Caption": "The Sunbeam logo and model number 32810027 are printed on the wash label affixed to the blanket"},
+        {"Caption": "Example product label with model number and date code Model Number: 100107"},
+        {"Caption": "Model Year 2019 Images"},
+        {"Caption": "Label with model number and serial number"},
+        {"Caption": "Back of recalled power banks showing Model No. PWB1071"}]}
+    assert recalls.caption_models(scope) == {"32810027", "PWB1071"}
+    monkeypatch.setattr(recalls, "description_models", lambda recall, products: set())  # Gemini found none
+    blanket = {"id": "cpsc:23157", "scope_json": {**scope, "Products": [{"Name": "Sunbeam Queen", "Model": ""}]}}
+    twin = normalise({"brand": "Sunbeam", "model": "BSF9GTS-R595-13A00", "category": "heated_blanket"})
+    assert recalls.classify(twin, blanket) is None  # another model: not this product, no review needed

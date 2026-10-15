@@ -80,6 +80,23 @@
         ...(d.ai_findings || []).map((f) => ({ icon: "⚠️", text: `${f.independent_reports ?? "?"} reports of ${f.mechanism || f.hazard_type} (${String(f.status).replace(/_/g, " ")})`, sub: [f.severity && `severity ${f.severity}`, f.with_photos != null && `${f.with_photos} with photos`, ev(f.evidence_ids)].filter(Boolean).join(" · ") }))];
       return vm("Safety findings", rows, "");
     },
+    ownerGuidance(d) {
+      const icon = { recalled: "⛔", hazard_reports: "⚠️", no_known_issue: "✅", not_enough_evidence: "❔" };
+      const rows = [{ icon: icon[d.situation] || "❔", text: d.headline }, ...(d.steps || []).map((s) => ({ icon: String(s.n), text: s.title, sub: [s.detail, ev(s.evidence_ids)].filter(Boolean).join(" · "), link: s.url }))];
+      (d.safer_alternatives || []).forEach((a) => rows.push({ icon: "🛡", text: `Safer option: ${[a.brand, a.model].filter(Boolean).join(" ")}`, sub: a.reason, link: a.url }));
+      return { ...vm("Already bought it?", rows, ""), note: d.label };
+    },
+    caseFile(d) {
+      const rows = [{ icon: "⚖️", text: `Verdict: ${String(d.verdict).replace(/_/g, " ")}`, sub: d.decided_by?.rule },
+        { icon: "🤖", text: d.decided_by?.ai_role || "" },
+        ...(d.linked_recalls || []).map((r) => ({ icon: "⛔", text: `Recall ${r.recall_id}: ${r.title}`, sub: [day(r.notice_date), r.match].filter(Boolean).join(" · "), link: r.url }))];
+      (d.findings || []).forEach((f) => {
+        rows.push({ icon: "⚠️", text: `${f.independent_reports} reports of ${f.mechanism}`, sub: [`severity ${f.severity}`, `${f.with_photos} with photos`, `first seen ${f.first_seen}`, ev(f.evidence_ids)].join(" · ") });
+        (f.quotes || []).forEach((q) => rows.push({ icon: "❝", text: q.quote, sub: [q.evidence_id, q.date].filter(Boolean).join(" · ") }));
+      });
+      rows.push({ icon: "🧑‍⚖️", text: `Awaiting a person's review. Not sent to anyone.`, sub: d.review_gate?.next_step, link: d.regulator?.url });
+      return { ...vm(`Case file ${d.case_file_id}`, rows.filter((r) => r.text), ""), note: d.label };
+    },
     report(d) {
       return vm("Report received", [{ icon: "✅", text: `Report ${d.report_id} ${d.status}`, sub: d.pii_masked ? "Personal details were masked automatically." : undefined }], "");
     },

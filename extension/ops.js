@@ -11,6 +11,8 @@ export const OPS = {
   history: { id: "getHistory", method: "GET", path: (a) => `/v1/products/${enc(a.product_id)}/history` },
   certifications: { id: "getCertifications", method: "GET", path: (a) => `/v1/products/${enc(a.product_id)}/certifications` },
   alternatives: { id: "getAlternatives", method: "GET", path: (a) => `/v1/products/${enc(a.product_id)}/alternatives` },
+  caseFile: { id: "getCaseFile", method: "GET", path: (a) => `/v1/products/${enc(a.product_id)}/case-file` },
+  ownerGuidance: { id: "getOwnerGuidance", method: "GET", path: (a) => `/v1/products/${enc(a.product_id)}/owner-guidance` },
   identify: { id: "identifyProduct", method: "POST", path: () => "/v1/products/identify", body: (a) => a.listing },
   duplicates: { id: "findDuplicates", method: "POST", path: () => "/v1/products/duplicates", body: (a) => ({ product_id: a.product_id, refresh: !!a.refresh }) },
   report: { id: "createReport", method: "POST", path: () => "/v1/reports", body: (a) => ({ product_id: a.product_id, description: a.description, photo_urls: a.photo_urls || [] }) },

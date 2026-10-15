@@ -83,3 +83,4 @@ warm:           ## before a demo or recording: run every demo check once so the 
 		curl -s -o /dev/null -w "safety $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/safety; \
 		curl -s -o /dev/null -w "certifications $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/certifications; done
 	@for p in SS-P-10291 SS-P-AMZ-B0BSKMH9GX; do \
+		curl -s -o /dev/null -w "owner-guidance $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/owner-guidance; done

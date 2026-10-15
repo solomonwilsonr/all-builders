@@ -23,11 +23,13 @@
 
   <section class="card" aria-labelledby="h-explore">
     <h2 id="h-explore">Product explorer</h2>
-    <p class="muted">Enter a product ID (for example <code>SS-P-AMZ-B0B4SCK38N</code>). These are database reads on the API.</p>
-    <div class="row"><input id="pid" type="text" aria-label="Product ID" placeholder="SS-P-…">
+    <p class="muted">Already filled in with a real Amazon.com product: a heated blanket with fire and shock reports from buyers, never recalled. Press any button, or enter another product ID.</p>
+    <div class="row"><input id="pid" type="text" aria-label="Product ID" placeholder="SS-P-…" value="SS-P-AMZ-B0BSKMH9GX">
       <button data-op="product" data-key="product">Details</button><button data-op="safety" data-key="safety">Safety</button>
       <button data-op="certifications" data-key="certifications">Marks</button><button data-op="relationships" data-key="relationships">Copies</button>
-      <button data-op="history" data-key="history">History</button><button data-op="alternatives" data-key="alternatives">Safer options</button></div>
+      <button data-op="history" data-key="history">History</button><button data-op="alternatives" data-key="alternatives">Safer options</button>
+      <button data-op="ownerGuidance" data-key="ownerGuidance">Already bought it?</button><button data-op="caseFile" data-key="caseFile">Case file</button>
+      <button id="case-dl" type="button" hidden>Download case file</button></div>
     <div id="explore" role="status"></div>
   </section>
 
