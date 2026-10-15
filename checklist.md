@@ -51,6 +51,7 @@ Give it a product listing and it answers two questions:
 - [x] Model numbers read right (16 Oct): "Convertible 5-in-1" was taken as model "IN1" on a Samsung fridge on Amazon.in, and long codes like RS76CG8003S9HL were missed; the shop's own "Model number" now comes first. **Needs `make deploy-api`** to reach the live API
 - [x] Chat page (`extension/demo/chat.html`) rebuilt for shoppers: example questions to start, live agent steps, paste or drop a screenshot, English/हिन्दी switch, works on a phone; developer controls moved to a Tools drawer
 - [x] WhatsApp bot built and tested: link or photo in, Hindi or English text + voice note out
+- [x] Other JAPAC shops (16 Oct): the website-age check now looks up the shop itself on Japanese and South-East Asian addresses. Before, `item.rakuten.co.jp` was looked up as `co.jp`, and `.com.sg`, `.com.my`, `.co.id`, `.co.th` and `.com.ph` were wrong the same way. Shopee, Lazada, Rakuten, Tokopedia, Mercari, Qoo10, Kogan, Trade Me and others now count as big marketplaces, so the seller is judged rather than the website. On shops the extension can't read, the extension now tells people to send the link or a screenshot to chat or WhatsApp. **Needs `make deploy-api`** to reach the live API
 
 ---
 
@@ -73,6 +74,13 @@ Give it a product listing and it answers two questions:
 - [ ] Merge `person-1` into `main`, update the README, make the GitHub repo public
 - [ ] Final `make bench` and `make eval-agents`; `make warm` before recording
 - [ ] Submit: deployed link, public repo, video, deck
+
+**Other JAPAC shops (after submission unless time allows)**
+Today: Amazon (India, Japan, Australia, Singapore, US) and Flipkart work fully. Any other shop works by screenshot, and by pasted link with less detail.
+- [ ] Extension on Shopee, Lazada, Rakuten, Myntra, Meesho, Tokopedia: add them to `manifest.json` and read title, price and brand from the shop's schema.org product data. Test on real pages first, because some shops may hide that data or block requests
+- [ ] Pasted links from those shops: Shopee, Lazada and Tokopedia build the page with JavaScript, so the server reads little. Read their schema.org data, or open the page in the Research Agent's headless browser
+- [ ] Reference prices and photos use only Amazon.in, Amazon.com and Flipkart (`REFERENCE_MARKETPLACES`). Add Amazon.co.jp, .com.au and .sg so non-Indian listings have a same-currency price to compare
+- [ ] Change the popup and README wording once more shops are supported
 
 **Nice to have**
 - [ ] My Shelf backend (still a mock)

@@ -47,6 +47,12 @@ def test_website_age_from_demo_data_and_rdap_shape(monkeypatch):
     assert trust.age_from_rdap({"events": [{"eventAction": "registration", "eventDate": "1997-09-15T04:00:00Z"}]}) \
         == date(1997, 9, 15)
     assert trust.registrable("shop.brand.co.in") == "brand.co.in"
+    # JAPAC: the shop's own domain, never the country's ("co.jp"), and big JAPAC marketplaces are skipped
+    assert trust.registrable("item.rakuten.co.jp") == "rakuten.co.jp"
+    assert trust.registrable("www.brandstore.com.my") == "brandstore.com.my"
+    assert trust.registrable("shop.example.co.id") == "example.co.id"
+    for url in ("https://shopee.sg/x-i.1.2", "https://www.lazada.co.th/products/x.html", "https://item.rakuten.co.jp/s/x/"):
+        assert trust.website_check(url)["result"] == "skipped"
 
 
 def test_hidden_instructions_and_wording():

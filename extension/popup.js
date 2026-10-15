@@ -58,6 +58,6 @@ document.getElementById("check").addEventListener("click", async () => {
     if (res?.ok) return window.close();
     say("This isn't a product page. Open one product, then press Check this page (results pages have a Check button on each card).");
   } catch (_) {
-    say("SafeShelf doesn't work on this site yet. Open a product on Amazon or Flipkart.");
+    say("SafeShelf can't read this shop's pages yet. Send the link or a screenshot to SafeShelf chat or WhatsApp instead, or open the product on Amazon or Flipkart.");
   }
 });

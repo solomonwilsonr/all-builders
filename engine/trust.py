@@ -33,8 +33,12 @@ NEW_DOMAIN_DAYS = 90
 PHASH_MAX_DISTANCE = 8
 MRP_DEEP_DISCOUNT = 0.40  # below 40% of the listing's own M.R.P.: inflated M.R.P.s are common, so unknown, not a flag
 MARKETPLACES = ("amazon.", "flipkart.", "meesho.", "myntra.", "snapdeal.", "jiomart.", "tatacliq.", "ebay.",
-                "walmart.", "etsy.", "aliexpress.", "temu.")
-TWO_PART_TLDS = ("co.in", "co.uk", "com.au", "net.in", "org.in", "co.nz")
+                "walmart.", "etsy.", "aliexpress.", "temu.",
+                # JAPAC: Japan, South-East Asia, Australia / New Zealand
+                "rakuten.", "mercari.", "shopping.yahoo.", "qoo10.", "shopee.", "lazada.", "tokopedia.",
+                "bukalapak.", "blibli.", "tiki.vn", "zalora.", "kogan.", "trademe.")
+TWO_PART_TLDS = ("co.in", "net.in", "org.in", "co.uk", "com.au", "net.au", "org.au", "co.nz", "org.nz", "co.jp",
+                 "ne.jp", "or.jp", "com.sg", "com.my", "co.id", "co.th", "com.ph", "com.vn")
 REFERENCE_MATCHES = {"url", "model_number"}
 HIDDEN = re.compile(
     r"ignore (all |any |your |the )?(previous|prior|above|earlier) instructions|you are an? (ai|assistant|agent)|"
