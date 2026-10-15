@@ -30,7 +30,7 @@ async def research(req: ResearchRequest, x_research_token: str = Header(default=
         raise HTTPException(status_code=422, detail="Give a brand and a model number")
     mode = "computer_use" if req.mode == "computer_use" else "scripted"
     return await browser.research(req.brand[:80], req.model[:80], req.sources, mode,
-                                  budget_s=240 if mode == "computer_use" else 100)
+                                  budget_s=240 if mode == "computer_use" else 160)
 
 
 @app.get("/health")

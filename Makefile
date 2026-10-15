@@ -12,7 +12,7 @@ API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
 # The Research Agent service (make deploy-research); empty = the API answers research requests with 503.
 RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research bench warm
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research bench warm eval-agents
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
 	node extension/tests/run_all.mjs
@@ -73,6 +73,9 @@ bench:          ## M2 backtest: reviews from the bucket (once), Gemini labels (c
 	@mkdir -p data/raw/amazon_reviews && gcloud storage cp --no-clobber \
 		"gs://safeshelf-data-03d8d835/amazon_reviews_backtest/reviews_*.jsonl" data/raw/amazon_reviews/
 	cd engine && PYTHONPATH=.. uv run --python 3.12 python ../bench/backtest.py
+
+eval-agents:    ## agent test set (JAPAC cases with known answers) against API_URL; writes bench/agent_eval_results.json
+	API_URL=$(API_URL) engine/.venv/bin/python bench/agent_eval.py
 
 warm:           ## before a demo or recording: run every demo check once so the first click answers in seconds
 	@for body in \

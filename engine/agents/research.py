@@ -16,7 +16,7 @@ from engine.agents import cache
 RESEARCH_URL = os.environ.get("SAFESHELF_RESEARCH_URL", "").rstrip("/")
 TOKEN = os.environ.get("SAFESHELF_RESEARCH_TOKEN", "")
 CACHE_S = 24 * 3600
-TIMEOUT_S = int(os.environ.get("SAFESHELF_RESEARCH_TIMEOUT", "150"))
+TIMEOUT_S = int(os.environ.get("SAFESHELF_RESEARCH_TIMEOUT", "240"))  # the browser has 160 s a site
 log = logging.getLogger(__name__)
 
 
