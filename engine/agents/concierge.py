@@ -6,6 +6,7 @@ returned in this request. If every model fails, the one-call chat (engine/chat.p
 """
 import asyncio
 import logging
+import re
 
 from fastapi import HTTPException
 from google.adk.agents import LlmAgent
@@ -15,6 +16,7 @@ from engine import chat, chat_core
 from engine.agents import guard, runtime, tools
 
 log = logging.getLogger(__name__)
+DEVANAGARI = re.compile(r"[\u0900-\u097F]")
 
 HOW_TO_WORK = """
 
@@ -80,6 +82,8 @@ async def chat_session(body: dict) -> dict:
         raise HTTPException(status_code=422, detail="Give a message")
     product_id = body.get("product_id")
     language = body.get("language") if body.get("language") in chat_core.LANGUAGES else "en"
+    if DEVANAGARI.search(message):  # a question typed in Hindi gets a Hindi answer, whatever the picker says
+        language = "hi"
     session_id = body.get("session_id") or runtime.new_id("SS-A-")
     unmatched = chat_core.is_unmatched(product_id)
     prompt, seen = chat_core.prepare(
@@ -89,7 +93,7 @@ async def chat_session(body: dict) -> dict:
         text, _ = await runtime.run(concierge, prompt, timeout_s=40)
     except Exception as error:  # noqa: BLE001  every agent model failed: the one-call chat still answers
         log.warning("Concierge failed (%s); one-call chat answers", type(error).__name__)
-        fallback = await asyncio.to_thread(chat.answer, {**body, "mode": "chat"})
+        fallback = await asyncio.to_thread(chat.answer, {**body, "mode": "chat", "language": language})
         fallback["steps"] = runtime.current().steps + [{"n": len(runtime.current().steps) + 1, "agent": "shelf_chat",
                                                         "tool": "fallback", "summary": "Answered in one model call"}]
         return fallback

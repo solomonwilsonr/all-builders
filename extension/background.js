@@ -31,7 +31,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
     "safeshelf:open-lab": async () => chrome.tabs.create({ url: chrome.runtime.getURL("lab.html") }),
     "safeshelf:evidence": async () => { await mustBeOn(); return getEvidence(msg.ids || []); },
     "safeshelf:chat": async () => { await mustBeOn(); return askAgent(msg); },
-    "safeshelf:agent": async () => { await mustBeOn(); return agentSession(msg.body || {}); }, // Investigate and the other agents
+    "safeshelf:agent": async () => { await mustBeOn(); return agentSession(msg.body || {}, Math.min(Number(msg.timeout) || 150000, 300000)); }, // Investigate and the other agents
     "safeshelf:save": async () => {
       await mustBeOn();
       // My Shelf lives in this browser. The API is only called when SHELF_SYNC is on (config.js).

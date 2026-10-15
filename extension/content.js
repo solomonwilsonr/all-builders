@@ -23,7 +23,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
   // One entry per shop. Selectors are best effort: shops change them, so each has fallbacks.
   const GENERIC = {
-    isProduct: () => true,
+    isProduct: () => !document.body?.hasAttribute("data-safeshelf-skip"), // e.g. the chat test console (demo/chat.html)
     title: "h1",
     price: null,
     seller: null,
@@ -332,6 +332,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
     /* Evidence */
     .evidence { margin-top:6px; }
+    details.steps { margin-top:6px; font-size:12px; color:var(--muted); } details.steps summary { cursor:pointer; font-weight:600; }
+    details.steps ol { margin:4px 0 0; padding-left:18px; } .draft dt { font-weight:700; font-size:13px; margin-top:6px; } .draft dd { margin:0 0 2px; font-size:13px; }
     .ev-h { font-weight:700; font-size:13px; color:var(--ink); }
     .ev-item { background:#fff; border:1px solid var(--line); border-radius:12px; padding:6px 10px; margin:6px 0; }
     .ev-title { font-size:12px; color:var(--muted); }
@@ -551,6 +553,22 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     return block;
   };
 
+  // What the agents did for an answer (tools read, hand-offs), from the API's own step list.
+  const STEP_WORDS = { gemini: "", safety: "read the safety record", product: "read the product", relationships: "read the copies and twins",
+    certifications: "read the safety marks", history: "read the history", alternatives: "read the safer options", evidence: "read the exact quotes" };
+  const stepsBlock = (steps) => {
+    const shown = (steps || []).filter((s) => s.tool !== "gemini" || /call|Wrote/.test(s.summary || ""));
+    if (!shown.length) return "";
+    const agent = (a) => ({ shelf_chat: "Shelf Chat", safer_alternative_finder: "Safer Alternative Finder", investigation_copilot: "Report copilot" }[a] || a);
+    return el("details", { className: "steps" }, el("summary", { textContent: `How SafeShelf answered (${shown.length} steps)` }),
+      el("ol", {}, ...shown.map((s) => el("li", { textContent: `${agent(s.agent)}: ${STEP_WORDS[s.tool] ? STEP_WORDS[s.tool] + " - " : ""}${s.summary}${s.seconds ? ` (${s.seconds} s)` : ""}` }))));
+  };
+  const agentCall = (body, timeout) => new Promise((resolve, reject) => {
+    try {
+      chrome.runtime.sendMessage({ type: "safeshelf:agent", body, timeout }, (res) => (res?.ok ? resolve(res.result) : reject(new Error(res?.error || chrome.runtime.lastError?.message || "no answer"))));
+    } catch (_) { reject(new Error("The extension was reloaded. Please refresh the page.")); }
+  });
+
   const level = (r) => {
     const both = [r.safe.level, r.real.level];
     return both.includes("red") ? "red" : both.includes("amber") ? "amber" : both.includes("unknown") ? "unknown" : "green";
@@ -704,11 +722,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             const speakA = el("button", { type: "button", className: "small", textContent: "Listen" });
             speakA.setAttribute("aria-label", "Read this answer aloud");
             speakA.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang.value === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
-            finish(a.text, [evidenceBlock(a.evidence_ids), ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []), speakA]);
+            finish(a.text, [evidenceBlock(a.evidence_ids), stepsBlock(a.steps), ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []), speakA]);
           });
         } catch (_) { thread.pop(); finish("The extension was reloaded. Please refresh the page."); }
       };
-      for (const q of ["Why this result?", "Is it safe to buy?", "What should I check before buying?"]) {
+      for (const q of ["Why this result?", "Is it safe to buy?", "Show me a safer one", "What should I check before buying?"]) {
         chips.append(el("button", { type: "button", textContent: q, onclick: () => ask(q) }));
       }
       form.onsubmit = (e) => { e.preventDefault(); ask(input.value); };
@@ -733,7 +751,19 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             costlyButton("Find copies with AI", "duplicates", "Search for copies of this product", () => loadPanel(found, "duplicates", { product_id: pid }, "duplicates"))), found);
         },
         history: () => lookup("history", "history"),
-        safer: () => lookup("alternatives", "alternatives"),
+        safer: () => {
+          if (!pid) return noMatch();
+          const said = el("div");
+          return el("div", {}, lookup("alternatives", "alternatives"), el("div", { className: "tools" },
+            costlyButton("Ask the Safer Alternative agent", "chat", "Ask the Safer Alternative agent to recommend one", async () => {
+              said.replaceChildren(el("div", { className: "vnote", textContent: "The Safer Alternative agent is comparing options…" }));
+              try {
+                const a = await agentCall({ mode: "alternatives", product_id: pid });
+                const m = a.messages?.[0] || {};
+                said.replaceChildren(el("p", { textContent: m.text || "No recommendation." }), evidenceBlock(m.evidence_ids || []), stepsBlock(a.steps));
+              } catch (err) { said.replaceChildren(el("div", { className: "notlive", textContent: `Could not ask the agent: ${err.message}` })); }
+            })), said);
+        },
         details: () => {
           if (!pid) return noMatch();
           const how = el("div");
@@ -755,7 +785,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
                 send.disabled = true;
                 loadPanel(out, "report", { product_id: pid, description: ta.value.trim() }, "report");
               };
-              d.replaceChildren(el("div", { className: "vnote", textContent: "Your report goes to SafeShelf. Personal details are masked, but please don't include any." }), ta, send, out);
+              d.replaceChildren(el("div", { className: "vnote", textContent: "Your report goes to SafeShelf. Personal details are masked, but please don't include any." }), ta, send, out, regulatorDraft(pid));
             });
           } catch (_) { d.replaceChildren(el("div", { className: "notlive", textContent: "The extension was reloaded. Please refresh the page." })); }
           return d;
@@ -782,6 +812,32 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       bar.append(...buttons);
       buttons[0].click();
       return el("div", {}, bar, area);
+    };
+
+    // The report copilot pre-fills a regulator's incident report from stored evidence. Nothing is sent: the shopper
+    // reviews it, copies it and files it on the regulator's own site.
+    const regulatorDraft = (pid) => {
+      const out = el("div");
+      const btn = costlyButton("Draft a report for the regulator", "chat", "Draft a regulator report from SafeShelf's evidence", async () => {
+        btn.disabled = true;
+        out.replaceChildren(el("div", { className: "vnote", textContent: "The report copilot is building the evidence pack…" }));
+        try {
+          const a = await agentCall({ mode: "report_draft", product_id: pid });
+          const rep = a.report || {};
+          const f = rep.fields || {};
+          const rows = [["Product", f.product_description], ["Brand / model", `${f.brand || ""} ${f.model || ""}`], ["Hazard", f.hazard_type], ["What buyers reported", f.incident_description],
+            ["Number of reports", f.number_of_reports], ["First reported", f.first_reported], ["Injuries", f.injuries_reported], ["Where sold", f.where_sold], ["Open questions", (f.open_questions || []).join(" ")]];
+          const text = `${rep.regulator?.name}\n${rows.map(([k, v]) => `${k}: ${v ?? ""}`).join("\n")}\nEvidence: ${(f.evidence_cited || []).join(", ")}`;
+          const copy = el("button", { type: "button", className: "small", textContent: "Copy draft" });
+          copy.onclick = () => navigator.clipboard?.writeText(text).then(() => { copy.textContent = "Copied"; });
+          const open = el("a", { href: rep.regulator?.url || "#", target: "_blank", rel: "noopener", textContent: `Open ${rep.regulator?.name || "the regulator's site"}` });
+          out.replaceChildren(el("div", { className: "notlive", textContent: "Draft only. SafeShelf has not sent anything: check every field, then file it yourself." }),
+            el("dl", { className: "draft" }, ...rows.filter(([, v]) => v !== undefined && v !== "").flatMap(([k, v]) => [el("dt", { textContent: k }), el("dd", { textContent: String(v) })])),
+            evidenceBlock(f.evidence_cited || []), el("div", { className: "row" }, copy, open));
+        } catch (err) { out.replaceChildren(el("div", { className: "notlive", textContent: `Could not draft it: ${err.message}` })); }
+        btn.disabled = false;
+      });
+      return el("div", {}, el("h3", { className: "vh", textContent: "Tell the regulator" }), el("div", { className: "tools" }, btn), out);
     };
 
     const render = (r) => {
@@ -1004,13 +1060,14 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             speakA.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang.value === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
             done(a.text, [
               evidenceBlock(a.evidence_ids),
+              stepsBlock(a.steps),
               ...(a.source === "mock" ? [el("div", { className: "muted", textContent: "Demo answer: not a real finding." })] : []),
               speakA,
             ]);
           });
         } catch (_) { done("The extension was reloaded. Please refresh the page."); }
       };
-      for (const q of ["Is this safe in a child's room?", "Is it genuine?", "Is there a safer option?"]) {
+      for (const q of ["Is this safe in a child's room?", "Is it genuine?", "Is there a safer option?", "Draft a refund request"]) {
         chips.append(el("button", { type: "button", textContent: q, onclick: () => ask(q) }));
       }
       form.onsubmit = (e) => { e.preventDefault(); ask(input.value); };

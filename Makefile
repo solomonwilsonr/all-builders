@@ -20,7 +20,7 @@ test-extension:  ## extension tests (plain Node, no Chrome, no network, no credi
 agents:         ## Shelf Chat agent service on :8081 (needs GOOGLE_API_KEY in .env or agents/.env)
 	cd agents && uv run --python 3.12 uvicorn server:app --reload --port 8081
 
-demo-pages:     ## serve the demo shop pages on :8090
+demo-pages:     ## serve the demo shop pages on :8090 (chat test console: http://localhost:8090/chat.html)
 	cd extension/demo && python3 -m http.server 8090
 
 api:            ## run the API locally on :8080 (MOCK=1 by default)

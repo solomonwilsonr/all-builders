@@ -71,8 +71,8 @@
   const HIGHLIGHT = "outline: 4px solid #4361ee !important; outline-offset: 3px !important; transition: transform .25s; transform: scale(1.04);";
   const WORDS = { red: "⛔ Danger or not real", amber: "⚠️ Be careful: under review", green: "✅ Nothing found in what was checked", unknown: "❔ Not enough evidence yet" };
 
-  const agent = (body) => new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage({ type: "safeshelf:agent", body }, (res) => (res?.ok ? resolve(res.result) : reject(new Error(res?.error || chrome.runtime.lastError?.message || "no answer"))));
+  const agent = (body, timeout) => new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: "safeshelf:agent", body, timeout }, (res) => (res?.ok ? resolve(res.result) : reject(new Error(res?.error || chrome.runtime.lastError?.message || "no answer"))));
   });
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -164,6 +164,40 @@
       foot.textContent = `${v.steps?.length || 0} agent steps · investigation ${v.investigation_id}: open the SafeShelf Lab → Investigation trace to see each step, model and cost. ${v.label || ""}`;
       out.append(box, summary, reasons, foot);
       now.textContent = `Done: ${box.textContent}`;
+      // The Research Agent: a browser on SafeShelf's server searches official recall sites for this model.
+      if (v.product_id) {
+        const deep = document.createElement("button");
+        deep.type = "button";
+        deep.textContent = "Check official recall sites (1-3 min)";
+        const found = document.createElement("div");
+        deep.onclick = async () => {
+          deep.disabled = true;
+          found.textContent = "The Research Agent is searching CPSC, the EU Safety Gate and ACCC…";
+          try {
+            const res = await agent({ mode: "research", product_id: v.product_id, session_id: sessionId }, 280000);
+            found.innerHTML = "";
+            const ul = document.createElement("ul");
+            for (const src of res.research?.sources || []) {
+              const li = document.createElement("li");
+              const hits = (src.matches || []).filter((m) => m.covers_this_model !== "no");
+              li.textContent = `${src.site}: ${src.status === "blocked" || src.status === "captcha" ? "the site blocked the automated check, so a person needs to look"
+                : hits.length ? hits.map((m) => `${m.covers_this_model === "yes" ? "notice names this model" : "may cover it"}: "${m.title}"`).join("; ") : "no notice found for this model"}`;
+              for (const m of hits.filter((x) => x.url).slice(0, 2)) {
+                const a = document.createElement("a");
+                a.href = m.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = " (open)";
+                li.append(a);
+              }
+              ul.append(li);
+            }
+            const note = document.createElement("p");
+            note.className = "muted";
+            note.textContent = `${res.research?.seconds ?? "?"} s. ${res.research?.label || ""}`;
+            found.append(ul, note);
+          } catch (err) { found.textContent = `The Research Agent could not finish: ${err.message}`; }
+          deep.disabled = false;
+        };
+        out.append(deep, found);
+      }
     } catch (err) {
       say(`SafeShelf could not finish: ${err.message}`, true);
     }

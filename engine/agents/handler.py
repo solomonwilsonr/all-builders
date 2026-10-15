@@ -14,13 +14,21 @@ import asyncio
 
 from fastapi import HTTPException, Request
 
-from engine import trace
+from engine import passport, trace
 from engine.agents import concierge, copilot, pipeline, research, runtime, shopper
 
 
 async def research_session(body: dict) -> dict:
+    pid = body.get("product_id")
+    if pid and not (body.get("brand") or body.get("model")):  # a known product: its own brand and model number
+        try:
+            product = await asyncio.to_thread(passport.product, pid)
+        except KeyError:
+            raise HTTPException(status_code=404, detail=f"Unknown product {pid}") from None
+        body = {**body, "brand": product.get("brand"), "model": product.get("model"),
+                "kind": body.get("kind") or product.get("category")}
     if not (body.get("brand") or body.get("model")):
-        raise HTTPException(status_code=422, detail="Give a brand and a model number")
+        raise HTTPException(status_code=422, detail="Give a product_id, or a brand and a model number")
     mode = "computer_use" if body.get("computer_use") else "scripted"
     result = await asyncio.to_thread(research.check, body.get("brand") or "", body.get("model") or "",
                                      body.get("kind") or "", body.get("sources"), mode)

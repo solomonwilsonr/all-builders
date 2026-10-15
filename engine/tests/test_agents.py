@@ -111,3 +111,27 @@ def test_investigate_needs_something_to_investigate():
     with pytest.raises(HTTPException) as err:
         asyncio.run(pipeline.investigate({"mode": "investigate", "product_id": "unmatched"}))
     assert err.value.status_code == 422
+
+
+def test_research_by_product_id_uses_its_brand_and_model(monkeypatch):
+    from engine.agents import handler
+    asked = {}
+    monkeypatch.setattr(handler.passport, "product", lambda pid: {"brand": "Kelvo", "model": "CX-65", "category": "usb_charger"})
+    monkeypatch.setattr(handler.research, "check", lambda brand, model, kind, sources, mode: asked.update(
+        brand=brand, model=model, kind=kind) or {"model": model, "sources": [], "seconds": 1})
+    runtime.start(None)
+    out = asyncio.run(handler.research_session({"mode": "research", "product_id": "SS-P-10291"}))
+    assert asked == {"brand": "Kelvo", "model": "CX-65", "kind": "usb_charger"} and out["mode"] == "research"
+
+
+def test_a_hindi_question_gets_a_hindi_answer(monkeypatch):
+    from engine.agents import concierge
+    seen = {}
+
+    async def fake_run(build, prompt, state=None, timeout_s=45):
+        seen["prompt"] = prompt
+        return "ठीक है", {}
+    monkeypatch.setattr(concierge.runtime, "run", fake_run)
+    runtime.start(None)
+    out = asyncio.run(concierge.chat_session({"product_id": "unmatched", "message": "क्या यह सुरक्षित है?", "language": "en"}))
+    assert out["language"] == "hi" and "Reply language: Hindi" in seen["prompt"]

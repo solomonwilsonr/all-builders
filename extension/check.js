@@ -66,12 +66,13 @@ export async function askAgent({ product_id, message, language, session_id, cont
   // Until the API serves a real chat handler it answers with a made-up example. Never show that as an answer.
   if (source === "mock") throw new Error("Shelf Chat is not live on the SafeShelf API yet: it only returns an example answer.");
   const answer = [...(body.messages || [])].reverse().find((m) => m.role === "assistant");
-  return { text: answer?.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: answer?.evidence_ids || [], source };
+  return { text: answer?.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: answer?.evidence_ids || [], steps: body.steps || [], source };
 }
 
 // Any agent session (Investigate pipeline, Shopper Agent steps, Safer Alternative, report draft): POST /v1/agent/sessions.
-export async function agentSession(body) {
-  const { body: answer, source } = await api("/v1/agent/sessions", { method: "POST", body: JSON.stringify(body) });
+// timeoutMs: the Research Agent browses official sites and can take two to three minutes.
+export async function agentSession(body, timeoutMs = 150000) {
+  const { body: answer, source } = await api("/v1/agent/sessions", { method: "POST", body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
   if (source === "mock") throw new Error("SafeShelf's agents are not live on this API yet: it only returns an example answer.");
   return answer;
 }
