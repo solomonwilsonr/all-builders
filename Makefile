@@ -46,9 +46,10 @@ db-up:          ## local Postgres + pgvector on :5442, tables from data/schema.s
 db-down:
 	docker compose down
 
-load-data:      ## CPSC + JAPAC recalls (OECD GlobalRecalls) + Australian registry (TVs, fridges) into the local database
+load-data:      ## CPSC + JAPAC recalls (OECD GlobalRecalls) + India (CCPA, BIS) + Australian registry (TVs, fridges) into the local database
 	uv run data/load_cpsc.py --from 2019 --to 2026 --summary
 	uv run data/load_globalrecalls.py --from 2019 --summary
+	cd engine && PYTHONPATH=.. uv run python ../data/load_india_notices.py --summary
 	uv run data/load_au_registry.py --types tv rf
 
 deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for example answers only)

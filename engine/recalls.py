@@ -77,11 +77,18 @@ def brand_recalls(brand: str) -> list[dict]:
         (f"%{brand}%", f"%{brand}%")).fetchall()
 
 
+# Indian notices (data/load_india_notices.py) that are not recalls: BIS seizures, CCPA safety notices and penalties.
+NOT_RECALLS = {"seizure", "safety_notice", "penalty", "other"}
+
+
 def classify(fp: dict, recall: dict) -> str | None:
-    """exact_model, needs_review (family named, no model numbers), or None (not this product)."""
+    """exact_model, needs_review (family named, no model numbers), or None (not this product).
+    A seizure or safety notice never makes a product "recalled": its model match goes to review."""
     models = notice_models(recall)
     if models:
-        return "exact_model" if fp["model_norm"] and fp["model_norm"] in models else None
+        if not (fp["model_norm"] and fp["model_norm"] in models):
+            return None
+        return "needs_review" if (recall["scope_json"] or {}).get("Kind") in NOT_RECALLS else "exact_model"
     category_words = re.findall(r"[a-z]{4,}", (fp.get("category") or "").replace("_", " ").lower())
     named = (recall["title"] or "").lower()
     return "needs_review" if any(w.rstrip("s") in named for w in category_words) else None

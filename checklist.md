@@ -39,6 +39,7 @@ Give it a product listing and it answers two questions:
 **Data**
 - [x] ~27,800 products and 29,379 real reviews
 - [x] 2,537 US recalls + 6,116 JAPAC recalls (Japan, Australia, Korea, Taiwan, Singapore, ASEAN)
+- [x] India: 36 official notices, 2021–2026, from government press releases (India has no recall database): 4 CCPA recall orders (pressure cookers on Amazon, Flipkart and others), 7 CCPA "don't buy without the ISI mark" notices, 2 penalties, 1 toy-standards action, 22 BIS raids (incl. Amazon, Flipkart and FirstCry warehouses; chargers, power adaptors, LED TVs, water heaters, cables). Raids and notices can never mark a product "recalled", only send it to review. Loaded locally; **Cloud SQL still needs it** (see Next steps)
 - [x] 8,470 Australian energy-registry records
 
 **Measured results**
@@ -106,5 +107,5 @@ Today: Amazon (India, Japan, Australia, Singapore, US) and Flipkart work fully. 
 
 ## Next steps
 1. **15 Oct:** commit the Recall Catalog and deploy it
-2. **16 Oct (before freeze):** `make deploy-api`, `make web-samples`, `make deploy-web`; connect the WhatsApp number
+2. **16 Oct (before freeze):** load the India notices into Cloud SQL (with `cloud-sql-proxy --port 5443` running: `cd engine && PYTHONPATH=.. uv run python ../data/load_india_notices.py --db <Cloud SQL URL on :5443>`), then `make deploy-api`, `make web-samples`, `make deploy-web`; connect the WhatsApp number
 3. **17 Oct:** no new features. Merge to `main`, record the video, make the deck, submit

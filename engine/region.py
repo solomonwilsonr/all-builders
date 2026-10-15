@@ -18,7 +18,8 @@ NAMES = {"in": "India", "jp": "Japan", "au": "Australia", "nz": "New Zealand", "
          "id": "Indonesia", "th": "Thailand", "ph": "the Philippines", "vn": "Vietnam"}
 
 # Recall sites searched for each market: its own regulator first, then large international databases (many products
-# sold in JAPAC are also sold, and recalled, in the US and EU). India has no public recall database.
+# sold in JAPAC are also sold, and recalled, in the US and EU). India has no public recall database; its CCPA recall
+# orders and BIS raids are loaded from press releases instead (data/load_india_notices.py).
 RECALL_SOURCES = {"jp": ["jp_caa", "cpsc", "eu"], "au": ["accc", "nz", "cpsc"], "nz": ["nz", "accc", "cpsc"],
                   "sg": ["sg", "cpsc", "eu"], "my": ["sg", "cpsc", "eu"], "id": ["cpsc", "eu", "nz"],
                   "th": ["cpsc", "eu", "nz"], "ph": ["cpsc", "eu", "nz"], "vn": ["cpsc", "eu", "nz"],

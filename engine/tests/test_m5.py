@@ -67,6 +67,15 @@ def test_recall_needs_the_exact_model_number():
     assert recalls.classify(other, notice) is None
 
 
+def test_an_indian_seizure_of_the_model_is_not_a_recall():
+    seized = {"id": "pib:1", "title": "Seized for sale without BIS certification: 64 power adaptor",
+              "scope_json": {"Products": [{"Model": "PA-12"}], "Kind": "seizure", "Country": "India"}}
+    ordered = {**seized, "id": "pib:2", "scope_json": {**seized["scope_json"], "Kind": "recall_order"}}
+    adaptor = normalise({"brand": "Ratan", "model": "PA-12", "category": "usb_charger"})
+    assert recalls.classify(adaptor, seized) == "needs_review"
+    assert recalls.classify(adaptor, ordered) == "exact_model"
+
+
 def test_family_named_without_models_goes_to_review(monkeypatch):
     notice = {"id": "cpsc:2", "title": "VRURC Portable Chargers Recalled", "scope_json": {"Products": [{"Model": ""}]}}
     monkeypatch.setattr(recalls, "notice_models", lambda recall: set())

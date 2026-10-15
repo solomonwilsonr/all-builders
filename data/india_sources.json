@@ -1,0 +1,7 @@
+{
+ "_note": "Indian product-safety notices: Press Information Bureau (pib.gov.in) release IDs, read by data/load_india_notices.py. India has no public recall database; these are the official CCPA recall orders and safety notices and BIS search-and-seizure raids on goods sold without the mandatory BIS certification (ISI mark). Found 16 Oct 2026 by searching pib.gov.in. Add an ID and rerun to load more.",
+ "ccpa": [1848370, 1852508, 1873903, 1951354, 2228691, 2215261, 1786071, 1805333, 1821641, 1826940, 1841493, 1845027,
+          1886029, 1890737, 1980893],
+ "bis": [1809332, 1937377, 2097412, 2111506, 2113173, 2115293, 2115618, 2123999, 2131619, 2163631, 2194520, 2198735,
+         2220320, 2232325, 2253438, 2258865, 2283104, 2285104, 2292810, 2292812, 2309094, 2311053]
+}
