@@ -436,7 +436,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .ask:focus-within { border-color:var(--lime-d); }
     .ask input { flex:1; min-width:0; font:inherit; font-size:14px; padding:8px 10px; border:0; border-radius:12px; color:var(--ink); background:transparent; }
     .ask input:focus-visible { outline:none; }
-    .ask select { font:inherit; font-size:12px; font-weight:600; padding:6px; border:0; border-radius:10px; background:#fff; color:var(--ink); cursor:pointer; }
+    .ask select { font:inherit; font-size:12px; font-weight:600; padding:6px; max-width:8.5em; border:0; border-radius:10px; background:#fff; color:var(--ink); cursor:pointer; }
     .ask .send { display:grid; place-items:center; flex:none; width:36px; height:36px; padding:0; border:0; border-radius:12px; background:var(--ink); color:#fff; cursor:pointer; }
     .ask .send svg { width:18px; height:18px; }
     .ask .send:disabled { opacity:.45; cursor:default; }
@@ -716,7 +716,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     }, /https?:\/\//.test(fields.message || "") ? 200000 : 150000)
       .then((a) => {
         const m = [...(a.messages || [])].reverse().find((x) => x.role === "assistant") || {};
-        done({ ok: true, result: { text: m.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: m.evidence_ids || [], steps: a.steps || [] } });
+        done({ ok: true, result: { text: m.text || "I don't know. There is not enough evidence to answer that.", evidence_ids: m.evidence_ids || [], steps: a.steps || [], language: a.language } });
       })
       .catch((err) => done({ ok: false, error: err.message }));
   };
@@ -817,10 +817,42 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     return d;
   };
 
+  // Answer languages across JAPAC: [code the API takes, the name in its own script, speech locale]. Same codes as
+  // LANGUAGES in engine/chat_core.py.
+  const LANGS = {
+    "": [["en", "English", "en-IN"]],
+    "India and South Asia": [["hi", "हिन्दी", "hi-IN"], ["bn", "বাংলা", "bn-IN"], ["mr", "मराठी", "mr-IN"], ["te", "తెలుగు", "te-IN"],
+      ["ta", "தமிழ்", "ta-IN"], ["gu", "ગુજરાતી", "gu-IN"], ["ur", "اردو", "ur-IN"], ["kn", "ಕನ್ನಡ", "kn-IN"], ["or", "ଓଡ଼ିଆ", "or-IN"],
+      ["ml", "മലയാളം", "ml-IN"], ["pa", "ਪੰਜਾਬੀ", "pa-IN"], ["ne", "नेपाली", "ne-NP"], ["si", "සිංහල", "si-LK"]],
+    "East Asia": [["ja", "日本語", "ja-JP"], ["ko", "한국어", "ko-KR"], ["zh-Hans", "简体中文", "zh-CN"], ["zh-Hant", "繁體中文", "zh-TW"]],
+    "South-East Asia": [["id", "Bahasa Indonesia", "id-ID"], ["ms", "Bahasa Melayu", "ms-MY"], ["th", "ไทย", "th-TH"],
+      ["vi", "Tiếng Việt", "vi-VN"], ["fil", "Filipino", "fil-PH"], ["my", "မြန်မာ", "my-MM"], ["km", "ខ្មែរ", "km-KH"], ["lo", "ລາວ", "lo-LA"]],
+  };
+  const LANG_LIST = Object.values(LANGS).flat();
+  const speechLocale = (code) => (LANG_LIST.find(([c]) => c === code) || LANG_LIST[0])[2];
+  // The shopper's last pick, else the browser's language when SafeShelf speaks it, else English.
+  const startLang = async () => {
+    try { const { chatLang } = await chrome.storage.local.get("chatLang"); if (LANG_LIST.some(([c]) => c === chatLang)) return chatLang; } catch (_) { /* storage unavailable */ }
+    const nav = (globalThis.navigator?.language || "en").toLowerCase();
+    const zh = /^zh-(tw|hk|mo|hant)/.test(nav) ? "zh-Hant" : "zh-Hans";
+    return (LANG_LIST.find(([c]) => c !== "en" && (nav.startsWith("zh") ? c === zh : nav.split("-")[0] === c.split("-")[0])) || LANG_LIST[0])[0];
+  };
+
   // A finished answer: the text, its sources, how SafeShelf answered, and Listen / Copy.
   const answerNodes = (a, lang) => {
     const listen = iconBtn("speaker", "Read this answer aloud", "Listen");
-    listen.onclick = () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(a.text); u.lang = lang === "hi" ? "hi-IN" : "en-IN"; speechSynthesis.speak(u); };
+    listen.onclick = () => {
+      speechSynthesis.cancel();
+      const locale = speechLocale(a.language || lang);
+      const base = locale.split("-")[0];
+      const voice = speechSynthesis.getVoices().find((v) => v.lang.replace("_", "-").toLowerCase().split("-")[0] === base);
+      // No voice for this language on this device: an English voice would read nonsense, so say so instead.
+      if (!voice && base !== "en" && speechSynthesis.getVoices().length) { listen.lastChild.textContent = "No voice for this language on this device"; return; }
+      const u = new SpeechSynthesisUtterance(a.text);
+      u.lang = locale;
+      if (voice) u.voice = voice;
+      speechSynthesis.speak(u);
+    };
     const copy = iconBtn("copy", "Copy this answer", "Copy");
     copy.onclick = () => navigator.clipboard?.writeText(a.text).then(() => { copy.lastChild.textContent = "Copied"; });
     return [rich(a.text), sourcesBlock(a.evidence_ids || []), stepsBlock(a.steps),
@@ -838,8 +870,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     log.setAttribute("aria-live", "polite");
     const input = el("input", { type: "text", placeholder, autocomplete: "off" });
     input.setAttribute("aria-label", "Your question");
-    const lang = el("select", {}, el("option", { value: "en", textContent: "English" }), el("option", { value: "hi", textContent: "हिन्दी" }));
+    const option = ([code, name]) => { const o = el("option", { value: code, textContent: name }); o.lang = code; return o; };
+    const lang = el("select", {}, ...Object.entries(LANGS).map(([region, list]) => (region ? el("optgroup", { label: region }, ...list.map(option)) : option(list[0]))));
     lang.setAttribute("aria-label", "Answer language");
+    startLang().then((code) => { lang.value = code; });
+    lang.onchange = () => { try { chrome.storage.local.set({ chatLang: lang.value }); } catch (_) { /* storage unavailable: this chat only */ } };
     const send = el("button", { type: "submit", className: "send" }, icon("send"));
     send.setAttribute("aria-label", "Send");
     const form = el("form", { className: "ask" }, input, lang, send);
