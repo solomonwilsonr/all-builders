@@ -18,7 +18,7 @@ WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PR
 
 .PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
-	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck
+	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery
 
 web:            ## the judges' page on :8095 (calls the live API)
 	cd web && python3 -m http.server 8095
@@ -175,3 +175,6 @@ schedule-watch-recheck: ## every 6 h: re-investigate saved products and raise al
 
 export-bigquery: ## analytics copy: assessments, coverage, fetches, claims, predictions -> NDJSON (BQ_DATASET=... to load)
 	$(ENGINE_RUN) ../data/export_bigquery.py $(if $(BQ_DATASET),--load $(BQ_DATASET))
+
+check-live:      ## after deploy-api: source health + the JAPAC gate against the deployed API (API_URL)
+	API_URL=$(API_URL) python3 bench/check_live.py

@@ -36,9 +36,12 @@ MARKETPLACES = ("amazon.", "flipkart.", "meesho.", "myntra.", "snapdeal.", "jiom
                 "walmart.", "etsy.", "aliexpress.", "temu.",
                 # JAPAC: Japan, South-East Asia, Australia / New Zealand
                 "rakuten.", "mercari.", "shopping.yahoo.", "qoo10.", "shopee.", "lazada.", "tokopedia.",
-                "bukalapak.", "blibli.", "tiki.vn", "zalora.", "kogan.", "trademe.")
+                "bukalapak.", "blibli.", "tiki.vn", "zalora.", "kogan.", "trademe.",
+                # Korea, Taiwan, Hong Kong
+                "coupang.", "gmarket.", "11st.", "auction.co.kr", "momoshop.", "pchome.", "shopee.tw", "hktvmall.")
 TWO_PART_TLDS = ("co.in", "net.in", "org.in", "co.uk", "com.au", "net.au", "org.au", "co.nz", "org.nz", "co.jp",
-                 "ne.jp", "or.jp", "com.sg", "com.my", "co.id", "co.th", "com.ph", "com.vn")
+                 "ne.jp", "or.jp", "com.sg", "com.my", "co.id", "co.th", "com.ph", "com.vn",
+                 "co.kr", "or.kr", "ne.kr", "com.tw", "org.tw", "com.hk", "org.hk")
 REFERENCE_MATCHES = {"url", "model_number"}
 HIDDEN = re.compile(
     r"ignore (all |any |your |the )?(previous|prior|above|earlier) instructions|you are an? (ai|assistant|agent)|"

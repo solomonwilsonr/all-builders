@@ -51,7 +51,13 @@ def test_website_age_from_demo_data_and_rdap_shape(monkeypatch):
     assert trust.registrable("item.rakuten.co.jp") == "rakuten.co.jp"
     assert trust.registrable("www.brandstore.com.my") == "brandstore.com.my"
     assert trust.registrable("shop.example.co.id") == "example.co.id"
-    for url in ("https://shopee.sg/x-i.1.2", "https://www.lazada.co.th/products/x.html", "https://item.rakuten.co.jp/s/x/"):
+    # Korea, Taiwan, Hong Kong: same rule ("co.kr" was looked up as the shop's own site)
+    assert trust.registrable("www.brandshop.co.kr") == "brandshop.co.kr"
+    assert trust.registrable("shop.example.com.tw") == "example.com.tw"
+    assert trust.registrable("www.store.com.hk") == "store.com.hk"
+    for url in ("https://shopee.sg/x-i.1.2", "https://www.lazada.co.th/products/x.html", "https://item.rakuten.co.jp/s/x/",
+                "https://www.coupang.com/vp/products/1", "https://item.gmarket.co.kr/Item?goodscode=1",
+                "https://www.11st.co.kr/products/1", "https://www.momoshop.com.tw/goods/x"):
         assert trust.website_check(url)["result"] == "skipped"
 
 

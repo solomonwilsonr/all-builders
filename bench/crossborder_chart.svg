@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 664" width="1100" height="664" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Same model, recalled abroad first</title>
+<desc id="d">Days between the first regulator notice and the JAPAC regulator notice for the same model, 19 pairs, median 26 days.</desc>
+<rect width="1100" height="664" fill="#fcfcfb"/>
+<text x="24" y="36" font-size="22" font-weight="700" fill="#0b0b0b">Another regulator recalled the same model first: a median of 26 days earlier</text>
+<text x="24" y="62" font-size="14" fill="#52514e">Days from the first notice to the JAPAC regulator's notice · 19 pairs, stored notices 2019–2026 · same model code</text>
+<line x1="400.0" y1="92" x2="400.0" y2="594" stroke="#e4e3df"/>
+<text x="400.0" y="612" font-size="12" fill="#52514e" text-anchor="middle">0</text>
+<line x1="496.4" y1="92" x2="496.4" y2="594" stroke="#e4e3df"/>
+<text x="496.4" y="612" font-size="12" fill="#52514e" text-anchor="middle">50</text>
+<line x1="592.8" y1="92" x2="592.8" y2="594" stroke="#e4e3df"/>
+<text x="592.8" y="612" font-size="12" fill="#52514e" text-anchor="middle">100</text>
+<line x1="689.2" y1="92" x2="689.2" y2="594" stroke="#e4e3df"/>
+<text x="689.2" y="612" font-size="12" fill="#52514e" text-anchor="middle">150</text>
+<line x1="785.5" y1="92" x2="785.5" y2="594" stroke="#e4e3df"/>
+<text x="785.5" y="612" font-size="12" fill="#52514e" text-anchor="middle">200</text>
+<line x1="881.9" y1="92" x2="881.9" y2="594" stroke="#e4e3df"/>
+<text x="881.9" y="612" font-size="12" fill="#52514e" text-anchor="middle">250</text>
+<text x="705.0" y="634" font-size="12" fill="#52514e" text-anchor="middle">days earlier</text>
+<text x="390" y="112" font-size="13" fill="#0b0b0b" text-anchor="end">EGO Power+ hedge trimmer <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,100 h560.8 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-560.8 z" fill="#2a78d6"><title>CPSC 2023-06-01 → ACCC 2024-03-20: 293 days (HT2410)</title></path>
+<text x="970.8" y="112" font-size="12" fill="#52514e">293 days</text>
+<text x="390" y="138" font-size="13" fill="#0b0b0b" text-anchor="end">Janod Cocoon activity table <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,126 h267.8 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-267.8 z" fill="#2a78d6"><title>CPSC 2023-05-25 → ACCC 2023-10-13: 141 days (J04402)</title></path>
+<text x="677.8" y="138" font-size="12" fill="#52514e">141 days</text>
+<text x="390" y="164" font-size="13" fill="#0b0b0b" text-anchor="end">NZXT H1 PC case <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,152 h244.7 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-244.7 z" fill="#2a78d6"><title>CPSC 2021-02-12 → ACCC 2021-06-21: 129 days (CAH16WRW1)</title></path>
+<text x="654.7" y="164" font-size="12" fill="#52514e">129 days</text>
+<text x="390" y="190" font-size="13" fill="#0b0b0b" text-anchor="end">4moms mamaRoo swing <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,178 h175.3 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-175.3 z" fill="#2a78d6"><title>CPSC 2022-08-15 → ACCC 2022-11-16: 93 days (4M012)</title></path>
+<text x="585.3" y="190" font-size="12" fill="#52514e">93 days</text>
+<text x="390" y="216" font-size="13" fill="#0b0b0b" text-anchor="end">PowerXL juicer <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,204 h144.4 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-144.4 z" fill="#2a78d6"><title>CPSC 2023-06-01 → ACCC 2023-08-17: 77 days (SHL96)</title></path>
+<text x="554.4" y="216" font-size="12" fill="#52514e">77 days</text>
+<text x="390" y="242" font-size="13" fill="#0b0b0b" text-anchor="end">PowerXL waffle maker <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,230 h127.1 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-127.1 z" fill="#2a78d6"><title>CPSC 2023-05-18 → ACCC 2023-07-25: 68 days (ESWM02)</title></path>
+<text x="537.1" y="242" font-size="12" fill="#52514e">68 days</text>
+<text x="390" y="268" font-size="13" fill="#0b0b0b" text-anchor="end">ESR HaloLock power bank <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,256 h100.1 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-100.1 z" fill="#2a78d6"><title>CPSC 2025-08-14 → ACCC 2025-10-07: 54 days (2G520)</title></path>
+<text x="510.1" y="268" font-size="12" fill="#52514e">54 days</text>
+<text x="390" y="294" font-size="13" fill="#0b0b0b" text-anchor="end">Thermos Stainless King jar <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,282 h61.5 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-61.5 z" fill="#2a78d6"><title>CPSC 2026-04-30 → ACCC 2026-06-03: 34 days (SK3000)</title></path>
+<text x="390" y="320" font-size="13" fill="#0b0b0b" text-anchor="end">Belkin BoostCharge Pro charger <tspan fill="#52514e">· Japan → Australia</tspan></text>
+<path d="M400,308 h53.8 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-53.8 z" fill="#2a78d6"><title>CAA 2024-10-07 → ACCC 2024-11-06: 30 days (BPD005)</title></path>
+<text x="390" y="346" font-size="13" fill="#0b0b0b" text-anchor="end">Baseus 65W power bank <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,334 h38.4 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-38.4 z" fill="#2a78d6"><title>CPSC 2025-05-01 → ACCC 2025-05-23: 22 days (BS30KP365)</title></path>
+<text x="390" y="372" font-size="13" fill="#0b0b0b" text-anchor="end">Audio-Technica ATH-CK3TW case <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,360 h30.7 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-30.7 z" fill="#2a78d6"><title>CPSC 2021-04-14 → ACCC 2021-05-02: 18 days (ATHCK3TW)</title></path>
+<text x="390" y="398" font-size="13" fill="#0b0b0b" text-anchor="end">Baseus magnetic power bank <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,386 h24.9 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-24.9 z" fill="#2a78d6"><title>CPSC 2024-06-27 → ACCC 2024-07-12: 15 days (PPCXW06)</title></path>
+<text x="390" y="424" font-size="13" fill="#0b0b0b" text-anchor="end">Fisher-Price Baby Biceps toy <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,412 h21.1 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-21.1 z" fill="#2a78d6"><title>CPSC 2024-08-29 → ACCC 2024-09-11: 13 days (GJD49)</title></path>
+<text x="390" y="450" font-size="13" fill="#0b0b0b" text-anchor="end">Yamaha PA-10 adaptor <tspan fill="#52514e">· US → Australia</tspan></text>
+<path d="M400,438 h21.1 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-21.1 z" fill="#2a78d6"><title>CPSC 2024-03-07 → ACCC 2024-03-20: 13 days (PA10)</title></path>
+<text x="390" y="476" font-size="13" fill="#0b0b0b" text-anchor="end">4moms mamaRoo swing <tspan fill="#52514e">· US → Singapore</tspan></text>
+<path d="M400,464 h13.3 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-13.3 z" fill="#2a78d6"><title>CPSC 2022-08-15 → CPSO 2022-08-24: 9 days (4M012)</title></path>
+<text x="390" y="502" font-size="13" fill="#0b0b0b" text-anchor="end">Baseus magnetic power bank <tspan fill="#52514e">· US → Japan</tspan></text>
+<path d="M400,490 h9.5 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-9.5 z" fill="#2a78d6"><title>CPSC 2024-06-27 → CAA 2024-07-04: 7 days (PPCXW06)</title></path>
+<text x="390" y="528" font-size="13" fill="#0b0b0b" text-anchor="end">4moms mamaRoo swing <tspan fill="#52514e">· US → Korea</tspan></text>
+<path d="M400,516 h3.7 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-3.7 z" fill="#2a78d6"><title>CPSC 2022-08-15 → KATS 2022-08-19: 4 days (4M005)</title></path>
+<text x="390" y="554" font-size="13" fill="#0b0b0b" text-anchor="end">Thomas &amp; Friends toy truck <tspan fill="#52514e">· US → Japan</tspan></text>
+<path d="M400,542 h-2.0 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h--2.0 z" fill="#2a78d6"><title>CPSC 2023-10-19 → CAA 2023-10-20: 1 days (HBJ89)</title></path>
+<text x="390" y="580" font-size="13" fill="#0b0b0b" text-anchor="end">Belkin power bank / charger <tspan fill="#52514e">· US → Japan</tspan></text>
+<path d="M400,568 h-2.0 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h--2.0 z" fill="#2a78d6"><title>CPSC 2025-11-13 → CAA 2025-11-13: 0 days (MMA008)</title></path>
+<text x="408.0" y="580" font-size="12" fill="#52514e">same day</text>
+<line x1="450.1" y1="86" x2="450.1" y2="594" stroke="#0b0b0b" stroke-dasharray="4 4"/>
+<text x="456.1" y="84" font-size="12" fill="#0b0b0b">median 26 days</text>
+<text x="24" y="654" font-size="11" fill="#52514e">Source: CPSC, ACCC, CAA, KATS, CPSO notices (OECD GlobalRecalls). Every pair is listed with its notices in bench/crossborder_review.md for a person to confirm.</text>
+</svg>
