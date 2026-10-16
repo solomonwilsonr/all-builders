@@ -152,7 +152,8 @@ export function afterBlock(result) {
     btn.disabled = true;
     btn.textContent = "Writing your steps and drafts…";
     try {
-      const a = await post("/v1/after-purchase", { investigation_id: result.investigation_id, ...listing, purchase: { url: listing.url } }, 150000);
+      const a = await post("/v1/after-purchase", { investigation_id: result.investigation_id, ...listing,
+        ...(result.product_id && result.product_id !== "unmatched" ? { product_id: result.product_id } : {}), purchase: { url: listing.url } }, 150000);
       const product = { brand: listing.brand, model: listing.model, title: listing.title, market: listing.market };
       box.replaceChildren(el("div", { className: "after" },
         el("h3", { textContent: a.headline }),

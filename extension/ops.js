@@ -19,6 +19,9 @@ export const OPS = {
   catalogScan: { id: "catalogScan", method: "POST", path: () => "/v1/catalog/scan", body: (a) => ({ csv_url: a.csv_url }) },
   trace: { id: "getTrace", method: "GET", path: (a) => `/v1/investigations/${enc(a.investigation_id)}/trace` },
   bench: { id: "getBenchResults", method: "GET", path: () => "/v1/bench/results" },
+  voice: { id: "speakVerdict", method: "POST", path: () => "/v1/voice/verdict", body: (a) => ({ plain: a.plain, text: a.text, language: a.language }) },
+  afterPurchase: { id: "afterPurchase", method: "POST", path: () => "/v1/after-purchase", body: (a) => a.body || {} },
+  incident: { id: "reportIncident", method: "POST", path: () => "/v1/incidents", body: (a) => a.body || {} },
 };
 const enc = (v) => encodeURIComponent(String(v ?? ""));
 

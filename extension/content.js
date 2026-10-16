@@ -761,6 +761,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   };
 
   const speak = (r) => {
+    if (r.outcome?.plain && globalThis.SafeShelfAftercare) return SafeShelfAftercare.speakPlain(r.outcome.plain); // voice mode
     const say = (name, c) => `${name}. ${c.word}. ${c.lines.join(". ")}.`;
     speechSynthesis.cancel();
     speechSynthesis.speak(new SpeechSynthesisUtterance(`${say("Is it safe?", r.safe)} ${say("Is it real?", r.real)} ${r.summary}`));
@@ -804,7 +805,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     el("ul", {}, ...plain.checked.map((c) => el("li", { className: c.mark },
       el("span", { className: "pm", ariaHidden: "true", textContent: MARKS[c.mark] || "–" }),
       el("span", { className: "flag", ariaHidden: "true", textContent: c.flag }),
-      el("span", {}, el("b", { textContent: `${c.name}${c.yours ? " (you)" : ""}: ` }), c.status)))),
+      el("span", {}, el("b", { textContent: `${c.name}${c.yours ? " (you)" : ""}: ` }), c.status, globalThis.SafeShelfAftercare?.badge(el, c.badge))))),
     el("p", { className: "note", textContent: plain.note })) : null;
   const detailsBox = (...nodes) => el("details", { className: "more" }, el("summary", { textContent: "Show details" }), ...nodes.filter(Boolean));
 
@@ -1020,10 +1021,10 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     // On results pages the popup lives in its own layer on <body>, so no card's CSS can clip, move or cover it.
     const pop = mode === "inline" ? el("div", { className: "pop" }) : null;
     if (pop) {
-      pop.attachShadow({ mode: "open" }).append(el("style", { textContent: STYLE }), box);
-      root.append(el("style", { textContent: STYLE }), bar);
+      pop.attachShadow({ mode: "open" }).append(el("style", { textContent: STYLE + (globalThis.SafeShelfAftercare?.STYLE || "") }), box);
+      root.append(el("style", { textContent: STYLE + (globalThis.SafeShelfAftercare?.STYLE || "") }), bar);
     } else {
-      root.append(el("style", { textContent: STYLE }), box, ...(chatBox ? [chatBox] : []), bar);
+      root.append(el("style", { textContent: STYLE + (globalThis.SafeShelfAftercare?.STYLE || "") }), box, ...(chatBox ? [chatBox] : []), bar);
     }
     let checked = false;
     let result = null;
@@ -1264,6 +1265,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           label(fab, `SafeShelf: ${word}`, word);
           box.className = `box ${lvl}`;
           const changed = lvl !== before;
+          if (globalThis.SafeShelfAftercare) SafeShelfAftercare.guardBuy({ ...r, outcome: { ...(r.outcome || {}), plain: fp || r.outcome?.plain } }, lvl); // the first look's colour guards the buy button
           const summary = !changed ? r.summary : ["red", "amber"].includes(lvl) ? "The first look found warning signs: see First look below." : "The first look found no warning signs in what it checked.";
           const updated = fp ? hero(lvl, fp.why, changed ? `Updated after a closer look (was: ${VERDICT_WORD[before]})` : null, fp.title)
             : hero(lvl, summary, changed ? `Updated after the first look (was ${VERDICT_WORD[before]})` : null);
@@ -1324,6 +1326,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         heroEl,
         panelTabs(r, [
           ...(plain ? [todoBox(plain)] : []),
+          // Before purchase the buy button is guarded (below); after purchase: steps, refund and complaint drafts
+          ...(globalThis.SafeShelfAftercare && r.source !== "mock" && mode === "float" ? [SafeShelfAftercare.afterPanel(el, r, getPage())] : []),
           ...(deeper ? [deeper] : []),
           ...(plain ? [placesBlock(plain)] : [section("Is it safe?", r.safe)]),
           section("Is the seller genuine?", r.real),
@@ -1332,9 +1336,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           el("p", { className: "foot", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),
           ...(mode === "inline" ? [inlineChat(r)] : []),
         ]),
-        el("div", { className: "actions" }, ...(askBtn ? [askBtn] : []), el("div", { className: "more" }, ...[investigateBtn, speakBtn, againBtn].filter(Boolean))),
+        el("div", { className: "actions" }, ...(askBtn ? [askBtn] : []), el("div", { className: "more" }, ...[investigateBtn, speakBtn, againBtn].filter(Boolean)),
+          ...(globalThis.SafeShelfAftercare && r.outcome?.plain ? [SafeShelfAftercare.voiceToggle(el)] : [])),
       );
       place();
+      if (mode === "float" && r.source !== "mock" && globalThis.SafeShelfAftercare) { SafeShelfAftercare.guardBuy(r, lvl); SafeShelfAftercare.autoSpeak(r); }
     };
 
     // While the check runs: what it covers and how long it has taken so far.

@@ -12,6 +12,8 @@ const assert = require("assert");
   };
   ctx.window = ctx.globalThis = ctx; vm.createContext(ctx);
   vm.runInContext(read("panels.js"), ctx);
+  assert.doesNotThrow(() => vm.runInContext(read("aftercare.js"), ctx), "aftercare.js failed to load");
+  assert.ok(ctx.SafeShelfAftercare?.guardBuy, "aftercare.js should expose SafeShelfAftercare");
   assert.doesNotThrow(() => vm.runInContext(read("content.js"), ctx), "content.js failed to load");
 }
 { // lab.js

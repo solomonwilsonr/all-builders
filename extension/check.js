@@ -276,6 +276,7 @@ async function runCheckNow(page) {
     label: [safety?.label, trust.label].filter(Boolean).join(" · "),
     // Plan v2.2: what was checked, country by country, and the official records behind the answer.
     outcome: outcome ? { outcome: outcome.outcome, headline: outcome.headline, source_mode: outcome.source_mode,
+      investigation_id: inv?.investigation_id || null, // "I already bought it" picks up this investigation
       plain: outcome.plain || null, // the answer in everyday words (engine/plain.py): shown first
       coverage: outcome.coverage?.countries || [], what_would_change: outcome.what_would_change || [],
       sources: (inv?.matches || []).filter((m) => m.tier !== "lookalike").slice(0, 4).map((m) => ({ authority: m.authority, record_id: m.record_id, url: m.url, title: m.title, local: m.local, tier: m.tier })),

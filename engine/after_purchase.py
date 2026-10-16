@@ -12,7 +12,9 @@ from datetime import UTC, datetime
 
 from engine import complaints, investigation, owner
 
-LISTING_FIELDS = ("url", "title", "brand", "model", "gtin", "batch", "market", "currency", "page_text", "category")
+# reviews: the page's reviews, so a re-check without a stored investigation sees what the shopper's card saw.
+LISTING_FIELDS = ("product_id", "url", "title", "brand", "model", "gtin", "batch", "market", "currency", "page_text",
+                  "category", "reviews")
 LABEL = "Guidance from official records and SafeShelf's code rules - not a regulatory determination or legal advice"
 
 
@@ -95,8 +97,8 @@ def answer_for(body: dict, tenant_id: str = "public") -> dict:
         except KeyError:
             pass  # expired or from another instance: check again from the listing
     listing = {k: body[k] for k in LISTING_FIELDS if body.get(k)}
-    if not any(listing.get(k) for k in ("url", "title", "brand", "model", "gtin")):
-        raise ValueError("give investigation_id, or the listing (url, title, brand or model)")
+    if not any(listing.get(k) for k in ("product_id", "url", "title", "brand", "model", "gtin")):
+        raise ValueError("give investigation_id, product_id, or the listing (url, title, brand or model)")
     return investigation.investigate(listing, None, tenant_id)
 
 
