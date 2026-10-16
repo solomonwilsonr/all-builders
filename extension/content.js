@@ -131,6 +131,13 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   };
 
   // Details tables (brand, model number, specs) found by their headings, since shops use different ids for them.
+  // The shop's own "Model Number" row, even when it sits in a collapsed tab or a comparison table (innerText skips
+  // hidden text; Amazon.com puts "Item details" in a closed tab). Official notices are matched on this number.
+  const modelHint = () => {
+    const m = (document.body?.textContent || "").match(/\b(?:Item\s+)?Model\s*(?:Number|No\.?)\s*[:\s\u200e\u200f]{1,6}([A-Za-z0-9][A-Za-z0-9\-/.]{2,24})/i);
+    return m && /\d/.test(m[1]) ? `Model Number: ${m[1]}` : "";
+  };
+
   const detailSections = (already) => {
     const heading = /^(product information|technical details|additional information|item details|product details|specifications)$/i;
     const found = [];
@@ -182,7 +189,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       seller: sellerName() || main.match(/^Sold by\s*\n(.+)$/m)?.[1],
       image_urls: images.length ? images : [].concat(ld?.image || []).slice(0, 8),
       // Technical details first: they identify the product. Marketing text last, so the cap cuts that, not the specs.
-      page_text: [asin && `ASIN: ${asin}`, mrp && `M.R.P.: ${mrp}`, details.slice(0, 2500), area.slice(0, 1500) + hidden].filter(Boolean).join("\n").slice(0, 4200),
+      page_text: [asin && `ASIN: ${asin}`, modelHint(), mrp && `M.R.P.: ${mrp}`, details.slice(0, 2500), area.slice(0, 1500) + hidden].filter(Boolean).join("\n").slice(0, 4200),
       reviews: readReviews(),
       listing_id: document.body.dataset.safeshelfListingId || null,
       product_id: document.body.dataset.safeshelfProductId || null,

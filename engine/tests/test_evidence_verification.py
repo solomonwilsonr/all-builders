@@ -303,3 +303,25 @@ def test_region_policy_keeps_places_apart():
     places = region_policy.places("IN", {"jurisdiction": "US", "affected_markets": ["US"]}, "CN")
     assert places == {"market_country": "IN", "source_jurisdiction": "US", "manufacturing_country": "CN",
                       "recall_affected_country": ["US"]}
+
+
+def test_brand_recalls_with_unknown_model_are_not_an_all_clear():
+    """Anker PowerCore Slim on Amazon.com (16 Oct): no model read, other Anker models recalled. Not 'no matching
+    notice': not enough evidence, and the model number is what would settle it."""
+    out = decide([match(tier="unresolved", local=True)], product={"brand": "Anker", "title": "Anker power bank"},
+                 market="US", rows=[country("US", NO_MATCH)])
+    assert out["outcome"] == "insufficient_evidence" and out["basis"] == "brand_recalls_model_unknown"
+
+
+def test_brand_name_is_not_a_product_type():
+    """16 Oct, Amazon.com: an Anker power bank was matched to Anker scooter and cooler recalls through the word
+    'anker'. Only a notice naming the same kind of product, without model numbers, is a possible match."""
+    bank = {"brand": "Anker", "model": "A1229", "title": "Anker Power Bank, 10,000mAh Portable Charger, Battery Pack"}
+    scooter = record(title="Anker Play Products Recalls Bolt Foldable Children's Scooters", ids={"models": [],
+                                                                                              "brands": ["Anker"]})
+    cooler = record(title="Anker EverFrost Lithium-Ion Battery Powered Coolers Recalled", ids={"models": [],
+                                                                                              "brands": ["Anker"]})
+    banks = record(title="Anker PowerCore 10000 power banks", ids={"models": [], "brands": ["Anker"]})
+    assert identity_scope.check(bank, scooter, "US")["tier"] == "none"
+    assert identity_scope.check(bank, cooler, "US")["tier"] == "none"
+    assert identity_scope.check(bank, banks, "US")["tier"] == "family_named"

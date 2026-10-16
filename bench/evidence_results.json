@@ -320,5 +320,5 @@
   }
  ],
  "note": "Synthetic red-team fixtures (bench/fixtures/evidence/redteam.json): they test that the policy behaves as designed on hard cases. They are not a real-world accuracy estimate.",
- "run_id": "evidence-2026-10-16T1008"
+ "run_id": "evidence-2026-10-16T1121"
 }

@@ -25,7 +25,7 @@ def parse_feed(xml_text: str, retrieved_at) -> list[SourceRecord]:
         description = (item.findtext("description") or "").strip()
         guid = (item.findtext("guid") or link).strip()
         published = normalizer.to_datetime(item.findtext("pubDate"))
-        ids = normalizer.identifiers([], f"{title} {description}")
+        ids = normalizer.identifiers([], f"{title} {description}", title=title)
         records.append(SourceRecord(
             source="au_accc", record_id=f"accc:{guid.rstrip('/').rsplit('/', 1)[-1]}", source_url=link,
             record_type="recall_notice", raw_payload_hash=payload_hash(f"{title}|{link}|{description}"),

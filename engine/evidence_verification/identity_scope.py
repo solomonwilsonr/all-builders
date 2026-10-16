@@ -42,10 +42,24 @@ def _brand_in(record: dict, brand: str) -> bool:
     return any(b == n or (len(b) >= 4 and b in n) for n in names) or (len(b) >= 3 and b in text)
 
 
-def _kind_words(product: dict) -> list[str]:
-    text = f"{product.get('category') or ''} {product.get('title') or ''}".replace("_", " ").lower()
-    words = re.findall(r"[a-z]{5,}", text)
-    return [w.rstrip("s") for w in words if w not in {"black", "white", "with", "original", "brand", "pack"}][:6]
+GENERIC_WORDS = {"black", "white", "with", "original", "brand", "pack", "portable", "power", "battery", "digital",
+                 "smart", "wireless", "charging", "fast", "compact", "ultra", "premium", "travel", "high", "speed",
+                 "poweriq", "inch", "litre", "liter", "pieces", "piece", "multi", "universal", "electric"}
+
+
+def same_kind(product: dict, notice_title: str) -> bool:
+    """Does the notice name this kind of product? By the product's category (power bank, heater...) when known, else
+    by the title's distinctive nouns. The brand name never counts: an Anker scooter is not an Anker power bank."""
+    from engine.normalize import CATEGORIES, category_of
+    named = notice_title.lower()
+    category = product.get("category") or category_of(product.get("title") or "")
+    if category in CATEGORIES:
+        return bool(re.search(CATEGORIES[category], named))
+    brand = norm_brand(product.get("brand"))
+    text = f"{category or ''} {product.get('title') or ''}".replace("_", " ").lower()
+    words = [w.rstrip("s") for w in re.findall(r"[a-z]{5,}", text)
+             if w not in GENERIC_WORDS and norm_brand(w) != brand and not (brand and norm_brand(w) in brand)]
+    return any(re.search(rf"\b{re.escape(w)}", named) for w in words[:6])
 
 
 def tier(product: dict, record: dict) -> tuple[str, list[str]]:
@@ -76,10 +90,8 @@ def tier(product: dict, record: dict) -> tuple[str, list[str]]:
                 [f"the notice names {original}, a variant of {product.get('model')} (same base code {base})"]
     if codes and brand_named:
         return "lookalike", [f"the notice names {', '.join(list(codes.values())[:4])}, not {product.get('model')}"]
-    if not codes and brand_named:
-        named = f"{record.get('title') or ''}".lower()
-        if any(re.search(rf"\b{re.escape(w)}", named) for w in _kind_words(product)):
-            return "family_named", ["the notice names this brand and product type but no model numbers"]
+    if not codes and brand_named and same_kind(product, record.get("title") or ""):
+        return "family_named", ["the notice names this brand and product type but no model numbers"]
     return "none", []
 
 

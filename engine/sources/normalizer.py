@@ -65,9 +65,18 @@ def gtins_in(text: str | None) -> list[str]:
     return [g for g in re.findall(r"(?<!\d)(\d{8}|\d{12,14})(?!\d)", locale.fold(text or "")) if locale.gtin_valid(g)]
 
 
-def identifiers(brands: list[str], text: str, models: list[str] | None = None) -> dict:
+def title_codes(title: str) -> list[str]:
+    """Model codes written in a notice title without a "model" label ("Anker 334 MagGo ... A1642")."""
+    from engine.normalize import model_candidates
+    return [m for m in model_candidates(locale.fold(title or "")) if re.search(r"[A-Z]", m) and len(m) >= 4]
+
+
+def identifiers(brands: list[str], text: str, models: list[str] | None = None, title: str = "") -> dict:
+    found = list(dict.fromkeys((models or []) + models_in(text)))
+    if not found and title:  # only when the notice labels no model: the title's own codes
+        found = title_codes(title)
     return {"brands": [b for b in dict.fromkeys(brands) if b],
-            "models": list(dict.fromkeys((models or []) + models_in(text))),
+            "models": found,
             "gtins": list(dict.fromkeys(gtins_in(text))), "batches": batches_in(text)}
 
 

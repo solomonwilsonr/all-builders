@@ -30,7 +30,7 @@ def to_record(raw: dict, retrieved_at) -> SourceRecord:
     hazard, remedy = raw.get("hazard") or "", raw.get("action") or ""
     brands = [raw.get("manufacturer.name"), raw.get("distributor.name")]
     text = f"{title} {description}"
-    ids = normalizer.identifiers([b for b in brands if b], text)
+    ids = normalizer.identifiers([b for b in brands if b], text, title=title)
     if raw.get("gtin"):
         ids["gtins"] = list(dict.fromkeys(ids["gtins"] + [str(raw["gtin"])]))
     published = normalizer.to_datetime(raw.get("date"))

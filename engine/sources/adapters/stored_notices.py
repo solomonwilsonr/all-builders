@@ -35,7 +35,7 @@ def to_record(row: dict, retrieved_at, source_id: str, read_models: list[str] | 
     named = [p.get("Model") for p in products if p.get("Model")] + list(read_models or [])
     brands = [m.get("Name") for m in scope.get("Manufacturers") or []] + \
              [m.get("Name") for m in scope.get("Importers") or []]
-    ids = normalizer.identifiers(brands, text, models=named)
+    ids = normalizer.identifiers(brands, text, models=named, title=row["title"] or "")
     kind = RECORD_TYPE.get(scope.get("Kind") or "", "recall_notice")
     hazard = row.get("hazard") or ""
     remedy = scope.get("Action") or ""

@@ -36,6 +36,7 @@ HEADLINES = {
     "seizure_or_notice": "Officials acted against this type of product in {market}; check its certification",
     "hazard_reports": "Some owners report a possible hazard (AI finding, under review)",
     "registry_mismatch": "A safety mark on the listing doesn't match the official registry",
+    "brand_recalls_model_unknown": "This brand has recalls of other models; the model number is needed to tell",
     "no_matching_notice_found": "No matching notice found in the sources checked (this is not proof of safety)",
     "insufficient_evidence": "Not enough evidence to say",
 }
@@ -105,6 +106,10 @@ def decide(market: str | None, market_name: str, product: dict, matches: list[di
     answered = [r for r in coverage_rows if r["state"] in (CHECKED_LIVE, CHECKED_CACHE, NO_MATCH)]
     market_answered = bool(market_row and market_row["state"] in (CHECKED_LIVE, CHECKED_CACHE, NO_MATCH))
     identifiable = bool(product.get("model") or product.get("gtin") or product.get("brand"))
+    brand_only = [m for m in usable if m["tier"] == "unresolved" and m.get("record_type") == "recall_notice"]
+    if outcome is None and brand_only and not product.get("model"):
+        # Without a model number, "no matching notice" would hide that this brand has recalls: say what's missing.
+        outcome, basis = "insufficient_evidence", "brand_recalls_model_unknown"
     if outcome is None:
         if identifiable and (market_answered or answered):
             outcome, basis = "no_matching_notice_found", "no_matching_notice_found"

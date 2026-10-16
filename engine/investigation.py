@@ -281,7 +281,7 @@ def collect(product: dict, market: str | None, depth: str = "quick", as_of: str 
     matches += stored_links(product.get("product_id"), market, {m["record_id"] for m in matches})
     matched: dict[str, dict[str, int]] = {}
     for m in matches:
-        if m["tier"] not in ("lookalike",) and not m["excluded"]:
+        if m["tier"] not in ("lookalike", "unresolved") and not m["excluded"]:  # brand-only: not a notice for this product
             for source in [m["source"], *m.get("also_from", [])]:
                 by_country = matched.setdefault(source, {})
                 by_country[m["jurisdiction"]] = by_country.get(m["jurisdiction"], 0) + 1

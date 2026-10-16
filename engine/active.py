@@ -26,7 +26,7 @@ def plan(decision: dict, product: dict, coverage_rows: list[dict], depth: str, m
         return []  # settled: what to do now is owner guidance, not more evidence
     wanted = []
     if not product.get("model"):
-        wanted.append("model")
+        wanted.append("model")  # first: with it, the brand's recalls can be checked against this exact product
     if decision["basis"] == "local_recall_batch_unknown" or any(m.get("scope") == "batch_unknown" for m in matches):
         wanted.append("batch")
     if decision["basis"] == "recalled_abroad_same_model":
