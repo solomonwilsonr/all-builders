@@ -20,13 +20,16 @@
     <li><b>29,379</b> real buyer reviews<span>read for fire, burn and shock reports</span></li>
     <li><b>8,470</b> Australian energy-registry records<span>to check star-rating claims</span></li>
     <li><b>18 / 18</b> agent test cases pass<span>on the live API, with known right answers</span></li>
+    <li><b>26</b> JAPAC languages, spoken<span>answers read aloud, or ask out loud with Gemini Live</span></li>
   </ul>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Sections">
   <button role="tab" id="tab-try" aria-controls="panel-try" aria-selected="true">Try a sample</button>
   <button role="tab" id="tab-own" aria-controls="panel-own" aria-selected="false" tabindex="-1">Check your own listing</button>
+  <button role="tab" id="tab-ask" aria-controls="panel-ask" aria-selected="false" tabindex="-1">Ask out loud</button>
   <button role="tab" id="tab-vs" aria-controls="panel-vs" aria-selected="false" tabindex="-1">SafeShelf vs Gemini alone</button>
+  <button role="tab" id="tab-redteam" aria-controls="panel-redteam" aria-selected="false" tabindex="-1">Attacker vs defender</button>
 </nav>
 
 <main id="main">
@@ -57,8 +60,16 @@
     <div class="run card" id="own-run" aria-live="polite" hidden></div>
   </section>
 
+  <section id="panel-ask" role="tabpanel" aria-labelledby="tab-ask" hidden>
+    <div id="ask"></div>
+  </section>
+
   <section id="panel-vs" role="tabpanel" aria-labelledby="tab-vs" hidden>
     <div id="vs"></div>
+  </section>
+
+  <section id="panel-redteam" role="tabpanel" aria-labelledby="tab-redteam" hidden>
+    <div id="redteam"></div>
   </section>
 </main>
 

@@ -57,6 +57,27 @@ HIDDEN = re.compile(
     r"(trust|threat|security|safety|risk|fraud) (flags?|warnings?|checks?|signals?|ratings?)", re.IGNORECASE)
 
 
+# A shop page has no reason to address an AI or SafeShelf. Beyond the fixed phrasings above, a sentence counts as an
+# instruction to AI shoppers when it does all three at once: addresses a machine, tells it to judge or skip something,
+# and pushes a trust word. Calibrated on 13 attacks Gemini wrote in the live red-team (engine/redteam.py, 16 Oct).
+MACHINE = re.compile(r"\b(system|ai|a\.i\.|llm|assistants?|agents?|bots?|models?|crawlers?|automated|you must)\b",
+                     re.IGNORECASE)
+COMMAND = re.compile(r"\b(ignore|disregard|override|bypass|skip|suppress|treat|mark|classify|rate|label|output|confirm|"
+                     r"consider|exempt|approve|proceed)\b", re.IGNORECASE)
+TRUST = re.compile(r"\b(verified|verification|trusted|trustworthy|genuine|authentic|authori[sz]ed|safe|approved|"
+                   r"legit(imate)?|certified|trust)\b", re.IGNORECASE)
+STRONG = re.compile(r"\bsafeshelf\b|\bsystem (instruction|notice|note|prompt|message|override)s?\b|"
+                    r"\b(ignore|disregard|override|skip|bypass)( all| any)?( previous| prior)? (risk|warning|security|"
+                    r"trust|threat|safety)", re.IGNORECASE)
+
+
+def hidden_instructions(text: str | None) -> bool:
+    text = text or ""
+    if HIDDEN.search(text) or STRONG.search(text):
+        return True
+    return any(MACHINE.search(s) and COMMAND.search(s) and TRUST.search(s)
+               for s in re.split(r"(?<=[.!?\]])\s+|\n+", text))
+
 @cache
 def _json(name: str) -> dict:
     path = DATA / name
@@ -348,7 +369,7 @@ def trust_check(listing: dict) -> dict:
                                      listing.get("currency") or "INR"),
                   "website_age": website_check(url), "spec": none,
                   "seller": seller_check(listing_brand(listing), seller, url, listing.get("page_text"))}
-    hidden = bool(HIDDEN.search(listing.get("page_text") or ""))
+    hidden = hidden_instructions(listing.get("page_text"))
     answer = {
         "listing_url": url,
         "matched_product_id": product_id,

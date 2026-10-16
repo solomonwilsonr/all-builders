@@ -161,7 +161,7 @@ def defend(kind: str, a: dict, market: str) -> dict:
     elif kind == "fake_shop":
         page = a.get("page_text") or ""
         seller = trust.seller_check(a["brand"], a.get("seller"), a.get("shop_url"), page)
-        hidden = bool(trust.HIDDEN.search(page))
+        hidden = trust.hidden_instructions(page)
         d = {"hidden_instructions_found": hidden, "seller": seller.get("result"),
              "seller_reason": seller.get("reason"), "price": trust.mrp_check(a.get("price"), a.get("mrp"))["result"]}
         d["outcome"] = "warned" if hidden else "not warned"

@@ -1,7 +1,8 @@
 // SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same public API as the extension.
 // Samples replay a saved run of the live API at real speed; "Run it live" streams a new one
 // (POST /v1/agent/sessions/stream, server-sent events), capped per browser so the demo's Gemini budget lasts.
-const API = "https://safeshelf-api-368488022657.asia-south1.run.app";
+// The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
+import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
 const LIVE_PER_DAY = 10;
 const LONG_WAIT_MS = 3000; // in a replay, a wait longer than this is shortened to SHORT_WAIT_MS (and the page says so)
 const SHORT_WAIT_MS = 1000;
@@ -130,7 +131,7 @@ function plainBlock(v) {
     el("div", { className: "pplaces" }, el("strong", { textContent: "Where we checked official recall lists" }),
       el("ul", {}, ...(p.checked || []).map((c) => el("li", { className: c.mark },
         el("span", { className: "pm", textContent: MARKS[c.mark] || "–" }), `${c.flag} `,
-        el("b", { textContent: `${c.name}${c.yours ? " (shopper's country)" : ""}: ` }), c.status)))),
+        el("b", { textContent: `${c.name}${c.yours ? " (shopper's country)" : ""}: ` }), c.status, " ", badgeEl(c.badge))))),
     el("p", { className: "muted", textContent: p.note }));
 }
 
@@ -176,6 +177,7 @@ function verdictBlock(result, expect) {
   }
   const plain = plainBlock(v);
   if (plain) parts.push(plain);
+  parts.push(listenBlock(v.plain, v.headline || text || ""));
   const cov = coverageBlock(v);
   if (cov) { cov.open = !plain; cov.querySelector("summary").textContent = plain ? "Show details: sources, records and rules" : cov.querySelector("summary").textContent; parts.push(cov); }
   const ids = [...new Set([...(result.messages?.[0]?.evidence_ids || []), ...(v.evidence_ids || [])])];
@@ -197,6 +199,7 @@ function verdictBlock(result, expect) {
     };
     parts.push(el("div", {}, btn, box));
   }
+  parts.push(afterBlock(result));
   parts.push(el("p", { className: "label" }, `${result.steps?.length || 0} agent steps · investigation ${result.investigation_id || "?"} · `,
     result.investigation_id ? el("a", { href: `${API}/v1/investigations/${encodeURIComponent(result.investigation_id)}/trace`, target: "_blank", rel: "noopener", textContent: "full trace (model, tool, time)" }) : "",
     result.label ? ` · ${result.label}` : ""));
@@ -278,6 +281,7 @@ async function showSample(preset, button) {
   let rec;
   try {
     rec = await (await fetch(`samples/${preset.id}.json`)).json();
+    setListing(preset.request.listing);
   } catch (_) { box.replaceChildren(el("p", { className: "error", textContent: "This sample's saved run could not be loaded." })); return; }
   const runLive = () => {
     const view = runView(box, { title: preset.name, sub, expect: preset.expect, pill: el("span", { className: "pill live", textContent: "Live now · Gemini on Vertex AI" }) });
@@ -320,6 +324,7 @@ function setUpOwn() {
     const listing = {};
     for (const k of ["title", "url", "seller", "page_text", "currency"]) if (String(f.get(k) || "").trim()) listing[k] = String(f.get(k)).trim();
     if (String(f.get("price") || "").trim()) listing.price = Number(f.get("price"));
+    setListing(listing);
     quota.take();
     refreshQuota();
     const view = runView(box, { title: listing.title, sub: listing.url || "No link given",
@@ -426,3 +431,5 @@ setUpOwn();
 refreshQuota();
 setUpSamples();
 setUpVs();
+setUpAsk();
+setUpRedteam(() => { if (!quota.left()) return false; quota.take(); refreshQuota(); return true; });
