@@ -383,6 +383,11 @@ async def research(brand: str, model: str, sources: list[str] | None = None, mod
     """Every requested site in parallel, each in its own browser tab, within one time budget."""
     wanted = [s for s in (sources or DEFAULT_SOURCES) if s in SOURCES]
     started = time.monotonic()
+    if mode == "browser_use":
+        import browser_use_agent
+        if browser_use_agent.available():
+            return await research_browser_use(brand, model, wanted, budget_s, started)
+        mode = "scripted"  # the library isn't installed here: the scripted flow answers instead
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True, args=["--disable-dev-shm-usage"])
         context = await browser.new_context(viewport={"width": WIDTH, "height": HEIGHT}, locale="en-GB",
@@ -408,3 +413,28 @@ async def research(brand: str, model: str, sources: list[str] | None = None, mod
             "seconds": round(time.monotonic() - started, 1),
             "label": "Found by an automated browser on official sites; a person confirms before anyone acts on it"}
 
+
+
+async def research_browser_use(brand: str, model: str, wanted: list[str], budget_s: float, started: float) -> dict:
+    """browser-use mode (research/browser_use_agent.py): one open-source browser agent per site, in parallel."""
+    import browser_use_agent
+
+    async with async_playwright() as p:
+        executable = p.chromium.executable_path  # the Chromium that `playwright install` put in the image
+
+    async def one(key: str) -> dict:
+        steps: list = []
+        try:
+            out = await asyncio.wait_for(browser_use_agent.run(key, SOURCES[key], brand, model, executable, steps),
+                                         budget_s)
+        except Exception as error:  # noqa: BLE001
+            log.warning("browser-use %s failed: %s", key, type(error).__name__)
+            out = {"status": "error", "error": type(error).__name__}
+        return {"source": key, "site": SOURCES[key]["site"], "start_url": SOURCES[key]["start_url"],
+                "matches": [], **out, "steps": steps}
+
+    results = await asyncio.gather(*(one(k) for k in wanted))
+    return {"brand": brand, "model": model, "mode": "browser_use", "sources": results,
+            "seconds": round(time.monotonic() - started, 1),
+            "label": "Found by an open-source browser agent (browser-use + Gemini) on official sites; a person "
+                     "confirms before anyone acts on it"}

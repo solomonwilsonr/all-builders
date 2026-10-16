@@ -19,7 +19,7 @@ class ResearchRequest(BaseModel):
     model: str = ""
     kind: str = ""
     sources: list[str] | None = None
-    mode: str = "scripted"  # or "computer_use"
+    mode: str = "scripted"  # or "computer_use", or "browser_use" (open-source browser-use agent)
 
 
 @app.post("/research")
@@ -28,9 +28,9 @@ async def research(req: ResearchRequest, x_research_token: str = Header(default=
         raise HTTPException(status_code=401, detail="Missing or wrong X-Research-Token")
     if not (req.brand or req.model):
         raise HTTPException(status_code=422, detail="Give a brand and a model number")
-    mode = "computer_use" if req.mode == "computer_use" else "scripted"
+    mode = req.mode if req.mode in ("computer_use", "browser_use") else "scripted"
     return await browser.research(req.brand[:80], req.model[:80], req.sources, mode,
-                                  budget_s=240 if mode == "computer_use" else 160)
+                                  budget_s=240 if mode in ("computer_use", "browser_use") else 160)
 
 
 @app.get("/health")

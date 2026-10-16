@@ -3,6 +3,7 @@ API (EU Safety Gate, Product Safety New Zealand). Slower and costlier than an AP
 Agent is configured and the investigation asked for depth. What it finds is a lead "for a person to confirm".
 """
 import asyncio
+import os
 
 from engine.sources import normalizer
 from engine.sources.adapters._http import Base
@@ -19,8 +20,10 @@ class Adapter(Base):
         if not research.RESEARCH_URL:
             raise SourceFailure(NOT_CONFIGURED, "the Research Agent is not configured here")
         site = SITE_KEYS.get(self.id, self.id)
+        # Sites with no API (EU Safety Gate, New Zealand) are searched by the open-source browser-use agent; the
+        # Research Agent falls back to its scripted flow where that library isn't installed.
         body = await asyncio.to_thread(research.check, query.brand or "", query.model or "", query.category or "",
-                                       [site])
+                                       [site], os.environ.get("SAFESHELF_BROWSER_MODE", "browser_use"))
         retrieved, records = now(), []
         for s in body.get("sources", []):
             if s.get("status") in ("blocked", "captcha"):
