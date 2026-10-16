@@ -46,6 +46,9 @@ def main() -> None:
     parser.add_argument("--db", default=None, help="Postgres URL (default: DATABASE_URL / Cloud SQL socket)")
     parser.add_argument("--status", action="store_true")
     args = parser.parse_args()
+    if args.db:  # the registry sync below goes through engine.store, which reads DATABASE_URL
+        os.environ["DATABASE_URL"] = args.db
+        os.environ.pop("CLOUD_SQL_INSTANCE", None)
     with connect(args.db or os.environ.get("DATABASE_URL")) as conn:
         conn.execute("""CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY, checksum TEXT NOT NULL,
                                                                      applied_at TIMESTAMPTZ NOT NULL DEFAULT now())""")
