@@ -121,6 +121,7 @@ def test_tenancy_helpers(monkeypatch):
     ("New 65W Fast Charger USB-C", None),
     ("V-Guard VSDI 100 Digital for Inverter Refrigerator up to 900 L, Working Range 120 VAC -280 VAC", "VSDI 100"),
     ("ABC 500 mAh power bank", None),
+    ("エレコム モバイルバッテリー 10000mAh 型番 DE-C38-10000BK ブラック", "DE-C38-10000BK"),
 ])
 def test_title_model_keeps_the_written_form(title, model):
     assert investigation.title_model({"title": title}) == model
@@ -130,3 +131,17 @@ def test_camera_scrubs_contact_details():
     assert camera.scrub("Call +91 98765 43210 or mail a@b.co") == "Call [removed] or mail [removed]"
     with pytest.raises(ValueError):
         camera.decode("not a data url")
+
+
+def test_identity_agent_keeps_only_values_quoted_from_the_page():
+    from engine.agents import identity_agent
+    page = {"title": "Philips HD 9252/90 Air Fryer 4.1 L, Black"}
+    good = lambda *a, **k: {"brand": "Philips", "brand_quote": "Philips", "model_number": "HD9252/90",  # noqa: E731
+                            "model_number_quote": "HD 9252/90", "model": "gemini-x"}
+    out = identity_agent.read(page, call=good)
+    assert out["model"] == "HD9252/90" and "model" in out["verified"]
+    identity_agent._cache.clear()
+    invented = lambda *a, **k: {"brand": "Philips", "brand_quote": "Philips", "model_number": "HD9999",  # noqa: E731
+                                "model_number_quote": "HD 9999 Pro", "model": "gemini-x"}
+    out = identity_agent.read(page, call=invented)
+    assert "model" not in out and out["rejected"] == ["model"]

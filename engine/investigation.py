@@ -33,7 +33,7 @@ log = logging.getLogger(__name__)
 MIN_REVIEWS = 20
 CLAIM_TYPES = set(typing.get_args(ClaimType))
 PRODUCT_FIELDS = ("product_id", "brand", "model", "gtin", "batch", "category", "title", "local_identifiers", "key",
-                  "market")
+                  "market", "identity_source", "identity_agent")
 HAZARD_FIELDS = ("hazard_type", "mechanism", "severity", "independent_reports", "independent_groups", "with_photos",
                  "first_seen", "trend", "evidence_ids")
 _jobs = ThreadPoolExecutor(max_workers=2, thread_name_prefix="investigation")
@@ -71,6 +71,17 @@ def product_from(request: dict) -> dict:
         for k in ("gtin", "category"):
             product[k] = product[k] or fp.get(k)
         product["brand"] = product["brand"] or title_brand(listing)
+    product["identity_source"] = "given" if request.get("model") else "listing text (code)" if product["model"] else None
+    if listing and not product["model"] and not request.get("no_agents"):
+        # Code found no model number: the identity agent reads the listing, and only quotes found on the page count.
+        from engine.agents import identity_agent
+        read = identity_agent.read({**listing, "label_text": request.get("label_text")})
+        for k in ("brand", "model", "batch"):
+            product[k] = product[k] or read.get(k)
+        if read.get("model"):
+            product["identity_source"] = f"identity agent (quoted: \"{read['quotes']['model']}\")"
+        product["identity_agent"] = {k: read.get(k) for k in ("verified", "rejected", "quotes", "model_version",
+                                                                "evidence_id")} if read else None
     ids = locales.local_identifiers(" ".join(str(request.get(k) or "") for k in ("title", "page_text", "label_text")))
     product["local_identifiers"] = {**ids, **(request.get("local_identifiers") or {})}
     if not product["gtin"] and ids.get("gtin"):
@@ -92,6 +103,10 @@ def title_model(listing: dict) -> str | None:
     from engine.sources.normalizer import NOT_MODEL, TOKEN
     labelled = labelled_model(listing.get("page_text") or "")
     title = N_IN_ONE.sub(" ", locales.fold(listing.get("title") or ""))
+    from engine.sources.normalizer import models_in
+    marked = models_in(title)  # "型番 DE-C38-10000BK", "Model: X100": a code the title itself labels comes first
+    if marked and not labelled:
+        return marked[0]
     # "V-Guard VSDI 100 Digital": a capitalised code and a number written apart are one model ("VSDI 100").
     spaced = [m for m in SPACED_MODEL.findall(title) if not UNIT_AFTER.match(m.split()[-1])]
     for token in spaced + MODEL_TOKEN.findall(title) + TOKEN.findall(title):
