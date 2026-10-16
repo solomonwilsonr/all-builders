@@ -1,18 +1,32 @@
-main { max-width:900px; margin:0 auto; padding:48px 20px 96px; }
-header { padding:28px; margin-bottom:16px; }
-h1 { margin:18px 0 10px; font-size:clamp(2.4rem,8vw,3.8rem); }
-h2 { font-size:1.4rem; line-height:1.1; letter-spacing:-.03em; margin:0 0 6px; }
-header .muted { max-width:60ch; margin:0; }
-section { padding:22px 24px; margin:14px 0; }
-.muted { color:var(--muted); margin:2px 0 10px; }
-.row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0; }
-input[type=text] { flex:1; min-width:220px; }
-.row button { padding:8px 14px; font-size:.92rem; }
-#refresh, #bench, #trace, #scan { background:var(--primary); border-color:var(--primary); color:var(--on-primary); }
-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:.95rem; } th, td { text-align:left; padding:8px 10px; vertical-align:top; }
-th { color:var(--muted); font-size:.85rem; font-weight:600; } tbody tr:nth-child(odd) { background:var(--soft); } tbody td:first-child { border-radius:10px 0 0 10px; } tbody td:last-child { border-radius:0 10px 10px 0; }
-code { font-size:.9em; background:var(--soft); padding:1px 5px; border-radius:6px; }
-.live { color:var(--green); font-weight:700; } .notlive { color:var(--amber); font-weight:700; }
-.vh { font-weight:700; margin:14px 0 2px; } .vnote { color:var(--muted); font-size:.9rem; margin:4px 0; }
-.vrow { display:flex; gap:8px; margin:6px 0; } .vrow .i { flex:none; width:1.6em; text-align:center; } .vrow .s { color:var(--muted); font-size:.9rem; }
-.nl { background:var(--soft); border-radius:14px; padding:10px 14px; margin-top:10px; }
+/* Judges' Lab: tool cards on the shared frame; colours come from the tokens in shell.css. */
+:root{--live:#2f6b3a;--notlive:#87621a;--bad:#9c3b2b}
+:root[data-theme=dark]{--live:#b3d5a0;--notlive:#e3c783;--bad:#efab9f}
+.lab-content{display:grid;gap:16px}
+.lab-content .lede{margin:0 0 8px;max-width:60ch;font-size:16px;line-height:1.55;color:var(--ink-2)}
+.card{min-width:0;padding:28px 30px}
+.card h2{margin:0 0 8px;font-size:20px;font-weight:600;letter-spacing:-.3px}
+.muted{margin:0 0 18px;max-width:75ch;font-size:15px;line-height:1.6;color:var(--ink-2)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:16px 0}
+.card button{padding:9px 14px;border:1px solid var(--line);border-radius:var(--round);background:var(--surface-2);color:var(--ink);font-size:14px;font-weight:500;transition:background .15s,border-color .15s}
+.card button:hover{border-color:var(--track)}
+.card button:active{transform:scale(.97)}
+#refresh,#bench,#trace,#scan{background:var(--action);border-color:var(--action);color:var(--on-action)}
+#refresh:hover,#bench:hover,#trace:hover,#scan:hover{opacity:.88}
+.card input{flex:1;min-width:160px;max-width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--ground);color:var(--ink);font-size:15px}
+#status{width:100%;margin-top:20px;border-collapse:collapse;table-layout:fixed;font-size:14px}
+th,td{padding:12px 10px;text-align:left;vertical-align:top;line-height:1.55;overflow-wrap:anywhere;border-bottom:1px solid var(--line)}
+th{font-size:13px;font-weight:500;color:var(--ink-2)}
+th:nth-child(1){width:40%}th:nth-child(2){width:22%}
+code{padding:2px 6px;border-radius:5px;background:var(--surface-2);font-size:13px;overflow-wrap:anywhere}
+.live{color:var(--live);font-weight:500}.notlive{color:var(--notlive);font-weight:500}
+.vh{margin:20px 0 8px;font-size:16px;font-weight:600}
+.vnote{margin:6px 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+.vrow{display:flex;gap:10px;margin:10px 0;font-size:15px;line-height:1.6}
+.vrow .i{flex:none;width:1.6em;text-align:center;color:var(--ink-2)}
+.i svg{width:17px;height:17px;vertical-align:-3px}
+.vrow .i[data-icon=ok]{color:var(--live)}.vrow .i[data-icon=stop]{color:var(--bad)}.vrow .i[data-icon=warn]{color:var(--notlive)}
+.live .i,.notlive .i{display:inline-block;width:auto;margin-right:7px}
+.vrow .s{font-size:14px;color:var(--ink-2)}
+.vrow a{text-decoration:underline;text-underline-offset:3px}
+.nl{margin-top:16px;padding:14px 16px;border-radius:12px;background:var(--surface-2);font-size:14px;line-height:1.6;color:var(--ink-2)}
+@media(max-width:540px){.card{padding:22px 18px}th,td{padding:10px 6px;font-size:13px}.card .row button{flex-grow:1}}

@@ -8,11 +8,20 @@
   ],
   "host_permissions": [
     "http://localhost/*",
-    "https://*.run.app/*"
+    "https://securetoken.googleapis.com/*",
+    "https://*.run.app/*",
+    "https://firestore.googleapis.com/*"
   ],
   "action": {
     "default_title": "SafeShelf",
     "default_popup": "popup.html"
+  },
+  "externally_connectable": {
+    "matches": [
+      "https://shelf2026-3656b.web.app/*",
+      "https://shelf2026-3656b.firebaseapp.com/*",
+      "http://localhost:8095/*"
+    ]
   },
   "background": {
     "service_worker": "background.js",

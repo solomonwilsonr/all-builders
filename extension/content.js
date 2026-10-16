@@ -279,15 +279,50 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     :host { --ink:#13233a; --muted:#5a6a7c; --line:#e3e7ec; --soft:#f1f3f6; --card:#fdfcfa; --lime:#dff0a8; --lime-d:#c9e383; --link:#2f5fb3;
       --green:#0a6b2d; --green-bg:#e3f3e7; --amber:#8a5a00; --amber-bg:#fbefd6; --red:#b3261e; --red-bg:#fbe3e1; --unknown:#4a5560; --unknown-bg:#eceff3;
       --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-      --sky:radial-gradient(120% 70% at 0% 0%, #b9d4ee 0%, transparent 60%), radial-gradient(120% 70% at 100% 100%, #f6c9b4 0%, transparent 60%), linear-gradient(180deg, #d6e4f2, #f3ddd2); }
+      --sky:radial-gradient(120% 70% at 0% 0%, #b9d4ee 0%, transparent 60%), radial-gradient(120% 70% at 100% 100%, #f6c9b4 0%, transparent 60%), linear-gradient(180deg, #d6e4f2, #f3ddd2);
+      --icon-stroke:2; }
+    /* Settings > Theme: accent, font and icon weight arrive as attributes on each host (see themed() below) */
+    :host([data-accent=mint]) { --lime:#c9f0dc; --lime-d:#a6e2c4; } :host([data-accent=sky]) { --lime:#cfe4fb; --lime-d:#a9cdf5; }
+    :host([data-accent=lilac]) { --lime:#e3dcfb; --lime-d:#c9bdf3; } :host([data-accent=peach]) { --lime:#fbdcc9; --lime-d:#f4c0a2; } :host([data-accent=sand]) { --lime:#efe5c9; --lime-d:#ddcda2; }
+    :host([data-font=geist]) { --font:Geist,"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    :host([data-font=system]) { --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+    :host([data-font=rounded]) { --font:ui-rounded,"SF Pro Rounded",Nunito,system-ui,sans-serif; }
+    :host([data-font=serif]) { --font:"Iowan Old Style",Palatino,Georgia,serif; }
+    :host([data-icons=light]) { --icon-stroke:1.5; } :host([data-icons=bold]) { --icon-stroke:2.6; }
+    svg:not(.ring) :is(path, rect, circle, line, polyline) { stroke-width:var(--icon-stroke); }
   `;
+  // Theme settings for the widget, read from storage below and kept up to date. Every shadow host is painted with them.
+  const LOOK = { accent: ["lime","mint","sky","lilac","peach","sand"], font: ["geist","system","rounded","serif"], icons: ["regular","light","bold"],
+    widgetSide: ["right","left"], widgetSize: ["regular","compact"], widgetSurface: ["glass","solid"], widgetChat: ["popup","drawer"] };
+  const look = Object.fromEntries(Object.entries(LOOK).map(([k, v]) => [k, v[0]]));
+  const themedHosts = new Set();
+  const paintLook = (h) => Object.assign(h.dataset, { accent: look.accent, font: look.font, icons: look.icons, side: look.widgetSide, size: look.widgetSize, surface: look.widgetSurface, chat: look.widgetChat });
+  const themed = (h) => { themedHosts.add(h); paintLook(h); return h; };
+  // Chat as a drawer docks at the browser edge: the page gets narrower by the drawer's width, like a browser side panel.
+  let dockStyle = null;
+  const dock = (side, px) => {
+    if (!px) { dockStyle?.remove(); dockStyle = null; return; }
+    if (!dockStyle) { dockStyle = document.createElement("style"); (document.head || document.documentElement).append(dockStyle); }
+    dockStyle.textContent = `html { margin-${side}:${px}px !important; transition:margin .2s ease; }`;
+  };
+  // Where the rail sits along the edge, as a % of the window height; set by dragging its handle.
+  let widgetY = 50;
+  const clampY = (y) => Math.min(92, Math.max(8, Number(y) || 50));
+  const placeY = (h, y = widgetY) => h.style?.setProperty?.("--ss-y", `${y}%`);
+  // Keeps the whole rail on screen: its centre stays at least half its height (plus a margin) from the top and bottom.
+  const fitY = (h, y) => {
+    const vh = innerHeight || 800, half = ((h.getBoundingClientRect?.().height || 0) / 2 + 8) / vh * 100;
+    return Math.min(100 - half, Math.max(half, clampY(y)));
+  };
+  const readLook = (data) => { for (const [k, v] of Object.entries(LOOK)) if (k in data) look[k] = v.includes(data[k]) ? data[k] : v[0]; themedHosts.forEach(paintLook); };
 
   const PANEL_STYLE = `
     .tabs { display:flex; flex-wrap:wrap; justify-content:center; gap:2px; margin:14px 0 10px; padding:4px; border-radius:14px; background:var(--soft); }
     .tab { font:inherit; font-size:13px; font-weight:600; padding:5px 10px; border:0; border-radius:10px; background:transparent; color:var(--muted); cursor:pointer; transition:background-color .12s ease; }
     .tab:hover { color:var(--ink); }
     .tab[aria-selected="true"] { background:#fff; color:var(--ink); box-shadow:0 1px 4px rgba(19,35,58,.14); }
-    .vrow { display:flex; gap:8px; margin:6px 0; } .vrow .i { flex:none; width:1.4em; text-align:center; }
+    .vrow { display:flex; gap:8px; margin:6px 0; } .vrow .i { flex:none; width:1.4em; text-align:center; } .vrow .i svg { width:17px; height:17px; vertical-align:-3px; }
+    .vrow .i[data-icon=ok] { color:var(--green); } .vrow .i[data-icon=stop] { color:var(--red); } .vrow .i[data-icon=warn] { color:var(--amber); } .vrow .i[data-icon=unknown], .vrow .i[data-icon=dot] { color:var(--muted); }
     .vrow .s { color:var(--muted); font-size:13px; } .vrow a { font-size:13px; color:var(--link); }
     .vh { font-weight:700; font-size:17px; letter-spacing:-.02em; margin:14px 0 2px; } .vnote { color:var(--muted); font-size:13px; margin:4px 0; }
     .notlive { background:var(--soft); border-radius:14px; padding:10px 12px; color:var(--ink); font-size:14px; }
@@ -315,6 +350,39 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     :host(.float) { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:2147483647; flex-direction:row; align-items:center; gap:12px; }
     :host(.float) .bar { flex-direction:column; gap:8px; padding:10px 8px 10px 10px; background:rgba(253,252,250,.86); backdrop-filter:blur(12px); border:1px solid #fff; border-right:0; border-radius:22px 0 0 22px; box-shadow:-6px 10px 30px rgba(19,35,58,.18); }
     :host(.float) .fab { position:relative; width:46px; height:46px; padding:0; border-radius:15px; display:grid; place-items:center; }
+    :host(.float[data-side=left]) { right:auto; left:0; flex-direction:row-reverse; }
+    :host(.float[data-side=left]) .bar { border-left:0; border-right:1px solid #fff; border-radius:0 22px 22px 0; padding:10px 10px 10px 8px; box-shadow:6px 10px 30px rgba(19,35,58,.18); }
+    :host(.float[data-side=left]) .tip { right:auto; left:calc(100% + 12px); }
+    :host(.float[data-size=compact]) .bar { gap:6px; padding-top:8px; padding-bottom:8px; }
+    :host(.float[data-size=compact]) .fab { width:38px; height:38px; border-radius:12px; } :host(.float[data-size=compact]) .fab svg:not(.ring) { width:20px; height:20px; }
+    :host(.float[data-surface=solid]) .bar { background:#fff; backdrop-filter:none; }
+    :host(.float.shelf-only) .fab:not(.go-shelf), :host(.float.shelf-only) .box { display:none !important; } /* not a product page */
+    :host(.float) { top:var(--ss-y,50%); }
+    .grip { display:grid; place-items:center; width:46px; height:14px; margin:-4px 0 -2px; padding:0; border:0; border-radius:6px; background:none; cursor:grab; touch-action:none; }
+    .grip::before { content:""; width:22px; height:4px; border-radius:2px; background:var(--muted); opacity:.45; transition:opacity .12s; }
+    .grip:hover::before, .grip:focus-visible::before { opacity:.85; } .grip:focus-visible { outline:2px solid var(--link); outline-offset:2px; }
+    :host(.float[data-size=compact]) .grip { width:38px; }
+    :host(.float.dragging) { user-select:none; } :host(.float.dragging) .grip { cursor:grabbing; } :host(.float.dragging) .bar { box-shadow:0 14px 40px rgba(19,35,58,.28); }
+    :host(.float.drawer-open) .grip { display:none; }
+    /* Panels as a drawer (Settings > Theme), while the check or chat is open: one solid full-height panel flush with the window edge.
+       The button rail becomes the panel's outer column, each icon with its short name under it. */
+    :host(.float[data-chat=drawer].drawer-open) { top:0; bottom:0; transform:none; gap:0; align-items:stretch; }
+    :host(.float[data-chat=drawer].drawer-open) .bar { justify-content:flex-start; gap:6px; padding:16px 8px; border:0; border-left:1px solid var(--line); border-radius:0; background:var(--card); backdrop-filter:none; box-shadow:none; }
+    :host(.float[data-chat=drawer].drawer-open) .fab { width:60px; height:auto; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:4px; border-radius:14px; background:transparent; }
+    :host(.float[data-chat=drawer].drawer-open) .fab:hover { background:var(--soft); }
+    :host(.float[data-chat=drawer].drawer-open) .fab::after { content:attr(data-short); font-size:11px; font-weight:600; color:var(--muted); }
+    :host(.float[data-chat=drawer].drawer-open) .fab[aria-expanded="true"] { background:var(--lime); border-color:transparent; }
+    :host(.float[data-chat=drawer].drawer-open) .fab[aria-expanded="true"]::after { color:var(--ink); }
+    :host(.float[data-chat=drawer].drawer-open) .tip { display:none; }
+    :host(.float[data-chat=drawer].drawer-open) .box:not([hidden]) { width:min(420px,calc(100vw - 90px)); max-height:none; padding:0; border-radius:0; background:var(--card); box-shadow:none; border-left:1px solid var(--line); animation:ss-drawer .22s ease-out; }
+    @keyframes ss-drawer { from { transform:translateX(28px); opacity:0; } }
+    :host(.float[data-chat=drawer].drawer-open) .box:not([hidden]) > .card { min-height:100%; border-radius:0; box-shadow:none; padding:20px; }
+    :host(.float[data-chat=drawer].drawer-open) .box.chat > .card { flex:1; min-height:0; }
+    :host(.float[data-chat=drawer].drawer-open) .chat .log { flex:1; max-height:none; }
+    :host(.float[data-chat=drawer].drawer-open) .chat .ask { margin-top:auto; } /* the question box sits at the bottom of the drawer */
+    :host(.float[data-chat=drawer][data-side=left].drawer-open) .bar { border-left:0; border-right:1px solid var(--line); }
+    :host(.float[data-chat=drawer][data-side=left].drawer-open) .box:not([hidden]) { border-left:0; border-right:1px solid var(--line); animation-name:ss-drawer-left; }
+    @keyframes ss-drawer-left { from { transform:translateX(-28px); opacity:0; } }
     .tip { position:absolute; right:calc(100% + 12px); top:50%; transform:translateY(-50%); background:var(--ink); color:#fff; padding:6px 12px; border-radius:10px; font-size:13px; font-weight:600; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .12s ease; }
     .fab:hover .tip, .fab:focus-visible .tip { opacity:1; }
     .fab { font:inherit; font-weight:700; padding:10px 18px; border:1px solid transparent; border-radius:14px; background:var(--soft); color:var(--ink); cursor:pointer; transition:transform .12s ease, background-color .12s ease; }
@@ -323,6 +391,14 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .fab[aria-expanded="true"] { background:var(--lime); border-color:var(--lime-d); }
     .fab:focus-visible { outline:3px solid var(--link); outline-offset:2px; }
     .fab:disabled { opacity:.6; cursor:default; }
+    .fab.just-saved { background:var(--green-bg); color:var(--green); } .fab.just-saved svg { animation:ss-pop .28s cubic-bezier(.3,.7,.4,1.4); }
+    .fab.saved { background:var(--lime); border-color:var(--lime-d); color:var(--ink); } .fab.saved svg path { fill:currentColor; }
+    @keyframes ss-pop { from { transform:scale(.5); opacity:0; } }
+    .fab .ring { position:absolute; inset:-5px; width:calc(100% + 10px); height:calc(100% + 10px); pointer-events:none; overflow:visible; }
+    .fab .ring rect { fill:none; stroke-width:2.5; } .fab .ring .track { stroke:var(--lime-d); opacity:.55; }
+    .fab .ring .seg { stroke:var(--green); stroke-linecap:round; stroke-dasharray:24 76; animation:ss-ring 1.1s linear infinite; }
+    .fab.loading[aria-expanded="true"] { border-color:transparent; box-shadow:none; }
+    @keyframes ss-ring { to { stroke-dashoffset:-100; } }
     .fab.unknown { background:var(--unknown-bg); color:var(--unknown); }
     .fab.green { background:var(--green-bg); color:var(--green); } .fab.amber { background:var(--amber-bg); color:var(--amber); } .fab.red { background:var(--red-bg); color:var(--red); }
     .fab.green[aria-expanded="true"], .fab.amber[aria-expanded="true"], .fab.red[aria-expanded="true"], .fab.unknown[aria-expanded="true"] { box-shadow:0 0 0 3px var(--lime-d); }
@@ -505,7 +581,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     button.small:hover { background:var(--soft); }
     .row button.small:first-child { background:var(--ink); border-color:var(--ink); color:#fff; }
     button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid var(--link); outline-offset:2px; }
-    @media (prefers-reduced-motion: reduce) { .fab, .tab { transition:none; } .fab:active { transform:none; } .wait .mark, .skel, .typing i, .first li::before { animation:none; } }
+    @media (prefers-reduced-motion: reduce) { .fab, .tab { transition:none; } .fab:active { transform:none; } .fab.just-saved svg { animation:none; } .fab .ring .seg { animation-duration:3s; } :host(.float) .box { animation:none !important; } .wait .mark, .skel, .typing i, .first li::before { animation:none; } }
   `;
 
   const el = (tag, props = {}, ...kids) => {
@@ -521,6 +597,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     toastHost?.remove();
     clearTimeout(toastTimer);
     toastHost = el("div");
+    themed(toastHost);
     const root = toastHost.attachShadow({ mode: "open" });
     const close = () => { toastHost?.remove(); toastHost = null; };
     const action = actionLabel ? el("button", { type: "button", textContent: actionLabel, onclick: () => { onAction?.(); close(); } }) : "";
@@ -590,7 +667,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   };
   const approved = new Set(); // pages already approved: Check, Save and Ask share one cached check
   const confirmCost = (what, estimate, page) => new Promise((resolve) => {
-    const host = el("div");
+    const host = themed(el("div"));
     const root = host.attachShadow({ mode: "open" });
     const finish = (ok) => { host.remove(); resolve(ok); };
     const go = el("button", { type: "button", textContent: "Continue", onclick: () => finish(true) });
@@ -633,12 +710,14 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   // --- END TEMP COST GUARD ---
 
   // ---- Panels: one tab per SafeShelf API. Nothing is shown unless the API says the endpoint is live. ----
+  // A row marker: the named line icon from panels.js, or the text itself (step numbers).
+  const marker = (name) => { const icons = globalThis.SafeShelfPanels?.ICONS || {}; const n = el("span", { className: "i" }); if (icons[name]) { n.innerHTML = icons[name]; n.dataset.icon = name; } else n.textContent = name ?? ""; return n; };
   // A list of rows from a view-model (see panels.js)
   const vmDom = (v) => el("div", {},
     el("div", { className: "vh", textContent: v.title }),
     ...(v.note ? [el("div", { className: "vnote", textContent: v.note })] : []),
     ...(v.empty ? [el("div", { className: "vnote", textContent: v.empty })] : []),
-    ...v.rows.map((r) => r.heading ? el("div", { className: "vh", textContent: r.heading }) : el("div", { className: "vrow" }, el("span", { className: "i", textContent: r.icon }),
+    ...v.rows.map((r) => r.heading ? el("div", { className: "vh", textContent: r.heading }) : el("div", { className: "vrow" }, marker(r.icon),
       el("div", {}, el("div", { textContent: r.text }), ...(r.sub ? [el("div", { className: "s", textContent: r.sub })] : []),
         ...(/^https?:/.test(r.link || "") ? [el("a", { href: r.link, target: "_blank", rel: "noopener", textContent: "Open source" })] : [])))),
   );
@@ -822,6 +901,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   const ICON_PATHS = {
     check: "M12 3l7 3v5c0 5-3.2 8.2-7 10-3.8-1.8-7-5-7-10V6z M9 12l2 2 4-4",
     save: "M7 3h10a1 1 0 011 1v17l-6-4-6 4V4a1 1 0 011-1z",
+    tick: "M5 12.5l4.5 4.5L19 7",
+    shelf: "M4 4h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9 M10 13h4",
     ask: "M4 5h16v11H9l-5 4z",
     warn: "M12 3l9.5 17h-19z M12 10v4 M12 17h.01",
     stop: "M8 3h8l5 5v8l-5 5H8l-5-5V8z M9.5 9.5l5 5 M14.5 9.5l-5 5",
@@ -999,16 +1080,62 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     return { log, intro, form, input, convo, reset };
   };
 
+  const openShelf = async () => {
+    try {
+      const reply = await chrome.runtime.sendMessage({ type: "safeshelf:open-shelf" });
+      if (!reply?.ok) throw new Error(reply?.error || "SafeShelf did not respond. Refresh this page and try again.");
+    } catch (err) {
+      const message = /context invalidated|receiving end does not exist|cannot read properties/i.test(err.message)
+        ? "SafeShelf was reloaded. Refresh this product page, then open My Shelf again."
+        : `Couldn't open My Shelf: ${err.message}`;
+      toast(message);
+    }
+  };
+
   // One button + result card. Used once as a floating button (product page) and once per product card (results pages).
   // Nothing is sent to the API until the button is clicked.
   const createWidget = (getPage, mode) => {
-    const host = el("div", { className: mode });
+    const host = themed(el("div", { className: mode }));
     const root = host.attachShadow({ mode: "open" });
+    // Reloading the extension invalidates scripts already injected into shop tabs.
+    // Block stale controls before they reach any extension API.
+    const guardContext = (event) => {
+      let active = false;
+      try { active = Boolean(chrome.runtime.id); } catch (_) {}
+      if (active) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      toast("SafeShelf was reloaded. Refresh this product page to reconnect.", "Refresh page", () => location.reload());
+    };
+    root.addEventListener("click", guardContext, true);
+    root.addEventListener("submit", guardContext, true);
+    root.addEventListener("pointerdown", guardContext, true);
     // Full wording on product pages, short wording on cards (less clutter); screen readers always get the full wording.
     const label = (btn, full, short) => {
       btn.setAttribute("aria-label", full);
+      btn.dataset.short = short; // shown under the icon when chat is open as a drawer
       if (mode === "inline") { btn.textContent = short; return; }
       btn.replaceChildren(icon(btn.dataset.kind), el("span", { className: "tip", textContent: full }));
+      if (btn.classList.contains("loading")) btn.append(ring());
+    };
+    // While a check runs, the check button's border becomes a moving ring.
+    const ring = () => {
+      const ns = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(ns, "svg");
+      svg.setAttribute("class", "ring"); svg.setAttribute("viewBox", "0 0 56 56"); svg.setAttribute("aria-hidden", "true");
+      for (const cls of ["track", "seg"]) {
+        const r = document.createElementNS(ns, "rect");
+        for (const [k, v] of Object.entries({ class: cls, x: "1.5", y: "1.5", width: "53", height: "53", rx: "19", pathLength: "100" })) r.setAttribute(k, v);
+        svg.append(r);
+      }
+      return svg;
+    };
+    const setLoading = (on) => {
+      if (mode !== "float") return;
+      fab.classList.toggle("loading", on);
+      fab.toggleAttribute("aria-busy", on);
+      fab.querySelector(".ring")?.remove();
+      if (on) fab.append(ring());
     };
     const fab = el("button", { type: "button", className: "fab" });
     fab.dataset.kind = "check";
@@ -1022,7 +1149,48 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     if (chatBtn) { chatBtn.dataset.kind = "ask"; label(chatBtn, "Ask SafeShelf", "Ask"); chatBtn.setAttribute("aria-expanded", "false"); }
     const chatBox = chatBtn ? el("section", { className: "box chat", hidden: true, ariaLabel: "Ask SafeShelf about this product" }) : null;
     shelfBtn.setAttribute("aria-live", "polite");
-    const bar = el("div", { className: "bar" }, ...(chatBtn ? [chatBtn] : []), shelfBtn, fab); // separate buttons: chat, save, check
+    // Open My Shelf: its own button, so the bookmark can add and remove. Product pages only.
+    const goShelfBtn = mode === "float" ? el("button", { type: "button", className: "fab go-shelf" }) : null;
+    if (goShelfBtn) { goShelfBtn.dataset.kind = "shelf"; label(goShelfBtn, "Open My Shelf", "Shelf"); goShelfBtn.onclick = openShelf; }
+    // Drag handle (float rail only): move the rail along the edge, or across the middle to the other side. Arrow keys do the same.
+    const grip = mode === "float" ? el("button", { type: "button", className: "grip", ariaLabel: "Move the SafeShelf buttons. Drag, or use the arrow keys." }) : null;
+    if (grip) {
+      placeY(host);
+      const keep = (y, side) => {
+        widgetY = fitY(host, y);
+        placeY(host);
+        try { chrome.storage.local.set({ widgetY, widgetSide: side }); } catch (_) {} // the extension was reloaded
+      };
+      grip.addEventListener("pointerdown", (e) => {
+        if (host.classList.contains("drawer-open")) return;
+        e.preventDefault();
+        try { grip.setPointerCapture(e.pointerId); } catch (_) {} // keeps the drag going if the pointer leaves the handle
+        host.classList.add("dragging");
+        const move = (ev) => {
+          placeY(host, fitY(host, (ev.clientY / innerHeight) * 100));
+          host.dataset.side = ev.clientX < innerWidth / 2 ? "left" : "right"; // crossing the middle flips it as you drag
+        };
+        const drop = (ev) => {
+          grip.removeEventListener("pointermove", move);
+          grip.removeEventListener("pointerup", drop);
+          grip.removeEventListener("pointercancel", drop);
+          host.classList.remove("dragging");
+          keep((ev.clientY / innerHeight) * 100, host.dataset.side);
+        };
+        grip.addEventListener("pointermove", move);
+        grip.addEventListener("pointerup", drop);
+        grip.addEventListener("pointercancel", drop);
+      });
+      grip.addEventListener("keydown", (e) => {
+        const side = { ArrowLeft: "left", ArrowRight: "right" }[e.key] || host.dataset.side;
+        const step = { ArrowUp: -4, ArrowDown: 4 }[e.key] || 0;
+        if (!step && side === host.dataset.side) return;
+        e.preventDefault();
+        host.dataset.side = side;
+        keep(widgetY + step, side);
+      });
+    }
+    const bar = el("div", { className: "bar" }, ...(grip ? [grip] : []), ...(chatBtn ? [chatBtn] : []), shelfBtn, ...(goShelfBtn ? [goShelfBtn] : []), fab); // separate buttons: chat, save, my shelf, check
     const box = el("section", { className: "box", hidden: true, ariaLabel: "SafeShelf safety check" });
     box.setAttribute("aria-live", "polite");
     const show = (...nodes) => box.replaceChildren(el("div", { className: "card" }, ...nodes)); // everything in the box sits on one white card
@@ -1030,7 +1198,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     // On results pages the popup lives in its own layer on <body>, so no card's CSS can clip, move or cover it.
     const pop = mode === "inline" ? el("div", { className: "pop" }) : null;
     if (pop) {
-      pop.attachShadow({ mode: "open" }).append(el("style", { textContent: STYLE + (globalThis.SafeShelfAftercare?.STYLE || "") }), box);
+      themed(pop).attachShadow({ mode: "open" }).append(el("style", { textContent: STYLE + (globalThis.SafeShelfAftercare?.STYLE || "") }), box);
       root.append(el("style", { textContent: STYLE + (globalThis.SafeShelfAftercare?.STYLE || "") }), bar);
     } else {
       root.append(el("style", { textContent: STYLE + (globalThis.SafeShelfAftercare?.STYLE || "") }), box, ...(chatBox ? [chatBox] : []), bar);
@@ -1038,6 +1206,26 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     let checked = false;
     let result = null;
     let saved = false;
+    let savedTimer = 0;
+    // Saved: a tick for one second, then the bookmark stays filled. On result cards (text buttons) only the wording changes.
+    const showSaved = (title, flash) => {
+      saved = true;
+      clearTimeout(savedTimer);
+      shelfBtn.disabled = false;
+      shelfBtn.title = title;
+      const settle = () => { shelfBtn.dataset.kind = "save"; shelfBtn.classList.remove("just-saved"); shelfBtn.classList.add("saved"); label(shelfBtn, "Saved. Click to remove from My Shelf", "Saved"); };
+      if (!flash) return settle();
+      shelfBtn.dataset.kind = "tick";
+      shelfBtn.classList.add("just-saved");
+      label(shelfBtn, "Saved", "Saved");
+      savedTimer = setTimeout(settle, 1000);
+    };
+    // A product already on My Shelf opens with the bookmark filled.
+    const markIfSaved = async () => {
+      if (mode !== "float") return;
+      try { const { shelf = [] } = await chrome.storage.local.get("shelf"); if (!saved && shelf.some((i) => i.url === cleanUrl())) showSaved("On My Shelf. Click to remove it.", false); } catch (_) {}
+    };
+    markIfSaved();
     let setChatOpen = () => {};
     let resetChat = () => {};
 
@@ -1056,9 +1244,18 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       }
     };
     const outside = (e) => { const p = e.composedPath(); if (!p.includes(host) && !p.includes(pop)) setOpen(false); };
+    // Settings > Theme > Panels open in: as a drawer, an open check card or chat reshapes the widget and docks it at the window edge.
+    const syncDrawer = () => {
+      if (mode !== "float") return;
+      const open = !box.hidden || (chatBox ? !chatBox.hidden : false);
+      host.classList.toggle("drawer-open", open);
+      if (open && look.widgetChat === "drawer") dock(look.widgetSide, Math.round(host.getBoundingClientRect().width)); // reading the size lays the drawer out first
+      else dock();
+    };
     const setOpen = (open) => {
       box.hidden = !open;
       fab.setAttribute("aria-expanded", String(open));
+      syncDrawer();
       if (pop) {
         if (open) document.body.append(pop); else pop.remove();
         const act = open ? "addEventListener" : "removeEventListener";
@@ -1366,7 +1563,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         const s = Math.round((Date.now() - started) / 1000);
         stage.textContent = `${STAGES[Math.min(Math.floor(s / 3), STAGES.length - 1)]}… ${s} s`;
       }, 1000);
-      stopTicker = () => clearInterval(t);
+      setLoading(true);
+      stopTicker = () => { clearInterval(t); setLoading(false); };
       return el("div", { className: "wait" }, el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), el("strong", { textContent: "Checking this product" }), stage,
         ...[92, 74, 84].map((w) => el("div", { className: "skel", style: `width:${w}%` })));
     };
@@ -1390,6 +1588,12 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           if (res?.ok) return render(res.result, fresh);
           stopTicker();
           checked = false; // opening the card again tries again
+          if (res?.signin) { // nothing works without a sign-in (session.js)
+            const signIn = el("button", { type: "button", className: "primary" }, "Sign in with Google");
+            signIn.onclick = () => chrome.runtime.sendMessage({ type: "safeshelf:signin" });
+            return show(cardHead("Check", closeX()), el("div", { className: "state" }, el("strong", { textContent: "Sign in to check this page" }),
+              el("p", { textContent: "SafeShelf checks products for signed-in people. Sign in, then press Check again." }), signIn));
+          }
           const retry = el("button", { type: "button", className: "primary" }, icon("refresh"), "Try again");
           retry.onclick = () => run(true);
           show(cardHead("Check", closeX()), el("div", { className: "state" }, el("strong", { textContent: "SafeShelf couldn't check this page" }),
@@ -1416,7 +1620,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       try {
         const page = getPage();
         const pid = r?.product_id || page.product_id || null;
-        const meta = { title: page.title, url: page.url, host: r?.host || location.hostname, level: r ? level(r) : null };
+        const meta = { title: page.title, url: page.url, image_url: (page.image_urls || [])[0] || null, host: r?.host || location.hostname, level: r ? level(r) : null };
         chrome.runtime.sendMessage({ type: "safeshelf:save", product_id: pid, meta }, (res) => {
           if (res?.ok) {
             const item = res.result;
@@ -1424,10 +1628,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             const note = item.synced ? "Saved to your SafeShelf account. We'll re-check recalls daily."
               : item.api_error ? `The API did not accept it (${item.api_error}), so it is saved on this browser only.`
               : "Saved on this browser.";
-            toast(note, "View shelf", () => chrome.runtime.sendMessage({ type: "safeshelf:open-shelf" }));
-            shelfBtn.disabled = false;
-            label(shelfBtn, "Saved. View shelf", "Saved");
-            shelfBtn.title = `${note} Click to view My Shelf.`;
+            toast(note, "View shelf", openShelf);
+            showSaved(`${note} Click again to remove it.`, true);
           } else {
             label(shelfBtn, "Could not save. Retry", "Retry");
             shelfBtn.title = res?.error || chrome.runtime.lastError?.message || "";
@@ -1437,8 +1639,25 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         });
       } catch (_) { shelfBtn.disabled = false; }
     };
+    // Takes this page off My Shelf; the bookmark goes back to empty.
+    const unsave = () => {
+      shelfBtn.disabled = true;
+      try {
+        chrome.runtime.sendMessage({ type: "safeshelf:unsave", url: getPage().url }, (res) => {
+          shelfBtn.disabled = false;
+          if (!res?.ok) return toast(`Could not remove from My Shelf: ${res?.error || chrome.runtime.lastError?.message || "unknown error"}`);
+          saved = false;
+          clearTimeout(savedTimer);
+          shelfBtn.dataset.kind = "save";
+          shelfBtn.classList.remove("saved", "just-saved");
+          label(shelfBtn, "Save to My Shelf", "Save");
+          shelfBtn.title = "";
+          toast("Removed from My Shelf.");
+        });
+      } catch (_) { shelfBtn.disabled = false; }
+    };
     shelfBtn.onclick = () => {
-      if (saved) { chrome.runtime.sendMessage({ type: "safeshelf:open-shelf" }); return; }
+      if (saved) return unsave();
       shelfBtn.disabled = true;
       label(shelfBtn, "Saving…", "…");
       save(result); // no check needed: saving is free
@@ -1457,9 +1676,13 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       result = null;
       saved = false;
       resetChat();
+      clearTimeout(savedTimer);
       shelfBtn.disabled = false;
+      shelfBtn.dataset.kind = "save";
+      shelfBtn.classList.remove("just-saved", "saved");
       label(shelfBtn, "Save to My Shelf", "Save");
       shelfBtn.title = "";
+      markIfSaved();
       fab.className = "fab";
       label(fab, "Check with SafeShelf", "Check");
       setOpen(false);
@@ -1536,6 +1759,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
       setChatOpen = (open) => {
         chatBox.hidden = !open;
+        syncDrawer();
         chatBtn.setAttribute("aria-expanded", String(open));
         if (!open) return speechSynthesis.cancel();
         setOpen(false);
@@ -1556,12 +1780,22 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   let enabled = false; // stays off until the saved on/off choice has been read
   const floating = createWidget(readPage, "float");
   const inline = new Set();
-  let lastUrl = location.href;
+  let lastUrl = ""; // empty, so the first tick treats the page as new (and fills a missing shelf image on a direct visit)
 
+  // Products saved before images were captured have none on My Shelf. Opening the product page again fills it in.
+  const fillShelfImage = () => {
+    try {
+      const { url, image_urls } = readPage();
+      if (image_urls?.[0]) chrome.runtime.sendMessage({ type: "safeshelf:shelf-image", url, image_url: image_urls[0] }, () => void chrome.runtime.lastError);
+    } catch (_) {} // the extension was reloaded; nothing to fill
+  };
+  // The rail's height changes (product page or not, size setting), so its saved position is re-fitted on screen. Never mid-drag.
+  const refitRail = () => { if (!floating.host.classList.contains("dragging")) placeY(floating.host, fitY(floating.host, widgetY)); };
   const tick = () => {
     if (!enabled) { // turned off from the toolbar menu: remove everything we added
       speechSynthesis.cancel();
       toastHost?.remove();
+      dock();
       floating.host.remove();
       inline.forEach((w) => w.remove());
       inline.clear();
@@ -1571,13 +1805,17 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     if (site.isProduct()) {
       inline.forEach((w) => w.remove());
       inline.clear();
+      floating.host.classList.remove("shelf-only");
       if (!floating.host.isConnected) document.body.append(floating.host);
-      if (location.href !== lastUrl) { lastUrl = location.href; floating.reset(); }
+      refitRail();
+      if (location.href !== lastUrl) { lastUrl = location.href; floating.reset(); setTimeout(fillShelfImage, 2000); }
       return;
     }
-    lastUrl = location.href;
-    floating.host.remove();
-    floating.reset();
+    // Not a product page: the rail shows only the My Shelf button.
+    if (location.href !== lastUrl) { lastUrl = location.href; floating.reset(); }
+    floating.host.classList.add("shelf-only");
+    if (!floating.host.isConnected) document.body.append(floating.host);
+    refitRail();
     if (!site.cards) return;
     for (const card of document.querySelectorAll(site.cards.selector)) {
       if (card.dataset.safeshelfCard) continue;
@@ -1601,17 +1839,27 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     cleanup() {
       clearInterval(timer);
       toastHost?.remove();
+      dock();
       floating.host.remove();
       inline.forEach((w) => w.remove());
       document.querySelectorAll("[data-safeshelf-card]").forEach((c) => delete c.dataset.safeshelfCard);
-      chrome.runtime.onMessage.removeListener(onMessage);
+      try { chrome.runtime.onMessage.removeListener(onMessage); } catch (_) { /* context already invalidated */ }
     },
   };
 
   const setEnabled = (value) => { enabled = value !== false; tick(); };
-  chrome.storage.local.get("enabled", ({ enabled: v }) => setEnabled(v));
-  const onStorage = (changes, area) => { if (area === "local" && changes.enabled) setEnabled(changes.enabled.newValue); };
+  const readY = (y) => { widgetY = clampY(y); placeY(floating.host, fitY(floating.host, widgetY)); };
+  chrome.storage.local.get(["enabled", "widgetY", ...Object.keys(LOOK)], (data = {}) => { readLook(data); if ("widgetY" in data) readY(data.widgetY); setEnabled(data.enabled); });
+  const onStorage = (changes, area) => {
+    if (area !== "local") return;
+    if (Object.keys(LOOK).some((k) => changes[k])) readLook(Object.fromEntries(Object.entries(changes).map(([k, c]) => [k, c.newValue])));
+    if (changes.widgetY) readY(changes.widgetY.newValue); // moved in another tab
+    if (changes.enabled) setEnabled(changes.enabled.newValue);
+  };
   chrome.storage.onChanged.addListener(onStorage);
   const oldCleanup = window.__safeshelf.cleanup;
-  window.__safeshelf.cleanup = () => { chrome.storage.onChanged.removeListener(onStorage); oldCleanup(); };
+  window.__safeshelf.cleanup = () => {
+    try { chrome.storage.onChanged.removeListener(onStorage); } catch (_) { /* context already invalidated */ }
+    oldCleanup();
+  };
 }

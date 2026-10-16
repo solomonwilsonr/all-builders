@@ -1,5 +1,24 @@
 const power = document.getElementById("power");
 
+// Signed out, the popup shows only "Sign in with Google" (session.js); everything else needs a sign-in.
+function showAccount(who) {
+  document.getElementById("signin-view").hidden = Boolean(who);
+  document.getElementById("app-view").hidden = !who;
+  if (!who) return;
+  document.getElementById("who").textContent = who.email || who.name || "Signed in";
+  document.getElementById("role").textContent = document.documentElement.dataset.role || "user";
+}
+chrome.runtime.sendMessage({ type: "safeshelf:account" }, (res) => {
+  showAccount(res?.result);
+});
+document.getElementById("signin").addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "safeshelf:signin" });
+  window.close();
+});
+document.getElementById("signout").addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "safeshelf:signout" }, () => showAccount(null));
+});
+
 function show(enabled) {
   power.setAttribute("aria-checked", String(enabled));
   document.getElementById("power-label").textContent = enabled ? "SafeShelf is on" : "SafeShelf is off";
@@ -33,8 +52,8 @@ chrome.storage.local.get(["costGuard", "spend"], ({ costGuard, spend }) => { sho
 guardBtn.addEventListener("click", async () => {
   const { costGuard } = await chrome.storage.local.get("costGuard");
   const next = costGuard === false;
-  await chrome.storage.local.set({ costGuard: next });
-  showGuard(next);
+  const reply = await chrome.runtime.sendMessage({ type: "safeshelf:set-cost-guard", enabled: next });
+  if (reply?.ok) showGuard(next);
 });
 document.getElementById("spend-reset").addEventListener("click", async () => {
   await chrome.storage.local.set({ spend: { total: 0, calls: 0 } });
@@ -43,7 +62,7 @@ document.getElementById("spend-reset").addEventListener("click", async () => {
 chrome.storage.onChanged.addListener((c) => { if (c.spend) showSpend(c.spend.newValue); });
 
 document.getElementById("lab").addEventListener("click", () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL("lab.html") });
+  chrome.runtime.sendMessage({ type: "safeshelf:open-lab" });
   window.close();
 });
 
@@ -61,3 +80,5 @@ document.getElementById("check").addEventListener("click", async () => {
     say("SafeShelf can't read this shop's pages yet. Send the link or a screenshot to SafeShelf chat or WhatsApp instead, or open the product on Amazon or Flipkart.");
   }
 });
+
+document.addEventListener("safeshelf:role", () => { document.getElementById("role").textContent = document.documentElement.dataset.role || "user"; });

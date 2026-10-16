@@ -1,8 +1,11 @@
-// SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same public API as the extension.
+// SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same API as the extension, signed in
+// with Google (auth.js); nothing runs until the person signs in.
 // Samples replay a saved run of the live API at real speed; "Run it live" streams a new one
 // (POST /v1/agent/sessions/stream, server-sent events), capped per browser so the demo's Gemini budget lasts.
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
+import { authFetch, requireSignIn } from "./auth.js";
+
 const LIVE_PER_DAY = 10;
 const LONG_WAIT_MS = 3000; // in a replay, a wait longer than this is shortened to SHORT_WAIT_MS (and the page says so)
 const SHORT_WAIT_MS = 1000;
@@ -188,7 +191,7 @@ function verdictBlock(result, expect) {
       btn.disabled = true;
       btn.textContent = "Reading the evidence…";
       try {
-        const res = await fetch(`${API}/v1/evidence?ids=${encodeURIComponent(ids.join(","))}`, { signal: AbortSignal.timeout(60000) });
+        const res = await authFetch(`${API}/v1/evidence?ids=${encodeURIComponent(ids.join(","))}`, { signal: AbortSignal.timeout(60000) });
         if (!res.ok) throw new Error(`the API answered ${res.status}`);
         const items = await res.json();
         box.replaceChildren(...(Array.isArray(items) ? items : items.items || []).map((e) => el("blockquote", {},
@@ -201,9 +204,28 @@ function verdictBlock(result, expect) {
   }
   parts.push(afterBlock(result));
   parts.push(el("p", { className: "label" }, `${result.steps?.length || 0} agent steps · investigation ${result.investigation_id || "?"} · `,
-    result.investigation_id ? el("a", { href: `${API}/v1/investigations/${encodeURIComponent(result.investigation_id)}/trace`, target: "_blank", rel: "noopener", textContent: "full trace (model, tool, time)" }) : "",
+    result.investigation_id ? traceLink(result.investigation_id) : "",
     result.label ? ` · ${result.label}` : ""));
   return parts;
+}
+
+// The trace needs the sign-in too, so a plain link can't open it: fetch it, then show the JSON in a new tab.
+function traceLink(id) {
+  const a = el("a", { href: "#", textContent: "full trace (model, tool, time)" });
+  a.onclick = async (e) => {
+    e.preventDefault();
+    const tab = window.open("", "_blank");
+    try {
+      const res = await authFetch(`${API}/v1/investigations/${encodeURIComponent(id)}/trace`, { signal: AbortSignal.timeout(60000) });
+      if (!res.ok) throw new Error(`the API answered ${res.status}`);
+      const url = URL.createObjectURL(new Blob([JSON.stringify(await res.json(), null, 2)], { type: "application/json" }));
+      if (tab) tab.location = url; else location.assign(url);
+    } catch (err) {
+      tab?.close();
+      a.textContent = `couldn't open the trace (${err.message})`;
+    }
+  };
+  return a;
 }
 
 // --- A saved run, replayed at the speed it really happened ---
@@ -227,7 +249,7 @@ async function live(view, request) {
   const started = performance.now();
   const tick = setInterval(() => view.clock(performance.now() - started), 100);
   try {
-    const res = await fetch(`${API}/v1/agent/sessions/stream`, { method: "POST", headers: { "Content-Type": "application/json" },
+    const res = await authFetch(`${API}/v1/agent/sessions/stream`, { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request), signal: AbortSignal.timeout(170000) });
     if (!res.ok) {
       const detail = (await res.json().catch(() => ({}))).detail;
@@ -426,6 +448,7 @@ function setUpTabs() {
   if (start) pick(start);
 }
 
+await requireSignIn();
 setUpTabs();
 setUpOwn();
 refreshQuota();

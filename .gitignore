@@ -10,3 +10,4 @@ __pycache__/
 skills-lock.json
 .codegraph/
 .build-research/
+extension/config.generated.js

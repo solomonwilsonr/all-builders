@@ -1,0 +1,4 @@
+html:not([data-role="admin"]) [data-admin-only] { display: none !important; }
+html:not([data-role="admin"]) body[data-admin-page] > :not(#admin-access-notice):not(script) { display: none !important; }
+html[data-role="admin"] #admin-access-notice { display: none; }
+#admin-access-notice { padding: 32px; font: 16px/1.6 system-ui, sans-serif; }

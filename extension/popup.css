@@ -15,3 +15,5 @@ button.link { width:auto; background:none; border:0; padding:4px 8px; text-decor
 button.big { width:100%; padding:13px 16px; border-radius:16px; font-size:1rem; }
 .hint { margin:8px 4px 16px; font-size:.82rem; color:var(--muted); }
 .hint.warn { color:var(--amber); }
+.account { margin-top:6px; }
+.account #who { overflow-wrap:anywhere; }

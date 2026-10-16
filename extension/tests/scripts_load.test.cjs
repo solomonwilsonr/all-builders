@@ -8,7 +8,7 @@ const assert = require("assert");
       body: Object.assign(fake(), { dataset: { safeshelfListingId: "SS-L-1" }, innerText: "x" }), documentElement: fake(), addEventListener() {}, removeEventListener() {} },
     location: { hostname: "localhost", href: "http://localhost:8090/product.html", pathname: "/product.html", search: "", hash: "", origin: "http://localhost:8090" },
     chrome: chromeStub(() => ({ result: { mockApi: true } })), NodeFilter: { SHOW_TEXT: 4 }, speechSynthesis: { cancel() {}, speak() {} }, SpeechSynthesisUtterance: function () {},
-    setInterval: () => 1, clearInterval() {}, setTimeout: () => 1, clearTimeout() {}, innerWidth: 1200, innerHeight: 800, console, URL, Promise, JSON, Set, Map, Array, Object, Number, String, RegExp, Math, Date, Error,
+    addEventListener() {}, removeEventListener() {}, setInterval: () => 1, clearInterval() {}, setTimeout: () => 1, clearTimeout() {}, innerWidth: 1200, innerHeight: 800, console, URL, Promise, JSON, Set, Map, Array, Object, Number, String, RegExp, Math, Date, Error,
   };
   ctx.window = ctx.globalThis = ctx; vm.createContext(ctx);
   vm.runInContext(read("panels.js"), ctx);
@@ -19,11 +19,11 @@ const assert = require("assert");
 { // lab.js
   const sent = [];
   const ctx = { document: { getElementById: () => fake(), querySelector: () => fake(), querySelectorAll: () => [], createElement: () => fake() },
-    chrome: chromeStub((m) => { sent.push(m.type); return { ok: true, result: m.type === "safeshelf:status" ? [{ op: "trustCheck", method: "POST", path: "/x", live: true }] : { live: false } }; }),
+    chrome: chromeStub((m) => { sent.push(m.type); return { ok: true, result: m.type === "safeshelf:lab-status" ? [{ op: "trustCheck", method: "POST", path: "/x", live: true }] : { live: false } }; }),
     confirm: () => true, console, Object, Promise };
   ctx.globalThis = ctx; vm.createContext(ctx);
   vm.runInContext(read("panels.js"), ctx);
   assert.doesNotThrow(() => vm.runInContext(read("lab.js"), ctx), "lab.js failed to load");
-  assert.ok(sent.includes("safeshelf:status"), "the Lab should ask for the API status on load");
+  assert.ok(sent.includes("safeshelf:lab-status"), "the Lab should ask for the API status on load");
 }
 console.log("ok  scripts_load");

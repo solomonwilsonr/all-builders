@@ -1,0 +1,26 @@
+/* Extension pastel / lime palette, with a neutral graphite dark variant. */
+:root{--glass-bg:rgba(255,255,255,.68);--glass-edge:rgba(255,255,255,.86);--glass-shadow:0 10px 40px rgba(35,49,66,.055),inset 0 1px 0 rgba(255,255,255,.8);--glass-ink:#263344;--glass-muted:#7b8794;--glass-soft:rgba(255,255,255,.4);--glass-line:rgba(116,137,159,.15);--glass-accent:#dff0a8}
+:root[data-theme=dark]{--glass-bg:rgba(38,38,43,.65);--glass-edge:rgba(255,255,255,.1);--glass-shadow:0 14px 44px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.045);--glass-ink:#e4e4e7;--glass-muted:#a1a1aa;--glass-soft:rgba(255,255,255,.035);--glass-line:rgba(255,255,255,.08);--glass-accent:#d4d4d8}
+:root:has(.app){background:radial-gradient(ellipse at 12% 4%,#dce8f5 0,transparent 47%),radial-gradient(ellipse at 95% 85%,#f4ded3 0,transparent 52%),linear-gradient(135deg,#f1f5f6,#f3f3ef);min-height:100%;color:var(--glass-ink)}
+:root[data-theme=dark]:has(.app){background:radial-gradient(ellipse at 10% 0%,#35353d 0,transparent 46%),radial-gradient(ellipse at 100% 90%,#2c2c31 0,transparent 55%),#18181b}
+body:has(.app){background:transparent}
+:root .sidebar{background:var(--glass-soft);border-color:var(--glass-line);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+:root .topbar{background:var(--glass-soft);border-color:var(--glass-line);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+:root .settings-shell,:root .lab-content .card{background:var(--glass-bg);border:1px solid var(--glass-edge);border-radius:16px;box-shadow:var(--glass-shadow);backdrop-filter:blur(28px) saturate(120%);-webkit-backdrop-filter:blur(28px) saturate(120%)}
+:root .brand-mark{background:#263344;color:#dff0a8;box-shadow:inset 0 1px 0 #ffffff30}
+:root[data-theme=dark] .brand-mark{background:#45454e;color:#f4f4f5}
+:root nav .selected{background:rgba(223,240,168,.5);color:#37472d;box-shadow:inset 0 1px 0 #ffffff70}
+:root[data-theme=dark] nav .selected{background:#ffffff12;color:#e4e4e7;box-shadow:inset 0 1px 0 #ffffff0c}
+:root .workspace-card{background:var(--glass-soft);border-color:var(--glass-edge);border-radius:10px}
+:root .save-bar{background:var(--glass-soft);border-color:var(--glass-line)}
+:root .tabs,:root .section{border-color:var(--glass-line)}
+:root .digest{background:linear-gradient(110deg,rgba(223,240,168,.2),rgba(207,227,247,.2));border-color:var(--glass-edge);border-radius:12px}
+:root[data-theme=dark] .digest{background:linear-gradient(110deg,#ffffff06,#ffffff02)}
+:root .button.primary{background:linear-gradient(150deg,#e9f7bc,#d3e898);border-color:#d1e19f;color:#263344;box-shadow:inset 0 1px 0 #ffffffa0,0 3px 8px #283b1210}
+:root .button.primary span{color:#53603c}
+:root[data-theme=dark] .button.primary{background:linear-gradient(150deg,#dedee2,#b9b9c2);border-color:#d4d4d8;color:#202024}
+:root .button.secondary,:root .segments{background:var(--glass-soft);border-color:var(--glass-line)}
+:root .tabs button[aria-selected=true]{color:var(--glass-ink);border-color:var(--glass-ink)}
+:root .segments button[aria-pressed=true]{background:var(--glass-bg);color:var(--glass-ink);border-color:var(--glass-edge);box-shadow:0 2px 6px #00000009}
+:root .header-heading p,:root .intro p,:root .section-description,:root .row-detail{color:var(--glass-muted)}
+@supports not (backdrop-filter:blur(1px)){:root{--glass-bg:#f7f8f7}:root[data-theme=dark]{--glass-bg:#27272b}}
