@@ -193,7 +193,7 @@ sources:
     terms: Official public portal. Searched only through the read-only Research Agent.
     attribution: "Source: EU Safety Gate"
     ttl_s: 86400
-    timeout_s: 10
+    timeout_s: 96   # browser-use takes 2-3 min a site; deep checks run as background jobs (x2.5 = 240 s)
     rate_per_min: 5
     owner: Solomon
     adapter: engine.sources.adapters.eu_safety_gate
@@ -212,7 +212,7 @@ sources:
     terms: Official public site; answers plain HTTP. Not in OECD GlobalRecalls.
     attribution: "Source: Product Safety New Zealand"
     ttl_s: 86400
-    timeout_s: 10
+    timeout_s: 96   # browser-use takes 2-3 min a site; deep checks run as background jobs (x2.5 = 240 s)
     rate_per_min: 5
     owner: Solomon
     adapter: engine.sources.adapters.research_fallback
