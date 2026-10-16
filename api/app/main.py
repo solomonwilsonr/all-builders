@@ -249,7 +249,7 @@ if REAL_HANDLERS:  # the A2A agent runs the real engine; with MOCK=1 there is no
                            websocket.query_params.get("market"))
         try:
             await websocket.close()
-        except RuntimeError:
+        except (RuntimeError, WebSocketDisconnect):
             pass  # the browser already closed it
 
 mcp_server.attach(app)  # last: it mounts at "/" behind every route above
