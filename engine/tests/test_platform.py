@@ -7,7 +7,6 @@ import pytest
 
 from engine import camera, cases, crossborder, hazard_discovery, investigation, tenancy, watch, webhooks
 
-
 # --- hazard discovery ---------------------------------------------------------------------------------------------
 
 def test_wilson_interval_and_anomaly():

@@ -1,0 +1,489 @@
+{
+ "pairs": 19,
+ "same_company_pairs": 18,
+ "person_checked": 0,
+ "verified": 0,
+ "rejected": 0,
+ "later_country": {
+  "AU": 13,
+  "SG": 1,
+  "JP": 3,
+  "KR": 1
+ },
+ "first_country": {
+  "US": 18,
+  "JP": 1
+ },
+ "lead_days": {
+  "n": 17,
+  "median": 22,
+  "median_95ci": [
+   13,
+   68
+  ],
+  "min": 1,
+  "max": 293
+ },
+ "small_sample": true,
+ "candidates": [
+  {
+   "model": "HT2410",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23212",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-06-01",
+    "title": "Chervon North America Recalls EGO Power+ Cordless Brushless Hedge Trimmers Due to Laceration Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2023/Chervon-North-America-Recalls-EGO-Power-Cordless-Brushless-Hedge-Trimmers-Due-to-Laceration-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1108716",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2024-03-20",
+    "title": "Chervon Australia Pty Ltd - EGO Power+ Cordless Brushless Hedge Trimmer",
+    "url": "https://www.productsafety.gov.au/recalls/chervon-australia-pty-ltd-ego-power-cordless-brushless-hedge-trimmer"
+   },
+   "lead_days": 293,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "J04402",
+   "tier": "suspected_rebrand",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23210",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-05-25",
+    "title": "Juratoys Recalls Children's Activity Tables Due to Choking Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1109781",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2023-10-13",
+    "title": "Bright Wonders - Janod Cocoon activity table",
+    "url": "https://www.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table"
+   },
+   "lead_days": 141,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "CAH16WRW1",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:21078",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2021-02-12",
+    "title": "NZXT Recalls H1 Computer Cases Due to Fire Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2021/NZXT-Recalls-H1-Computer-Cases-Due-to-Fire-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1090009",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2021-06-21",
+    "title": "NZXT H1 Computer Cases fitted with PCIe Riser Assembly",
+    "url": "https://www.productsafety.gov.au/recalls/nzxt-h1-computer-cases-fitted-with-pcie-riser-assembly"
+   },
+   "lead_days": 129,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "4M012",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:22200",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2022-08-15",
+    "title": "4moms Recalls More than 2 Million MamaRoo and RockaRoo Infant Swings and Rockers Due to Entanglement and Strangulation Hazards; One Death Reported",
+    "url": "https://www.cpsc.gov/Recalls/2022/4moms-Recalls-More-than-2-Million-MamaRoo-and-RockaRoo-Infant-Swings-and-Rockers-Due-to-Entanglement-and-Strangulation-Hazards-One-Death-Reported"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1103702",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2022-11-16",
+    "title": "4moms mamaRoo Multi-motion Baby Swing and rockaRoo Baby Rocker",
+    "url": "https://www.productsafety.gov.au/search-consumer-product-recalls/4moms-mamaroo-multi-motion-baby-swing-and-rockaroo-baby-rocker"
+   },
+   "lead_days": 93,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "SHL96",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23213",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-06-01",
+    "title": "Empower Brands Recalls Power XL Self-Cleaning Juicers Due to Laceration and Ingestion Hazards",
+    "url": "https://www.cpsc.gov/Recalls/2023/Empower-Brands-Recalls-Power-XL-Self-Cleaning-Juicers-Due-to-Laceration-and-Ingestion-Hazards"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1108476",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2023-08-17",
+    "title": "PowerXL model SHL96 Self-Cleaning Juicer",
+    "url": "https://www.productsafety.gov.au/recalls/powerxl-model-shl96-self-cleaning-juicer"
+   },
+   "lead_days": 77,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "ESWM02",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23205",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-05-18",
+    "title": "Empower Brands Recalls PowerXL Stuffed Wafflizer Waffle Makers Due to Burn Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2023/Empower-Brands-Recalls-PowerXL-Stuffed-Wafflizer-Waffle-Makers-Due-to-Burn-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1108183",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2023-07-25",
+    "title": "PowerXL Model ESWM02 (5 inch) and Model ESWM03 (7 inch) Stuffed Wafflizer waffle makers",
+    "url": "https://www.productsafety.gov.au/recalls/powerxl-model-eswm02-5-inch-and-model-eswm03-7-inch-stuffed-wafflizer-waffle-makers"
+   },
+   "lead_days": 68,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "2G520",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:25437",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2025-08-14",
+    "title": "ESR HaloLock Wireless Power Banks Recalled Due to Fire and Burn Hazards; Distributed by Waymeet",
+    "url": "https://www.cpsc.gov/Recalls/2025/ESR-HaloLock-Wireless-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Distributed-by-Waymeet"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1125827",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2025-10-07",
+    "title": "ESR wireless power banks",
+    "url": "https://www.productsafety.gov.au/search-consumer-product-recalls/esr-wireless-power-banks"
+   },
+   "lead_days": 54,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "SK3000",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:26444",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2026-04-30",
+    "title": "Thermos Recalls 8.2 Million Stainless King Food Jars and Bottles Due to Serious Impact Injury and Laceration Hazards",
+    "url": "https://www.cpsc.gov/Recalls/2026/Thermos-Recalls-8-2-Million-Stainless-King-Food-Jars-and-Bottles-Due-to-Serious-Impact-Injury-and-Laceration-Hazards"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1132375",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2026-06-03",
+    "title": "Stainless King™ Food Jars",
+    "url": "http://www.productsafety.gov.au/search-consumer-product-recalls/stainless-king%E2%84%A2-food-jars"
+   },
+   "lead_days": 34,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "BPD005",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "oecd:JP:E0000033012",
+    "country": "JP",
+    "authority": "CAA",
+    "date": "2024-10-07",
+    "title": "Belkin BoostCharge Pro Fast Wireless Charger for Apple Watch + Power Bank 10K",
+    "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000033012&screenkbn=06"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1117245",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2024-11-06",
+    "title": "BoostCharge Pro fast wireless charger for Apple watch + power bank 10K",
+    "url": "https://www.productsafety.gov.au/search-consumer-product-recalls/boostcharge-pro-fast-wireless-charger-for-apple-watch-power-bank-10k"
+   },
+   "lead_days": 30,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "BS30KP365",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:25248",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2025-05-01",
+    "title": "Baseus Portable Chargers Recalled Due to Fire Hazard; Sold on Amazon.com by Shenzhen Baseus Technology",
+    "url": "https://www.cpsc.gov/Recalls/2025/Baseus-Portable-Chargers-Recalled-Due-to-Fire-Hazard-Sold-on-Amazon-com-by-Shenzhen-Baseus-Technology"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1122012",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2025-05-23",
+    "title": "Baseus power bank 65W 30000 mAh (model number: BS-30KP365)",
+    "url": "https://www.productsafety.gov.au/search-consumer-product-recalls/baseus-power-bank-65w-30000-mah-model-number-bs-30kp365"
+   },
+   "lead_days": 22,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "ATHCK3TW",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:21110",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2021-04-14",
+    "title": "Audio-Technica Recalls Charging Cases Sold with Wireless Headphones Due to Fire Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2021/Audio-Technica-Recalls-Charging-Cases-Sold-with-Wireless-Headphones-Due-to-Fire-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1090110",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2021-05-02",
+    "title": "Audio-Technica Wireless Headphones Model ATH-CK3TW",
+    "url": "https://www.productsafety.gov.au/recalls/audio-technica-wireless-headphones-model-ath-ck3tw"
+   },
+   "lead_days": 18,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "PPCXW06",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:24287",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2024-06-27",
+    "title": "Baseus Magnetic Wireless Charging Power Banks Recalled Due to Fire Hazard; Imported by Shenzhen Baseus Technology",
+    "url": "https://www.cpsc.gov/Recalls/2024/Baseus-Magnetic-Wireless-Charging-Power-Banks-Recalled-Due-to-Fire-Hazard-Imported-by-Shenzhen-Baseus-Technology"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1115471",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2024-07-12",
+    "title": "Baseus magnetic wireless charging power banks 6000mAh 20W (updated)",
+    "url": "https://www.productsafety.gov.au/search-consumer-product-recalls/baseus-magnetic-wireless-charging-power-banks-6000mah-20w-updated"
+   },
+   "lead_days": 15,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "GJD49",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:24351",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2024-08-29",
+    "title": "Fisher-Price Recalls Dumbbell Toy in Baby Biceps Gift Sets Due to Choking Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2024/Fisher-Price-Recalls-Dumbbell-Toy-in-Baby-Biceps-Gift-Sets-Due-to-Choking-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1116543",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2024-09-11",
+    "title": "Fisher-Price® Baby Biceps gift set – dumbbell toy",
+    "url": "https://www.productsafety.gov.au/recalls/fisher-price%C2%AE-baby-biceps-gift-set-%E2%80%93-dumbbell-toy"
+   },
+   "lead_days": 13,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "PA10",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:24149",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2024-03-07",
+    "title": "Yamaha Corporation of America Recalls Power Adaptors Due to Electrical Shock and Electrocution Hazards",
+    "url": "https://www.cpsc.gov/Recalls/2024/Yamaha-Corporation-of-America-Recalls-Power-Adaptors-Due-to-Electrical-Shock-and-Electrocution-Hazards"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1112809",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2024-03-20",
+    "title": "AC Adaptor PA-10 for mixer",
+    "url": "https://www.productsafety.gov.au/recalls/ac-adaptor-pa-10-for-mixer"
+   },
+   "lead_days": 13,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "4M012",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:22200",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2022-08-15",
+    "title": "4moms Recalls More than 2 Million MamaRoo and RockaRoo Infant Swings and Rockers Due to Entanglement and Strangulation Hazards; One Death Reported",
+    "url": "https://www.cpsc.gov/Recalls/2022/4moms-Recalls-More-than-2-Million-MamaRoo-and-RockaRoo-Infant-Swings-and-Rockers-Due-to-Entanglement-and-Strangulation-Hazards-One-Death-Reported"
+   },
+   "later": {
+    "record_id": "oecd:SG:Z1Q3V0HNC2ZMZKKXWLZ1VW9YCW8RQT09",
+    "country": "SG",
+    "authority": "CPSO",
+    "date": "2022-08-24",
+    "title": "MamaRoo infant swings and RockaRoo infant rockers",
+    "url": "https://www.consumerproductsafety.gov.sg/consumers/product-safety-alerts-and-recalls/children-products"
+   },
+   "lead_days": 9,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "PPCXW06",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:24287",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2024-06-27",
+    "title": "Baseus Magnetic Wireless Charging Power Banks Recalled Due to Fire Hazard; Imported by Shenzhen Baseus Technology",
+    "url": "https://www.cpsc.gov/Recalls/2024/Baseus-Magnetic-Wireless-Charging-Power-Banks-Recalled-Due-to-Fire-Hazard-Imported-by-Shenzhen-Baseus-Technology"
+   },
+   "later": {
+    "record_id": "oecd:JP:E0000032609",
+    "country": "JP",
+    "authority": "CAA",
+    "date": "2024-07-04",
+    "title": "Lithium battery charger",
+    "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000032609&screenkbn=06"
+   },
+   "lead_days": 7,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "4M005",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:22200",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2022-08-15",
+    "title": "4moms Recalls More than 2 Million MamaRoo and RockaRoo Infant Swings and Rockers Due to Entanglement and Strangulation Hazards; One Death Reported",
+    "url": "https://www.cpsc.gov/Recalls/2022/4moms-Recalls-More-than-2-Million-MamaRoo-and-RockaRoo-Infant-Swings-and-Rockers-Due-to-Entanglement-and-Strangulation-Hazards-One-Death-Reported"
+   },
+   "later": {
+    "record_id": "oecd:KR:K22/CP/00077",
+    "country": "KR",
+    "authority": "KATS",
+    "date": "2022-08-19",
+    "title": "MamaRoo Swing for Infant Model 4M-005 (Version 1.0 & Version 2.0), 1026 (Version 3.0) & 1037 (Version 4.0) and RockaRoo Infant Locker Model 4M-012 (All together, it’s called “These models”)",
+    "url": "http://www.safetykorea.kr/recall/ajax/recallBoard?recallUid=10018284"
+   },
+   "lead_days": 4,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "HBJ89",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:24010",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-10-19",
+    "title": "Thomas & Friends Wooden Railway Troublesome Truck & Crates and Troublesome Truck & Paint Recalled by Fisher-Price Due to Choking and Magnet Ingestion Hazards",
+    "url": "https://www.cpsc.gov/Recalls/2024/Thomas-Friends-Wooden-Railway-Troublesome-Truck-Crates-and-Troublesome-Truck-Paint-Recalled-by-Fisher-Price-Due-to-Choking-and-Magnet-Ingestion-Hazards"
+   },
+   "later": {
+    "record_id": "oecd:JP:E0000031469",
+    "country": "JP",
+    "authority": "CAA",
+    "date": "2023-10-20",
+    "title": "Toy, Thomas & Friends Wooden Railway Troublesome Truck & Crates, Thomas & Friends Wooden Railway Troublesome Truck & Paint",
+    "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000031469&screenkbn=06"
+   },
+   "lead_days": 1,
+   "needs_person": true,
+   "person_check": "not_checked"
+  },
+  {
+   "model": "MMA008",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:26090",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2025-11-13",
+    "title": "Belkin Recalls Portable Power Banks and Wireless Charging Stands Due to Fire and Burn Hazards",
+    "url": "https://www.cpsc.gov/Recalls/2026/Belkin-Recalls-Portable-Power-Banks-and-Wireless-Charging-Stands-Due-to-Fire-and-Burn-Hazards"
+   },
+   "later": {
+    "record_id": "oecd:JP:E0000035216",
+    "country": "JP",
+    "authority": "CAA",
+    "date": "2025-11-13",
+    "title": "Wireless charger (for smartphones)",
+    "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035216&screenkbn=06"
+   },
+   "lead_days": 0,
+   "needs_person": true,
+   "person_check": "not_checked"
+  }
+ ],
+ "method": "Same model code (letters and digits, at least 4 characters; generic words removed) in notices from two countries; same company named = exact tier. Lead = days between the two publication dates.",
+ "limits": "Stored notices since 2019 only; model codes written in a notice's free text can be missed, so this undercounts. A pair is a lead until a person confirms it is the same product.",
+ "run_id": "crossborder-2026-10-16T0959"
+}

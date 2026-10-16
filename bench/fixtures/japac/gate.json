@@ -1,0 +1,58 @@
+{
+ "_note": "JAPAC acceptance gate products; expected outcomes checked by hand against the official notices on 16 Oct 2026.",
+ "cases": [
+  {
+   "id": "IN-foreign-match",
+   "request": {
+    "brand": "NEWDERY",
+    "model": "ZHX-PB22",
+    "market": "IN"
+   },
+   "expected_outcome": "potential_concern",
+   "expected_basis": "recalled_abroad_same_model",
+   "why": "CPSC 26792 (24 Sep 2026) names model ZHX-PB22; no Indian notice."
+  },
+  {
+   "id": "JP-local-recall",
+   "request": {
+    "brand": "HAIARA",
+    "model": "W5PRO",
+    "market": "JP"
+   },
+   "expected_outcome": "confirmed_recall",
+   "why": "CAA notice 00000035913 lists 型番 W5PRO, no batch limits."
+  },
+  {
+   "id": "AU-local-batch",
+   "request": {
+    "brand": "Baseus",
+    "model": "BS-30KP365",
+    "market": "AU"
+   },
+   "expected_outcome": "potential_concern",
+   "expected_basis": "local_recall_batch_unknown",
+   "why": "ACCC notice PS1122012 covers serials ending 0-9 or D only."
+  },
+  {
+   "id": "SG-foreign-match",
+   "request": {
+    "brand": "Anker",
+    "model": "A1263",
+    "market": "SG"
+   },
+   "expected_outcome": "potential_concern",
+   "expected_basis": "recalled_abroad_same_model",
+   "why": "CPSC recall of Anker A1263; Singapore's CPSO refuses automated checks, so its state must be unavailable/not supported."
+  },
+  {
+   "id": "lookalike-AU",
+   "request": {
+    "brand": "Baseus",
+    "model": "BS-30KP366",
+    "market": "AU"
+   },
+   "expected_outcome": "no_matching_notice_found",
+   "why": "A look-alike code next to a recalled one: the recall must not pass to it."
+  }
+ ]
+}

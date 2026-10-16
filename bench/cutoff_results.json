@@ -1,0 +1,187 @@
+{
+ "recalls": 25,
+ "flagged": 0,
+ "rows": [
+  {
+   "recall_id": "cpsc:19752",
+   "cutoff": "2019-06-11",
+   "published": "2019-06-11",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:19731",
+   "cutoff": "2019-03-21",
+   "published": "2019-03-21",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:19059",
+   "cutoff": "2019-02-05",
+   "published": "2019-02-05",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21028",
+   "cutoff": "2020-11-10",
+   "published": "2020-11-10",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21703",
+   "cutoff": "2020-10-15",
+   "published": "2020-10-15",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21003",
+   "cutoff": "2020-10-07",
+   "published": "2020-10-07",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:20184",
+   "cutoff": "2020-09-16",
+   "published": "2020-09-16",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:20162",
+   "cutoff": "2020-08-12",
+   "published": "2020-08-12",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:20089",
+   "cutoff": "2020-03-12",
+   "published": "2020-03-12",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:22038",
+   "cutoff": "2021-12-22",
+   "published": "2021-12-22",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:22009",
+   "cutoff": "2021-10-27",
+   "published": "2021-10-27",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21197",
+   "cutoff": "2021-09-15",
+   "published": "2021-09-15",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21189",
+   "cutoff": "2021-08-25",
+   "published": "2021-08-25",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21104",
+   "cutoff": "2021-04-07",
+   "published": "2021-04-07",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21081",
+   "cutoff": "2021-02-17",
+   "published": "2021-02-17",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:21073",
+   "cutoff": "2021-02-03",
+   "published": "2021-02-03",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23059",
+   "cutoff": "2022-12-01",
+   "published": "2022-12-01",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23007",
+   "cutoff": "2022-10-13",
+   "published": "2022-10-13",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:22737",
+   "cutoff": "2022-03-31",
+   "published": "2022-03-31",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23238",
+   "cutoff": "2023-07-06",
+   "published": "2023-07-06",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23770",
+   "cutoff": "2023-06-22",
+   "published": "2023-06-22",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23207",
+   "cutoff": "2023-05-18",
+   "published": "2023-05-18",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23753",
+   "cutoff": "2023-05-04",
+   "published": "2023-05-04",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23157",
+   "cutoff": "2023-03-16",
+   "published": "2023-03-16",
+   "earliest_elsewhere": null,
+   "issues": []
+  },
+  {
+   "recall_id": "cpsc:23735",
+   "cutoff": "2023-03-09",
+   "published": "2023-03-09",
+   "earliest_elsewhere": null,
+   "issues": []
+  }
+ ],
+ "rules": [
+  "reviews strictly before the cutoff (bench/backtest.py usable())",
+  "reviews mentioning 'recall' removed",
+  "cutoff must not be later than the first public notice of the same model anywhere"
+ ],
+ "run_id": "historical_cutoff-2026-10-16T0959"
+}

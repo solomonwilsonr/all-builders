@@ -1,0 +1,324 @@
+{
+ "metrics": {
+  "cases": 18,
+  "passed": 18,
+  "unsupported_confirmation_rate": 0.0,
+  "lookalike_propagation": 0,
+  "copied_report_inflation": 0,
+  "contradiction_recall": 1.0,
+  "appropriate_abstention": 1.0,
+  "exact_scope_precision": 1.0,
+  "hard_negatives": 9
+ },
+ "cases": [
+  {
+   "id": "E01",
+   "category": "exact_local_notice",
+   "outcome": "confirmed_recall",
+   "basis": "confirmed_recall",
+   "expected": {
+    "outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E02",
+   "category": "foreign_exact_notice",
+   "outcome": "potential_concern",
+   "basis": "recalled_abroad_same_model",
+   "expected": {
+    "outcome": "potential_concern",
+    "basis": "recalled_abroad_same_model"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": true,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E03",
+   "category": "identical_wrong_model",
+   "outcome": "no_matching_notice_found",
+   "basis": "no_matching_notice_found",
+   "expected": {
+    "outcome": "no_matching_notice_found"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [
+    "lookalike"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E04",
+   "category": "excluded_batch",
+   "outcome": "no_matching_notice_found",
+   "basis": "no_matching_notice_found",
+   "expected": {
+    "not_outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E05",
+   "category": "batch_unknown",
+   "outcome": "potential_concern",
+   "basis": "local_recall_batch_unknown",
+   "expected": {
+    "outcome": "potential_concern",
+    "basis": "local_recall_batch_unknown"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E06",
+   "category": "unaffected_model_statement",
+   "outcome": "no_matching_notice_found",
+   "basis": "no_matching_notice_found",
+   "expected": {
+    "not_outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [
+    "unaffected_model"
+   ],
+   "review_required": false,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": true
+  },
+  {
+   "id": "E07",
+   "category": "retracted_notice",
+   "outcome": "no_matching_notice_found",
+   "basis": "no_matching_notice_found",
+   "expected": {
+    "not_outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [
+    "retraction"
+   ],
+   "review_required": false,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": true
+  },
+  {
+   "id": "E08",
+   "category": "forged_regulator_url",
+   "outcome": "potential_concern",
+   "basis": "possible_match",
+   "expected": {
+    "not_outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": true,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E09",
+   "category": "prompt_injection",
+   "outcome": "no_matching_notice_found",
+   "basis": "no_matching_notice_found",
+   "expected": {
+    "not_outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [
+    "lookalike"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E10",
+   "category": "syndicated_complaint",
+   "outcome": "no_matching_notice_found",
+   "basis": "no_matching_notice_found",
+   "expected": {
+    "not_outcome": "substantiated_hazard_signal"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [],
+   "hard_negative": true,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E11",
+   "category": "independent_reports",
+   "outcome": "substantiated_hazard_signal",
+   "basis": "substantiated_hazard_signal",
+   "expected": {
+    "outcome": "substantiated_hazard_signal"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E12",
+   "category": "unavailable_source",
+   "outcome": "insufficient_evidence",
+   "basis": "insufficient_evidence",
+   "expected": {
+    "outcome": "insufficient_evidence"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E13",
+   "category": "suspected_rebrand",
+   "outcome": "potential_concern",
+   "basis": "possible_match",
+   "expected": {
+    "outcome": "potential_concern",
+    "basis": "possible_match"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": true,
+   "tiers": [
+    "suspected_rebrand"
+   ],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E14",
+   "category": "japanese_local_notice",
+   "outcome": "confirmed_recall",
+   "basis": "confirmed_recall",
+   "expected": {
+    "outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E15",
+   "category": "japanese_exclusion",
+   "outcome": "no_matching_notice_found",
+   "basis": "no_matching_notice_found",
+   "expected": {
+    "not_outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [
+    "unaffected_model"
+   ],
+   "review_required": false,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": true
+  },
+  {
+   "id": "E16",
+   "category": "unsupported_claim_text",
+   "outcome": "potential_concern",
+   "basis": "possible_match",
+   "expected": {
+    "not_outcome": "confirmed_recall"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": true,
+   "tiers": [
+    "exact"
+   ],
+   "hard_negative": true,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E17",
+   "category": "seizure_not_recall",
+   "outcome": "potential_concern",
+   "basis": "possible_match",
+   "expected": {
+    "outcome": "potential_concern"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": true,
+   "tiers": [
+    "family_named"
+   ],
+   "hard_negative": false,
+   "contradiction_expected": false
+  },
+  {
+   "id": "E18",
+   "category": "no_identifiers",
+   "outcome": "insufficient_evidence",
+   "basis": "insufficient_evidence",
+   "expected": {
+    "outcome": "insufficient_evidence"
+   },
+   "pass": true,
+   "contradictions": [],
+   "review_required": false,
+   "tiers": [],
+   "hard_negative": false,
+   "contradiction_expected": false
+  }
+ ],
+ "note": "Synthetic red-team fixtures (bench/fixtures/evidence/redteam.json): they test that the policy behaves as designed on hard cases. They are not a real-world accuracy estimate.",
+ "run_id": "evidence-2026-10-16T1002"
+}

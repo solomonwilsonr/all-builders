@@ -13,8 +13,12 @@ API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
 RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)' 2>/dev/null)
 # The token the hourly re-check job sends (secret recheck-token, made by `make schedule-recheck`); empty until then.
 RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
+# The webhook signing key (secret webhook-key); empty = POST /v1/webhooks answers 503 "not configured".
+WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web \
+	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
+	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck
 
 web:            ## the judges' page on :8095 (calls the live API)
 	cd web && python3 -m http.server 8095
@@ -56,13 +60,14 @@ load-data:      ## CPSC + JAPAC recalls (OECD GlobalRecalls) + India (CCPA, BIS)
 
 deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for example answers only)
 	rm -rf .build && mkdir -p .build && cp -R api engine contracts .build/ && mkdir -p .build/data && \
-		cp data/bis_mock.json data/authorised_sellers.json data/demo_domains.json .build/data/ && \
-		mkdir -p .build/bench && cp bench/results.json .build/bench/ && \
+		cp data/bis_mock.json data/authorised_sellers.json data/demo_domains.json data/source_registry_japac.yaml .build/data/ && \
+		mkdir -p .build/bench/runs && cp bench/results.json .build/bench/ && \
+		(cp bench/runs/*.json .build/bench/runs/ 2>/dev/null || true) && (cp bench/evidence_results.json .build/bench/ 2>/dev/null || true) && \
 		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
 		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 2Gi --timeout 300 \
 		--add-cloudsql-instances $(SQL_INSTANCE) \
-		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest) \
+		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest)$(if $(WEBHOOK_SECRET),$(comma)SAFESHELF_WEBHOOK_KEY=webhook-key:latest) \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
 
 schedule-recheck: ## every 30 min: recall sites searched again for one saved first-look model (then run make deploy-api)
@@ -118,3 +123,52 @@ warm:           ## before a demo or recording: run every demo check once so the 
 		curl -s -o /dev/null -w "certifications $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/certifications; done
 	@for p in SS-P-10291 SS-P-AMZ-B0BSKMH9GX; do \
 		curl -s -o /dev/null -w "owner-guidance $$p %{http_code} %{time_total}s\n" $(API_URL)/v1/products/$$p/owner-guidance; done
+
+# ---- plan v2.2: live sources, evidence verification, benchmarks ---------------------------------------------------
+ENGINE_RUN = cd engine && PYTHONPATH=.. uv run --python 3.12 python
+
+test-engine:     ## engine unit tests (no network, no database, no Gemini)
+	cd engine && uv run --python 3.12 pytest -q
+
+test-sources:    ## source adapters on recorded official responses, failure states, planner, coverage
+	cd engine && uv run --python 3.12 pytest -q tests/test_sources.py
+
+test-security:   ## forged regulator URLs, SSRF, injected instructions, lookalikes, tenant/webhook rules
+	cd engine && uv run --python 3.12 pytest -q tests/test_evidence_verification.py tests/test_platform.py tests/test_sources.py -k "forged or allowlist or webhook or injection or lookalike or tenancy or redirect or captcha or sanitised or unofficial"
+
+test-integration: ## live sources + local database: the JAPAC gate (network needed)
+	$(ENGINE_RUN) ../bench/japac_gate.py
+
+migrate:         ## apply data/migrations/*.sql once each (DATABASE_URL; Cloud SQL through cloud-sql-proxy). Back up first
+	$(ENGINE_RUN) ../data/migrate.py
+
+source-health:   ## which official sources may run here, and why not
+	@$(ENGINE_RUN) -c "import json; from engine.sources import health; print(json.dumps([(s['source'], s['enabled'], s['why_not']) for s in health.report()['sources']], indent=1))"
+
+bench-evidence:  ## synthetic red-team fixtures through the evidence verification engine
+	$(ENGINE_RUN) ../bench/evidence_eval.py
+
+bench-identity:  ## engine pair decisions vs people's labels (identity gold set); --sample writes pairs to label
+	$(ENGINE_RUN) ../bench/identity_eval.py
+
+bench-historical: ## leakage check: every backtest cutoff is the first public date of the recall anywhere
+	$(ENGINE_RUN) ../bench/cutoff.py
+
+bench-crossborder: ## same model recalled in two countries: pairs, lead times, recall_by_country.json
+	$(ENGINE_RUN) ../bench/crossborder_eval.py
+
+bench-japac:     ## JAPAC acceptance gate (live) + coverage_by_country.json
+	$(ENGINE_RUN) ../bench/japac_gate.py
+
+eval-prospective: ## verify the prediction log's hash chain and resolve predictions against later recalls
+	$(ENGINE_RUN) ../bench/prospective.py
+
+bench-all: bench-evidence bench-historical bench-crossborder bench-identity bench-japac eval-prospective
+
+schedule-watch-recheck: ## every 6 h: re-investigate saved products and raise alerts (uses the recheck token)
+	@body=$$(mktemp); printf '{"limit":20,"token":"%s"}' \
+		"$$(gcloud secrets versions access latest --secret recheck-token --project $(GCP_PROJECT))" > $$body; \
+		verb=create; gcloud scheduler jobs describe safeshelf-watch-recheck --project $(GCP_PROJECT) --location $(REGION) >/dev/null 2>&1 && verb=update; \
+		gcloud scheduler jobs $$verb http safeshelf-watch-recheck --project $(GCP_PROJECT) --location $(REGION) --schedule '0 */6 * * *' \
+			--uri $(API_URL)/v1/watchlists/recheck --http-method POST --headers Content-Type=application/json \
+			--attempt-deadline 300s --message-body-from-file $$body; status=$$?; rm -f $$body; exit $$status

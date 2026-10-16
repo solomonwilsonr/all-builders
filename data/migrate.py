@@ -47,8 +47,8 @@ def main() -> None:
     parser.add_argument("--status", action="store_true")
     args = parser.parse_args()
     with connect(args.db or os.environ.get("DATABASE_URL")) as conn:
-        conn.execute("""CREATE TABLE IF NOT EXISTS schema_migrations (
-                            name TEXT PRIMARY KEY, checksum TEXT NOT NULL, applied_at TIMESTAMPTZ NOT NULL DEFAULT now())""")
+        conn.execute("""CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY, checksum TEXT NOT NULL,
+                                                                     applied_at TIMESTAMPTZ NOT NULL DEFAULT now())""")
         applied = {r[0]: r[1] for r in conn.execute("SELECT name, checksum FROM schema_migrations").fetchall()}
         for path in files():
             check_additive(path)

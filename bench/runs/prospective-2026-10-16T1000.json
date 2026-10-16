@@ -1,0 +1,33 @@
+{
+ "run_id": "prospective-2026-10-16T1000",
+ "benchmark": "prospective",
+ "created_at": "2026-10-16T10:00:21+00:00",
+ "policy_version": "2026-10-16.1",
+ "commit": "4f265dd",
+ "summary": "19 logged predictions, chain intact",
+ "results": {
+  "predictions": 19,
+  "chain_intact": true,
+  "chain_broken_at": null,
+  "newly_resolved": 0,
+  "by_outcome": {
+   "no_matching_notice_found": {
+    "predictions": 3,
+    "recalled_later": 0
+   },
+   "confirmed_recall": {
+    "predictions": 3,
+    "recalled_later": 0
+   },
+   "potential_concern": {
+    "predictions": 12,
+    "recalled_later": 0
+   },
+   "insufficient_evidence": {
+    "predictions": 1,
+    "recalled_later": 0
+   }
+  },
+  "note": "Predictions are logged when made; outcomes are only added later. Too early to judge until months of recalls have been published after the predictions."
+ }
+}

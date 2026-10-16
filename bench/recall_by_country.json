@@ -1,0 +1,58 @@
+{
+ "authorities": [
+  {
+   "authority": "ACCC",
+   "n": 2962,
+   "oldest": "2019-01-02",
+   "newest": "2026-10-13"
+  },
+  {
+   "authority": "CPSC",
+   "n": 2537,
+   "oldest": "2019-01-30",
+   "newest": "2026-10-08"
+  },
+  {
+   "authority": "KATS",
+   "n": 2242,
+   "oldest": "2019-01-02",
+   "newest": "2026-09-16"
+  },
+  {
+   "authority": "CAA",
+   "n": 677,
+   "oldest": "2019-01-09",
+   "newest": "2026-08-04"
+  },
+  {
+   "authority": "ASEAN",
+   "n": 161,
+   "oldest": "2019-01-03",
+   "newest": "2022-10-27"
+  },
+  {
+   "authority": "BSMI",
+   "n": 45,
+   "oldest": "2023-01-16",
+   "newest": "2026-09-16"
+  },
+  {
+   "authority": "CPSO",
+   "n": 29,
+   "oldest": "2019-01-28",
+   "newest": "2022-09-29"
+  },
+  {
+   "authority": "BIS",
+   "n": 21,
+   "oldest": "2022-03-22",
+   "newest": "2026-09-09"
+  },
+  {
+   "authority": "CCPA",
+   "n": 15,
+   "oldest": "2021-12-06",
+   "newest": "2026-02-16"
+  }
+ ]
+}

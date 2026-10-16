@@ -1,0 +1,13 @@
+{
+ "run_id": "identity-2026-10-16T1000",
+ "benchmark": "identity",
+ "created_at": "2026-10-16T10:00:21+00:00",
+ "policy_version": "2026-10-16.1",
+ "commit": "4f265dd",
+ "summary": "0 labelled pairs (no human labels yet)",
+ "results": {
+  "labelled_pairs": 0,
+  "status": "no human labels yet",
+  "next_step": "label pairs with bench/label_pairs.py or POST /v1/identity/feedback; two annotators for high-impact pairs"
+ }
+}

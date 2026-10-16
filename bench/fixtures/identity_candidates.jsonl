@@ -1,0 +1,16 @@
+{"source_id": "SS-P-10291", "target_id": "SS-P-20019", "engine": "exact_model", "engine_status": "verified", "market": null}
+{"source_id": "SS-P-IN-B88CF60F00", "target_id": "SS-P-IN-B914C15B02", "engine": "exact_model", "engine_status": "verified", "market": "IN"}
+{"source_id": "SS-P-IN-B88CF60F00", "target_id": "SS-P-IN-C7FDECCDF2", "engine": "exact_model", "engine_status": "verified", "market": "IN"}
+{"source_id": "SS-P-10291", "target_id": "SS-P-30118", "engine": "rebranded_equivalent", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-IN-B88CF60F00", "target_id": "SS-P-IN-BC37EE80CC", "engine": "rebranded_equivalent", "engine_status": "unverified", "market": "IN"}
+{"source_id": "SS-P-10291", "target_id": "SS-P-40007", "engine": "visually_similar", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-30118", "target_id": "SS-P-40007", "engine": "visually_similar", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-30118", "target_id": "SS-P-AMZ-B08HRTX2FQ", "engine": "visually_similar", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-30118", "target_id": "SS-P-AMZ-B08KZLM8DK", "engine": "visually_similar", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-30118", "target_id": "SS-P-AMZ-B0953F46R3", "engine": "visually_similar", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-30118", "target_id": "SS-P-AMZ-B09Q97TB1V", "engine": "visually_similar", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-30118", "target_id": "SS-P-IN-4C1C726CA3", "engine": "visually_similar", "engine_status": "unverified", "market": null}
+{"source_id": "SS-P-IN-B88CF60F00", "target_id": "SS-P-IN-BAD2AA004E", "engine": "visually_similar", "engine_status": "unverified", "market": "IN"}
+{"source_id": "SS-P-IN-B88CF60F00", "target_id": "SS-P-IN-C22855FBAF", "engine": "visually_similar", "engine_status": "unverified", "market": "IN"}
+{"source_id": "SS-P-IN-B88CF60F00", "target_id": "SS-P-IN-CA56BE45E8", "engine": "visually_similar", "engine_status": "unverified", "market": "IN"}
+{"source_id": "SS-P-IN-B88CF60F00", "target_id": "SS-P-IN-E64F02B7B4", "engine": "visually_similar", "engine_status": "unverified", "market": "IN"}
