@@ -1,18 +1,18 @@
 {
- "recorded_at": "2026-10-16 00:37 IST",
+ "recorded_at": "2026-10-16 16:38 IST",
  "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
  "events": [
   {
    "type": "open",
    "mode": "investigate",
-   "investigation_id": "SS-I-0559F062",
-   "_ms": 240
+   "investigation_id": "SS-I-DDA61B00",
+   "_ms": 117
   },
   {
    "type": "start",
    "agent": "page_reader",
    "tool": "page",
-   "_ms": 240
+   "_ms": 117
   },
   {
    "type": "step",
@@ -21,44 +21,50 @@
    "tool": "page",
    "summary": "Matched the listing to SS-P-30118 (by url)",
    "model": null,
-   "seconds": 0.29,
-   "_ms": 14206
+   "seconds": 0.07,
+   "_ms": 204
   },
   {
    "type": "start",
    "agent": "is_it_real",
    "tool": "is_it_real",
-   "_ms": 14206
+   "_ms": 204
   },
   {
    "type": "start",
    "agent": "safety_radar",
    "tool": "safety_radar",
-   "_ms": 14206
+   "_ms": 204
   },
   {
    "type": "start",
    "agent": "twin_finder",
    "tool": "twin_finder",
-   "_ms": 14206
+   "_ms": 204
   },
   {
    "type": "start",
    "agent": "recall_checker",
    "tool": "recall_checker",
-   "_ms": 14206
+   "_ms": 204
   },
   {
    "type": "start",
    "agent": "cert_verifier",
    "tool": "cert_verifier",
-   "_ms": 14206
+   "_ms": 204
+  },
+  {
+   "type": "start",
+   "agent": "official_sources",
+   "tool": "official_sources",
+   "_ms": 204
   },
   {
    "type": "start",
    "agent": "research_agent",
    "tool": "research_agent",
-   "_ms": 14207
+   "_ms": 204
   },
   {
    "type": "step",
@@ -67,8 +73,8 @@
    "tool": "twin_finder",
    "summary": "No related products on file",
    "model": null,
-   "seconds": 12.71,
-   "_ms": 14207
+   "seconds": 0.96,
+   "_ms": 1764
   },
   {
    "type": "step",
@@ -77,8 +83,8 @@
    "tool": "research_agent",
    "summary": "Skipped: nothing to check this with",
    "model": null,
-   "seconds": 12.73,
-   "_ms": 14207
+   "seconds": 1.46,
+   "_ms": 1764
   },
   {
    "type": "step",
@@ -87,8 +93,8 @@
    "tool": "cert_verifier",
    "summary": "Safety marks: BIS mismatch",
    "model": null,
-   "seconds": 13.3,
-   "_ms": 14795
+   "seconds": 1.49,
+   "_ms": 1813
   },
   {
    "type": "step",
@@ -97,8 +103,8 @@
    "tool": "recall_checker",
    "summary": "No recall notice linked",
    "model": null,
-   "seconds": 13.75,
-   "_ms": 21397
+   "seconds": 1.55,
+   "_ms": 1814
   },
   {
    "type": "step",
@@ -107,93 +113,967 @@
    "tool": "is_it_real",
    "summary": "Is it real? no warning signs",
    "model": null,
-   "seconds": 13.83,
-   "_ms": 23195
+   "seconds": 1.57,
+   "_ms": 1814
   },
   {
    "type": "step",
    "n": 7,
+   "agent": "official_sources",
+   "tool": "official_sources",
+   "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
+   "model": null,
+   "seconds": 1.58,
+   "_ms": 1814
+  },
+  {
+   "type": "step",
+   "n": 8,
    "agent": "safety_radar",
    "tool": "safety_radar",
    "summary": "Safety: verdict not_enough_evidence from 0 reviews",
    "model": null,
-   "seconds": 19.7,
-   "_ms": 23195
+   "seconds": 1.59,
+   "_ms": 1814
   },
   {
    "type": "start",
    "agent": "verdict",
    "tool": "verdict",
-   "_ms": 23310
+   "_ms": 1814
   },
   {
    "type": "step",
-   "n": 8,
+   "n": 9,
    "agent": "verdict",
    "tool": "verdict",
-   "summary": "Code set the verdict: safety unknown, is it real unknown, overall unknown",
+   "summary": "Code set the verdict: safety unknown, is it real amber, overall amber",
    "model": null,
-   "seconds": 0.02,
-   "_ms": 23311
+   "seconds": 0.0,
+   "_ms": 1827
   },
   {
    "type": "verdict",
    "verdict": {
     "safe": "unknown",
-    "real": "unknown",
-    "overall": "unknown",
+    "real": "amber",
+    "overall": "amber",
     "reasons": [
      {
-      "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+      "text": "No matching notice found in the sources checked (this is not proof of safety)",
+      "evidence_ids": []
+     },
+     {
+      "text": "Checked: India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
       "evidence_ids": []
      },
      {
       "text": "Only 0 review(s) read: too few to call it safe",
       "evidence_ids": []
+     },
+     {
+      "text": "BIS R-41097318: the BIS licence belongs to another brand (mock registry) (listing says VoltNova, registry says Kelvo)",
+      "evidence_ids": []
      }
     ],
-    "evidence_ids": []
+    "evidence_ids": [],
+    "outcome": "no_matching_notice_found",
+    "basis": "no_matching_notice_found",
+    "headline": "No matching notice found in the sources checked (this is not proof of safety)",
+    "safety_concern": {
+     "level": "none",
+     "text": "No matching notice found in the sources checked (this is not proof of safety)"
+    },
+    "evidence_strength": "none",
+    "identity_confidence": "none",
+    "lead_record": null,
+    "coverage": {
+     "countries": [
+      {
+       "country": "IN",
+       "name": "India",
+       "is_market": true,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:54.034859+00:00",
+       "sources": [
+        {
+         "source": "india_notices",
+         "authority": "CCPA / BIS",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-09-09"
+        },
+        {
+         "source": "india_bis",
+         "authority": "BIS",
+         "state": "not_supported",
+         "mode": null,
+         "freshness": null
+        },
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": [
+        "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+       ]
+      },
+      {
+       "country": "JP",
+       "name": "Japan",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "AU",
+       "name": "Australia",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "SG",
+       "name": "Singapore",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": [
+        "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+       ]
+      },
+      {
+       "country": "KR",
+       "name": "South Korea",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "TW",
+       "name": "Taiwan",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "US",
+       "name": "the United States",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:54.063590+00:00",
+       "sources": [
+        {
+         "source": "cpsc",
+         "authority": "CPSC",
+         "state": "no_matching_notice_found",
+         "mode": "live",
+         "freshness": null
+        },
+        {
+         "source": "saferproducts",
+         "authority": "CPSC",
+         "state": "not_supported",
+         "mode": null,
+         "freshness": null
+        },
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "EU",
+       "name": "the European Union",
+       "is_market": false,
+       "state": "not_supported",
+       "checked_at": null,
+       "sources": [
+        {
+         "source": "eu_safety_gate",
+         "authority": "EU Safety Gate",
+         "state": "not_supported",
+         "mode": null,
+         "freshness": null
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "ID",
+       "name": "Indonesia",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "MY",
+       "name": "Malaysia",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "PH",
+       "name": "the Philippines",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "TH",
+       "name": "Thailand",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "VN",
+       "name": "Vietnam",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      }
+     ],
+     "sources": [
+      {
+       "source": "india_notices",
+       "name": "India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)",
+       "authority": "CCPA / BIS",
+       "role": "local",
+       "jurisdiction": "IN",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "checked_at": "2026-10-16T11:08:54.034859+00:00",
+       "freshness": "2026-09-09",
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "searched the stored copy; no notice matched this product"
+      },
+      {
+       "source": "india_bis",
+       "name": "BIS product certification (CRS / ISI licence) verification",
+       "authority": "BIS",
+       "role": "local",
+       "jurisdiction": "IN",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "no automated access exists; a person can check it by hand"
+      },
+      {
+       "source": "cpsc",
+       "name": "U.S. Consumer Product Safety Commission recalls",
+       "authority": "CPSC",
+       "role": "global",
+       "jurisdiction": "US",
+       "state": "no_matching_notice_found",
+       "mode": "live",
+       "checked_at": "2026-10-16T11:08:54.063590+00:00",
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "searched live; no notice matched this product"
+      },
+      {
+       "source": "eu_safety_gate",
+       "name": "EU Safety Gate alerts",
+       "authority": "EU Safety Gate",
+       "role": "global",
+       "jurisdiction": "EU",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "searched only on a deep check (it needs a browser, about 30 s a site)"
+      },
+      {
+       "source": "saferproducts",
+       "name": "SaferProducts.gov incident reports (OData)",
+       "authority": "CPSC",
+       "role": "global",
+       "jurisdiction": "US",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up"
+      },
+      {
+       "source": "manufacturer",
+       "name": "Manufacturer-authorised recall feeds",
+       "authority": "Manufacturer",
+       "role": "global",
+       "jurisdiction": "MULTI",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "no automated access exists; a person can check it by hand"
+      },
+      {
+       "source": "stored_notices",
+       "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+       "authority": "SafeShelf store",
+       "role": "global",
+       "jurisdiction": "MULTI",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "freshness": "2026-10-13",
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "searched the stored copy; no notice matched this product"
+      }
+     ],
+     "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+    },
+    "limitations": [
+     "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand.",
+     "Only 0 review(s) read; hazard signals need at least 20.",
+     "No matching notice in what was checked is not proof that the product is safe."
+    ],
+    "what_would_change": [
+     {
+      "fact": "the safety-mark registration (e.g. BIS R-number)",
+      "how": "look it up in the BIS Care app",
+      "cost": 2,
+      "impact": 2,
+      "key": "certificate"
+     },
+     {
+      "fact": "more first-hand owner reports",
+      "how": "SafeShelf re-checks as reviews arrive (watchlist)",
+      "cost": 2,
+      "impact": 2,
+      "key": "more_reviews"
+     },
+     {
+      "fact": "sites that need a browser (EU Safety Gate, New Zealand)",
+      "how": "a deep check",
+      "cost": 2,
+      "impact": 2,
+      "key": "deep_sources"
+     }
+    ],
+    "review_required": false,
+    "review_reasons": [],
+    "policy_version": "2026-10-16.1",
+    "source_mode": "partial",
+    "rules": [
+     "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
+    ],
+    "matches": []
    },
-   "_ms": 23311
+   "_ms": 1828
   },
   {
    "type": "step",
-   "n": 9,
+   "n": 10,
    "agent": "verdict_writer",
    "tool": "gemini",
    "summary": "Wrote the answer",
    "model": "gemini-3.5-flash-lite",
-   "seconds": 1.25,
-   "_ms": 24510
+   "seconds": 0.87,
+   "_ms": 2713
   },
   {
    "type": "done",
    "result": {
-    "session_id": "SS-I-0559F062",
-    "investigation_id": "SS-I-0559F062",
+    "session_id": "SS-I-DDA61B00",
+    "investigation_id": "SS-I-DDA61B00",
     "mode": "investigate",
     "product_id": "SS-P-30118",
     "language": "en",
     "verdict": {
      "safe": "unknown",
-     "real": "unknown",
-     "overall": "unknown",
+     "real": "amber",
+     "overall": "amber",
      "reasons": [
       {
-       "text": "No official recall found (checked ACCC, CPSC, KATS, CAA, ASEAN, BSMI, CPSO)",
+       "text": "No matching notice found in the sources checked (this is not proof of safety)",
+       "evidence_ids": []
+      },
+      {
+       "text": "Checked: India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
        "evidence_ids": []
       },
       {
        "text": "Only 0 review(s) read: too few to call it safe",
        "evidence_ids": []
+      },
+      {
+       "text": "BIS R-41097318: the BIS licence belongs to another brand (mock registry) (listing says VoltNova, registry says Kelvo)",
+       "evidence_ids": []
       }
      ],
-     "evidence_ids": []
+     "evidence_ids": [],
+     "outcome": "no_matching_notice_found",
+     "basis": "no_matching_notice_found",
+     "headline": "No matching notice found in the sources checked (this is not proof of safety)",
+     "safety_concern": {
+      "level": "none",
+      "text": "No matching notice found in the sources checked (this is not proof of safety)"
+     },
+     "evidence_strength": "none",
+     "identity_confidence": "none",
+     "lead_record": null,
+     "coverage": {
+      "countries": [
+       {
+        "country": "IN",
+        "name": "India",
+        "is_market": true,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "sources": [
+         {
+          "source": "india_notices",
+          "authority": "CCPA / BIS",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-09-09"
+         },
+         {
+          "source": "india_bis",
+          "authority": "BIS",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+        ]
+       },
+       {
+        "country": "JP",
+        "name": "Japan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "AU",
+        "name": "Australia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "SG",
+        "name": "Singapore",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+        ]
+       },
+       {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "US",
+        "name": "the United States",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "sources": [
+         {
+          "source": "cpsc",
+          "authority": "CPSC",
+          "state": "no_matching_notice_found",
+          "mode": "live",
+          "freshness": null
+         },
+         {
+          "source": "saferproducts",
+          "authority": "CPSC",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "EU",
+        "name": "the European Union",
+        "is_market": false,
+        "state": "not_supported",
+        "checked_at": null,
+        "sources": [
+         {
+          "source": "eu_safety_gate",
+          "authority": "EU Safety Gate",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "ID",
+        "name": "Indonesia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "MY",
+        "name": "Malaysia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "PH",
+        "name": "the Philippines",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TH",
+        "name": "Thailand",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "VN",
+        "name": "Vietnam",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       }
+      ],
+      "sources": [
+       {
+        "source": "india_notices",
+        "name": "India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)",
+        "authority": "CCPA / BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "no_matching_notice_found",
+        "mode": "cache",
+        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "freshness": "2026-09-09",
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched the stored copy; no notice matched this product"
+       },
+       {
+        "source": "india_bis",
+        "name": "BIS product certification (CRS / ISI licence) verification",
+        "authority": "BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "cpsc",
+        "name": "U.S. Consumer Product Safety Commission recalls",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "no_matching_notice_found",
+        "mode": "live",
+        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched live; no notice matched this product"
+       },
+       {
+        "source": "eu_safety_gate",
+        "name": "EU Safety Gate alerts",
+        "authority": "EU Safety Gate",
+        "role": "global",
+        "jurisdiction": "EU",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched only on a deep check (it needs a browser, about 30 s a site)"
+       },
+       {
+        "source": "saferproducts",
+        "name": "SaferProducts.gov incident reports (OData)",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up"
+       },
+       {
+        "source": "manufacturer",
+        "name": "Manufacturer-authorised recall feeds",
+        "authority": "Manufacturer",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "stored_notices",
+        "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+        "authority": "SafeShelf store",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "no_matching_notice_found",
+        "mode": "cache",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "freshness": "2026-10-13",
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched the stored copy; no notice matched this product"
+       }
+      ],
+      "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+     },
+     "limitations": [
+      "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand.",
+      "Only 0 review(s) read; hazard signals need at least 20.",
+      "No matching notice in what was checked is not proof that the product is safe."
+     ],
+     "what_would_change": [
+      {
+       "fact": "the safety-mark registration (e.g. BIS R-number)",
+       "how": "look it up in the BIS Care app",
+       "cost": 2,
+       "impact": 2,
+       "key": "certificate"
+      },
+      {
+       "fact": "more first-hand owner reports",
+       "how": "SafeShelf re-checks as reviews arrive (watchlist)",
+       "cost": 2,
+       "impact": 2,
+       "key": "more_reviews"
+      },
+      {
+       "fact": "sites that need a browser (EU Safety Gate, New Zealand)",
+       "how": "a deep check",
+       "cost": 2,
+       "impact": 2,
+       "key": "deep_sources"
+      }
+     ],
+     "review_required": false,
+     "review_reasons": [],
+     "policy_version": "2026-10-16.1",
+     "source_mode": "partial",
+     "rules": [
+      "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
+     ],
+     "matches": []
     },
     "messages": [
      {
       "role": "assistant",
-      "text": "We checked for official recalls and found none listed by major safety authorities. However, there are only 0 reviews read, which is too few to call it safe.",
+      "text": "This product has no matching recall notice found in the sources checked, though this is not proof of safety. The listing's BIS licence belongs to another brand, and this AI finding is under review and not a regulator's decision. There are also too few reviews read to call it safe.",
       "evidence_ids": []
      }
     ],
@@ -253,7 +1133,9 @@
         "CAA",
         "ASEAN",
         "BSMI",
-        "CPSO"
+        "CPSO",
+        "BIS",
+        "CCPA"
        ],
        "recall_ids": [],
        "recall_ids_under_review": []
@@ -264,11 +1146,14 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "VoltNova",
-        "checked_at": "2026-10-15T19:06:57+00:00",
+        "checked_at": "2026-10-16T11:08:54+00:00",
         "result": "mismatch",
         "field": "brand",
         "registry_value": "Kelvo",
-        "reason": "the BIS licence belongs to another brand (mock registry)"
+        "reason": "the BIS licence belongs to another brand (mock registry)",
+        "registry_mode": "demo_mock_registry",
+        "verification": "mismatch",
+        "lookup_url": "https://www.bis.gov.in/bis-apps/?lang=en"
        }
       ],
       "reviews_checked": 0,
@@ -290,15 +1175,428 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "VoltNova",
-        "checked_at": "2026-10-15T19:06:44+00:00",
+        "checked_at": "2026-10-16T11:08:52+00:00",
         "result": "mismatch",
         "field": "brand",
         "registry_value": "Kelvo",
-        "reason": "the BIS licence belongs to another brand (mock registry)"
+        "reason": "the BIS licence belongs to another brand (mock registry)",
+        "registry_mode": "demo_mock_registry",
+        "verification": "mismatch",
+        "lookup_url": "https://www.bis.gov.in/bis-apps/?lang=en"
        }
       ],
       "label_numbers": [],
       "label_matches_claim": null
+     },
+     "official_sources": {
+      "market": "IN",
+      "market_name": "India",
+      "product": {
+       "product_id": "SS-P-30118",
+       "brand": "VoltNova",
+       "model": "VN-65PD",
+       "gtin": null,
+       "batch": null,
+       "category": "usb_charger",
+       "title": "VoltNova VN-65PD 65W GaN Charger, Dual USB-C, Foldable Pins",
+       "local_identifiers": {
+        "bis_r": [
+         "R-41097318"
+        ]
+       },
+       "key": "voltnova|VN65PD|IN",
+       "market": "IN"
+      },
+      "matches": [],
+      "contradictions": [],
+      "source_rows": [
+       {
+        "source": "india_notices",
+        "name": "India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)",
+        "authority": "CCPA / BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "no_matching_notice_found",
+        "mode": "cache",
+        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "freshness": "2026-09-09",
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched the stored copy; no notice matched this product"
+       },
+       {
+        "source": "india_bis",
+        "name": "BIS product certification (CRS / ISI licence) verification",
+        "authority": "BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "cpsc",
+        "name": "U.S. Consumer Product Safety Commission recalls",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "no_matching_notice_found",
+        "mode": "live",
+        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched live; no notice matched this product"
+       },
+       {
+        "source": "eu_safety_gate",
+        "name": "EU Safety Gate alerts",
+        "authority": "EU Safety Gate",
+        "role": "global",
+        "jurisdiction": "EU",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched only on a deep check (it needs a browser, about 30 s a site)"
+       },
+       {
+        "source": "saferproducts",
+        "name": "SaferProducts.gov incident reports (OData)",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up"
+       },
+       {
+        "source": "manufacturer",
+        "name": "Manufacturer-authorised recall feeds",
+        "authority": "Manufacturer",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "stored_notices",
+        "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+        "authority": "SafeShelf store",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "no_matching_notice_found",
+        "mode": "cache",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "freshness": "2026-10-13",
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched the stored copy; no notice matched this product"
+       }
+      ],
+      "country_rows": [
+       {
+        "country": "IN",
+        "name": "India",
+        "is_market": true,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "sources": [
+         {
+          "source": "india_notices",
+          "authority": "CCPA / BIS",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-09-09"
+         },
+         {
+          "source": "india_bis",
+          "authority": "BIS",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+        ]
+       },
+       {
+        "country": "JP",
+        "name": "Japan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "AU",
+        "name": "Australia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "SG",
+        "name": "Singapore",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+        ]
+       },
+       {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "US",
+        "name": "the United States",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "sources": [
+         {
+          "source": "cpsc",
+          "authority": "CPSC",
+          "state": "no_matching_notice_found",
+          "mode": "live",
+          "freshness": null
+         },
+         {
+          "source": "saferproducts",
+          "authority": "CPSC",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "EU",
+        "name": "the European Union",
+        "is_market": false,
+        "state": "not_supported",
+        "checked_at": null,
+        "sources": [
+         {
+          "source": "eu_safety_gate",
+          "authority": "EU Safety Gate",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "ID",
+        "name": "Indonesia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "MY",
+        "name": "Malaysia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "PH",
+        "name": "the Philippines",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TH",
+        "name": "Thailand",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "VN",
+        "name": "Vietnam",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       }
+      ],
+      "source_mode": "partial",
+      "depth": "quick",
+      "query_keys": [
+       "28c6deb7eb9377859cf68f80"
+      ],
+      "query": {
+       "brand": "VoltNova",
+       "model": "VN-65PD",
+       "gtin": null,
+       "market": "IN",
+       "depth": "quick",
+       "as_of": null
+      }
      },
      "research_agent": {
       "skipped": true
@@ -311,7 +1609,7 @@
       "tool": "page",
       "summary": "Matched the listing to SS-P-30118 (by url)",
       "model": null,
-      "seconds": 0.29
+      "seconds": 0.07
      },
      {
       "n": 2,
@@ -319,7 +1617,7 @@
       "tool": "twin_finder",
       "summary": "No related products on file",
       "model": null,
-      "seconds": 12.71
+      "seconds": 0.96
      },
      {
       "n": 3,
@@ -327,7 +1625,7 @@
       "tool": "research_agent",
       "summary": "Skipped: nothing to check this with",
       "model": null,
-      "seconds": 12.73
+      "seconds": 1.46
      },
      {
       "n": 4,
@@ -335,7 +1633,7 @@
       "tool": "cert_verifier",
       "summary": "Safety marks: BIS mismatch",
       "model": null,
-      "seconds": 13.3
+      "seconds": 1.49
      },
      {
       "n": 5,
@@ -343,7 +1641,7 @@
       "tool": "recall_checker",
       "summary": "No recall notice linked",
       "model": null,
-      "seconds": 13.75
+      "seconds": 1.55
      },
      {
       "n": 6,
@@ -351,37 +1649,45 @@
       "tool": "is_it_real",
       "summary": "Is it real? no warning signs",
       "model": null,
-      "seconds": 13.83
+      "seconds": 1.57
      },
      {
       "n": 7,
+      "agent": "official_sources",
+      "tool": "official_sources",
+      "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
+      "model": null,
+      "seconds": 1.58
+     },
+     {
+      "n": 8,
       "agent": "safety_radar",
       "tool": "safety_radar",
       "summary": "Safety: verdict not_enough_evidence from 0 reviews",
       "model": null,
-      "seconds": 19.7
-     },
-     {
-      "n": 8,
-      "agent": "verdict",
-      "tool": "verdict",
-      "summary": "Code set the verdict: safety unknown, is it real unknown, overall unknown",
-      "model": null,
-      "seconds": 0.02
+      "seconds": 1.59
      },
      {
       "n": 9,
+      "agent": "verdict",
+      "tool": "verdict",
+      "summary": "Code set the verdict: safety unknown, is it real amber, overall amber",
+      "model": null,
+      "seconds": 0.0
+     },
+     {
+      "n": 10,
       "agent": "verdict_writer",
       "tool": "gemini",
       "summary": "Wrote the answer",
       "model": "gemini-3.5-flash-lite",
-      "seconds": 1.25
+      "seconds": 0.87
      }
     ],
     "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
-    "checked_at": 1792091227.2676077
+    "checked_at": 1792148935.0835695
    },
-   "_ms": 24511
+   "_ms": 2723
   }
  ]
 }
