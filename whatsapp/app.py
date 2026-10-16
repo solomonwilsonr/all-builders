@@ -145,9 +145,20 @@ async def handle(message: dict) -> None:
                     get(api, f"/v1/products/{identity['product_id']}/safety"),
                     get(api, f"/v1/products/{identity['product_id']}/alternatives"))
                 text = bot.reply(identity, safety, lang, alternatives=alts, from_photo=True)
+            # The voice note is the short spoken verdict (engine/plain.py "say", a few seconds long) in the shopper's
+            # language (POST /v1/voice/verdict); answers without one read the whole reply.
+            spoken = None
+            if (safety.get("plain") or {}).get("say"):
+                try:
+                    spoken = await post(api, "/v1/voice/verdict", {"plain": safety["plain"], "language": lang})
+                except Exception:  # noqa: BLE001  the whole reply is read instead
+                    spoken = None
         said = await translate(text, lang)
         await send_text(sender, said)
-        await send_voice(sender, bot.voice_text(said), lang if said != text or lang in bot.TEXT else "en")
+        if spoken:
+            await send_voice(sender, bot.voice_text(spoken["text"]), spoken["language"])
+        else:
+            await send_voice(sender, bot.voice_text(said), lang if said != text or lang in bot.TEXT else "en")
         log.info(json.dumps({"event": "answered", "kind": asked["kind"], "lang": lang, "trace": trace,
                              "verdict": safety.get("verdict")}))
     except Exception as error:  # noqa: BLE001  the shopper always gets an answer
