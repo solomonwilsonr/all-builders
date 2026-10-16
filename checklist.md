@@ -1,6 +1,6 @@
 # SafeShelf checklist
 
-**Last updated:** 16 Oct 2026, evening (Day 5 of 6) · **Score: 71/100** → 94 if the plan lands ([score](#-score-out-of-100))
+**Last updated:** 16 Oct 2026, evening (Day 5 of 6) · **Score: 76/100** → 94 if the plan lands ([score](#-score-out-of-100))
 **Deadline:** 18 Oct 2026, 11:59 PM IST · **Feature freeze:** evening of 16 Oct (after that, only fixes, data, measurements and the story)
 
 Updated with every change. For the details behind each line, see [plan.md](plan.md).
@@ -38,8 +38,8 @@ Each line: who · time · score points it adds. Tick it, then re-score ([Score](
 ### Tonight, 16 Oct: make it visible (before the freeze)
 - [x] **1. Commit the extension's open changes**: the 26-language picker in `extension/content.js` · Solomon · 5 min
 - [x] **2. Korea and Taiwan website-age fix** (done 16 Oct: `co.kr`, `com.tw`, `com.hk` and Coupang, Gmarket, 11st, momo, PChome, HKTVmall; tests pass): add `co.kr`, `com.tw`, `com.hk` to `TWO_PART_TLDS` and Coupang, Gmarket, 11st, momo to `MARKETPLACES` in `engine/trust.py`, with tests. Same bug just fixed for Japan and SEA; goes out with item 4 · Claude · 15 min
-- [ ] **3. India notices into Cloud SQL**: with `cloud-sql-proxy --port 5443` running: `cd engine && PYTHONPATH=.. uv run python ../data/load_india_notices.py --db <Cloud SQL URL on :5443>` · Solomon · 5 min
-- [ ] **4. `make deploy-api`**: carries everything under [Built, waiting for deploy](#-built-waiting-for-deploy). Then `make schedule-recheck` once and `make deploy-api` again for the half-hourly recall re-check. Check it live afterwards · Solomon · 20 min
+- [x] **3. India notices into Cloud SQL** (done 16 Oct: CCPA 15, BIS 21 in Cloud SQL): with `cloud-sql-proxy --port 5443` running: `cd engine && PYTHONPATH=.. uv run python ../data/load_india_notices.py --db <Cloud SQL URL on :5443>` · Solomon · 5 min
+- [x] **4. `make deploy-api`** (done 16 Oct, revision safeshelf-api-00035, plan v2.2 live; `make check-live` all good: CPSC, CAA, OECD and India reachable from Cloud Run, all 5 JAPAC cases right in about 1 s). Still to do: `make schedule-recheck` and `make schedule-watch-recheck`.: carries everything under [Built, waiting for deploy](#-built-waiting-for-deploy). Then `make schedule-recheck` once and `make deploy-api` again for the half-hourly recall re-check. Check it live afterwards · Solomon · 20 min
 - [ ] **5. Judges' web page live**: `make web-samples` → `make deploy-web` (Firebase Hosting; Firebase may need enabling on the project). Look at it on a phone · Solomon · 30 min
 - [ ] **6. WhatsApp bot on a Meta test number**; record the Hindi voice-note moment · Solomon · 30 min
   - *Items 3–6 together: UX +3, Problem fit +1, Technical +2 → **77***
@@ -85,11 +85,11 @@ Our own estimate, scored as a judge would see SafeShelf today against the four j
 
 | Judging area | Weight | Now | If the plan lands | Where we stand |
 |---|---|---|---|---|
-| Technical merit and GenAI | 40 | **32** | 36 | 🟢 Strong: real agents, Gemini 3.x, measured results. Lost points: the 16 Oct work isn't deployed; an Amazon.in check stalled |
-| Problem fit and impact | 25 | **17** | 25 | 🟢 Good, not Strong: JAPAC focus, 26 languages, 6,152 JAPAC notices, but no impact number of our own, India data not live, all measured proof from US data |
-| Innovation | 25 | **17** | 24 | 🟢 Good, not Strong: copy-finding and first look are new, but the backtest headline undersells them and there's no checked real-world finding |
+| Technical merit and GenAI | 40 | **34** | 36 | 🟢 Strong: real agents, Gemini 3.x, measured results. Lost points: the 16 Oct work isn't deployed; an Amazon.in check stalled |
+| Problem fit and impact | 25 | **19** | 25 | 🟢 Good, not Strong: JAPAC focus, 26 languages, 6,152 JAPAC notices, but no impact number of our own, India data not live, all measured proof from US data |
+| Innovation | 25 | **18** | 24 | 🟢 Good, not Strong: copy-finding and first look are new, but the backtest headline undersells them and there's no checked real-world finding |
 | UX | 10 | **5** | 9 | 🟡 Extension and chat page redesigned; no hosted link yet, and judges probably won't install an extension |
-| **Total** | 100 | **71** | **94** | |
+| **Total** | 100 | **76** | **94** | |
 
 **Path:** 71 → 77 (items 3–6) → 81 (7) → 83 (9) → 86 (11) → 88 (12) → 89 (13) → 92 (15) → 94 (16)
 
@@ -98,6 +98,7 @@ Our own estimate, scored as a judge would see SafeShelf today against the four j
 | Date | Score | What changed |
 |---|---|---|
 | 16 Oct | 71 | First score: 16 Oct work built but not deployed; no hosted link |
+| 16 Oct, evening | 76 | Plan v2.2 deployed: live official sources (CAA live), country-by-country coverage, recall abroad ≠ local recall; India notices in Cloud SQL. Still no hosted web page |
 
 ---
 
