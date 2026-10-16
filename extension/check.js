@@ -1,23 +1,35 @@
 // Calls the API and turns the answers into one display model. Runs in the background worker,
-// so pages (including https shops) never call the API themselves and no key reaches a page.
-import { API_BASE, API_KEY } from "./config.js";
+// so pages (including https shops) never call the API themselves and no sign-in token reaches a page.
+import { API_BASE } from "./config.js";
+import { idToken, SignInNeeded } from "./session.js";
 
 const VERDICT = {
-  green: { icon: "✅", word: "No problems found" },
-  amber: { icon: "⚠️", word: "Be careful" },
-  red: { icon: "⛔", word: "Don't buy" },
-  unknown: { icon: "❔", word: "Can't tell yet" },
+  green: { icon: "✅", word: "Looks fine so far" },
+  amber: { icon: "⚠️", word: "Be careful: under review" },
+  red: { icon: "⛔", word: "Danger or not real" },
+  unknown: { icon: "❔", word: "Not enough evidence yet" },
 };
 
+// Every call carries the signed-in person's ID token. A 401 or 403 is asked once more with a fresh token (the old
+// one may have just run out, or an admin may have just changed the role); a second 401 means sign in again.
+async function signedFetch(url, options, fresh = false) {
+  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${await idToken(fresh)}` };
+  const res = await fetch(url, { ...options, headers });
+  if (!fresh && (res.status === 401 || res.status === 403)) return signedFetch(url, options, true);
+  if (res.status === 401) throw new SignInNeeded("Your SafeShelf sign-in wasn't accepted. Click the SafeShelf icon in the toolbar to sign in again");
+  return res;
+}
+
 export async function api(path, options = {}, base = API_BASE) {
-  const headers = { "Content-Type": "application/json", ...(API_KEY && { "X-API-Key": API_KEY }), ...(options.headers || {}) };
   // The real engine can take a minute on a cold start, so wait up to 150 s instead of hanging forever.
-  const res = await fetch(base + path, { signal: AbortSignal.timeout(150000), ...options, headers });
+  const res = await signedFetch(base + path, { signal: AbortSignal.timeout(150000), ...options });
   if (!res.ok) {
     const detail = (await res.json().catch(() => ({}))).detail; // the API's own explanation, e.g. "The AI is busy right now"
     throw new Error(typeof detail === "string" ? detail : `${path} answered ${res.status}`);
   }
-  return { body: await res.json(), source: res.headers.get("X-SafeShelf-Source") };
+  const source = res.headers.get("X-SafeShelf-Source");
+  if (source === "mock") throw new Error("Demo data was rejected. Restart the local API with make api to use real results.");
+  return { body: await res.json(), source };
 }
 
 // "Is it real?" colour comes from counting flags in code, never from page text.
@@ -111,13 +123,13 @@ export async function agentStream(body, onEvent, timeoutMs = 150000) {
 }
 
 async function streamOnce(body, onEvent, timeoutMs) {
-  const headers = { "Content-Type": "application/json", ...(API_KEY && { "X-API-Key": API_KEY }) };
-  const res = await fetch(API_BASE + "/v1/agent/sessions/stream", { method: "POST", headers, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
+  const res = await signedFetch(API_BASE + "/v1/agent/sessions/stream", { method: "POST", body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
   if (res.status === 404 || res.status === 405) return agentSession(body, timeoutMs);
   if (!res.ok) {
     const detail = (await res.json().catch(() => ({}))).detail;
     throw new Error(typeof detail === "string" ? detail : `the agent answered ${res.status}`);
   }
+  if (res.headers.get("X-SafeShelf-Source") === "mock") throw new Error("Demo data was rejected. Restart the local API with make api to use real results.");
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";

@@ -1,0 +1,106 @@
+/* Shared frame for Settings, My Shelf and the Lab: a quiet sidebar, a colour wash at the top of the page,
+   and surfaces with a faint edge. Loaded last on each page. Change --wash to retint every page. */
+:root{
+  --ground:#fafaf9; --rail:#f2f2f0; --surface:#fff; --surface-2:#efefec; --line:rgba(24,24,27,.08);
+  --ink:#18181b; --ink-2:#5f5f67; --accent:#dff0a8; --accent-ink:#2c3a12;
+  --action:#18181b; --on-action:#fff; --track:#d4d4d8;
+  --frost:rgba(255,255,255,.55); --frost-edge:rgba(255,255,255,.75); /* frosted glass, used sparingly */
+  --accent-rgb:223,240,168; --wash-strength:1;
+  --wash:linear-gradient(180deg,rgba(var(--accent-rgb),var(--wash-strength)) 0,rgba(var(--accent-rgb),0) 100%);
+  --icon-stroke:1.7;
+  --font:Geist,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --round:999px;
+  color:var(--ink); background:var(--ground); font-family:var(--font);
+}
+:root[data-theme=dark]{
+  --ground:#0e0e0f; --rail:#151516; --surface:#18181a; --surface-2:#232326; --line:rgba(255,255,255,.07);
+  --ink:#f2f2f3; --ink-2:#9b9ba3; --accent:#2a301c; --accent-ink:#e6f2c0;
+  --action:#f2f2f3; --on-action:#111113; --track:#3a3a3f;
+  --frost:rgba(30,30,33,.55); --frost-edge:rgba(255,255,255,.09);
+  --wash-strength:.22;
+}
+body{background:var(--ground);color:var(--ink)}
+
+/* Theme settings (Settings > Theme). Each choice is an attribute on <html>, or on a preview element, so it can be shown before saving. */
+:root,[data-accent]{--field:color-mix(in srgb,var(--accent) 38%,var(--surface))}
+[data-accent=lime]{--accent:#dff0a8;--accent-ink:#2c3a12;--accent-rgb:223,240,168}
+[data-accent=mint]{--accent:#c9f0dc;--accent-ink:#12382a;--accent-rgb:201,240,220}
+[data-accent=sky]{--accent:#cfe4fb;--accent-ink:#12304f;--accent-rgb:207,228,251}
+[data-accent=lilac]{--accent:#e3dcfb;--accent-ink:#2e2152;--accent-rgb:227,220,251}
+[data-accent=peach]{--accent:#fbdcc9;--accent-ink:#4a2412;--accent-rgb:251,220,201}
+[data-accent=sand]{--accent:#efe5c9;--accent-ink:#3d3215;--accent-rgb:239,229,201}
+[data-theme=dark][data-accent=lime],[data-theme=dark] [data-accent=lime]{--accent:#2a301c;--accent-ink:#e6f2c0}
+[data-theme=dark][data-accent=mint],[data-theme=dark] [data-accent=mint]{--accent:#1c2f26;--accent-ink:#c9f0dc}
+[data-theme=dark][data-accent=sky],[data-theme=dark] [data-accent=sky]{--accent:#1b2836;--accent-ink:#cfe4fb}
+[data-theme=dark][data-accent=lilac],[data-theme=dark] [data-accent=lilac]{--accent:#272236;--accent-ink:#e3dcfb}
+[data-theme=dark][data-accent=peach],[data-theme=dark] [data-accent=peach]{--accent:#352419;--accent-ink:#fbdcc9}
+[data-theme=dark][data-accent=sand],[data-theme=dark] [data-accent=sand]{--accent:#2f2a1c;--accent-ink:#efe5c9}
+[data-font]{font-family:var(--font)}
+[data-font=geist]{--font:Geist,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-font=system]{--font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+[data-font=rounded]{--font:Nunito,ui-rounded,system-ui,sans-serif}
+[data-font=serif]{--font:"Iowan Old Style",Palatino,Georgia,serif}
+[data-icons=regular]{--icon-stroke:1.7}
+[data-icons=light]{--icon-stroke:1.25}
+[data-icons=bold]{--icon-stroke:2.3}
+.sidebar svg,.page-top svg,.i svg *,.shelf-search svg,.product-placeholder svg,.look-preview svg{stroke-width:var(--icon-stroke)}
+:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* Sidebar */
+.sidebar{background:var(--rail);border:0;border-right:1px solid var(--line);padding:28px 16px 24px}
+.brand{font-size:19px;letter-spacing:-.4px;font-weight:600;gap:11px;padding:0 8px;color:var(--ink)}
+.brand-mark{width:30px;height:30px;font-size:18px;border-radius:9px;background:var(--action);color:var(--on-action)}
+.sidebar nav{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);gap:2px}
+.sidebar nav a{gap:12px;font-size:15px;font-weight:450;padding:10px 12px;border-radius:10px;color:var(--ink-2)}
+.sidebar nav a svg{width:19px;height:19px;flex:none}
+.sidebar nav a:hover{background:var(--surface-2);color:var(--ink)}
+.sidebar nav a.selected{background:var(--surface-2);color:var(--ink)}
+:root:not([data-theme=dark]) .sidebar nav a.selected{background:#fff;color:#18181b;font-weight:550;box-shadow:0 1px 3px rgba(24,24,27,.05),inset 0 0 0 1px rgba(24,24,27,.09)}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);min-width:0}
+.sidebar-note{margin:0;padding:0 8px;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.sidebar-account{display:flex;align-items:center;gap:10px;padding:0 8px 16px;min-width:0}
+.sidebar-account[hidden]{display:none}
+.sidebar-avatar{display:grid;place-items:center;width:36px;height:36px;flex:none;border-radius:50%;background:var(--surface-2);color:var(--ink);font-size:12px;font-weight:600}
+.sidebar-identity{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sidebar-name,.sidebar-email{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-name{font-size:13px;font-weight:600;color:var(--ink)}
+.sidebar-email{font-size:12px;color:var(--ink-2)}
+.sidebar-logout{align-self:flex-start;margin-top:5px;padding:4px 0;border:0;border-radius:4px;background:transparent;color:var(--ink-2);font:inherit;font-size:12px;cursor:pointer}
+.sidebar-logout:hover{background:transparent;color:var(--ink);text-decoration:underline}
+.sidebar-logout:disabled{opacity:.6;cursor:wait}
+.sidebar-account-status{font-size:12px;color:var(--ink-2);overflow-wrap:anywhere}
+.sidebar-account-status:empty{display:none}
+
+/* Content column: the wash sits behind the page title and fades out */
+.app{min-height:100vh;background:var(--wash) no-repeat;background-size:100% 380px}
+/* Flat by default, including before the saved appearance has loaded. */
+:root:not([data-gradient=on]){--sky:var(--ground);--wash:none}
+:root:not([data-gradient=on]):has(.app){background:var(--ground)}
+:root:not([data-gradient=on]) .app{background-image:none}
+:root:not([data-gradient=on]) .digest,:root:not([data-gradient=on]) .button.primary{background-image:none}
+.look-preview[data-gradient=off]{background:var(--surface)}
+/* One compact row: icon, title, then the description. Same width and margins as main so the edges line up. */
+.page-top{display:flex;align-items:center;flex-wrap:wrap;gap:4px 16px;max-width:1310px;margin:0 auto;padding:24px 48px 0}
+.page-top h1{display:flex;align-items:center;gap:10px;margin:0;font-size:18px;font-weight:500;letter-spacing:-.2px;line-height:1.3;white-space:nowrap}
+.page-top h1 svg{width:20px;height:20px;flex:none;align-self:center}
+.page-top p{margin:0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.app main{padding-top:28px}
+.page-foot{color:var(--ink-2);font-size:13px;margin-top:32px}
+.page-foot>span:last-child{font-size:13px;letter-spacing:0}
+
+/* Shelf and Lab cards */
+.settings-shell,.lab-content .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:none}
+
+/* Narrow windows: the sidebar becomes a bar above the page */
+@media(max-width:1150px){.page-top{padding-inline:25px}}
+@media(max-width:850px){
+  .sidebar{position:static;width:auto;flex-direction:row;align-items:center;gap:16px;padding:12px 16px;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{font-size:18px;padding:0}
+  .sidebar nav{display:flex;margin:0 0 0 auto;padding:0;border:0;overflow-x:auto}
+  .sidebar nav a{font-size:14px;padding:8px 10px;width:auto;white-space:nowrap}
+  .sidebar-footer{display:none}
+  .app{margin-left:0}
+  .page-top{padding:24px 16px 0}
+  .app main{padding:24px 16px 32px}
+}
+@media(max-width:540px){.brand{font-size:0;gap:0}.sidebar nav a{gap:7px}.sidebar nav a:not(.selected){font-size:0;gap:0}}

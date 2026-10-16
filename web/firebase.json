@@ -1,10 +1,39 @@
 {
   "hosting": {
+    "site": "shelf2026-3656b",
     "public": ".",
-    "ignore": ["firebase.json", "README.md", ".env.example", "record_samples.py", "**/.*", "**/__pycache__/**"],
+    "ignore": [
+      "firebase.json",
+      "firebase-debug*.log",
+      "README.md",
+      ".env.example",
+      "record_samples.py",
+      "**/.*",
+      "**/__pycache__/**",
+      "firestore.rules"
+    ],
     "headers": [
-      { "source": "samples/*.json", "headers": [{ "key": "Cache-Control", "value": "max-age=300" }] },
-      { "source": "data/*.json", "headers": [{ "key": "Cache-Control", "value": "max-age=300" }] }
+      {
+        "source": "samples/*.json",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=300"
+          }
+        ]
+      },
+      {
+        "source": "data/*.json",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=300"
+          }
+        ]
+      }
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }

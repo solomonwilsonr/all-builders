@@ -1,0 +1,3 @@
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+/* Dark colours for every page now come from the tokens in shell.css, shelf.css and lab.css. */

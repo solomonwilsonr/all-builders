@@ -11,6 +11,7 @@ DEPLOY_MOCK ?= 0
 TRACE_TO_CLOUD ?= 1
 
 API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
+FIREBASE_PROJECT ?= shelf2026-3656b
 # The Research Agent service (make deploy-research); empty = the API answers research requests with 503.
 RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)' 2>/dev/null)
 # The token the hourly re-check job sends (secret recheck-token, made by `make schedule-recheck`); empty until then.
@@ -31,7 +32,7 @@ web-samples:    ## re-record the judges' page samples from the live API (after d
 deploy-web:     ## the judges' page to Firebase Hosting, with the latest bench results
 	cp bench/results.json web/data/bench.json && cp bench/agent_eval_results.json web/data/agent_eval.json && \
 		cp bench/catalog_results.json web/data/catalog.json
-	cd web && firebase deploy --only hosting --project $(GCP_PROJECT)
+	cd web && firebase deploy --only hosting --project $(FIREBASE_PROJECT)
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
 	node extension/tests/run_all.mjs
