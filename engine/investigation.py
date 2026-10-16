@@ -21,6 +21,7 @@ from engine.evidence_verification import (
     adjudicator,
     contradictions,
     corroboration,
+    critic,
     identity_scope,
     source_check,
 )
@@ -174,6 +175,7 @@ def verify(product: dict, records: list[dict], market: str | None, found_contrad
             "support": support, "retracted": r["record_id"] in retracted, "excluded": r["record_id"] in excluded,
             "attribution": r.get("attribution"), "also_from": r.get("also_from", []),
             "original_text": r["original_text"][:600] if r["language"] != "en" else None,
+            "excerpt": r["original_text"][:1200],  # what the critic reads (all languages)
             "places": region_policy.places(market, r)})
     order = adjudicator.TIER_RANK
     return sorted(matches, key=lambda m: (order.index(m["tier"]), not m["local"], m["published"] or ""))
@@ -281,7 +283,7 @@ def stored_links(product_id: str | None, market: str | None, seen: set[str]) -> 
 
 
 def collect(product: dict, market: str | None, depth: str = "quick", as_of: str | None = None,
-            review_texts: list[dict] | None = None, only: list[str] | None = None) -> dict:
+            review_texts: list[dict] | None = None, only: list[str] | None = None, agents: bool = True) -> dict:
     """Sources -> dedupe -> contradictions -> scope-checked matches -> coverage. JSON-safe (pipeline state)."""
     query = query_for(product, market, as_of)
     if query.brand or query.model or query.gtin:
@@ -294,6 +296,8 @@ def collect(product: dict, market: str | None, depth: str = "quick", as_of: str 
     found = contradictions.find(product, records, review_texts or [])
     matches = verify(product, records, market, found)
     matches += stored_links(product.get("product_id"), market, {m["record_id"] for m in matches})
+    # The critic agent takes a second look at possible matches; it can set one aside, never confirm a recall.
+    critiques = critic.apply(product, matches, found) if agents else []
     matched: dict[str, dict[str, int]] = {}
     for m in matches:
         if m["tier"] not in ("lookalike", "unresolved") and not m["excluded"]:  # brand-only: not a notice for this product
@@ -310,7 +314,7 @@ def collect(product: dict, market: str | None, depth: str = "quick", as_of: str 
     return {"market": market, "market_name": registry.market_name(market) if market else "your country",
             "product": {k: product.get(k) for k in PRODUCT_FIELDS},
             "records": records, "matches": matches, "contradictions": found, "source_rows": source_rows,
-            "country_rows": country_rows, "source_mode": source_mode, "depth": depth,
+            "country_rows": country_rows, "source_mode": source_mode, "depth": depth, "critiques": critiques,
             "query_keys": [query.key()],
             "query": {"brand": query.brand, "model": query.model, "gtin": query.gtin, "market": market, "depth": depth,
                       "as_of": as_of}}
@@ -361,7 +365,8 @@ def investigate(request: dict, investigation_id: str | None = None, tenant_id: s
     depth = "deep" if request.get("depth") == "deep" else "quick"
     as_of = request.get("as_of")
     hazards, reviews_checked, groups, review_texts = hazards_for(product, request)
-    collected = collect(product, market, depth, as_of, review_texts, request.get("only_sources"))
+    collected = collect(product, market, depth, as_of, review_texts, request.get("only_sources"),
+                        agents=not request.get("no_agents"))
     decision = adjudicate(collected, hazards, reviews_checked, request.get("registry_issues"), as_of)
     matches = collected["matches"]
     claims = build_claims(product, collected["records"], [m for m in matches if m["tier"] != "lookalike"][:12])
@@ -370,6 +375,7 @@ def investigate(request: dict, investigation_id: str | None = None, tenant_id: s
         "market": market, "market_name": collected["market_name"], "depth": depth, "product": collected["product"],
         **decision,
         "matches": matches[:15], "claims": claims, "contradictions": collected["contradictions"][:10],
+        "critiques": collected.get("critiques", []),
         "hazards": [{k: h.get(k) for k in HAZARD_FIELDS} for h in hazards],
         "observation_groups": groups[:50], "reviews_checked": reviews_checked,
         "retrieved_at": datetime.now(UTC).isoformat(), "seconds": round(time.monotonic() - started, 2),

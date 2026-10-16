@@ -5,6 +5,8 @@
 Rules: short sentences, no jargon ("notice", "coverage", "potential concern", "stored copy" never appear), say what
 to do next, never claim more than the code decided, and always say that "no recall found" is not a guarantee.
 Screens (extension, web page, WhatsApp, chat) show this first and keep the technical answer behind "details".
+`say` is the same answer short enough to hear in a shop aisle (engine/voice.py speaks it in the shopper's language),
+and every "Where we checked" row carries a "checked by code, not guessed" badge linked to the official record or list.
 """
 FLAGS = {"IN": "🇮🇳", "JP": "🇯🇵", "AU": "🇦🇺", "SG": "🇸🇬", "NZ": "🇳🇿", "KR": "🇰🇷", "TW": "🇹🇼", "US": "🇺🇸", "EU": "🇪🇺",
          "MY": "🇲🇾", "ID": "🇮🇩", "TH": "🇹🇭", "PH": "🇵🇭", "VN": "🇻🇳"}
@@ -40,10 +42,37 @@ def name_of(product: dict) -> str:
     return f"this {brand} product" if brand else "this product"
 
 
+def official_list(row: dict) -> dict | None:
+    """The official list a country row was checked against, for the badge when no notice matched."""
+    from engine.sources import registry
+    for cell in row.get("sources") or []:
+        if cell.get("state") == "not_supported":
+            continue
+        try:
+            url = registry.source(cell["source"]).get("official_url")
+        except KeyError:
+            url = None
+        if url:
+            return {"url": url, "label": f"{cell.get('authority') or 'Official'} list"}
+    return None
+
+
+def badge(record: dict | None, row: dict, mark: str) -> dict:
+    """'Checked by code, not guessed': the row's status came from matching rules, linked to what they read."""
+    if record and record.get("url"):
+        link = {"url": record["url"], "label": f"{record.get('authority') or 'Official'} {record.get('record_id')}"}
+    elif mark in ("ok", "warn", "maybe"):
+        link = official_list(row)
+    else:
+        link = None
+    return {"text": "Checked by code, not guessed", "decided_by": "code", **({"link": link} if link else {})}
+
+
 def checked_list(country_rows: list[dict], matches: list[dict], market: str | None) -> list[dict]:
     """One line per country, in plain words. Countries SafeShelf can't check at all are left out, except the
     shopper's own (which then says why)."""
     worst: dict[str, str] = {}
+    record: dict[str, dict] = {}
     rank = {"exact": 4, "variant": 3, "suspected_rebrand": 3, "family_named": 2, "unresolved": 1}
     for m in matches:
         if m.get("excluded") or m.get("retracted") or m.get("tier") not in rank:
@@ -51,6 +80,7 @@ def checked_list(country_rows: list[dict], matches: list[dict], market: str | No
         code = (m.get("jurisdiction") or "").upper()
         if rank[m["tier"]] > rank.get(worst.get(code, ""), 0):
             worst[code] = m["tier"]
+            record[code] = m
     out = []
     for row in country_rows:
         code = row["country"]
@@ -72,8 +102,30 @@ def checked_list(country_rows: list[dict], matches: list[dict], market: str | No
         if code == "IN" and mark in ("ok", "skip"):
             status += " (India has no public recall list; we checked government safety orders)"
         out.append({"country": code, "flag": FLAGS.get(code, "🌐"), "name": row.get("name") or country(code),
-                    "status": status, "mark": mark, "yours": bool(row.get("is_market"))})
+                    "status": status, "mark": mark, "yours": bool(row.get("is_market")),
+                    "badge": badge(record.get(code) if tier else None, row, mark)})
     return out[:8]
+
+
+# The answer read aloud: a few seconds long, in the order a shopper needs it (what, then what to do).
+SAY = {
+    "confirmed_recall": "{title}, because of {risk}. Don't buy it. If you have one, stop using it.",
+    "recalled_abroad_same_model": "{title}, because of {risk}. Not recalled in {here} yet. Check the model number "
+                                  "before you buy.",
+    "local_recall_batch_unknown": "Some of these are recalled in {here}, because of {risk}. Check the batch number.",
+    "substantiated_hazard_signal": "Several buyers report {risk}. Not recalled. Think twice before buying.",
+    "possible_match": "A similar {brand} product was recalled. Ask the seller if it's this one.",
+    "seizure_or_notice": "Officials warn about this type of product. Look for the safety mark.",
+    "hazard_reports": "A few buyers mention {risk}. Not recalled. Read the reviews.",
+    "registry_mismatch": "The safety mark doesn't match this product. Ask the seller.",
+    "brand_recalls_model_unknown": "This brand has had recalls. We need the model number to check.",
+    "no_matching_notice_found": "No recall found in {n} countries. Not a guarantee, but a good sign.",
+    "insufficient_evidence": "We can't tell yet. Find the model number and check again.",
+}
+
+
+def spoken(key: str, **words) -> str:
+    return " ".join(SAY.get(key, SAY["insufficient_evidence"]).format(**words).split())
 
 
 def shopper(decision: dict, product: dict, matches: list[dict], country_rows: list[dict],
@@ -144,8 +196,14 @@ def shopper(decision: dict, product: dict, matches: list[dict], country_rows: li
             "We couldn't identify this product well enough to check it against official recall lists.",
             "Look for the brand and model number in the product details or on the label, then check again."),
     }
-    title, tone, why, todo = texts.get(basis) or texts.get(outcome) or texts["insufficient_evidence"]
-    return {"title": title, "tone": tone, "why": why, "todo": todo,
+    key = basis if basis in texts else outcome if outcome in texts else "insufficient_evidence"
+    title, tone, why, todo = texts[key]
+    if basis == "possible_match" and (lead.get("critic") or {}).get("effect") == "likely_same":
+        title = "Probably the same as a recalled product"
+        why = ("A safety recall describes a product that looks the same as this one (our AI compared the names and "
+               "details), but the recall gives no model number, so it isn't confirmed.")
+    say = spoken(key, title=title, risk=risk, here=here, brand=product.get("brand") or "", n=n_ok)
+    return {"title": title, "tone": tone, "why": why, "todo": todo, "say": say,
             "checked": checked_list(country_rows, matches, market),
             "link": {"url": lead.get("url"), "label": f"See the official recall ({lead.get('authority')})"}
             if lead.get("url") and outcome != "no_matching_notice_found" else None,

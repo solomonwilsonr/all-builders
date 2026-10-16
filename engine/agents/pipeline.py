@@ -50,6 +50,7 @@ from engine import (
     trust,
 )
 from engine.agents import cache, guard, research, runtime
+from engine.evidence_verification import critic
 
 log = logging.getLogger(__name__)
 CACHE_S = 600  # a repeat investigation of the same listing within 10 minutes is answered from memory
@@ -224,9 +225,13 @@ def official_sources(state: dict) -> dict | None:
 
 
 def describe_sources(b: dict) -> str:
-    n = len([m for m in b.get("matches", []) if m["tier"] not in ("lookalike",)])
+    n = len([m for m in b.get("matches", []) if m["tier"] not in ("lookalike",) and not m.get("excluded")])
+    product = b.get("product") or {}
+    extra = f"; {product['identity_source']}" if str(product.get("identity_source") or "").startswith("identity") else ""
+    if b.get("critiques"):
+        extra += f"; {critic.describe(b['critiques'])}"
     where = ", ".join(f"{r['name']} {r['state'].replace('_', ' ')}" for r in b.get("country_rows", [])[:3])
-    return f"Official sources ({b.get('source_mode')}): {n} notice(s) may concern this product; {where}"
+    return f"Official sources ({b.get('source_mode')}): {n} notice(s) may concern this product; {where}{extra}"
 
 
 def research_agent(state: dict) -> dict | None:

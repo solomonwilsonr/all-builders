@@ -335,3 +335,28 @@ def test_full_product_code_with_a_colour_suffix_is_the_same_model():
     assert identity_scope.check({**anker, "model": "A12630"}, rec, "IN")["tier"] == "exact"
     assert identity_scope.check({**anker, "model": "A12631234"}, rec, "IN")["tier"] != "exact"
     assert identity_scope.check({**anker, "model": "A1263X"}, rec, "IN")["tier"] != "exact"
+
+
+def test_critic_can_set_aside_but_never_confirm():
+    from engine.evidence_verification import critic
+    critic._cache.clear()
+    product = {"brand": "Anker", "model": "A1229", "title": "Anker PowerCore Slim 10000"}
+    possible = match(tier="family_named", record_id="tw:1", title="Anker PowerCore 10000 power banks")
+    different = lambda *a, **k: {"verdict": "different_product", "reasons": ["Slim 10000 is not PowerCore 10000"],  # noqa
+                                 "listing_quote": "PowerCore Slim 10000", "notice_quote": "PowerCore 10000"}
+    found: list = []
+    critic.apply(product, [possible], found, call=different)
+    assert possible["excluded"] and found[0]["kind"] == "critic_different_product"
+    critic._cache.clear()
+    same = lambda *a, **k: {"verdict": "same_product", "reasons": ["names agree"],  # noqa: E731
+                            "listing_quote": "Anker", "notice_quote": "Anker"}
+    second = match(tier="family_named", record_id="tw:2", title="Anker PowerCore Slim 10000 power banks")
+    critic.apply(product, [second], [], call=same)
+    assert not second.get("excluded") and second["critic"]["effect"] == "likely_same"
+    assert decide([second], market="US", rows=[country("US", CHECKED_LIVE)])["outcome"] != "confirmed_recall"
+    critic._cache.clear()
+    ungrounded = lambda *a, **k: {"verdict": "different_product", "reasons": ["made up"],  # noqa: E731
+                                  "listing_quote": "nothing like this", "notice_quote": "or this"}
+    third = match(tier="variant", record_id="x:3", title="Anker PowerCore 10000")
+    critic.apply(product, [third], [], call=ungrounded)
+    assert not third.get("excluded")  # quotes not found in the texts: no effect
