@@ -150,3 +150,17 @@ async def test_a_tamil_shopper_gets_tamil_text_and_voice_or_english_if_translati
     fail = True
     assert await wa.translate("✅ CHECKED.", "ta") == "✅ CHECKED."
     assert await wa.fixed("ta", "help") == sent[-1][1]  # fixed messages are translated once, then reused
+
+
+def test_a_recall_abroad_is_not_called_a_local_recall():
+    """Plan v2.2: a US recall of the same model on an Amazon.in product is 'recalled in another country', never
+    'RECALLED', and the reply says which countries' sources were checked."""
+    from bot import reply
+    safety = {"verdict": "amber", "outcome": "potential_concern", "basis": "recalled_abroad_same_model",
+              "lead_record": {"authority": "CPSC", "record_id": "cpsc:26792"}, "official_status": {},
+              "coverage": {"summary": "India: no matching notice · the United States: notice found (live)"}}
+    text = reply({"brand": "NEWDERY", "model": "ZHX-PB22"}, safety, "en")
+    assert "RECALLED IN ANOTHER COUNTRY" in text and "cpsc:26792" in text and "⛔" not in text
+    assert "Checked: India: no matching notice" in text
+    hindi = reply({"brand": "NEWDERY", "model": "ZHX-PB22"}, safety, "hi")
+    assert "दूसरे देश में रिकॉल" in hindi

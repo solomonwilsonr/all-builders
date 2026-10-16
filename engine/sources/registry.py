@@ -71,3 +71,23 @@ def adapter(source_id: str):
     entry = source(source_id)
     module = importlib.import_module(entry["adapter"])
     return module.Adapter(entry)
+
+
+def sync_to_db() -> int:
+    """Copy the registry into the source_registry table (make migrate), so the database records which sources and
+    terms an answer was given under."""
+    from psycopg.types.json import Jsonb
+
+    from engine import store
+    for e in all_sources():
+        store.conn().execute(
+            """INSERT INTO source_registry (id, name, authority, jurisdiction, access_method, access_status, terms,
+                                            regions, refresh_ttl_s, checked_at, health, updated_at)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())
+               ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, access_method = EXCLUDED.access_method,
+                   access_status = EXCLUDED.access_status, terms = EXCLUDED.terms, regions = EXCLUDED.regions,
+                   refresh_ttl_s = EXCLUDED.refresh_ttl_s, checked_at = EXCLUDED.checked_at, updated_at = now()""",
+            (e["id"], e["name"], e["authority"], e["jurisdiction"], e["access_method"], e["access_status"],
+             e.get("terms"), e.get("markets") or [], e.get("ttl_s"), e.get("checked_at"),
+             Jsonb({"owner": e.get("owner")})))
+    return len(all_sources())

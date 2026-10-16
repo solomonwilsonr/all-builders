@@ -399,6 +399,15 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .sec h3 { margin:0 0 2px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
     .verdict { font-size:12px; font-weight:700; padding:2px 10px; border-radius:999px; background:#fff; }
     .sec.green .verdict { color:var(--green); } .sec.amber .verdict { color:var(--amber); } .sec.red .verdict { color:var(--red); } .sec.unknown .verdict { color:var(--unknown); }
+    /* What was checked, by country (plan v2.2) */
+    .coverage { margin-top:8px; padding:8px 14px; border-radius:16px; background:var(--unknown-bg); font-size:13px; }
+    .coverage summary { cursor:pointer; font-weight:600; }
+    .coverage ul { margin:6px 0; padding-left:0; list-style:none; } .coverage li { margin:3px 0; }
+    .coverage .mark { display:inline-block; width:1.2em; font-weight:700; }
+    .coverage .checked_live .mark, .coverage .checked_cache .mark { color:var(--red); }
+    .coverage .source_unavailable .mark { color:var(--amber); }
+    .coverage .note { color:var(--unknown); font-size:12px; margin:2px 0 0 1.2em; }
+    .coverage .sub { margin:8px 0 2px; font-weight:600; }
 
     /* Chat */
     .box.chat { display:flex; flex-direction:column; }
@@ -740,6 +749,31 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
   const section = (title, c) =>
     el("div", { className: `sec ${c.level}` }, el("h3", {}, `${title} `, el("span", { className: "verdict", textContent: c.word })), el("ul", {}, ...c.lines.map((l) => el("li", { textContent: l }))));
+
+  // Plan v2.2: what was checked, country by country (live, stored copy, couldn't be checked, not supported), and the
+  // official records behind the answer. A country with no match is never shown as an all-clear.
+  const STATE_WORDS = { checked_live: ["●", "notice found (live)"], checked_cache: ["●", "notice found (stored copy)"],
+    no_matching_notice_found: ["○", "no matching notice"], source_unavailable: ["!", "couldn't be checked"], not_supported: ["–", "not checked"] };
+  const coverageBlock = (o) => {
+    if (!o || !o.coverage?.length) return null;
+    const rows = o.coverage.slice(0, 8).map((c) => {
+      const [mark, words] = STATE_WORDS[c.state] || ["–", c.state];
+      const how = (c.sources || []).filter((x) => x.state !== "not_supported").map((x) => x.authority).join(", ");
+      return el("li", { className: `cov ${c.state}` }, el("span", { className: "mark", ariaHidden: "true", textContent: mark }),
+        el("strong", { textContent: `${c.name}${c.is_market ? " (your country)" : ""}: ` }), `${words}${how ? ` · ${how}` : ""}`,
+        ...(c.notes?.length && c.is_market ? [el("div", { className: "note", textContent: c.notes[0] })] : []));
+    });
+    const links = (o.sources || []).filter((x) => /^https:/.test(x.url || "")).map((x) =>
+      el("li", {}, el("a", { href: x.url, target: "_blank", rel: "noopener", textContent: `${x.authority} ${x.record_id}` }),
+        ` ${x.local ? "(this country)" : "(another country)"}: ${(x.title || "").slice(0, 90)}`));
+    const next = (o.what_would_change || []).slice(0, 2).map((w) => el("li", { textContent: `${w.fact} (${w.how})` }));
+    return el("details", { className: "coverage" },
+      el("summary", { textContent: `What was checked (${o.source_mode === "partial" ? "some sources couldn't be read" : o.source_mode || "live"})` }),
+      el("ul", {}, ...rows),
+      ...(links.length ? [el("p", { className: "sub", textContent: "Official records" }), el("ul", {}, ...links)] : []),
+      ...(next.length ? [el("p", { className: "sub", textContent: "What would change this answer" }), el("ul", {}, ...next)] : []),
+      el("p", { className: "note", textContent: "The result is set by code from these sources; no matching notice is not proof of safety." }));
+  };
 
   // Side-rail icons: plain stroked paths, one family, drawn in the button's text colour.
   const ICON_PATHS = {
@@ -1246,6 +1280,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         panelTabs(r, [
           ...(deeper ? [deeper] : []),
           section("Is it safe?", r.safe),
+          ...(coverageBlock(r.outcome) ? [coverageBlock(r.outcome)] : []),
           section("Is it real?", r.real),
           el("details", { className: "read" }, el("summary", { textContent: "What SafeShelf read from this page" }), contextCard(getPage())),
           el("p", { className: "foot", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),

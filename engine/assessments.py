@@ -84,6 +84,15 @@ def save_snapshot(answer: dict) -> str:
 
 @_safe
 def save_claim(claim: dict, investigation_id: str) -> None:
+    before = store.conn().execute(
+        "SELECT verification_state FROM evidence_claims WHERE claim_id = %s AND revision = 1 "
+        "AND source_record_id IS NOT NULL", (claim["claim_id"],)).fetchone()
+    if before and before["verification_state"] != claim.get("verification_status"):
+        store.conn().execute(  # why a claim's standing changed between two dates (plan v2.2 workstream B)
+            """INSERT INTO evidence_revisions (entity_type, entity_id, previous_hash, new_hash, reason, actor)
+               VALUES ('claim', %s, %s, %s, %s, 'engine.investigation')""",
+            (claim["claim_id"], before["verification_state"], claim.get("verification_status"),
+             f"re-checked in {investigation_id}: {before['verification_state']} -> {claim.get('verification_status')}"))
     store.conn().execute(
         """INSERT INTO evidence_claims (claim_id, claim_type, claim_text, product_id, model, variant, batch_scope,
                jurisdiction, source_registry_id, source_record_id, source_url, source_type, source_document_hash,

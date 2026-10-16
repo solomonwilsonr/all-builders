@@ -144,3 +144,16 @@ details summary { cursor:pointer; font-weight:700; }
 
 .foot { margin-top:32px; font-size:13px; color:var(--muted); }
 .foot p { margin:4px 0; max-width:90ch; }
+
+/* What was checked, by country (plan v2.2) */
+.coverage { margin:12px 0; padding:12px 16px; border-radius:16px; background:var(--card); box-shadow:var(--shadow); }
+.coverage summary { cursor:pointer; font-weight:700; }
+.coverage .headline { font-weight:600; margin:8px 0; }
+.coverage table { width:100%; border-collapse:collapse; font-size:14px; }
+.coverage td { padding:4px 6px; border-top:1px solid rgba(0,0,0,.06); vertical-align:top; }
+.coverage td.mark { width:1.4em; font-weight:700; }
+.coverage tr.checked_live td.mark, .coverage tr.checked_cache td.mark { color:#b3261e; }
+.coverage tr.source_unavailable td.mark { color:#a15c00; }
+.coverage h4 { margin:10px 0 4px; font-size:14px; }
+.coverage .muted { opacity:.75; font-size:13px; }
+@media (max-width:600px) { .coverage td:last-child { display:none; } }

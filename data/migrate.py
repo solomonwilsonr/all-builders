@@ -64,6 +64,12 @@ def main() -> None:
                 conn.execute("INSERT INTO schema_migrations (name, checksum) VALUES (%s, %s)",
                              (path.name, checksum(path)))
             print(f"applied  {path.name}  (now)")
+    if not args.status:
+        try:  # the source registry (data/source_registry_japac.yaml) into source_registry
+            from engine.sources import registry
+            print(f"source registry: {registry.sync_to_db()} sources synced")
+        except Exception as error:  # noqa: BLE001  run from engine/ with PYTHONPATH=.. to include this step
+            print(f"source registry not synced ({type(error).__name__})")
 
 
 if __name__ == "__main__":

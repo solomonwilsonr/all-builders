@@ -10,7 +10,7 @@ const VERDICT = {
 };
 
 export async function api(path, options = {}, base = API_BASE) {
-  const headers = { "Content-Type": "application/json", ...(API_KEY && { "X-API-Key": API_KEY }) };
+  const headers = { "Content-Type": "application/json", ...(API_KEY && { "X-API-Key": API_KEY }), ...(options.headers || {}) };
   // The real engine can take a minute on a cold start, so wait up to 150 s instead of hanging forever.
   const res = await fetch(base + path, { signal: AbortSignal.timeout(150000), ...options, headers });
   if (!res.ok) {
@@ -44,8 +44,22 @@ const STRONG_MATCHES = new Set(["url", "model_number"]);
 const card = (level, lines) => ({ level, icon: VERDICT[level].icon, word: VERDICT[level].word, lines });
 
 // POST /v1/shelf/items. `listing_url` and `title` are extra fields so a listing that has no product id yet can still be saved.
-export async function saveToShelf({ product_id, listing_url, title }) {
-  const { body, source } = await api("/v1/shelf/items", { method: "POST", body: JSON.stringify({ product_id, listing_url, title }) });
+// A random id for this browser, sent as X-Owner-Ref so the API keeps this shopper's saved products apart (it stores
+// only a hash of it). No account or personal detail is involved.
+async function ownerRef() {
+  const { owner_ref } = await chrome.storage.local.get("owner_ref");
+  if (owner_ref) return owner_ref;
+  const fresh = crypto.randomUUID();
+  await chrome.storage.local.set({ owner_ref: fresh });
+  return fresh;
+}
+
+// Plan v2.2: My Shelf saves are watchlist items: re-checked against live official sources, with an alert only when the
+// outcome for this exact model and batch changes.
+export async function saveToShelf({ product_id, listing_url, title, brand, model, market }) {
+  const headers = { "X-Owner-Ref": await ownerRef() };
+  const { body, source } = await api("/v1/watchlists", { method: "POST", headers,
+    body: JSON.stringify({ product_id, url: listing_url, title, brand, model, market }) });
   return { ...body, source }; // source tells the caller whether the API really stored it ("real") or only answered with an example ("mock")
 }
 
@@ -147,6 +161,37 @@ function pageSafetyLines(s) {
   return lines;
 }
 
+// Plan v2.2: the live official-source investigation (country scope, coverage, sources). null when the API can't
+// answer it (old server, mock), so the card falls back to the older recall lines.
+async function sourcesCheck(listing, productId) {
+  try {
+    const body = { url: listing.url, title: listing.title, currency: listing.currency, page_text: listing.page_text,
+      brand: listing.brand, model: listing.model, ...(productId && { product_id: productId }) };
+    const { body: inv, source } = await api("/v1/investigations", { method: "POST", body: JSON.stringify(body) });
+    return source === "mock" || !inv?.outcome ? null : inv;
+  } catch (_) {
+    return null;
+  }
+}
+
+// The colour from the code's outcome: red only for a recall in the shopper's own country; green only when the
+// reviews were enough and showed nothing (engine/safety.py colour()).
+export function outcomeLevel(outcome, radar) {
+  if (outcome === "confirmed_recall") return "red";
+  if (outcome === "substantiated_hazard_signal" || outcome === "potential_concern") return "amber";
+  if (outcome === "no_matching_notice_found") return radar === "green" || radar === "amber" ? radar : radar === "red" ? "amber" : "unknown";
+  return radar === "amber" ? "amber" : "unknown";
+}
+
+export function outcomeLines(o) {
+  const lead = o.lead_record;
+  const lines = [lead ? `${o.headline} (${lead.authority} ${lead.record_id}${lead.published ? `, ${lead.published}` : ""})` : o.headline];
+  if (o.coverage?.summary) lines.push(`Checked: ${o.coverage.summary}`);
+  const next = (o.what_would_change || [])[0];
+  if (next && o.outcome !== "confirmed_recall") lines.push(`What would change this: ${next.fact}`);
+  return lines;
+}
+
 // One check per page at a time, remembered for 10 minutes: Check, Save and Ask all need it, and the real engine is slow.
 const recent = new Map();
 // fresh: "Check again" asks the API again instead of reusing the remembered answer.
@@ -167,14 +212,20 @@ async function runCheckNow(page) {
   const trustCall = api("/v1/listings/trust-check", { method: "POST", body: JSON.stringify(listing) });
   const earlySafety = product_id ? api(`/v1/products/${product_id}/safety`).then((r) => r.body) : listingSafety(listing);
   earlySafety.catch(() => {}); // awaited below only when it is the answer used
+  const invCall = product_id ? Promise.resolve(null) : sourcesCheck(listing, null);
   const { body: trust, source } = await trustCall;
   const exact = !trust.matched_by || STRONG_MATCHES.has(trust.matched_by); // the mock has no matched_by
   const pid = exact ? trust.matched_product_id || product_id : product_id;
   // Known product: its stored safety answer. Otherwise the listing alone: recalls by brand and model, and the reviews on the page.
   const safety = pid && pid !== product_id ? (await api(`/v1/products/${pid}/safety`)).body : await earlySafety;
 
-  const safeLevel = !safety ? "unknown" : safety.verdict === "not_enough_evidence" ? "unknown" : safety.verdict;
-  const safeLines = !safety
+  // A stored product's safety answer carries the outcome itself; a listing gets it from the live investigation.
+  const inv = safety?.outcome ? null : await invCall;
+  const outcome = safety?.outcome ? safety : inv;
+  const radarLevel = !safety ? "unknown" : safety.verdict === "not_enough_evidence" ? "unknown" : safety.verdict;
+  const safeLevel = outcome ? outcomeLevel(outcome.outcome, safety?.outcome ? radarLevel : (safety?.verdict === "not_enough_evidence" ? "unknown" : safety?.verdict)) : radarLevel;
+  const findingLines = (safety?.ai_findings || []).map((f) => `${f.independent_reports} buyer report${f.independent_reports === 1 ? "" : "s"} of ${f.mechanism} (AI finding, under review)`);
+  const safeLines = outcome ? [...outcomeLines(outcome), ...findingLines] : !safety
     ? ["We could not match this exact product to one we have checked, so we make no safety claim for it"]
     : pid ? [
         safety.official_status.recalled ? "Officially recalled" : `Not recalled (checked ${safety.official_status.checked.join(", ")})`,
@@ -217,5 +268,10 @@ async function runCheckNow(page) {
     trust_checks: trust.checks,
     genuine_model_safety: trust.safety_of_genuine_model || null,
     label: [safety?.label, trust.label].filter(Boolean).join(" · "),
+    // Plan v2.2: what was checked, country by country, and the official records behind the answer.
+    outcome: outcome ? { outcome: outcome.outcome, headline: outcome.headline, source_mode: outcome.source_mode,
+      coverage: outcome.coverage?.countries || [], what_would_change: outcome.what_would_change || [],
+      sources: (inv?.matches || []).filter((m) => m.tier !== "lookalike").slice(0, 4).map((m) => ({ authority: m.authority, record_id: m.record_id, url: m.url, title: m.title, local: m.local, tier: m.tier })),
+      lead: outcome.lead_record || null, limitations: outcome.limitations || [], policy_version: outcome.policy_version } : null,
   };
 }

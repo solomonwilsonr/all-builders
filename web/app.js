@@ -111,6 +111,37 @@ function runView(box, { title, sub, expect, pill }) {
   };
 }
 
+// Plan v2.2: the code's outcome, what was checked country by country, the official records, and what would change it.
+const STATES = { checked_live: ["●", "notice found (live)"], checked_cache: ["●", "notice found (stored copy)"],
+  no_matching_notice_found: ["○", "no matching notice"], source_unavailable: ["!", "couldn't be checked"], not_supported: ["–", "not checked"] };
+const OUTCOMES = { confirmed_recall: "Confirmed recall in this country", substantiated_hazard_signal: "Substantiated hazard reports",
+  potential_concern: "Potential concern", no_matching_notice_found: "No matching notice (not proof of safety)", insufficient_evidence: "Not enough evidence" };
+
+function coverageBlock(v) {
+  const countries = v.coverage?.countries || [];
+  if (!v.outcome || !countries.length) return null;
+  const rows = countries.slice(0, 8).map((c) => {
+    const [mark, words] = STATES[c.state] || ["–", c.state];
+    const how = (c.sources || []).filter((x) => x.state !== "not_supported").map((x) => x.authority).join(", ");
+    return el("tr", { className: c.state }, el("td", { className: "mark", textContent: mark }),
+      el("td", {}, el("strong", { textContent: c.name }), c.is_market ? " (shopper's country)" : ""),
+      el("td", { textContent: words }), el("td", { className: "muted", textContent: how }));
+  });
+  const records = (v.matches || []).filter((m) => m.tier !== "lookalike" && /^https:/.test(m.url || "")).slice(0, 4).map((m) =>
+    el("li", {}, el("a", { href: m.url, target: "_blank", rel: "noopener", textContent: `${m.authority} ${m.record_id}` }),
+      ` · ${m.local ? "this country" : `another country (${m.jurisdiction})`} · ${m.tier.replace("_", " ")}, ${m.scope.replace(/_/g, " ")}`));
+  const next = (v.what_would_change || []).slice(0, 3).map((w) => el("li", { textContent: `${w.fact} (${w.how})` }));
+  const market = countries.find((c) => c.is_market);
+  return el("details", { className: "coverage", open: true },
+    el("summary", { textContent: `${OUTCOMES[v.outcome] || v.outcome}: what was checked${v.source_mode === "partial" ? " (some sources couldn't be read)" : ""}` }),
+    el("p", { className: "headline", textContent: v.headline || "" }),
+    el("table", {}, el("tbody", {}, ...rows)),
+    ...(market?.notes?.length ? [el("p", { className: "muted", textContent: market.notes.join(" ") })] : []),
+    ...(records.length ? [el("h4", { textContent: "Official records" }), el("ul", {}, ...records)] : []),
+    ...(next.length ? [el("h4", { textContent: "What would change this answer" }), el("ul", {}, ...next)] : []),
+    el("p", { className: "muted", textContent: `Set by code (policy ${v.policy_version || "?"}). A country with no matching notice is not an all-clear.` }));
+}
+
 function verdictBlock(result, expect) {
   const v = result.verdict || { safe: "unknown", real: "unknown", overall: "unknown", reasons: [] };
   const chip = (name, level) => el("div", { className: `chip ${level}` }, el("small", { textContent: name }), SHORT[level] || SHORT.unknown);
@@ -126,6 +157,8 @@ function verdictBlock(result, expect) {
     parts.push(el("details", { open: true }, el("summary", { textContent: `Why: ${v.reasons.length} reason${v.reasons.length === 1 ? "" : "s"}, written by code` }),
       el("ul", { className: "reasons" }, ...v.reasons.map((r) => el("li", { textContent: r.text })))));
   }
+  const cov = coverageBlock(v);
+  if (cov) parts.push(cov);
   const ids = [...new Set([...(result.messages?.[0]?.evidence_ids || []), ...(v.evidence_ids || [])])];
   if (ids.length) {
     const box = el("div", { className: "evidence" });

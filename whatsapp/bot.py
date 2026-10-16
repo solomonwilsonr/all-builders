@@ -69,6 +69,12 @@ TEXT = {
         "not_enough_evidence": "ℹ️ NOT ENOUGH EVIDENCE. Too few reviews of {name} to judge its safety yet. "
                                "No recall found.",
         "under_review_recall": "A recall that may cover it is being checked.",
+        "abroad": "⚠️ RECALLED IN ANOTHER COUNTRY. {authority} recalled this model ({record}). Not confirmed for your "
+                  "country yet: check that your label shows the same model and batch, and don't charge it unattended "
+                  "until you know.",
+        "batch": "⚠️ RECALLED FOR SOME UNITS. {authority} recalled {name} for certain serial or batch numbers "
+                 "({record}). Check the number on your unit against the notice.",
+        "checked": "Checked: {summary}",
         "shop_ok": "Shop check: nothing unusual found.",
         "shop": "Shop check: {summary}",
         "hidden": "This page has hidden text aimed at AI assistants. I ignored it.",
@@ -90,6 +96,11 @@ TEXT = {
         "not_enough_evidence": "ℹ️ पर्याप्त जानकारी नहीं। {name} की सुरक्षा बताने के लिए अभी बहुत कम रिव्यू हैं। कोई "
                                "रिकॉल नहीं मिला।",
         "under_review_recall": "एक रिकॉल जो इस पर लागू हो सकता है, उसकी जाँच चल रही है।",
+        "abroad": "⚠️ दूसरे देश में रिकॉल हुआ है। {authority} ने यह मॉडल रिकॉल किया है ({record})। आपके देश के लिए अभी "
+                  "पुष्टि नहीं हुई: लेबल पर वही मॉडल और बैच नंबर देखें, और तब तक इसे बिना निगरानी चार्ज न करें।",
+        "batch": "⚠️ कुछ यूनिट का रिकॉल हुआ है। {authority} ने {name} के कुछ सीरियल या बैच नंबर रिकॉल किए हैं "
+                 "({record})। अपनी यूनिट का नंबर नोटिस से मिलाएँ।",
+        "checked": "जाँचे गए स्रोत: {summary}",
         "shop_ok": "दुकान की जाँच: कुछ असामान्य नहीं मिला।",
         "shop": "दुकान की जाँच: {summary}",
         "hidden": "इस पेज में AI के लिए छिपा हुआ टेक्स्ट है। मैंने उसे अनदेखा किया।",
@@ -193,8 +204,15 @@ def reply(identity: dict, safety: dict, lang: str = "en", trust: dict | None = N
     lines = [t["photo"].format(name=name)] if from_photo else []
     verdict = safety.get("verdict")
     status = safety.get("official_status") or {}
+    lead = safety.get("lead_record") or {}
+    basis = safety.get("basis")
     if verdict == "red":
-        lines.append(t["red"].format(name=name, recalls=", ".join(status.get("recall_ids") or [])))
+        recalls = lead.get("record_id") or ", ".join(status.get("recall_ids") or [])
+        lines.append(t["red"].format(name=name, recalls=recalls))
+    elif basis in ("recalled_abroad_same_model", "local_recall_batch_unknown") and lead:
+        key = "abroad" if basis == "recalled_abroad_same_model" else "batch"
+        lines.append(t[key].format(name=name, authority=lead.get("authority") or "A regulator",
+                                   record=lead.get("record_id") or ""))
     elif verdict == "amber":
         top = (safety.get("ai_findings") or [{}])[0]
         lines.append(t["amber"].format(n=top.get("independent_reports", 0), name=name,
@@ -203,8 +221,11 @@ def reply(identity: dict, safety: dict, lang: str = "en", trust: dict | None = N
         lines.append(t["green"].format(name=name, reviews=safety.get("reviews_checked", 0)))
     else:
         lines.append(t["not_enough_evidence"].format(name=name))
-    if status.get("recall_ids_under_review") and verdict != "red":
+    if status.get("recall_ids_under_review") and verdict != "red" and not lead:
         lines.append(t["under_review_recall"])
+    summary = (safety.get("coverage") or {}).get("summary")
+    if summary:  # plan v2.2: which countries' sources were checked (no match in one country is not an all-clear)
+        lines.append(t["checked"].format(summary=summary))
     shop = shop_line(trust or {}, lang)
     if shop:
         lines.append(shop)

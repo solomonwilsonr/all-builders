@@ -209,7 +209,13 @@
       const foot = document.createElement("p");
       foot.className = "muted";
       foot.textContent = `${v.steps?.length || 0} agent steps · investigation ${v.investigation_id}: open the SafeShelf Lab → Investigation trace to see each step, model and cost. ${v.label || ""}`;
-      out.append(box, summary, reasons, foot);
+      // Plan v2.2: what would change the answer, and how fresh the sources were.
+      const next = document.createElement("p");
+      next.className = "muted";
+      const steps = (v.verdict?.what_would_change || []).slice(0, 2).map((w) => w.fact);
+      next.textContent = [v.verdict?.source_mode && `Sources: ${v.verdict.source_mode === "partial" ? "some couldn't be read" : v.verdict.source_mode}`,
+        steps.length && `What would change this: ${steps.join("; ")}`].filter(Boolean).join(" · ");
+      out.append(box, summary, reasons, ...(next.textContent ? [next] : []), foot);
       now.textContent = `Done: ${box.textContent}`;
       // The Research Agent: a browser on SafeShelf's server searches official recall sites for this model.
       if (v.product_id && !v.research) { // recall sites not searched yet (e.g. no Research Agent on this server)
