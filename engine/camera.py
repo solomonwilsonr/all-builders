@@ -19,7 +19,7 @@ SCHEMA = {
     "properties": {
         "is_product_label": {"type": "boolean"},
         "brand": {"type": "string"},
-        "model": {"type": "string"},
+        "model_number": {"type": "string"},  # not "model": gemini.structured() puts the AI model's name there
         "batch": {"type": "string"},
         "serial": {"type": "string"},
         "marks": {"type": "array", "items": {"type": "string"}},
@@ -66,6 +66,8 @@ def read_label(image: str | bytes) -> dict:
     result = gemini.structured([types.Part.from_bytes(data=data, mime_type=mime), PROMPT], SCHEMA,
                                models=["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.5-flash-lite"])
     fields = {k: scrub(result.get(k)) for k in SCHEMA["properties"] if result.get(k) not in (None, "", [])}
+    if "model_number" in fields:  # the screens and the investigation read "model"
+        fields["model"] = fields.pop("model_number")
     text = " ".join([*(str(v) for v in fields.values() if isinstance(v, str)), *fields.get("mark_numbers", [])])
     return {
         "image_sha256": hashlib.sha256(data).hexdigest(),

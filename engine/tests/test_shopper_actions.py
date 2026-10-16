@@ -173,3 +173,14 @@ def test_fake_shop_with_hidden_instructions_is_caught():
 def test_unknown_attack_is_refused():
     with pytest.raises(ValueError):
         redteam.defend("nonsense", ATTACK, "US")
+
+
+# --- camera: the model number survives gemini.structured()'s "model" key ---------------------------------------------
+
+def test_label_model_number_is_not_the_ai_model_name(monkeypatch):
+    from engine import camera
+    monkeypatch.setattr(camera.gemini, "structured", lambda *a, **k: {
+        "is_product_label": True, "brand": "Anker", "model_number": "A1263", "visible_damage": False,
+        "model": "gemini-3-flash-preview"})
+    out = camera.read_label("data:image/jpeg;base64,/9j/4AAQ")
+    assert out["read"]["model"] == "A1263" and out["model_version"] == "gemini-3-flash-preview"

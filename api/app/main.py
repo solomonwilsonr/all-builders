@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 
@@ -219,6 +219,38 @@ if REAL_HANDLERS:  # the A2A agent runs the real engine; with MOCK=1 there is no
         check_key(request)
         rate_limit(request)
         return await agent_handler.stream_agent_session(request)
+
+    from engine import live
+
+    @app.websocket("/v1/live")
+    async def live_session(websocket: WebSocket):
+        """Ask out loud: a voice and camera conversation with Gemini Live (engine/live.py). One session counts as
+        one check against the rate limit; ?language=hi&market=IN."""
+        await websocket.accept()
+        caller = (websocket.headers.get("x-forwarded-for", "").split(",")[0].strip() or "internal")
+        if API_KEY and websocket.query_params.get("key") != API_KEY:
+            await websocket.close(code=4401, reason="Missing or wrong key")
+            return
+        if reason := limiter.check(caller, time.time()):
+            await websocket.send_json({"type": "error", "detail": reason})
+            await websocket.close(code=4429)
+            return
+
+        async def recv() -> dict | None:
+            try:
+                return await websocket.receive_json()
+            except (WebSocketDisconnect, ValueError, RuntimeError):
+                return None
+
+        async def send(message: dict) -> None:
+            await websocket.send_json(message)
+
+        await live.session(recv, send, websocket.query_params.get("language") or "en",
+                           websocket.query_params.get("market"))
+        try:
+            await websocket.close()
+        except RuntimeError:
+            pass  # the browser already closed it
 
 mcp_server.attach(app)  # last: it mounts at "/" behind every route above
 
