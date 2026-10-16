@@ -1,0 +1,312 @@
+# SafeShelf source registry (implementation plan v2.2, section 2A and 20).
+# One entry per official source. An adapter runs only when access_status is "verified" (or "key_required" with its key
+# set). Everything else is reported in the coverage list as "not supported" or "source unavailable", never as clear.
+#
+# access_status: verified | key_required | blocked | browser_only | unverified | not_available
+# checked_at: when a person last confirmed the access method, terms and failure behaviour (docs/source-access.md).
+# domains: the only hosts the adapter may contact or cite (SSRF allowlist and forged-URL check).
+
+sources:
+  - id: cpsc
+    name: U.S. Consumer Product Safety Commission recalls
+    authority: CPSC
+    jurisdiction: US
+    role: global_upstream
+    markets: [US]
+    access_method: REST API (saferproducts.gov/RestWebServices/Recall, JSON)
+    access_status: verified
+    checked_at: 2026-10-16
+    official_url: https://www.cpsc.gov/Recalls/CPSC-Recalls-Application-Program-Interface-API-Information
+    domains: [www.saferproducts.gov, saferproducts.gov, www.cpsc.gov, cpsc.gov]
+    terms: U.S. federal government work, public domain; API documented for public use.
+    attribution: "Source: U.S. CPSC recalls API"
+    ttl_s: 21600
+    timeout_s: 8
+    rate_per_min: 30
+    owner: Solomon
+    adapter: engine.sources.adapters.cpsc
+
+  - id: saferproducts
+    name: SaferProducts.gov incident reports (OData)
+    authority: CPSC
+    jurisdiction: US
+    role: global_upstream
+    markets: [US]
+    access_method: OData API with a free application key
+    access_status: key_required
+    key_env: SAFERPRODUCTS_API_KEY
+    checked_at: 2026-10-16
+    official_url: https://www.saferproducts.gov/FAQs/FrequentlyAskedQuestions11
+    domains: [www.saferproducts.gov, saferproducts.gov]
+    terms: Public incident reports; key registration required. Reports are consumer allegations, not findings.
+    attribution: "Source: SaferProducts.gov public incident reports"
+    ttl_s: 21600
+    timeout_s: 8
+    rate_per_min: 20
+    owner: Solomon
+    adapter: engine.sources.adapters.saferproducts
+
+  - id: oecd_globalrecalls
+    name: OECD GlobalRecalls portal (regulators' notices, incl. ACCC, CAA, KATS, CPSO, BSMI, ASEAN)
+    authority: OECD
+    jurisdiction: MULTI
+    role: regional_aggregator
+    markets: [AU, JP, KR, SG, TW, MY, ID, TH, PH, VN]
+    access_method: Open JSON web service (globalrecalls.oecd.org/ws/search.xqy, getrecall.xqy)
+    access_status: verified
+    checked_at: 2026-10-16
+    official_url: https://globalrecalls.oecd.org/
+    domains: [globalrecalls.oecd.org, www.productsafety.gov.au, www.recall.caa.go.jp, www.recalls.gov.au]
+    terms: "(c) OECD, all rights reserved (oecd.org/termsandconditions). SafeShelf keeps metadata, short excerpts and the link; no bulk republication. Singapore and ASEAN feeds stopped arriving in 2022; New Zealand and India are not in it."
+    attribution: "Source: OECD GlobalRecalls, from the national regulator's notice"
+    ttl_s: 21600
+    timeout_s: 10
+    rate_per_min: 30
+    owner: Solomon
+    adapter: engine.sources.adapters.oecd_globalrecalls
+
+  - id: au_accc
+    name: ACCC Product Safety Australia recalls (RSS)
+    authority: ACCC
+    jurisdiction: AU
+    role: local_regulator
+    markets: [AU]
+    access_method: Official RSS feed (productsafety.gov.au/rss/recalls)
+    access_status: blocked
+    checked_at: 2026-10-16
+    official_url: https://www.productsafety.gov.au/about-us/product-safety-news/subscribe-to-rss-feeds
+    domains: [www.productsafety.gov.au, productsafety.gov.au]
+    terms: Official public feed. From SafeShelf's network the site answers 403 (Akamai) to plain HTTP and headless browsers; Australian notices come through OECD GlobalRecalls until the feed answers.
+    attribution: "Source: ACCC Product Safety Australia"
+    ttl_s: 21600
+    timeout_s: 8
+    rate_per_min: 10
+    owner: Solomon
+    adapter: engine.sources.adapters.au_accc
+
+  - id: jp_caa
+    name: Consumer Affairs Agency recall information site (Japan)
+    authority: CAA
+    jurisdiction: JP
+    role: local_regulator
+    markets: [JP]
+    access_method: Public HTML pages (new-registrations list and notice detail pages); plain HTTP
+    access_status: verified
+    checked_at: 2026-10-16
+    official_url: https://www.recall.caa.go.jp/
+    domains: [www.recall.caa.go.jp, recall.caa.go.jp, www.caa.go.jp]
+    terms: "Public Data License 1.0 (PDL1.0), per recall.caa.go.jp/about: reuse allowed with the source credited, and edits marked as edits. Japanese text is kept as published."
+    attribution: "出典：消費者庁リコール情報サイト (Consumer Affairs Agency recall information site); SafeShelf extracted fields from it"
+    ttl_s: 21600
+    timeout_s: 10
+    rate_per_min: 20
+    owner: Solomon
+    adapter: engine.sources.adapters.jp_caa
+
+  - id: jp_nite
+    name: NITE product accident information (Japan)
+    authority: NITE
+    jurisdiction: JP
+    role: local_regulator
+    markets: [JP]
+    access_method: Site reachable by plain HTTP; no documented query interface found yet
+    access_status: unverified
+    checked_at: 2026-10-16
+    official_url: https://www.nite.go.jp/jiko/jikojohou/index.html
+    domains: [www.nite.go.jp]
+    terms: Not yet reviewed for automated querying.
+    attribution: "Source: NITE (National Institute of Technology and Evaluation)"
+    ttl_s: 86400
+    timeout_s: 10
+    rate_per_min: 5
+    owner: Solomon
+    adapter: engine.sources.adapters.jp_nite
+
+  - id: jp_meti
+    name: METI product safety recall notices (Japan)
+    authority: METI
+    jurisdiction: JP
+    role: local_regulator
+    markets: [JP]
+    access_method: HTML pages
+    access_status: blocked
+    checked_at: 2026-10-16
+    official_url: https://www.meti.go.jp/product_safety/recall/index.html
+    domains: [www.meti.go.jp]
+    terms: Answers 403 to automated requests from SafeShelf's network. CAA's site links METI's notices, so they are reached through jp_caa.
+    attribution: "Source: METI"
+    ttl_s: 86400
+    timeout_s: 10
+    rate_per_min: 5
+    owner: Solomon
+    adapter: engine.sources.adapters.jp_meti
+
+  - id: sg_cps
+    name: Consumer Product Safety Office recalls and alerts (Singapore)
+    authority: CPSO
+    jurisdiction: SG
+    role: local_regulator
+    markets: [SG, MY]
+    access_method: HTML pages
+    access_status: blocked
+    checked_at: 2026-10-16
+    official_url: https://www.consumerproductsafety.gov.sg/
+    domains: [www.consumerproductsafety.gov.sg]
+    terms: Answers 403 to plain HTTP and headless browsers from SafeShelf's network. Older CPSO notices (to 2022) come through OECD GlobalRecalls.
+    attribution: "Source: Consumer Product Safety Office, Enterprise Singapore"
+    ttl_s: 86400
+    timeout_s: 10
+    rate_per_min: 5
+    owner: Solomon
+    adapter: engine.sources.adapters.sg_cps
+
+  - id: sg_safety_mark
+    name: SAFETY Mark registered controlled goods (Singapore)
+    authority: CPSO
+    jurisdiction: SG
+    role: registry
+    markets: [SG]
+    access_method: Public registry search; no documented machine interface found
+    access_status: unverified
+    checked_at: 2026-10-16
+    official_url: https://www.consumerproductsafety.gov.sg/
+    domains: [www.consumerproductsafety.gov.sg]
+    terms: Not yet reviewed. A missing SAFETY Mark only matters for the 33 controlled goods categories.
+    attribution: "Source: Enterprise Singapore SAFETY Mark registry"
+    ttl_s: 86400
+    timeout_s: 10
+    rate_per_min: 5
+    owner: Solomon
+    adapter: engine.sources.adapters.sg_safety_mark
+
+  - id: eu_safety_gate
+    name: EU Safety Gate alerts
+    authority: EU Safety Gate
+    jurisdiction: EU
+    role: global_upstream
+    markets: [EU]
+    access_method: JavaScript portal; works in a headless browser (Research Agent). No permitted public JSON endpoint confirmed.
+    access_status: browser_only
+    checked_at: 2026-10-16
+    official_url: https://ec.europa.eu/safety-gate-alerts/
+    domains: [ec.europa.eu]
+    terms: Official public portal. Searched only through the read-only Research Agent.
+    attribution: "Source: EU Safety Gate"
+    ttl_s: 86400
+    timeout_s: 10
+    rate_per_min: 5
+    owner: Solomon
+    adapter: engine.sources.adapters.eu_safety_gate
+
+  - id: nz_product_safety
+    name: Product Safety New Zealand recalls
+    authority: MBIE
+    jurisdiction: NZ
+    role: local_regulator
+    markets: [NZ]
+    access_method: HTML site, searched by the Research Agent
+    access_status: browser_only
+    checked_at: 2026-10-16
+    official_url: https://www.productsafety.govt.nz/recalls
+    domains: [www.productsafety.govt.nz]
+    terms: Official public site; answers plain HTTP. Not in OECD GlobalRecalls.
+    attribution: "Source: Product Safety New Zealand"
+    ttl_s: 86400
+    timeout_s: 10
+    rate_per_min: 5
+    owner: Solomon
+    adapter: engine.sources.adapters.research_fallback
+
+  - id: india_notices
+    name: India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)
+    authority: CCPA / BIS
+    jurisdiction: IN
+    role: local_regulator
+    markets: [IN]
+    access_method: Official PIB press releases, fetched by plain HTTP and stored (data/load_india_notices.py); answered from the stored copy
+    access_status: verified
+    checked_at: 2026-10-16
+    official_url: https://www.pib.gov.in/
+    domains: [www.pib.gov.in, pib.gov.in]
+    terms: Government of India press releases, published for public use with credit. India has no public recall database.
+    attribution: "Source: Press Information Bureau, Government of India"
+    ttl_s: 86400
+    timeout_s: 4
+    rate_per_min: 60
+    owner: Solomon
+    adapter: engine.sources.adapters.india_notices
+
+  - id: india_bis
+    name: BIS product certification (CRS / ISI licence) verification
+    authority: BIS
+    jurisdiction: IN
+    role: registry
+    markets: [IN]
+    access_method: Public lookup on bis.gov.in for people; no automation API
+    access_status: not_available
+    checked_at: 2026-10-16
+    official_url: https://www.bis.gov.in/bis-apps/?lang=en
+    domains: [www.bis.gov.in, bis.gov.in, www.crsbis.in, crsbis.in]
+    terms: Public lookup does not imply automated access. SafeShelf reports "not verified" and gives the shopper the lookup link; it never calls a mark fake because it could not check it.
+    attribution: "Source: Bureau of Indian Standards"
+    ttl_s: 86400
+    timeout_s: 4
+    rate_per_min: 5
+    owner: Solomon
+    adapter: engine.sources.adapters.india_bis
+
+  - id: manufacturer
+    name: Manufacturer-authorised recall feeds
+    authority: Manufacturer
+    jurisdiction: MULTI
+    role: manufacturer
+    markets: []
+    access_method: Feeds a manufacturer authorises (none signed up yet)
+    access_status: not_available
+    checked_at: 2026-10-16
+    official_url: ""
+    domains: []
+    terms: Only feeds with written permission.
+    attribution: "Source: manufacturer notice"
+    ttl_s: 21600
+    timeout_s: 6
+    rate_per_min: 10
+    owner: Solomon
+    adapter: engine.sources.adapters.manufacturer
+
+  - id: stored_notices
+    name: SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)
+    authority: SafeShelf store
+    jurisdiction: MULTI
+    role: cache
+    markets: [US, AU, JP, KR, SG, TW, MY, ID, TH, PH, VN, IN]
+    access_method: Postgres recalls table, loaded by data/load_*.py from the official sources above
+    access_status: verified
+    checked_at: 2026-10-16
+    official_url: ""
+    domains: []
+    terms: Each row keeps its regulator's link and terms.
+    attribution: "Stored copy of the regulator's notice"
+    ttl_s: 0
+    timeout_s: 4
+    rate_per_min: 600
+    owner: Solomon
+    adapter: engine.sources.adapters.stored_notices
+
+# Which sources answer for each market, own regulator first. "global" sources are checked for every market, as
+# cross-border signals: a foreign recall never becomes a local confirmed recall without exact-scope verification.
+markets:
+  IN: {name: India, local: [india_notices, india_bis], languages: [en, hi], identifiers: [bis_r, isi_licence, gtin]}
+  JP: {name: Japan, local: [jp_caa, oecd_globalrecalls, jp_nite, jp_meti], languages: [ja, en], identifiers: [jan, pse, gtin]}
+  AU: {name: Australia, local: [oecd_globalrecalls, au_accc], languages: [en], identifiers: [gtin, rcm]}
+  SG: {name: Singapore, local: [sg_cps, sg_safety_mark, oecd_globalrecalls], languages: [en, zh, ms, ta], identifiers: [safety_mark, gtin]}
+  NZ: {name: New Zealand, local: [nz_product_safety], languages: [en, mi], identifiers: [gtin, rcm]}
+  KR: {name: South Korea, local: [oecd_globalrecalls], languages: [ko], identifiers: [kc, gtin]}
+  TW: {name: Taiwan, local: [oecd_globalrecalls], languages: [zh], identifiers: [bsmi, gtin]}
+  MY: {name: Malaysia, local: [oecd_globalrecalls, sg_cps], languages: [ms, en], identifiers: [sirim, gtin]}
+  ID: {name: Indonesia, local: [oecd_globalrecalls], languages: [id], identifiers: [sni, gtin]}
+  TH: {name: Thailand, local: [oecd_globalrecalls], languages: [th], identifiers: [tisi, gtin]}
+  PH: {name: the Philippines, local: [oecd_globalrecalls], languages: [en, tl], identifiers: [ps_icc, gtin]}
+  VN: {name: Vietnam, local: [oecd_globalrecalls], languages: [vi], identifiers: [cr, gtin]}
+  US: {name: the United States, local: [cpsc, saferproducts], languages: [en], identifiers: [gtin, upc]}
+global: [cpsc, eu_safety_gate, saferproducts, manufacturer, stored_notices]

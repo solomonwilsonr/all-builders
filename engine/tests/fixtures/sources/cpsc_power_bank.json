@@ -1,0 +1,306 @@
+[
+ {
+  "RecallID": 11000,
+  "RecallNumber": "26792",
+  "RecallDate": "2026-09-24T00:00:00",
+  "Description": "This recall involves NEWDERY power banks with model number ZHX-PB22. The power banks are black with yellow cables. The brand name “NEWDERY” is engraved on the front and the model number “ZHX-PB22” is printed on the back.",
+  "URL": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+  "Title": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+  "ConsumerContact": "NEWDERY toll-free at 888-256-6673 from 11 a.m. to 7 p.m. ET Monday through Friday, email at support@newdery.com or online at https://www.newdery.com/pages/newdery-power-bank-recalls or go to www.newdery.com and click on “Recall” at the top of the page for more information.",
+  "LastPublishDate": "2026-09-24T00:00:00",
+  "Products": [
+   {
+    "Name": "NEWDERY power banks",
+    "Description": "",
+    "Model": "",
+    "Type": "Adapter/Power Supply/Charger/Battery",
+    "CategoryID": "1808",
+    "NumberOfUnits": "About 21,380"
+   }
+  ],
+  "Inconjunctions": [],
+  "Images": [
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/NEWDERY1.png",
+    "Caption": "Recalled NEWDERY power bank (front)"
+   },
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/NEWDERY2.png",
+    "Caption": "Recalled NEWDERY power bank (back)"
+   }
+  ],
+  "Injuries": [
+   {
+    "Name": "NEWDERY has received nine reports of the recalled power banks exploding and igniting, including one report of a serious fire resulting in $2 million in property damage and one report of a burn injury."
+   }
+  ],
+  "Manufacturers": [],
+  "Retailers": [
+   {
+    "Name": "Sold Online At:\nAmazon.com from October 2023 to November 2024 for between $27 and $50.",
+    "CompanyID": ""
+   }
+  ],
+  "Importers": [
+   {
+    "Name": "Shenzhen Xinkewangda Electronics Co., Ltd., d/b/a NEWDERY, of China",
+    "CompanyID": ""
+   }
+  ],
+  "Distributors": [],
+  "SoldAtLabel": null,
+  "ManufacturerCountries": [
+   {
+    "Country": "China"
+   }
+  ],
+  "ProductUPCs": [],
+  "Hazards": [
+   {
+    "Name": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+    "HazardType": "",
+    "HazardTypeID": ""
+   }
+  ],
+  "Remedies": [
+   {
+    "Name": "Consumers should stop using the recalled power banks immediately and contact NEWDERY for instructions on how to receive a full refund. To receive a refund, consumers will be required to submit a photo of their recalled power bank showing the model number, serial number and the word “recalled” and the consumer’s last name written on the power bank in permanent marker. Consumers will also be required to confirm disposal of the power bank in accordance with applicable laws and regulations before receiving a refund. \n\nNote: Do not throw this lithium-ion battery or device in the trash, the general recycling stream (e.g., street-level or curbside recycling bins), or in used battery recycling boxes found at various retail and home improvement stores. Recalled lithium-ion batteries must be disposed of differently than other batteries, because they present a greater risk of fire. Your municipal household hazardous waste (HHW) collection center may accept this lithium-ion battery or device for disposal. Before taking your battery or device to a HHW collection center, contact it ahead of time and ask whether it accepts recalled lithium-ion batteries. If it does not, contact your municipality for further guidance."
+   }
+  ],
+  "RemedyOptions": [
+   {
+    "Option": "Refund"
+   }
+  ]
+ },
+ {
+  "RecallID": 10939,
+  "RecallNumber": "26740",
+  "RecallDate": "2026-09-03T00:00:00",
+  "Description": "This recall involves XO Poppy Power Trip Magnetic Wireless Power Banks with model number PYPBK5M. The power banks come in three colors and can be identified by their appearance and packaging: cream colored (PY-PBK5M-CR2); cream with pink bow print (PY-PBK5M-BW8); and black with teddy bear print (PY-PBK5M-TB2). Specific model numbers can be found printed on the bottom of the original packaging, directly above the barcode. Note: Do not throw this recalled lithium-ion battery or device in the trash, in the general recycling stream (e.g., street-level or curbside recycling bins), or in used battery recycling boxes found at various retail and home improvement stores. Recalled lithium-ion batteries must be disposed of differently than other batteries, because they present a greater risk of fire. Your municipal household hazardous waste (HHW) collection center may accept this recalled lithium-ion battery or device for disposal. Before taking your battery or device to a HHW collection center, contact that office ahead of time and ask whether it accepts recalled lithium-ion batteries. If it does not, contact your municipality for further guidance. ",
+  "URL": "https://cpsc.gov/Recalls/2026/Truststone-Group-Recalls-XO-Poppy-Power-Trip-Magnetic-Wireless-Power-Banks-Due-to-Fire-and-Burn-Hazards-Sold-Exclusively-at-TJX-and-Marshalls-Stores",
+  "Title": "Truststone Group Recalls XO Poppy Power Trip Magnetic Wireless Power Banks Due to Fire and Burn Hazards; Sold Exclusively at TJX and Marshalls Stores",
+  "ConsumerContact": "Truststone Group toll-free at 833-820-0888 from 8:30 a.m. to 6 p.m. ET Monday through Friday, email at xopowerbank@realtimeresults.net, online at https://www.recallrtr.com/xopowerbank and click on “Important Recall Information” to learn more.",
+  "LastPublishDate": "2026-09-03T00:00:00",
+  "Products": [
+   {
+    "Name": "XO Poppy Power Trip Magnetic Wireless Power Banks",
+    "Description": "",
+    "Model": "",
+    "Type": "Adapter/Power Supply/Charger/Battery",
+    "CategoryID": "1808",
+    "NumberOfUnits": "About 32,400"
+   }
+  ],
+  "Inconjunctions": [],
+  "Images": [
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/XOpoppyPowerBank_teddyBearPrint.png",
+    "Caption": "Recalled XO Poppy Power Bank PY-PBK5M-TB2 (Teddy Bear Print)"
+   },
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/XOpoppyPowerBank_BowPrint.png",
+    "Caption": "Recalled XO Poppy Power Bank PY-PBK5M-BW8 (Bow Print)"
+   },
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/XOpoppyPowerBank_Cream.png",
+    "Caption": "Recalled XO Poppy Power Bank PY-PBK5M-CR2 (Cream)"
+   }
+  ],
+  "Injuries": [
+   {
+    "Name": "None reported"
+   }
+  ],
+  "Manufacturers": [],
+  "Retailers": [
+   {
+    "Name": "Sold At:\nTJX and Marshalls stores nationwide from April 2025 through March 2026 for about $15",
+    "CompanyID": ""
+   }
+  ],
+  "Importers": [
+   {
+    "Name": "Truststone Group LLC of New York",
+    "CompanyID": ""
+   }
+  ],
+  "Distributors": [],
+  "SoldAtLabel": null,
+  "ManufacturerCountries": [
+   {
+    "Country": "Vietnam"
+   }
+  ],
+  "ProductUPCs": [],
+  "Hazards": [
+   {
+    "Name": "The lithium-ion battery in the recalled power banks can overheat and ignite, posing fire and burn hazards to consumers.",
+    "HazardType": "",
+    "HazardTypeID": ""
+   }
+  ],
+  "Remedies": [
+   {
+    "Name": "Consumers should stop using the recalled power banks immediately and contact Truststone Group for a full refund in the form of a virtual gift card.  The virtual gift card can be used at any establishment that accepts Mastercard."
+   }
+  ],
+  "RemedyOptions": [
+   {
+    "Option": "Refund"
+   }
+  ]
+ },
+ {
+  "RecallID": 10833,
+  "RecallNumber": "26575",
+  "RecallDate": "2026-06-25T00:00:00",
+  "Description": "This recall involves the Super Off-Road 12,000 mAh Solar Wireless Power Bank, a power bank with solar charging capability. The product can be used to charge devices wirelessly. The power bank is black and measures about 3.4 inches wide by 6.5 inches high.",
+  "URL": "https://www.cpsc.gov/Recalls/2026/Super-Off-Road-Solar-Power-Banks-Recalled-Due-to-Overheating-Imported-by-Spector-Co",
+  "Title": "Super Off-Road Solar Power Banks Recalled Due to Overheating; Imported by Spector & Co.",
+  "ConsumerContact": "Spector & Co. toll-free at 888-377-7732 from 9 a.m. to 8 p.m. ET Monday through Friday, email at recall@spectorandco.com, or online at https://www.spectorandco.com/us/our-company/recall or www.spectorandco.com and click on \"Product Recall\" at the top of the webpage for more information.",
+  "LastPublishDate": "2026-06-30T00:00:00",
+  "Products": [
+   {
+    "Name": "Super Off-Road 12,000 mAh Solar Wireless Power Banks",
+    "Description": "",
+    "Model": "",
+    "Type": "",
+    "CategoryID": "",
+    "NumberOfUnits": "About 7,400 (In addition, about 4,964 were sold in Canada)"
+   }
+  ],
+  "Inconjunctions": [
+   {
+    "URL": "https://recalls-rappels.canada.ca/en/alert-recall/super-road-12000-mah-solar-wireless-power-bank-recalled-due-fire-hazard"
+   }
+  ],
+  "Images": [
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/Soff-road.png",
+    "Caption": "Recalled Super Off-Road 12,000 mAh Solar Wireless Power Bank"
+   }
+  ],
+  "Injuries": [
+   {
+    "Name": "The firm has received two reports of the power bank's battery swelling. No injuries have been reported."
+   }
+  ],
+  "Manufacturers": [],
+  "Retailers": [
+   {
+    "Name": "Given away as promotional items by various companies from January 2019 through December 2023.",
+    "CompanyID": ""
+   }
+  ],
+  "Importers": [
+   {
+    "Name": "Spector & Co., of Saint Laurent, of Quebec, Canada",
+    "CompanyID": ""
+   }
+  ],
+  "Distributors": [],
+  "SoldAtLabel": null,
+  "ManufacturerCountries": [
+   {
+    "Country": "China"
+   }
+  ],
+  "ProductUPCs": [],
+  "Hazards": [
+   {
+    "Name": "The solar power bank's lithium-ion battery can swell and overheat, posing a burn hazard to consumers.",
+    "HazardType": "",
+    "HazardTypeID": ""
+   }
+  ],
+  "Remedies": [
+   {
+    "Name": "Consumers should stop using the recalled power banks immediately and visit spectroandco.com/recall to register for a full refund. The refund will be in the form of a check which will be mailed to consumers. Consumers should dispose of the camera in accordance with local and state regulations. Note: Do not throw this recalled lithium-ion battery or device in the trash, in the general recycling stream (e.g., street-level or curbside recycling bins), or in used battery recycling boxes found at various retail and home improvement stores. Recalled lithium-ion batteries must be disposed of differently than other batteries, because they present a greater risk of fire. Your municipal household hazardous waste (HHW) collection center may accept this recalled lithium-ion battery or device for disposal. Before taking your battery or device to a HHW collection center, contact that office ahead of time and ask whether it accepts recalled lithium-ion batteries. If it does not, contact your municipality for further guidance."
+   }
+  ],
+  "RemedyOptions": [
+   {
+    "Option": "Refund"
+   }
+  ]
+ },
+ {
+  "RecallID": 10706,
+  "RecallNumber": "26399",
+  "RecallDate": "2026-04-09T00:00:00",
+  "Description": "This recall involves VEEKTOMX VT103 Small Portable Charger Mini Power Banks. The power banks are white, pink, or purple. The recalled power banks have model number \"VT103\" imprinted on the back of the power bank and do NOT contain a serial number on the bottom right corner of the back of the power bank. Note: Do not throw this recalled lithium-ion battery or device in the trash, in the general recycling stream (e.g., street-level or curbside recycling bins), or in used battery recycling boxes found at various retail and home improvement stores. Recalled lithium-ion batteries must be disposed of differently than other batteries, because they present a greater risk of fire. Your municipal household hazardous waste (HHW) collection center may accept this recalled lithium-ion battery or device for disposal. Before taking your battery or device to a HHW collection center, contact that office ahead of time and ask whether it accepts recalled lithium-ion batteries. If it does not, contact your municipality for further guidance.",
+  "URL": "https://www.cpsc.gov/Recalls/2026/Shenzhen-Baihang-Recalls-VEEKTOMX-Mini-Power-Banks-Due-to-Fire-and-Burn-Hazards-Sold-on-Amazon",
+  "Title": "Shenzhen Baihang Recalls VEEKTOMX Mini Power Banks, Due to Fire and Burn Hazards; Sold on Amazon",
+  "ConsumerContact": "Veektomx at recall@veektomx.com or online at veektomx.com and click on \"Important Recall Information\" to learn more.",
+  "LastPublishDate": "2026-04-10T00:00:00",
+  "Products": [
+   {
+    "Name": "VEEKTOMX Portable Charger Mini Power Banks",
+    "Description": "",
+    "Model": "",
+    "Type": "",
+    "CategoryID": "",
+    "NumberOfUnits": "About 8,000"
+   }
+  ],
+  "Inconjunctions": [],
+  "Images": [
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/Picture13_4.png",
+    "Caption": "Recalled VEEKTOMX Mini Power Bank (White)"
+   },
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/Picture14_4.png",
+    "Caption": "Recalled VEEKTOMX Mini Power Banks are labeled VT03 and do not have a serial number on the bottom right corner of the power bank"
+   },
+   {
+    "URL": "https://www.cpsc.gov/s3fs-public/Picture15_3.png",
+    "Caption": "VT03 power banks with a serial number displayed on the casing are not subject to this recall"
+   }
+  ],
+  "Injuries": [
+   {
+    "Name": "Shenzhen Baihang has received three reports of fires resulting in minor property damage. No injuries have been reported."
+   }
+  ],
+  "Manufacturers": [],
+  "Retailers": [
+   {
+    "Name": "Amazon.com between January 2024 and September 2024, for between $24 and $30.",
+    "CompanyID": ""
+   }
+  ],
+  "Importers": [
+   {
+    "Name": "Shenzhen Baihang Technology Co., Ltd., of China",
+    "CompanyID": ""
+   }
+  ],
+  "Distributors": [],
+  "SoldAtLabel": null,
+  "ManufacturerCountries": [
+   {
+    "Country": "China"
+   }
+  ],
+  "ProductUPCs": [],
+  "Hazards": [
+   {
+    "Name": "The lithium-ion battery in the recalled power banks can overheat and ignite, posing fire and burn hazards to consumers.",
+    "HazardType": "",
+    "HazardTypeID": ""
+   }
+  ],
+  "Remedies": [
+   {
+    "Name": "Consumers should immediately stop using the recalled power banks and contact Shenzhen Baihang to verify power bank is part of the recall and receive a free replacement power bank."
+   }
+  ],
+  "RemedyOptions": [
+   {
+    "Option": "Replace"
+   }
+  ]
+ }
+]

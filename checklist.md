@@ -1,6 +1,6 @@
 # SafeShelf checklist
 
-**Last updated:** 16 Oct 2026 (Day 5 of 6) · **Score: 71/100** → 94 if the plan lands ([score](#-score-out-of-100))
+**Last updated:** 16 Oct 2026, evening (Day 5 of 6) · **Score: 71/100** → 94 if the plan lands ([score](#-score-out-of-100))
 **Deadline:** 18 Oct 2026, 11:59 PM IST · **Feature freeze:** evening of 16 Oct (after that, only fixes, data, measurements and the story)
 
 Updated with every change. For the details behind each line, see [plan.md](plan.md).
@@ -9,6 +9,24 @@ Updated with every change. For the details behind each line, see [plan.md](plan.
 
 ## In one line
 The engine, agents and data are built. Judges can't see the latest work until it's deployed, and all our measured proof is from US data while the pitch is JAPAC. The plan fixes both: **deploy, then measure SafeShelf on JAPAC and Indian data, then tell that story.**
+
+---
+
+## 🧭 Implementation plan v2.2 (decided 16 Oct: build all of it)
+Solomon chose to build the whole v2.2 plan (live official sources + evidence verification) instead of freezing tonight. Each line ticks when it is built and tested; it reaches judges with `make migrate` on Cloud SQL and `make deploy-api`.
+- [x] **Live official sources** (`engine/sources/`): CPSC API, OECD GlobalRecalls (Australia, Japan, Korea, Singapore, Taiwan, ASEAN) and **Japan's CAA recall site live** (reuse allowed under PDL 1.0; Japanese text and 型番 model numbers kept as published), India's CCPA/BIS notices from the stored copy. ACCC, METI and Singapore's CPSO refuse automated requests; NITE and the SAFETY Mark registry have no verified access; BIS has no automation API. Each shows as "couldn't be checked" or "not supported", never as clear. Registry in `data/source_registry_japac.yaml`; caching, rate limits, circuit breakers, health
+- [x] **Evidence verification** (`engine/evidence_verification/`): is the source official and does its text say it; does the notice cover this exact model, variant and batch, in this country; copies count once; retractions and "not affected" notices downgrade. Five results set by code: confirmed recall (local, exact, in scope) · substantiated hazard · potential concern (incl. "recalled abroad, same model") · no matching notice (not proof of safety) · not enough evidence. Plus a per-country coverage list and "what would change this". 41 tests incl. forged regulator address, lookalike model, excluded batch, copied complaints, injected instructions
+- [x] **Database migrations 001–008** (additive only) and `data/migrate.py`: applied to the local database. Cloud SQL: Solomon runs `make migrate` through the proxy
+- [ ] Investigation pipeline, safety answer and case file use the new results
+- [ ] New API endpoints: investigations, source health, recheck, watchlists, identity feedback, reviews, webhooks, developer usage, bench runs
+- [ ] Identity review and negative edges · hazard trends and evidence integrity · cause hypotheses · cross-border matching · supply chain · product timeline · certification checks
+- [ ] Camera label check · post-purchase rechecks and alerts · case workflow with human review
+- [ ] Benchmarks: identity, historical cutoff, cross-border, evidence quality, prospective log; per-country reports
+- [ ] Screens: extension, web page and WhatsApp show the result, coverage and sources
+- [ ] Docs: source access log, regional privacy review
+- **Needs people, not code:** hand-checked identity pairs (gold set), a second annotator, the SaferProducts.gov key, and checking access for Japan's NITE and Singapore's CPSO
+
+Live check on 16 Oct (no reviews): HAIARA W5PRO on a Japanese shop → **confirmed recall** from CAA, live, 1 s; NEWDERY ZHX-PB22 on Amazon.in → **recalled abroad, same model** (CPSC), sent for review; Baseus BS-30KP365 in Australia → **recalled here for some units, check the serial** (ACCC via OECD); Anker A1263 in Singapore → recalled abroad (CPSC); an unbranded "Fast charger 65W" → not enough evidence.
 
 ---
 
