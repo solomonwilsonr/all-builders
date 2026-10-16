@@ -404,8 +404,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .sec { border-radius:16px; padding:10px 14px; margin-top:10px; background:var(--unknown-bg); }
     .sec.green { background:var(--green-bg); } .sec.amber { background:var(--amber-bg); } .sec.red { background:var(--red-bg); }
     .sec h3 { margin:0 0 2px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .sec h3 .t { display:flex; align-items:center; gap:6px; }
+    .sec h3 .t svg { width:16px; height:16px; flex:none; }
     .verdict { font-size:12px; font-weight:700; padding:2px 10px; border-radius:999px; background:#fff; }
     .sec.green .verdict { color:var(--green); } .sec.amber .verdict { color:var(--amber); } .sec.red .verdict { color:var(--red); } .sec.unknown .verdict { color:var(--unknown); }
+    .sec.green .t svg { color:var(--green); } .sec.amber .t svg { color:var(--amber); } .sec.red .t svg { color:var(--red); } .sec.unknown .t svg { color:var(--unknown); }
     /* Plain answer: what to do, where we checked (plan v2.2 UX) */
     .todo { margin-top:10px; padding:12px 14px; border-radius:16px; background:#fff; border:1px solid rgba(0,0,0,.08); }
     .todo strong { display:block; font-size:14px; margin-bottom:4px; }
@@ -425,8 +428,13 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .coverage .mark { display:inline-block; width:1.2em; font-weight:700; }
     .coverage .checked_live .mark, .coverage .checked_cache .mark { color:var(--red); }
     .coverage .source_unavailable .mark { color:var(--amber); }
+    .coverage .no_matching_notice_found .mark { color:var(--green); }
+    .coverage .not_supported .mark { color:var(--unknown); }
+    .coverage .legend { color:var(--unknown); font-size:12px; margin:2px 0 8px; }
     .coverage .note { color:var(--unknown); font-size:12px; margin:2px 0 0 1.2em; }
     .coverage .sub { margin:8px 0 2px; font-weight:600; }
+    .aftercare-block { margin-top:14px; padding-top:12px; border-top:1px dashed rgba(0,0,0,.12); }
+    .dividerlabel { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--muted); }
 
     /* Chat */
     .box.chat { display:flex; flex-direction:column; }
@@ -768,7 +776,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   };
 
   const section = (title, c) =>
-    el("div", { className: `sec ${c.level}` }, el("h3", {}, `${title} `, el("span", { className: "verdict", textContent: c.word })), el("ul", {}, ...c.lines.map((l) => el("li", { textContent: l }))));
+    el("div", { className: `sec ${c.level}` }, el("h3", {}, el("span", { className: "t" }, icon(VERDICT_ICON[c.level] || "help"), title), el("span", { className: "verdict", textContent: c.word })), el("ul", {}, ...c.lines.map((l) => el("li", { textContent: l }))));
 
   // Plan v2.2: what was checked, country by country (live, stored copy, couldn't be checked, not supported), and the
   // official records behind the answer. A country with no match is never shown as an all-clear.
@@ -789,6 +797,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     const next = (o.what_would_change || []).slice(0, 2).map((w) => el("li", { textContent: `${w.fact} (${w.how})` }));
     return el("details", { className: "coverage" },
       el("summary", { textContent: `What was checked (${o.source_mode === "partial" ? "some sources couldn't be read" : o.source_mode || "live"})` }),
+      el("p", { className: "legend", textContent: "● a recall notice was found there (worth reading) · ○ no matching notice · ! couldn't be checked · – not covered yet" }),
       el("ul", {}, ...rows),
       ...(links.length ? [el("p", { className: "sub", textContent: "Official records" }), el("ul", {}, ...links)] : []),
       ...(next.length ? [el("p", { className: "sub", textContent: "What would change this answer" }), el("ul", {}, ...next)] : []),
@@ -1326,8 +1335,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         heroEl,
         panelTabs(r, [
           ...(plain ? [todoBox(plain)] : []),
-          // Before purchase the buy button is guarded (below); after purchase: steps, refund and complaint drafts
-          ...(globalThis.SafeShelfAftercare && r.source !== "mock" && mode === "float" ? [SafeShelfAftercare.afterPanel(el, r, getPage())] : []),
+          // Before purchase the buy button is guarded (below); after purchase: steps, refund and complaint drafts.
+          // Kept in its own labelled block so "I already bought it" never reads as part of the pre-purchase verdict.
+          ...(globalThis.SafeShelfAftercare && r.source !== "mock" && mode === "float"
+            ? [el("div", { className: "aftercare-block" }, el("p", { className: "dividerlabel" }, "Already bought it?"), SafeShelfAftercare.afterPanel(el, r, getPage()))]
+            : []),
           ...(deeper ? [deeper] : []),
           ...(plain ? [placesBlock(plain)] : [section("Is it safe?", r.safe)]),
           section("Is the seller genuine?", r.real),

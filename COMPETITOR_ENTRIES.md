@@ -436,3 +436,59 @@ New public entries jumped from ~36 to 59 as teams open their repos ahead of the 
 - **Needl** scrapes product pages and sends them to Gemini, but its purpose is not published yet. Re-check before the 18th.
 - **ContextLens** (Media) is the most similar in spirit: it checks a creator's video against advertising and health-claim rules before it goes live. It's for creators, though, not shoppers.
 - The quality bar is rising. Most strong new entries have a no-login live demo, a "judge quick path", measured precision and recall, and synthetic data that is clearly labelled.
+
+## Ninth scan (2026-10-16, afternoon IST)
+Method: the same `gh search repos` variants (name, description, README; created since 2026-08-15) plus `gh search code` → 425 unique repos, 173 not named in this file. We fetched each README and kept the 44 that name the cup, then read those.
+
+**New real entries (31):**
+
+| Theme | Repo | Idea |
+|---|---|---|
+| **Retail** | [kevsoriano/servermaya](https://github.com/kevsoriano/servermaya) | Seller Evidence Assistant: Messenger + GCash sellers; turns a chat into an order and checks payment, packing and delivery claims, catches fake seller messages. Live |
+| **Retail** | [Gajaananth/TZGrowthOs](https://github.com/Gajaananth/TZGrowthOs) | Tradiq Zium GrowthOS: marketing and local SEO for Sri Lankan SMEs |
+| Retail? | [Udbhavps/Shop-the-moment](https://github.com/Udbhavps/Shop-the-moment) | Shop the Moment: pause a connected-TV ad, Gemini finds products on screen and matches them to a catalog |
+| BFSI | [wishwhitehat/kawal](https://github.com/wishwhitehat/kawal) | Kawal: real-time multilingual scam guardian for APAC (Gemini Live) |
+| BFSI | [affanrahman0/claimguard-arena](https://github.com/affanrahman0/claimguard-arena) | ClaimGuard Arena: motor-insurance fraud defender stress-tested by an AI attacker |
+| BFSI | [EntropicEquanimity/ScammerSurvivor](https://github.com/EntropicEquanimity/ScammerSurvivor) | Scammer Survivor: a practice phone for spotting scams across JAPAC. Live |
+| BFSI | [changhyeonnam/ghack](https://github.com/changhyeonnam/ghack) | LedgerLens: credit memos for thin-file SE Asian small businesses, every number clickable to its source, a second AI challenges it. Live + video |
+| BFSI | [yjia28tan/LifeNest-AI](https://github.com/yjia28tan/LifeNest-AI) | LifeNest AI: home-loan risk advisor for first-time Malaysian buyers |
+| Manufacturing | [kendramoss/wassup-hackathon-2026](https://github.com/kendramoss/wassup-hackathon-2026) | Origin Proof: predicts the US CBP country of origin when production leaves China, citing past rulings |
+| Manufacturing | [UttyWotty/ai_build_base_2026](https://github.com/UttyWotty/ai_build_base_2026) | OSI: traces a machine alert through spare parts, suppliers and orders; agents draft the plan. Live + video + deck |
+| Future of Work | [MrJim-Dev/everyops](https://github.com/MrJim-Dev/everyops) | EveryOps: describe your business, it shapes bookings, POS, finance and HR systems. Live |
+| Future of Work | [prateek8741/Tasklore](https://github.com/prateek8741/Tasklore) | Tasklore: seniors record a task once, new hires get an adaptive onboarding plan. Live |
+| Future of Work | [jease0502/SkillCoach-AIBC](https://github.com/jease0502/SkillCoach-AIBC) | SkillCoach: role-play coach for customer conversations with a compliance guard |
+| Future of Work | [harshithballa/ai-solvers-org-mind](https://github.com/harshithballa/ai-solvers-org-mind) | OrgMind: company agents learn from each other's conversations |
+| Future of Work | [Misto1997/panda-ai](https://github.com/Misto1997/panda-ai) | PANDA AI: guarded SQL over a semantic layer, explains why a metric moved |
+| Future of Work | [AIBuilderCup-ClusterMind/ClusterMind](https://github.com/AIBuilderCup-ClusterMind/ClusterMind) | ClusterMind: Kubernetes topology and impact analysis |
+| Future of Work | [rubaiyat2009/agentops-ai](https://github.com/rubaiyat2009/agentops-ai) | AgentOps AI: enterprise incident investigation copilot |
+| Future of Work | [ap3965/funnel](https://github.com/ap3965/funnel) | Funnel: an AI that may only ask questions helps you make a stuck decision |
+| Future of Work | [buya-v/softfactory-cli](https://github.com/buya-v/softfactory-cli) | SoftFactory: multi-agent code generation factory |
+| Future of Work? | [sigitkusuma/kala-voice-agent](https://github.com/sigitkusuma/kala-voice-agent) | Kala: embeddable voice agent for any website |
+| Sustainability | [ahsaanmunir53/perdas-guard](https://github.com/ahsaanmunir53/perdas-guard) | Pardes Guard: checks recruitment agents and papers for first-time migrant workers. Live + video + deck |
+| Sustainability | [victorchengwei/-greenledger-seaguard](https://github.com/victorchengwei/-greenledger-seaguard) | GreenLedger SeaGuard: ship collision-avoidance support (YOLOv8 + Gemini + COLREG). Live |
+| Sustainability | [DannyRidz/Crop-Health-Assistant](https://github.com/DannyRidz/Crop-Health-Assistant) | Coffee leaf screening for PNG farmers. Live |
+| Sustainability | [humanmystery/dementia-companion](https://github.com/humanmystery/dementia-companion) | Forget Me Not: companion for people with dementia and their families |
+| Sustainability | [japan-gse-builders/nao-playground](https://github.com/japan-gse-builders/nao-playground) | Hachi: daily AI check-in phone call for older English speakers in Japan |
+| Sustainability | [jasadu/hack2skill_island_relience_repo](https://github.com/jasadu/hack2skill_island_relience_repo) | SentriCORE: island water-and-power resilience operations |
+| Sustainability | [saadhiq/EcoTrace](https://github.com/saadhiq/EcoTrace) | EcoTrace: traceable household waste collection. Live |
+| Sustainability | [myllatshimna/Sustainability_MVP](https://github.com/myllatshimna/Sustainability_MVP) | ReLoop: circular-economy item assessment (Seattle pilot) |
+| Sustainability | [WalterVetrivel/tnc_guardian](https://github.com/WalterVetrivel/tnc_guardian) | T&C Guardian: Chrome extension that reads terms of service before you agree |
+| Sustainability? | [Dineshkarki24/saathi](https://github.com/Dineshkarki24/saathi) | Saathi: counselling copilot for Nepali study-abroad consultancies |
+| Sustainability? | [Heubert-AIBuilderCup/ofcourse_aibuildercup](https://github.com/Heubert-AIBuilderCup/ofcourse_aibuildercup) | OfCourse: helps international students choose a course abroad |
+
+**Already counted under another repo:** amalskr/Shield-AI-Android (Shield AI), Supashot-AI-Builder-Cup/needl-ui (Needl), AIBuilderCup-ClusterMind/ClusterMind-chkwak (ClusterMind).
+
+**Placeholders and noise (not counted):** breadDDDDD/ai-cup-proj (no README), WijesooriyaHD/ai-builder-cup-AWP (empty); profile pages (abhisek11, GamersStop, getkcoin-alt ×2, NeetiSingh-ai, Sanskriti-Slngh), RonyZ1320 (Hummingbot cup), jnsantoswebstudio/MAHALO-A-AI (açaí shop site; "builderCup" is a CSS id).
+
+### Running count (ninth scan): **≈267 real public entries**
+| Theme | Eighth scan | New | Total |
+|---|---|---|---|
+| Future of Work | ~52 | 10 | **~62** |
+| Sustainability & Social Impact | ~49 | 11 | **~60** |
+| BFSI | ~50 | 5 | **~55** |
+| Retail & Commerce | ~36 | 3 | **~39** |
+| Manufacturing | ~31 | 2 | **~33** |
+| Media, Content & Digital | ~18 | 0 | **~18** |
+| **Total** | **≈236** | **31** | **≈267** |
+
+**What it means for SafeShelf:** still nobody on product safety, recalls or fake shops (text search of the 44 READMEs found no overlap). Nearest: Seller Evidence Assistant (catches fake *seller messages*, not fake shops) and T&C Guardian (a consumer Chrome extension, but for terms of service).

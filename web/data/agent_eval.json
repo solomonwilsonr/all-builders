@@ -1,34 +1,34 @@
 {
  "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
- "run_at": "2026-10-15 21:16",
- "passed": 18,
- "cases": 18,
- "checks_passed": 49,
- "checks": 49,
+ "run_at": "2026-10-16 18:00",
+ "passed": 21,
+ "cases": 22,
+ "checks_passed": 65,
+ "checks": 66,
  "speed": {
   "investigate": {
-   "median_s": 4.7,
-   "max_s": 15.4,
-   "n": 5
+   "median_s": 6.6,
+   "max_s": 21.0,
+   "n": 9
   },
   "chat": {
-   "median_s": 5.4,
-   "max_s": 13.7,
+   "median_s": 7.6,
+   "max_s": 24.0,
    "n": 6
   },
   "report_draft": {
-   "median_s": 5.7,
-   "max_s": 10.9,
+   "median_s": 3.3,
+   "max_s": 5.0,
    "n": 2
   },
   "shopper_step": {
-   "median_s": 1.4,
-   "max_s": 1.4,
+   "median_s": 1.3,
+   "max_s": 1.3,
    "n": 1
   },
   "research": {
-   "median_s": 60.6,
-   "max_s": 98.4,
+   "median_s": 60.0,
+   "max_s": 106.0,
    "n": 4
   }
  },
@@ -38,7 +38,7 @@
    "market": "in",
    "mode": "investigate",
    "passed": true,
-   "seconds": 5.5,
+   "seconds": 7.2,
    "status": 200,
    "checks": {
     "overall red": true,
@@ -53,7 +53,7 @@
    "market": "in",
    "mode": "investigate",
    "passed": true,
-   "seconds": 4.7,
+   "seconds": 3.5,
    "status": 200,
    "checks": {
     "safety amber": true,
@@ -67,7 +67,7 @@
    "market": "in",
    "mode": "investigate",
    "passed": true,
-   "seconds": 4.2,
+   "seconds": 3.0,
    "status": 200,
    "checks": {
     "safety green": true,
@@ -80,7 +80,7 @@
    "market": "jp",
    "mode": "investigate",
    "passed": true,
-   "seconds": 15.4,
+   "seconds": 21.0,
    "status": 200,
    "checks": {
     "safety not enough evidence": true,
@@ -93,7 +93,7 @@
    "market": "in",
    "mode": "investigate",
    "passed": true,
-   "seconds": 4.4,
+   "seconds": 4.9,
    "status": 200,
    "checks": {
     "no 'far below the genuine' claim": true,
@@ -105,7 +105,7 @@
    "market": "in",
    "mode": "chat",
    "passed": true,
-   "seconds": 5.8,
+   "seconds": 7.5,
    "status": 200,
    "checks": {
     "mentions the hazard reports": true,
@@ -119,7 +119,7 @@
    "market": "in",
    "mode": "chat",
    "passed": true,
-   "seconds": 4.0,
+   "seconds": 7.7,
    "status": 200,
    "checks": {
     "answer in Hindi": true,
@@ -131,7 +131,7 @@
    "market": "in",
    "mode": "chat",
    "passed": true,
-   "seconds": 5.0,
+   "seconds": 9.3,
    "status": 200,
    "checks": {
     "no safety promise": true,
@@ -142,11 +142,11 @@
    "case": "Safer option hands over to the finder",
    "market": "in",
    "mode": "chat",
-   "passed": true,
-   "seconds": 13.7,
+   "passed": false,
+   "seconds": 24.0,
    "status": 200,
    "checks": {
-    "names SafeVolt": true,
+    "names SafeVolt": false,
     "finder agent ran": true,
     "cited evidence exists": true
    }
@@ -156,7 +156,7 @@
    "market": "sg",
    "mode": "chat",
    "passed": true,
-   "seconds": 2.9,
+   "seconds": 1.3,
    "status": 200,
    "checks": {
     "no evidence cited": true,
@@ -169,7 +169,7 @@
    "market": "in",
    "mode": "chat",
    "passed": true,
-   "seconds": 7.3,
+   "seconds": 5.2,
    "status": 200,
    "checks": {
     "read the quotes": true,
@@ -181,7 +181,7 @@
    "market": "in",
    "mode": "report_draft",
    "passed": true,
-   "seconds": 10.9,
+   "seconds": 5.0,
    "status": 200,
    "checks": {
     "not submitted": true,
@@ -195,7 +195,7 @@
    "market": "in",
    "mode": "report_draft",
    "passed": true,
-   "seconds": 0.4,
+   "seconds": 1.6,
    "status": 409,
    "checks": {
     "refused (409)": true
@@ -206,7 +206,7 @@
    "market": "in",
    "mode": "shopper_step",
    "passed": true,
-   "seconds": 1.4,
+   "seconds": 1.3,
    "status": 200,
    "checks": {
     "three controls blocked": true,
@@ -219,7 +219,7 @@
    "market": "jp",
    "mode": "research",
    "passed": true,
-   "seconds": 65.9,
+   "seconds": 104.6,
    "status": 200,
    "checks": {
     "notice found": true,
@@ -231,7 +231,7 @@
    "market": "us",
    "mode": "research",
    "passed": true,
-   "seconds": 98.4,
+   "seconds": 106.0,
    "status": 200,
    "checks": {
     "exact model named": true,
@@ -243,7 +243,7 @@
    "market": "au",
    "mode": "research",
    "passed": true,
-   "seconds": 55.3,
+   "seconds": 15.4,
    "status": 200,
    "checks": {
     "nothing claimed": true,
@@ -255,10 +255,67 @@
    "market": "au",
    "mode": "research",
    "passed": true,
-   "seconds": 4.4,
+   "seconds": 4.2,
    "status": 200,
    "checks": {
     "says blocked": true,
+    "cited evidence exists": true
+   }
+  },
+  {
+   "case": "Recall abroad is amber and names the country",
+   "market": "in",
+   "mode": "investigate",
+   "passed": true,
+   "seconds": 5.4,
+   "status": 200,
+   "checks": {
+    "safety amber, never red": true,
+    "outcome recalled abroad": true,
+    "plain title names the US": true,
+    "answer doesn't claim an Indian recall": true,
+    "no safety promise": true,
+    "cited evidence exists": true
+   }
+  },
+  {
+   "case": "Recall in Japan is red (CAA read live)",
+   "market": "jp",
+   "mode": "investigate",
+   "passed": true,
+   "seconds": 6.6,
+   "status": 200,
+   "checks": {
+    "safety red": true,
+    "confirmed recall": true,
+    "CAA is the source": true,
+    "cited evidence exists": true
+   }
+  },
+  {
+   "case": "Identity agent reads a model number code can't",
+   "market": "in",
+   "mode": "investigate",
+   "passed": true,
+   "seconds": 18.8,
+   "status": 200,
+   "checks": {
+    "model read": true,
+    "read by the identity agent, quoted": true,
+    "cited evidence exists": true
+   }
+  },
+  {
+   "case": "Critic sets aside look-alike recalls",
+   "market": "us",
+   "mode": "investigate",
+   "passed": true,
+   "seconds": 15.2,
+   "status": 200,
+   "checks": {
+    "not called recalled": true,
+    "look-alikes set aside": true,
+    "plain answer present": true,
     "cited evidence exists": true
    }
   }

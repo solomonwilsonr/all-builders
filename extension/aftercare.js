@@ -87,9 +87,12 @@
       .d{background:#fdfcfa;color:#13233a;max-width:440px;margin:16px;border-radius:20px;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
       h2{margin:0 0 6px;font-size:22px;color:${red ? "#b3261e" : "#8a5a00"}} p{margin:6px 0} .k{font-size:12px;color:#5a6a7c}
       .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px} button{font:inherit;font-weight:700;padding:11px 16px;border-radius:12px;border:1px solid #e3e7ec;background:#fff;color:#13233a;cursor:pointer}
-      button.stop{background:#13233a;color:#fff;border-color:#13233a} button:focus-visible{outline:3px solid #2f5fb3;outline-offset:2px}`;
+      button.stop{background:#13233a;color:#fff;border-color:#13233a}
+      button.ghost{font-weight:600;border-color:transparent;background:transparent;color:#5a6a7c;padding:11px 10px}
+      button:focus-visible{outline:3px solid #2f5fb3;outline-offset:2px}`;
     const stop = Object.assign(document.createElement("button"), { className: "stop", textContent: red ? "Don't buy it" : "Go back and check" });
-    const buy = Object.assign(document.createElement("button"), { textContent: "Buy anyway" });
+    // On a red (recalled) verdict, "Buy anyway" is a plain text link, not a button of equal weight to "Don't buy it".
+    const buy = Object.assign(document.createElement("button"), { className: red ? "ghost" : "", textContent: "Buy anyway" });
     const listen = Object.assign(document.createElement("button"), { textContent: "🔊 Listen" });
     const d = document.createElement("div");
     d.className = "d";
@@ -97,7 +100,8 @@
     d.setAttribute("aria-modal", "true");
     d.setAttribute("aria-labelledby", "t");
     d.innerHTML = `<p class="k">SafeShelf · before you buy</p><h2 id="t"></h2><p class="why"></p><p class="todo"></p><div class="row"></div><p class="k">Checked by code against official recall lists. Your choice: SafeShelf never blocks a purchase.</p>`;
-    d.querySelector("h2").textContent = plain.title || (red ? "This product is recalled" : "Be careful with this product");
+    // Matches the card's own severity wording (VERDICT_WORD in content.js) so the two never disagree on the same verdict.
+    d.querySelector("h2").textContent = plain.title || (red ? "Don't buy — a safety problem was found" : "Be careful — check this before buying");
     d.querySelector(".why").textContent = plain.why || r.summary || "";
     d.querySelector(".todo").textContent = plain.todo || "";
     d.querySelector(".row").append(stop, buy, listen);
