@@ -2,4 +2,3 @@ fastapi>=0.115
 uvicorn[standard]>=0.30
 google-genai>=2.30
 playwright==1.64.0
-browser-use==0.13.11  # open-source browser agent (MIT), research/browser_use_agent.py
