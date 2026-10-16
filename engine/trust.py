@@ -45,9 +45,16 @@ TWO_PART_TLDS = ("co.in", "net.in", "org.in", "co.uk", "com.au", "net.au", "org.
 REFERENCE_MATCHES = {"url", "model_number"}
 HIDDEN = re.compile(
     r"ignore (all |any |your |the )?(previous|prior|above|earlier) instructions|you are an? (ai|assistant|agent)|"
-    r"system prompt|(mark|rate|report|classify|label|show) (this|the) (product|shop|seller|listing) as "
-    r"(safe|genuine|trusted|verified|green)|safeshelf: this (product|listing|shop) is|"
-    r"do not (warn|flag|tell)|assistant:|<\s*/?\s*(system|instructions)\s*>", re.IGNORECASE)
+    r"system prompt|(mark|rate|report|classify|label|show|treat) (this|the) (product|shop|seller|listing|merchant|"
+    r"store) as .{0,12}(safe|genuine|trusted|trustworthy|verified|green|legitimate|authentic)|"
+    r"safeshelf: this (product|listing|shop) is|safeshelf\s*,|"
+    r"do not (warn|flag|tell)|assistant:|<\s*/?\s*(system|instructions)\s*>|"
+    # Phrasings the live red-team's attacker used (engine/redteam.py, 16 Oct): a notice addressed to AI shoppers,
+    # or telling them to switch off their own warnings.
+    r"\b(for|to|attention|note|notice)\W{0,3}(all |any )?(ai|a\.i\.|llm|automated|ai-powered)( shopping)? "
+    r"(assistants?|agents?|shoppers?|bots?|crawlers?|systems?|models?)\b|"
+    r"\b(disregard|override|bypass|suppress) (all |any |every )?(previous |prior |negative |existing |other )?"
+    r"(trust|threat|security|safety|risk|fraud) (flags?|warnings?|checks?|signals?|ratings?)", re.IGNORECASE)
 
 
 @cache

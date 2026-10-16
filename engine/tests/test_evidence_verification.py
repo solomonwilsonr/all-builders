@@ -109,6 +109,16 @@ def test_syndicated_complaints_count_once():
     assert len(groups) == 1 and len(groups[0]["publishers"]) == 10
 
 
+def test_reposts_with_small_edits_count_once_but_short_generic_reports_stay_separate():
+    a = "My Voltrix power bank started smoking on my desk while charging my phone last night, scary."
+    b = "My Voltrix power bank began smoking on the desk while charging my phone last night, so scary!"
+    assert corroboration.independent_count([{"id": "a", "text": a}, {"id": "b", "text": b}]) == 1
+    assert corroboration.independent_count([{"id": "a", "text": "It overheated while charging."},
+                                            {"id": "b", "text": "Mine overheated while charging overnight."}]) == 2
+    c = "After two weeks the battery swelled up and the case got too hot to touch while charging my tablet."
+    assert corroboration.independent_count([{"id": "a", "text": a}, {"id": "c", "text": c}]) == 2
+
+
 def test_same_record_from_two_sources_is_one_observation():
     obs = [{"id": "a", "record_id": "cpsc:1", "text": "x"}, {"id": "b", "record_id": "cpsc:1", "text": "y"}]
     assert corroboration.independent_count(obs) == 1

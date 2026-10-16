@@ -5,6 +5,7 @@ an image, a citation of each other, or nearly the same words (copied complaints,
 notice and SafeShelf's stored copy of it). Distinct publishers are kept, but the independent count is the number of
 groups, never the number of reports.
 """
+import difflib
 import hashlib
 import re
 
@@ -12,6 +13,8 @@ from engine import locales
 
 SIMILAR = 0.6          # word 5-gram overlap that makes two texts one observation
 SAME_DAY_SIMILAR = 0.3  # lower bar for reports of the same product on the same date
+REWORDED = 0.75         # share of words in the same order that makes a reworded repost one observation
+REWORD_MIN_WORDS = 10
 
 
 def shingles(text: str, n: int = 5) -> set[str]:
@@ -23,6 +26,17 @@ def shingles(text: str, n: int = 5) -> set[str]:
 
 def jaccard(a: set[str], b: set[str]) -> float:
     return len(a & b) / len(a | b) if a and b else 0.0
+
+
+def reworded(a: str, b: str) -> bool:
+    """A repost with a few words swapped ("started smoking on my desk" / "began smoking on the desk"): word-by-word
+    alignment still matches most of it, while 5-gram overlap collapses (three edits in 18 words: 0.14). Found by the
+    live red-team (engine/redteam.py, 16 Oct). Short texts are left alone: two owners can both write "it overheated"."""
+    wa = re.findall(r"\w+", locales.fold(a).lower())
+    wb = re.findall(r"\w+", locales.fold(b).lower())
+    if min(len(wa), len(wb)) < REWORD_MIN_WORDS:
+        return False
+    return difflib.SequenceMatcher(None, wa, wb, autojunk=False).ratio() >= REWORDED
 
 
 class _Groups:
@@ -60,6 +74,8 @@ def group(observations: list[dict]) -> list[dict]:
                 overlap = jaccard(grams[i], grams[j])
                 if overlap >= SIMILAR:
                     why = "nearly the same words"
+                elif reworded(a.get("text") or "", b.get("text") or ""):
+                    why = "the same words with small edits"
                 elif a.get("date") and a.get("date") == b.get("date") and overlap >= SAME_DAY_SIMILAR:
                     why = "same day, similar words"
             if why:
