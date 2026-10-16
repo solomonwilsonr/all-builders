@@ -83,6 +83,12 @@ def tier(product: dict, record: dict) -> tuple[str, list[str]]:
             why = f"the notice names model {codes[model]}"
             return "exact", [why + (" and this brand" if brand_named else "")]
         return "suspected_rebrand", [f"the notice names model {codes[model]} under another brand"]
+    # Shops often list the full product code: Anker's A1263011 is the recalled A1263 plus a colour / pack code.
+    for code, original in codes.items():
+        rest = model[len(code):] if len(code) >= 5 and model.startswith(code) else ""
+        if rest and rest.isdigit() and len(rest) <= 3 and re.search(r"\d", code) and (brand_named or not brand):
+            return "exact", [f"the notice names model {original}; this listing's code {product.get('model')} is "
+                             f"{original} plus a colour or pack code ({rest})"]
     base = base_code(product.get("model") or "")
     for original in codes.values():
         if len(base) >= 4 and base_code(original) == base:

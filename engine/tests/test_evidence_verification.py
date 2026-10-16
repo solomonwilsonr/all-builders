@@ -325,3 +325,13 @@ def test_brand_name_is_not_a_product_type():
     assert identity_scope.check(bank, scooter, "US")["tier"] == "none"
     assert identity_scope.check(bank, cooler, "US")["tier"] == "none"
     assert identity_scope.check(bank, banks, "US")["tier"] == "family_named"
+
+
+def test_full_product_code_with_a_colour_suffix_is_the_same_model():
+    """Flipkart lists the recalled Anker A1263 as model 'A1263011' (16 Oct). Longer digits or letters are not."""
+    rec = record(ids={"models": ["A1263"], "brands": ["Anker"]}, original_text="Anker power banks model A1263.")
+    anker = {"brand": "Anker", "title": "Anker power bank"}
+    assert identity_scope.check({**anker, "model": "A1263011"}, rec, "IN")["tier"] == "exact"
+    assert identity_scope.check({**anker, "model": "A12630"}, rec, "IN")["tier"] == "exact"
+    assert identity_scope.check({**anker, "model": "A12631234"}, rec, "IN")["tier"] != "exact"
+    assert identity_scope.check({**anker, "model": "A1263X"}, rec, "IN")["tier"] != "exact"

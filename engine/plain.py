@@ -112,7 +112,8 @@ def shopper(decision: dict, product: dict, matches: list[dict], country_rows: li
             "Read what the buyers say below before you buy, and consider a safer alternative."),
         "possible_match": (
             "A similar product was recalled", "amber",
-            (f"A safety recall mentions a {brand} product like this one but gives no model number, "
+            (f"A safety recall mentions {'an' if brand[:1].lower() in 'aeiou' else 'a'} {brand} product like this one "
+             "but gives no model number, "
              "so we can't tell if it's this exact one."),
             "Compare the product name and photos with the recall (link below). If you're unsure, ask the seller."),
         "seizure_or_notice": (
