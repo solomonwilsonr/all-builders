@@ -63,11 +63,28 @@ def registrable(hostname: str) -> str:
     return ".".join(parts[-keep:])
 
 
+def brand_entry(brand: str | None) -> dict:
+    """Who may sell this brand (data/authorised_sellers.json), by its name or another name it sells under."""
+    brands = _json("authorised_sellers.json").get("brands", {})
+    b = norm_brand(brand)
+    return brands.get(b) or next((e for e in brands.values() if b and b in e.get("aliases", [])), {})
+
+
 def authorised(brand: str, seller: str | None, url: str | None) -> bool:
-    entry = _json("authorised_sellers.json").get("brands", {}).get(norm_brand(brand), {})
+    entry = brand_entry(brand)
     domain = host(url)
-    return bool(domain and any(domain == d or domain.endswith("." + d) for d in entry.get("domains", []))) or \
-        bool(seller and norm_brand(seller) in {norm_brand(s) for s in entry.get("sellers", []) + [brand]})
+    if domain and any(domain == d or domain.endswith("." + d) for d in entry.get("domains", [])):
+        return True
+    s = norm_brand(seller)
+    named = [norm_brand(n) for n in entry.get("sellers", [])]
+    # Marketplaces show the full company name: "Clicktech Retail Private Ltd" for the "Clicktech Retail" a brand names
+    return bool(s) and (s == norm_brand(brand) or any(s == n or (len(n) >= 5 and s.startswith(n)) for n in named))
+
+
+def ships_from(page_text: str | None) -> str | None:
+    """Amazon's "Ships from Amazon" / "Fulfilled by Amazon": Amazon holds the stock and handles returns."""
+    return "Amazon" if re.search(r"Ships from\s*:?\s*Amazon\b|Fulfilled by Amazon", page_text or "", re.IGNORECASE) \
+        else None
 
 
 # ---------- checks (pure functions, unit-tested) ----------
@@ -192,22 +209,36 @@ def listing_mrp(page_text: str | None) -> float | None:
         return None
 
 
-def seller_check(brand: str, seller: str | None, url: str | None) -> dict:
-    """Is the seller the brand itself or an authorised seller? A third party is not a warning, only not verified."""
+def seller_check(brand: str, seller: str | None, url: str | None, page_text: str | None = None) -> dict:
+    """Is the seller the brand itself or an authorised seller? A third party is not a warning, only not verified.
+    Real brands are checked against the seller list the brand published (data/authorised_sellers.json)."""
     if not seller:
         return {"result": "unknown", "reason": "the page does not name the seller"}
     b, s_ = norm_brand(brand), norm_brand(seller)
+    entry = brand_entry(brand)
+    extra = {**({"ships_from": ships_from(page_text)} if ships_from(page_text) else {}),
+             **({"source": entry["source_url"]} if entry.get("source_url") else {})}
     if len(b) >= 3 and s_.startswith(b):
-        return {"result": "ok", "seller": seller, "relationship": "brand", "brand": brand}
+        return {"result": "ok", "seller": seller, "relationship": "brand", "brand": brand, **extra}
     if brand and authorised(brand, seller, url):
-        return {"result": "ok", "seller": seller, "relationship": "authorised", "brand": brand}
+        return {"result": "ok", "seller": seller, "relationship": "authorised", "brand": brand, **extra}
     if len(b) >= 4 and b in s_:  # "PATANJALI NUTRELA NUTRITION" for Nutrela: plausibly the brand's store, not proven
-        return {"result": "unknown", "seller": seller, "relationship": "brand_named", "brand": brand,
+        return {"result": "unknown", "seller": seller, "relationship": "brand_named", "brand": brand, **extra,
                 "reason": f"sold by {seller}: the seller's name includes {brand}, so it may be the brand's own store, "
                           "but SafeShelf cannot confirm it (shops can use a brand's name)"}
-    return {"result": "unknown", "seller": seller, "relationship": "third_party", "brand": brand,
-            "reason": f"sold by {seller}, a third-party seller; SafeShelf cannot confirm it is authorised to sell "
-                      f"{brand or 'this brand'}"}
+    # 16 Oct: a shopper took Amazon's "Visit the Samsung Store" link for the seller of a fridge sold by DAWNTECH.
+    reason = f"sold by {seller}, a third-party seller, not {brand or 'the brand'}'s own store"
+    store_link = re.search(r"Visit the (.+?) Store", page_text or "")
+    if store_link:
+        name = store_link.group(1).strip()
+        reason += f' (the "Visit the {name} Store" link is {name}\'s brand page, not the seller)'
+    if entry.get("sellers") and entry.get("source_url"):
+        reason += f"; it is not on the list of official sellers {brand} published, so SafeShelf cannot confirm it " \
+                  "is authorised"
+    else:
+        reason += f"; SafeShelf cannot confirm it is authorised to sell {brand or 'this brand'}"
+    return {"result": "unknown", "seller": seller, "relationship": "third_party", "brand": brand, **extra,
+            "reason": reason}
 
 
 def mrp_check(price: float | None, mrp: float | None, currency: str = "INR") -> dict:
@@ -230,7 +261,11 @@ def good_signs(checks: dict, url: str | None) -> list[str]:
     if seller.get("relationship") == "brand":
         signs.append(f"Sold by the brand itself ({seller['seller']})")
     elif seller.get("relationship") == "authorised":
-        signs.append(f"Sold by {seller['seller']}, an authorised seller of {seller['brand']}")
+        signs.append(f"Sold by {seller['seller']}, an authorised seller of {seller['brand']}" +
+                     (f" (on the list {seller['brand']} published)" if seller.get("source") else ""))
+    if seller.get("ships_from") and seller.get("relationship") not in ("brand", "authorised"):
+        signs.append(f"Ships from {seller['ships_from']}: Amazon stores it and handles returns, which helps a little "
+                     "but does not show the seller is authorised")
     price = checks["price"]
     if price["result"] == "ok" and price.get("mrp"):
         off = round(100 * (1 - price["ratio"]))
@@ -302,7 +337,7 @@ def trust_check(listing: dict) -> dict:
                   "price": mrp_check(listing.get("price"), listing_mrp(listing.get("page_text")),
                                      listing.get("currency") or "INR"),
                   "website_age": website_check(url), "spec": none,
-                  "seller": seller_check(listing_brand(listing), seller, url)}
+                  "seller": seller_check(listing_brand(listing), seller, url, listing.get("page_text"))}
     hidden = bool(HIDDEN.search(listing.get("page_text") or ""))
     answer = {
         "listing_url": url,

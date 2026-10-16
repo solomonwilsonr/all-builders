@@ -123,6 +123,37 @@ def test_a_look_alike_is_never_the_price_reference(monkeypatch):
     assert out["checks"]["copied_photos"]["result"] == "skipped"
 
 
+AMAZON_SAMSUNG_FRIDGE = ("Visit the Samsung Store\nShips from\nAmazon\nSold by\nDAWNTECH ELECTRONICS PRIVATE LIMITED\n"
+                         "Brand\tSamsung\nCapacity\t653 litres")
+
+
+def test_real_brands_use_the_seller_list_the_brand_published():
+    url = "https://www.amazon.in/dp/B0BQC4Y4TP"
+    assert trust.authorised("Samsung", "Clicktech Retail Private Ltd", url)  # full company name, listed by its start
+    assert trust.authorised("Samsung", None, "https://www.samsung.com/in/refrigerators/")
+    assert not trust.authorised("Samsung", "DAWNTECH ELECTRONICS PRIVATE LIMITED", url)
+    assert trust.authorised("Redmi", "Darshita Mobiles", url)  # Xiaomi's list, by the name it sells under
+    assert trust.authorised("Xiaomi", "Dawntech Electronics Private Limited", url)  # Xiaomi named it (smart TVs)
+    assert not trust.authorised("Mi", "Mirza Traders", url)  # a short brand name never matches by prefix
+    ok = trust.seller_check("Samsung", "Clicktech Retail Private Ltd", url)
+    assert ok["relationship"] == "authorised" and "sammobile" in ok["source"]
+
+
+def test_a_brand_store_link_is_not_the_seller():
+    # 16 Oct: a shopper read Amazon's "Visit the Samsung Store" as the seller of a fridge sold by DAWNTECH.
+    out = trust.seller_check("Samsung", "DAWNTECH ELECTRONICS PRIVATE LIMITED", "https://www.amazon.in/dp/B0BQC4Y4TP",
+                             AMAZON_SAMSUNG_FRIDGE)
+    assert out["relationship"] == "third_party" and out["ships_from"] == "Amazon"
+    assert "not Samsung's own store" in out["reason"]
+    assert '"Visit the Samsung Store" link is Samsung\'s brand page, not the seller' in out["reason"]
+    assert "not on the list of official sellers Samsung published" in out["reason"]
+    signs = trust.good_signs({"seller": out, "price": trust.mrp_check(79990, 113000), "website_age": {"result": "skipped"}},
+                             "https://www.amazon.in/dp/B0BQC4Y4TP")
+    assert any(s.startswith("Ships from Amazon:") and "does not show the seller is authorised" in s for s in signs)
+    # A brand with no published list keeps the plain wording
+    assert "cannot confirm it is authorised to sell Nutrela" in trust.seller_check("Nutrela", "MegaDealz24", None)["reason"]
+
+
 def test_a_seller_named_after_the_brand_is_said_but_not_trusted():
     out = trust.seller_check("NUTRELA", "PATANJALI NUTRELA NUTRITION", "https://www.amazon.in/dp/B09BFX21D1")
     assert out["result"] == "unknown" and out["relationship"] == "brand_named" and "may be the brand" in out["reason"]

@@ -1,8 +1,27 @@
 {
- "_note": "Who may sell each brand (engine/trust.py). Keys are normalised brand names. Demo brands are fictional.",
+ "_note": "Who may sell each brand (engine/trust.py). Keys are normalised brand names; aliases are other names the brand sells under. Demo brands (kelvo, voltnova, viewmax) are fictional. Real brands come only from a list the brand itself published (source, source_url, as_of). A seller the brand named for any category counts for the whole brand. A seller named here matches the marketplace's full name by its start (Clicktech Retail matches Clicktech Retail Private Ltd).",
  "brands": {
   "kelvo": {"domains": ["demo.safeshelf.app", "kelvo.example"], "sellers": ["Kelvo Official Store", "Appario Retail"]},
   "voltnova": {"domains": ["voltnova.example"], "sellers": ["VoltNova Store"]},
-  "viewmax": {"domains": ["viewmax.example"], "sellers": ["ViewMax India"]}
+  "viewmax": {"domains": ["viewmax.example"], "sellers": ["ViewMax India"]},
+  "samsung": {
+   "domains": ["samsung.com"],
+   "sellers": ["Clicktech Retail", "STPL Exclusive", "Darshita Etel",
+               "TrueCom Retail", "Mythanglory Retail", "BTPLD", "Flashstar Commerce",
+               "Buzz India", "SV Peripherals", "Unique Click", "India Flash Mart", "Retail Net"],
+   "source": "Samsung India's list of official online marketplace sellers (Amazon: Clicktech Retail, STPL Exclusive, Darshita Etel; Flipkart: by category)",
+   "source_url": "https://www.sammobile.com/news/here-are-samsung-india-official-sellers-amazon-flipkart/",
+   "as_of": "2025-09-08"
+  },
+  "xiaomi": {
+   "aliases": ["redmi", "mi"],
+   "domains": ["mi.com"],
+   "sellers": ["Darshita Mobiles", "Green Mobiles", "Clicktech Retail", "Dawntech Electronics", "Cocoblu Retail",
+               "Kay Kay Overseas", "RetailEZ",
+               "Mythanglory", "Akshnav", "Treasure EVERretailer", "RetailNet", "OmniTechRetail", "MTAILMODEECOM"],
+   "source": "Xiaomi India's list of authorised Amazon and Flipkart sellers (Amazon smart TVs: Dawntech Electronics; phones: Darshita Mobiles, Green Mobiles)",
+   "source_url": "https://www.gadgets360.com/mobiles/news/xiaomi-authorised-retailers-amazon-great-indian-festival-flipkart-big-billion-days-sale-9243063",
+   "as_of": "2025-09-09"
+  }
  }
 }
