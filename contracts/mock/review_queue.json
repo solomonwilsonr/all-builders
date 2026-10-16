@@ -1,0 +1,30 @@
+{
+ "state": "open",
+ "items": [
+  {
+   "queue_id": "RQ-1B2C3D4E",
+   "case_id": "INV-0F7027F9",
+   "kind": "cross_border",
+   "subject": {
+    "product": {
+     "brand": "NEWDERY",
+     "model": "ZHX-PB22",
+     "market": "IN"
+    },
+    "lead_record": {
+     "record_id": "cpsc:26792",
+     "authority": "CPSC",
+     "tier": "exact",
+     "local": false
+    }
+   },
+   "reasons": [
+    "Cross-border match: CPSC recall cpsc:26792 names this model; a reviewer approves before it is shown as affecting India."
+   ],
+   "state": "open",
+   "assigned_to": null,
+   "priority": 1,
+   "created_at": "2026-10-16T18:20:00+00:00"
+  }
+ ]
+}

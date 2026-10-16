@@ -1,0 +1,23 @@
+{
+ "product_id": "SS-P-20019",
+ "market": "IN",
+ "matches": [
+  {
+   "record_id": "cpsc:25248",
+   "authority": "CPSC",
+   "jurisdiction": "US",
+   "title": "Baseus Portable Chargers Recalled Due to Fire Hazard; Sold on Amazon.com by Shenzhen Baseus Technology",
+   "url": "https://www.cpsc.gov/Recalls/2025/Baseus-Portable-Chargers-Recalled-Due-to-Fire-Hazard-Sold-on-Amazon-com-by-Shenzhen-Baseus-Technology",
+   "published": "2025-05-01",
+   "tier": "exact",
+   "scope": "batch_unknown",
+   "local": false,
+   "status": "potential_cross_border_match",
+   "reasons": [
+    "the notice names model BS-30KP365 and this brand",
+    "the notice covers only some units"
+   ]
+  }
+ ],
+ "note": "A foreign notice is a signal for this market, never a local confirmed recall."
+}

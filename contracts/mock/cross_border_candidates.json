@@ -1,0 +1,144 @@
+{
+ "candidates": [
+  {
+   "model": "HT2410",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23212",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-06-01",
+    "title": "Chervon North America Recalls EGO Power+ Cordless Brushless Hedge Trimmers Due to Laceration Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2023/Chervon-North-America-Recalls-EGO-Power-Cordless-Brushless-Hedge-Trimmers-Due-to-Laceration-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1108716",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2024-03-20",
+    "title": "Chervon Australia Pty Ltd - EGO Power+ Cordless Brushless Hedge Trimmer",
+    "url": "https://www.productsafety.gov.au/recalls/chervon-australia-pty-ltd-ego-power-cordless-brushless-hedge-trimmer"
+   },
+   "lead_days": 293,
+   "needs_person": true
+  },
+  {
+   "model": "J04402",
+   "tier": "suspected_rebrand",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23210",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-05-25",
+    "title": "Juratoys Recalls Children's Activity Tables Due to Choking Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1109781",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2023-10-13",
+    "title": "Bright Wonders - Janod Cocoon activity table",
+    "url": "https://www.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table"
+   },
+   "lead_days": 141,
+   "needs_person": true
+  },
+  {
+   "model": "CAH16WRW1",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:21078",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2021-02-12",
+    "title": "NZXT Recalls H1 Computer Cases Due to Fire Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2021/NZXT-Recalls-H1-Computer-Cases-Due-to-Fire-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1090009",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2021-06-21",
+    "title": "NZXT H1 Computer Cases fitted with PCIe Riser Assembly",
+    "url": "https://www.productsafety.gov.au/recalls/nzxt-h1-computer-cases-fitted-with-pcie-riser-assembly"
+   },
+   "lead_days": 129,
+   "needs_person": true
+  },
+  {
+   "model": "4M012",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:22200",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2022-08-15",
+    "title": "4moms Recalls More than 2 Million MamaRoo and RockaRoo Infant Swings and Rockers Due to Entanglement and Strangulation Hazards; One Death Reported",
+    "url": "https://www.cpsc.gov/Recalls/2022/4moms-Recalls-More-than-2-Million-MamaRoo-and-RockaRoo-Infant-Swings-and-Rockers-Due-to-Entanglement-and-Strangulation-Hazards-One-Death-Reported"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1103702",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2022-11-16",
+    "title": "4moms mamaRoo Multi-motion Baby Swing and rockaRoo Baby Rocker",
+    "url": "https://www.productsafety.gov.au/search-consumer-product-recalls/4moms-mamaroo-multi-motion-baby-swing-and-rockaroo-baby-rocker"
+   },
+   "lead_days": 93,
+   "needs_person": true
+  },
+  {
+   "model": "SHL96",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23213",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-06-01",
+    "title": "Empower Brands Recalls Power XL Self-Cleaning Juicers Due to Laceration and Ingestion Hazards",
+    "url": "https://www.cpsc.gov/Recalls/2023/Empower-Brands-Recalls-Power-XL-Self-Cleaning-Juicers-Due-to-Laceration-and-Ingestion-Hazards"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1108476",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2023-08-17",
+    "title": "PowerXL model SHL96 Self-Cleaning Juicer",
+    "url": "https://www.productsafety.gov.au/recalls/powerxl-model-shl96-self-cleaning-juicer"
+   },
+   "lead_days": 77,
+   "needs_person": true
+  },
+  {
+   "model": "ESWM03",
+   "tier": "exact",
+   "status": "potential_cross_border_match",
+   "first": {
+    "record_id": "cpsc:23205",
+    "country": "US",
+    "authority": "CPSC",
+    "date": "2023-05-18",
+    "title": "Empower Brands Recalls PowerXL Stuffed Wafflizer Waffle Makers Due to Burn Hazard",
+    "url": "https://www.cpsc.gov/Recalls/2023/Empower-Brands-Recalls-PowerXL-Stuffed-Wafflizer-Waffle-Makers-Due-to-Burn-Hazard"
+   },
+   "later": {
+    "record_id": "oecd:AU:PS1108183",
+    "country": "AU",
+    "authority": "ACCC",
+    "date": "2023-07-25",
+    "title": "PowerXL Model ESWM02 (5 inch) and Model ESWM03 (7 inch) Stuffed Wafflizer waffle makers",
+    "url": "https://www.productsafety.gov.au/recalls/powerxl-model-eswm02-5-inch-and-model-eswm03-7-inch-stuffed-wafflizer-waffle-makers"
+   },
+   "lead_days": 68,
+   "needs_person": true
+  }
+ ],
+ "total": 19,
+ "note": "Same model code in notices from two countries; tier exact = same company named. Each needs a person to check."
+}

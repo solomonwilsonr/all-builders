@@ -1,0 +1,12 @@
+{
+ "runs": [
+  {
+   "run_id": "crossborder-2026-10-16",
+   "benchmark": "crossborder",
+   "created_at": "2026-10-16T19:00:00Z",
+   "policy_version": "2026-10-16.1",
+   "summary": "19 candidate pairs, 18 same company; all awaiting a person's check",
+   "path": "bench/runs/crossborder-2026-10-16.json"
+  }
+ ]
+}

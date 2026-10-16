@@ -16,10 +16,9 @@ from engine.sources.base import (
 MULTI = {"oecd_globalrecalls": ["AU", "JP", "KR", "SG", "TW", "MY", "ID", "TH", "PH", "VN"],
          "stored_notices": ["US", "AU", "JP", "KR", "SG", "TW", "MY", "ID", "TH", "PH", "VN", "IN"],
          "manufacturer": []}
-STALE_NOTES = {"oecd_globalrecalls": {"SG": "Singapore notices in this feed stop in 2022",
-                                      "MY": "ASEAN notices in this feed stop in 2022", "ID": "ASEAN notices stop in 2022",
-                                      "TH": "ASEAN notices stop in 2022", "PH": "ASEAN notices stop in 2022",
-                                      "VN": "ASEAN notices stop in 2022"}}
+ASEAN_STALE = "ASEAN notices in this feed stop in 2022"
+STALE_NOTES = {"oecd_globalrecalls": {"SG": "Singapore notices in this feed stop in 2022", "MY": ASEAN_STALE,
+                                      "ID": ASEAN_STALE, "TH": ASEAN_STALE, "PH": ASEAN_STALE, "VN": ASEAN_STALE}}
 COUNTRY_NOTES = {"IN": "India has no public recall database: CCPA recall orders, safety notices and BIS raids are "
                        "checked instead, and BIS certificates can only be verified by hand.",
                  "NZ": "New Zealand recalls are not in any open feed; searched in a browser on deep checks only.",

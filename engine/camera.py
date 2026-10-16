@@ -66,7 +66,7 @@ def read_label(image: str | bytes) -> dict:
     result = gemini.structured([types.Part.from_bytes(data=data, mime_type=mime), PROMPT], SCHEMA,
                                models=["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.5-flash-lite"])
     fields = {k: scrub(result.get(k)) for k in SCHEMA["properties"] if result.get(k) not in (None, "", [])}
-    text = " ".join(str(v) for v in fields.values() if isinstance(v, str)) + " " + " ".join(fields.get("mark_numbers", []))
+    text = " ".join([*(str(v) for v in fields.values() if isinstance(v, str)), *fields.get("mark_numbers", [])])
     return {
         "image_sha256": hashlib.sha256(data).hexdigest(),
         "image_stored": False,

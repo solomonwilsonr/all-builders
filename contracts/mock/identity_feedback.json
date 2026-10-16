@@ -1,0 +1,16 @@
+{
+ "pair_id": "SS-P-10291|SS-P-30118",
+ "label": "distinct",
+ "annotators": 1,
+ "annotators_agree": true,
+ "edge": {
+  "relationship": "distinct_product",
+  "status": "verified"
+ },
+ "versions": [
+  2,
+  1
+ ],
+ "identity_policy_version": "2026-10-16.1",
+ "note": null
+}

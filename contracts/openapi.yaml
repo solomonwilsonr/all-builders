@@ -341,6 +341,312 @@ paths:
       responses:
         '200': {description: Bench results, content: {application/json: {schema: {type: object, required: [tasks]}}}}
 
+  # ---- plan v2.2: live investigations, sources, watchlists, review, enterprise -------------------------------------
+
+  /v1/investigations:
+    post:
+      summary: Investigate any product (seen before or not) against live official sources; deep = durable job
+      description: |
+        Market from the shop URL, currency or `market`. Identity is read-only. Official sources for that market and
+        global upstream sources are queried in parallel; every record is checked for source authenticity, claim
+        support, exact model / variant / batch scope and country; copies count once; the outcome is set by code:
+        confirmed_recall | substantiated_hazard_signal | potential_concern | no_matching_notice_found |
+        insufficient_evidence. `coverage` says country by country what was checked, how and when.
+        With `depth: deep` the answer is a job ({status: queued}); poll GET /v1/investigations/{id}.
+        Send `Idempotency-Key` to make a retry safe.
+      operationId: createInvestigation
+      x-mock: investigation.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/InvestigationInput'}
+      responses:
+        '200': {description: Investigation (or a queued job), content: {application/json: {schema: {$ref: '#/components/schemas/Investigation'}}}}
+
+  /v1/investigations/{investigation_id}:
+    get:
+      summary: An investigation's answer, or its job status while it runs
+      operationId: getInvestigation
+      x-mock: investigation.json
+      parameters:
+        - {name: investigation_id, in: path, required: true, schema: {type: string, example: INV-1A2B3C4D}}
+      responses:
+        '200': {description: Investigation, content: {application/json: {schema: {$ref: '#/components/schemas/Investigation'}}}}
+
+  /v1/investigations/{investigation_id}/sources:
+    get:
+      summary: The sources an investigation checked, the records it matched and its claim passport
+      operationId: getInvestigationSources
+      x-mock: investigation_sources.json
+      parameters:
+        - {name: investigation_id, in: path, required: true, schema: {type: string, example: INV-1A2B3C4D}}
+      responses:
+        '200': {description: Sources, coverage and claims, content: {application/json: {schema: {type: object, required: [investigation_id]}}}}
+
+  /v1/sources/health:
+    get:
+      summary: Public, redacted status of every official source (enabled, why not, last outcome, circuit)
+      operationId: getSourcesHealth
+      x-mock: sources_health.json
+      responses:
+        '200': {description: Source health, content: {application/json: {schema: {type: object, required: [sources]}}}}
+
+  /v1/products/{product_id}/recheck:
+    post:
+      summary: Re-investigate a stored product now against live sources (new snapshot)
+      operationId: recheckProduct
+      x-mock: investigation.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Investigation, content: {application/json: {schema: {$ref: '#/components/schemas/Investigation'}}}}
+
+  /v1/products/{product_id}/timeline:
+    get:
+      summary: The product's evidence timeline (identity versions, notices, hazard signals, checks, assessments)
+      operationId: getTimeline
+      x-mock: timeline.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Timeline, content: {application/json: {schema: {type: object, required: [product_id, events]}}}}
+
+  /v1/products/{product_id}/supply-chain:
+    get:
+      summary: Manufacturer, importer, distributor and retailer edges, each cited to an official record
+      operationId: getSupplyChain
+      x-mock: supply_chain.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Supply-chain edges, content: {application/json: {schema: {type: object, required: [product_id, edges]}}}}
+
+  /v1/products/{product_id}/cross-border:
+    get:
+      summary: Foreign notices naming this product's exact model (signals for its own market, never a local recall)
+      operationId: getCrossBorder
+      x-mock: cross_border.json
+      parameters: [{$ref: '#/components/parameters/ProductId'}]
+      responses:
+        '200': {description: Cross-border matches, content: {application/json: {schema: {type: object, required: [product_id, matches]}}}}
+
+  /v1/camera/label:
+    post:
+      summary: Read a label photo (brand, model, batch, marks, visible damage) for the shopper to confirm
+      description: The photo is not stored (only its hash). Names, addresses and phone numbers are removed.
+      operationId: readLabel
+      x-mock: camera_label.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image: {type: string, description: 'data:image/...;base64,...'}
+      responses:
+        '200': {description: What the label shows, to confirm, content: {application/json: {schema: {type: object, required: [read, needs_confirmation]}}}}
+
+  /v1/watchlists:
+    post:
+      summary: Save a product to the shopper's watchlist (rechecked; alerts only for this model and batch)
+      operationId: createWatchlist
+      x-mock: watchlist.json
+      parameters:
+        - {name: X-Owner-Ref, in: header, required: true, schema: {type: string}, description: The screen's user id; stored only as a hash}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id: {type: string}
+                brand: {type: string}
+                model: {type: string}
+                batch: {type: string}
+                market: {type: string, example: IN}
+                notify: {type: boolean, default: true}
+      responses:
+        '200': {description: Saved, content: {application/json: {schema: {type: object, required: [watchlist_id]}}}}
+    get:
+      summary: The shopper's saved products and their latest outcome
+      operationId: listWatchlists
+      x-mock: watchlists.json
+      parameters:
+        - {name: X-Owner-Ref, in: header, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Saved products, content: {application/json: {schema: {type: object, required: [items]}}}}
+
+  /v1/watchlists/{watchlist_id}:
+    delete:
+      summary: Remove a saved product (its details are deleted, not just hidden)
+      operationId: deleteWatchlist
+      x-mock: watchlist_deleted.json
+      parameters:
+        - {name: watchlist_id, in: path, required: true, schema: {type: string}}
+        - {name: X-Owner-Ref, in: header, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Deleted, content: {application/json: {schema: {type: object, required: [deleted]}}}}
+
+  /v1/watchlists/recheck:
+    post:
+      summary: Re-investigate saved products and raise deduplicated alerts (scheduler; internal key)
+      operationId: recheckWatchlists
+      x-mock: watchlist_recheck.json
+      responses:
+        '200': {description: Recheck summary, content: {application/json: {schema: {type: object, required: [checked, alerts]}}}}
+
+  /v1/identity/feedback:
+    post:
+      summary: A reviewer labels a product pair (joins the identity gold set; decisive labels write adjudicated edges)
+      operationId: identityFeedback
+      x-mock: identity_feedback.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [source_id, target_id, label, rationale]
+              properties:
+                source_id: {type: string}
+                target_id: {type: string}
+                label: {type: string, enum: [exact, rebrand, regional_variant, lookalike, counterfeit_suspect, distinct, unresolvable]}
+                rationale: {type: string}
+                market: {type: string}
+      responses:
+        '200': {description: Label stored, content: {application/json: {schema: {type: object, required: [pair_id, label]}}}}
+
+  /v1/reports/{report_id}/review:
+    post:
+      summary: A reviewer substantiates, rejects or marks inconclusive a shopper's report (reviewer key)
+      operationId: reviewReport
+      x-mock: report_review.json
+      parameters:
+        - {name: report_id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReviewDecisionInput'}
+      responses:
+        '200': {description: Report status, content: {application/json: {schema: {type: object, required: [report_id, status]}}}}
+
+  /v1/reviews/queue:
+    get:
+      summary: Consequential ambiguous findings waiting for a person (reviewer key, tenant-scoped)
+      operationId: getReviewQueue
+      x-mock: review_queue.json
+      parameters:
+        - {name: state, in: query, required: false, schema: {type: string, enum: [open, second_review, decided]}}
+      responses:
+        '200': {description: Queue, content: {application/json: {schema: {type: object, required: [items]}}}}
+
+  /v1/reviews/{case_id}/decisions:
+    post:
+      summary: Approve, correct, reject or escalate a case's queued items (cross-border needs two reviewers)
+      operationId: decideReview
+      x-mock: review_decision.json
+      parameters:
+        - {name: case_id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReviewDecisionInput'}
+      responses:
+        '200': {description: Decisions, content: {application/json: {schema: {type: object, required: [case_id, decided]}}}}
+
+  /v1/cases/{case_id}:
+    get:
+      summary: A safety case's lifecycle, history and pending actions
+      operationId: getCase
+      x-mock: case.json
+      parameters:
+        - {name: case_id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Case, content: {application/json: {schema: {type: object, required: [case_id, lifecycle]}}}}
+
+  /v1/cases/{case_id}/transition:
+    post:
+      summary: Move a case through its lifecycle (reviewer key; every move audited and reversible)
+      operationId: transitionCase
+      x-mock: case.json
+      parameters:
+        - {name: case_id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [to, rationale]
+              properties:
+                to: {type: string, enum: [candidate, triage, investigating, substantiated, unsubstantiated, inconclusive, action_pending, resolved, reopened]}
+                rationale: {type: string}
+                action: {type: string, enum: [prefill_regulator_form, notify_owners, publish_correction]}
+      responses:
+        '200': {description: Case, content: {application/json: {schema: {type: object, required: [case_id]}}}}
+
+  /v1/radar/candidates:
+    get:
+      summary: Products whose hazard signals clear their category baseline (investigation candidates, not defects)
+      operationId: getRadarCandidates
+      x-mock: radar_candidates.json
+      responses:
+        '200': {description: Candidates, content: {application/json: {schema: {type: object, required: [candidates]}}}}
+
+  /v1/cross-border/candidates:
+    get:
+      summary: Notices in two countries naming the same model (earliest notice, lead time; for a person to check)
+      operationId: getCrossBorderCandidates
+      x-mock: cross_border_candidates.json
+      responses:
+        '200': {description: Candidates, content: {application/json: {schema: {type: object, required: [candidates]}}}}
+
+  /v1/developer/usage:
+    get:
+      summary: This tenant's API usage (developer key)
+      operationId: getDeveloperUsage
+      x-mock: developer_usage.json
+      responses:
+        '200': {description: Usage, content: {application/json: {schema: {type: object, required: [tenant_id, operations]}}}}
+
+  /v1/webhooks:
+    post:
+      summary: Register a signed webhook (https, public host; HMAC-SHA256 signature; secret shown once)
+      operationId: createWebhook
+      x-mock: webhook.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, events]
+              properties:
+                url: {type: string, example: 'https://partner.example/safeshelf'}
+                events: {type: array, items: {type: string, enum: [investigation.complete, watchlist.alert, review.decided, case.updated]}}
+      responses:
+        '200': {description: Webhook, content: {application/json: {schema: {type: object, required: [webhook_id]}}}}
+
+  /v1/bench/runs:
+    get:
+      summary: Every versioned benchmark run (identity, historical, cross-border, evidence, prospective)
+      operationId: getBenchRuns
+      x-mock: bench_runs.json
+      responses:
+        '200': {description: Runs, content: {application/json: {schema: {type: object, required: [runs]}}}}
+
+  /v1/bench/evidence:
+    get:
+      summary: Evidence-quality metrics from the verification benchmark (with sample sizes and intervals)
+      operationId: getBenchEvidence
+      x-mock: bench_evidence.json
+      responses:
+        '200': {description: Evidence metrics, content: {application/json: {schema: {type: object, required: [metrics]}}}}
+
+
 components:
   securitySchemes:
     apiKey: {type: apiKey, in: header, name: X-API-Key}
@@ -403,8 +709,10 @@ components:
 
     RelationshipClass:
       type: string
-      enum: [exact_model, rebranded_equivalent, model_variant, visually_similar, shared_component]
-      description: Only exact_model inherits a recall; rebranded_equivalent only after human verification.
+      enum: [exact_model, rebranded_equivalent, model_variant, visually_similar, shared_component, regional_variant,
+             unverified_rebrand, distinct_product]
+      description: Only exact_model inherits a recall; rebranded_equivalent only after human verification;
+        distinct_product is a reviewed negative edge (never the same product).
 
     Identity:
       type: object
@@ -476,6 +784,15 @@ components:
               counterevidence: {type: string}
         certifications: {type: array, items: {$ref: '#/components/schemas/CertificationCheck'}}
         label: {type: string}
+        outcome: {$ref: '#/components/schemas/Outcome'}
+        headline: {type: string}
+        safety_concern: {type: object, properties: {level: {type: string, enum: [high, medium, low, none, unknown]}, text: {type: string}}}
+        evidence_strength: {type: string, enum: [strong, moderate, weak, none]}
+        identity_confidence: {type: string, enum: [exact, variant, suspected_rebrand, family_named, lookalike, unresolved, none]}
+        coverage: {$ref: '#/components/schemas/Coverage'}
+        limitations: {type: array, items: {type: string}}
+        as_of: {type: string, format: date-time}
+        policy_version: {type: string}
 
     CertificationCheck:
       type: object
@@ -532,3 +849,110 @@ components:
         summary: {type: string, description: 'Always "Be careful: ..." with reasons; never "scam"'}
         safety_of_genuine_model: {type: string}
         label: {type: string}
+
+    Outcome:
+      type: string
+      enum: [confirmed_recall, substantiated_hazard_signal, potential_concern, no_matching_notice_found, insufficient_evidence]
+      description: Set by code (engine/evidence_verification/adjudicator.py). A foreign recall is never confirmed_recall;
+        no_matching_notice_found is not proof of safety.
+
+    Coverage:
+      type: object
+      description: Country by country, what was checked (checked_live, checked_cache, no_matching_notice_found,
+        source_unavailable, not_supported), when, and how fresh.
+      properties:
+        summary: {type: string}
+        countries:
+          type: array
+          items:
+            type: object
+            required: [country, state]
+            properties:
+              country: {type: string, example: IN}
+              name: {type: string}
+              is_market: {type: boolean}
+              state: {type: string, enum: [checked_live, checked_cache, no_matching_notice_found, source_unavailable, not_supported]}
+              checked_at: {type: [string, 'null']}
+              matched: {type: integer}
+              sources: {type: array, items: {type: object}}
+              notes: {type: array, items: {type: string}}
+        sources: {type: array, items: {type: object}}
+
+    InvestigationInput:
+      type: object
+      description: At least a url, title, brand, model, gtin or product_id.
+      properties:
+        url: {type: string}
+        title: {type: string}
+        brand: {type: string}
+        model: {type: string}
+        gtin: {type: string}
+        batch: {type: string, description: serial, lot or date code}
+        product_id: {type: string}
+        market: {type: string, description: 'ISO 3166-1 alpha-2 (IN, JP, AU, SG...); else from the URL or currency'}
+        currency: {type: string}
+        depth: {type: string, enum: [quick, deep], default: quick}
+        reviews: {type: array, items: {type: object}, description: the page's reviews, for an unknown product}
+        as_of: {type: string, format: date, description: historical replay - nothing published later is used}
+
+    Investigation:
+      type: object
+      required: [investigation_id, status]
+      properties:
+        investigation_id: {type: string}
+        status: {type: string, enum: [queued, running, complete, failed]}
+        job_status: {type: string}
+        market: {type: [string, 'null']}
+        product: {type: object}
+        outcome: {$ref: '#/components/schemas/Outcome'}
+        basis: {type: string}
+        headline: {type: string}
+        colour: {type: string, enum: [red, amber, green, unknown]}
+        safety_concern: {type: object}
+        evidence_strength: {type: string}
+        identity_confidence: {type: string}
+        coverage: {$ref: '#/components/schemas/Coverage'}
+        matches: {type: array, items: {type: object}}
+        claims: {type: array, items: {$ref: '#/components/schemas/EvidenceClaim'}}
+        contradictions: {type: array, items: {type: object}}
+        hazards: {type: array, items: {type: object}}
+        what_would_change: {type: array, items: {type: object}}
+        limitations: {type: array, items: {type: string}}
+        review_required: {type: boolean}
+        source_mode: {type: string, enum: [live, cache, partial, none, mock]}
+        retrieved_at: {type: string}
+        policy_version: {type: string}
+        snapshot_id: {type: [string, 'null']}
+
+    EvidenceClaim:
+      type: object
+      description: The claim-level evidence passport (engine/evidence_verification/claims.py).
+      required: [claim_id, claim_type, claim_text, source_registry_id, source_record_id]
+      properties:
+        claim_id: {type: string}
+        claim_type: {type: string}
+        claim_text: {type: string}
+        source_registry_id: {type: string}
+        source_record_id: {type: string}
+        source_url: {type: string}
+        source_excerpt: {type: string}
+        source_language: {type: string}
+        event_at: {type: [string, 'null']}
+        source_published_at: {type: [string, 'null']}
+        source_updated_at: {type: [string, 'null']}
+        retrieved_at: {type: [string, 'null']}
+        source_authenticity_status: {type: string}
+        claim_support_status: {type: string}
+        product_match_tier: {type: string}
+        identity_scope_status: {type: string}
+        verification_status: {type: string}
+        review_status: {type: string}
+
+    ReviewDecisionInput:
+      type: object
+      required: [decision, rationale]
+      properties:
+        decision: {type: string, enum: [approve, correct, reject, escalate]}
+        rationale: {type: string}
+        correction: {type: object}
+        queue_id: {type: string}

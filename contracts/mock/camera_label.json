@@ -1,0 +1,23 @@
+{
+ "image_sha256": "3f1c0d9a5b6e4c2f8a7d1e0b9c8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a",
+ "image_stored": false,
+ "read": {
+  "is_product_label": true,
+  "brand": "HAIARA",
+  "model": "W5PRO",
+  "batch": "2503",
+  "marks": [
+   "PSE"
+  ],
+  "ratings": "5V 3A",
+  "visible_damage": false,
+  "damage_kind": "none",
+  "language": "ja"
+ },
+ "local_identifiers": {
+  "pse_claimed": true
+ },
+ "model_version": "gemini-3.5-flash",
+ "needs_confirmation": true,
+ "note": "Check these against the label, correct anything wrong, then confirm. A photo of the outside can't show whether the inside is electrically safe."
+}

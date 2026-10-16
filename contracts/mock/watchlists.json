@@ -1,0 +1,17 @@
+{
+ "items": [
+  {
+   "watchlist_id": "WL-7C1E2A90",
+   "product_id": null,
+   "query": {
+    "brand": "NEWDERY",
+    "model": "ZHX-PB22",
+    "market": "IN"
+   },
+   "last_outcome": "potential_concern",
+   "last_snapshot_id": "AS-0F7027F9",
+   "notify": true,
+   "created_at": "2026-10-16T18:20:00+00:00"
+  }
+ ]
+}

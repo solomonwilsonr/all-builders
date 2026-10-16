@@ -145,6 +145,47 @@ def history(product_id: str) -> dict:
     return {"product_id": product_id, "events": events, "recalls": _recalls(product_id)}
 
 
+def timeline(product_id: str) -> dict:
+    """The product's evidence timeline (plan v2.2 "digital twin"): fingerprint versions, relationship decisions,
+    hazard signals, recall notices by their publication date, certification checks and every stored assessment, in
+    order. Assembled from versioned records; not real-time telemetry from the physical product."""
+    base = history(product_id)
+    events = [{**e, "kind": e["change_type"]} for e in base["events"]]
+    conn = store.conn()
+    for r in base["recalls"]:
+        if r.get("notice_date"):
+            events.append({"at": f"{r['notice_date']}T00:00:00Z", "kind": "recall_notice_published",
+                           "summary": f"{r['authority']} published {r['recall_id']}: {r['title'][:120]}",
+                           "record_id": r["recall_id"], "url": r.get("url")})
+    for row in conn.execute("SELECT version FROM product_fingerprints WHERE product_id = %s AND version > 1",
+                            (product_id,)).fetchall():
+        events.append({"at": None, "kind": "fingerprint_revised",
+                       "summary": f"Identity fingerprint version {row['version']}"})
+    optional = {
+        "assessment": ("SELECT id, outcome, policy_version, source_mode, created_at FROM assessment_snapshots "
+                       "WHERE product_id = %s ORDER BY created_at"),
+        "certification": ("SELECT authority, number, status, source, checked_at FROM certification_checks "
+                          "WHERE product_id = %s ORDER BY checked_at"),
+    }
+    for kind, sql in optional.items():
+        try:  # tables from `make migrate`; older databases simply have none of these events
+            rows = conn.execute(sql, (product_id,)).fetchall()
+        except Exception:  # noqa: BLE001
+            rows = []
+        for row in rows:
+            if kind == "assessment":
+                events.append({"at": row["created_at"].isoformat(), "kind": "assessment",
+                               "summary": f"Assessed: {row['outcome'].replace('_', ' ')} ({row['source_mode']}, policy "
+                                          f"{row['policy_version']})", "snapshot_id": row["id"]})
+            else:
+                status = row["status"].replace("_", " ")
+                events.append({"at": row["checked_at"].isoformat(), "kind": "certification_check",
+                               "summary": f"{row['authority']} {row['number'] or ''}: {status} ({row['source']})"})
+    events.sort(key=lambda e: e["at"] or "")
+    return {"product_id": product_id, "events": events,
+            "note": "Built from SafeShelf's versioned records; dates of notices are their publication dates."}
+
+
 # ---------- safer alternatives ----------
 
 def hazard_reports(product_id: str) -> tuple[int, int]:

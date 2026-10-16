@@ -42,8 +42,10 @@ def now() -> datetime:
 
 
 def payload_hash(payload) -> str:
-    body = payload if isinstance(payload, (bytes, str)) else json.dumps(payload, sort_keys=True, ensure_ascii=False,
-                                                                         default=str)
+    if isinstance(payload, (bytes, str)):
+        body = payload
+    else:
+        body = json.dumps(payload, sort_keys=True, ensure_ascii=False, default=str)
     return hashlib.sha256(body.encode() if isinstance(body, str) else body).hexdigest()
 
 

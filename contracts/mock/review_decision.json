@@ -1,0 +1,12 @@
+{
+ "case_id": "INV-0F7027F9",
+ "decided": [
+  {
+   "queue_id": "RQ-1B2C3D4E",
+   "kind": "cross_border",
+   "decision": "approve",
+   "state": "second_review",
+   "needs_second_reviewer": true
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "metrics": {
+  "cases": 24,
+  "unsupported_confirmation_rate": 0.0,
+  "lookalike_propagation": 0,
+  "copied_report_inflation": 0,
+  "contradiction_recall": 1.0,
+  "appropriate_abstention": 1.0
+ },
+ "note": "Synthetic red-team fixtures (bench/fixtures/evidence/), not a real-world accuracy estimate.",
+ "run_id": "evidence-2026-10-16"
+}

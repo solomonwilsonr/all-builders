@@ -65,7 +65,7 @@ async def run_one(source_id: str, query: SourceQuery) -> SourceResult:
                             detail="SafeShelf's own rate limit for this source was reached; try again shortly")
     adapter = registry.adapter(source_id)
     started = time.monotonic()
-    timeout = float(entry.get("timeout_s") or 8) * 2.5  # the adapter's own timeout covers one request; a search makes a few
+    timeout = float(entry.get("timeout_s") or 8) * 2.5  # the adapter's timeout is per request; a search makes a few
     try:
         records = await asyncio.wait_for(adapter.search(query), timeout=timeout)
         result = SourceResult(source=source_id, status=OK, records=records, query_key=qkey,
@@ -76,7 +76,8 @@ async def run_one(source_id: str, query: SourceQuery) -> SourceResult:
         result.freshness = (max(v for v in fresh.values() if v) if isinstance(fresh, dict) and any(fresh.values())
                             else max(dates).date().isoformat() if dates else None)
     except TimeoutError:
-        result = SourceResult(source=source_id, status=TIMEOUT, query_key=qkey, detail=f"no answer within {timeout:g} s")
+        result = SourceResult(source=source_id, status=TIMEOUT, query_key=qkey,
+                              detail=f"no answer within {timeout:g} s")
     except SourceFailure as failure:
         result = SourceResult(source=source_id, status=failure.status, query_key=qkey, detail=failure.detail)
     except Exception as error:  # noqa: BLE001  an adapter bug is a failed source, not a failed investigation

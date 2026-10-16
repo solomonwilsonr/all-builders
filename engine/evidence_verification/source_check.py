@@ -18,8 +18,12 @@ AUTHORITY_DOMAINS = {
     "OECD": ["oecd.org"], "EU Safety Gate": ["ec.europa.eu"],
 }
 # OECD stores the notice link of the national regulator; ASEAN members' regulators publish on their own domains.
+OECD_AUTHORITIES = ("ACCC", "CAA", "KATS", "CPSO", "BSMI", "ASEAN")
 OECD_EXTRA = ["oecd.org", "productsafety.gov.au", "recalls.gov.au", "caa.go.jp", "go.kr", "gov.sg", "gov.tw",
               "go.id", "gov.my", "go.th", "gov.ph", "gov.vn", "asean.org"]
+
+
+BROWSED = ("research_fallback", "eu_safety_gate", "nz_product_safety")  # found by the browsing agent: a lead
 
 
 def official_domains(source_id: str, authority: str | None) -> list[str]:
@@ -28,9 +32,7 @@ def official_domains(source_id: str, authority: str | None) -> list[str]:
     except KeyError:
         domains = []
     domains += AUTHORITY_DOMAINS.get(authority or "", [])
-    if source_id in ("oecd_globalrecalls", "stored_notices") and (authority in ("ACCC", "CAA", "KATS", "CPSO", "BSMI",
-                                                                                "ASEAN") or source_id ==
-                                                                   "oecd_globalrecalls"):
+    if source_id == "oecd_globalrecalls" or (source_id == "stored_notices" and authority in OECD_AUTHORITIES):
         domains += OECD_EXTRA
     return list(dict.fromkeys(d.removeprefix("www.") for d in domains))
 
@@ -45,8 +47,7 @@ def authenticity(record: dict) -> tuple[str, str]:
     ok, why = policy.allowed_url(url, official_domains(record.get("source", ""), record.get("authority")))
     if not ok:
         return "unofficial_domain", why
-    if record.get("mode") == "live" and record.get("source") not in ("research_fallback", "eu_safety_gate",
-                                                                    "nz_product_safety"):
+    if record.get("mode") == "live" and record.get("source") not in BROWSED:
         return "authentic", "read live from the official source by SafeShelf"
     return "official_domain", "official link and record ID; read from the stored copy or by browsing"
 

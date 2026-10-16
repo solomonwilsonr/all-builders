@@ -11,6 +11,7 @@ import re
 
 from engine import gemini, store
 from engine.normalize import norm_brand, norm_model
+from engine.sources import normalizer
 
 MODELS_SCHEMA = {
     "type": "object",
@@ -44,6 +45,11 @@ def notice_models(recall: dict) -> set[str]:
     models.discard("")
     if models:
         return models
+    # "This recall involves ... with model number ZHX-PB22": read by code before asking Gemini (plan v2.2)
+    written = {norm_model(m) for m in normalizer.models_in(recall["scope_json"].get("Description") or "")}
+    written = {m for m in written if len(m) >= 3}
+    if written:
+        return written | caption_models(recall["scope_json"])
     return caption_models(recall["scope_json"]) | description_models(recall, products)
 
 

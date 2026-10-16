@@ -1,0 +1,15 @@
+{
+ "tenant_id": "TN-1A2B3C4D",
+ "days": 30,
+ "operations": [
+  {
+   "operation": "createInvestigation",
+   "calls": 412,
+   "errors": 3,
+   "first_call": "2026-10-01T04:10:00+00:00",
+   "last_call": "2026-10-16T17:58:00+00:00"
+  }
+ ],
+ "total_calls": 412,
+ "note": "Usage of this tenant only. Billing and pricing are separate commercial decisions."
+}

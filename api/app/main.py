@@ -35,7 +35,9 @@ MAX_AGENT_BODY = 9_000_000  # the chat takes a screenshot: 6 MB of image is 8 MB
 RATE_PER_MIN = int(os.environ.get("SAFESHELF_RATE_PER_MIN", "30"))
 DAILY_CAP = int(os.environ.get("SAFESHELF_DAILY_CAP", "3000"))
 # Engine calls that only read the database: browsing the Recall Catalog must not use up the AI-check limit.
-UNMETERED = {"listRecalls", "getRecall"}
+UNMETERED = {"listRecalls", "getRecall", "getSourcesHealth", "getInvestigation", "getInvestigationSources",
+             "getRadarCandidates", "getCrossBorderCandidates", "getBenchRuns", "getBenchEvidence", "listWatchlists",
+             "deleteWatchlist", "getReviewQueue", "getCase", "getDeveloperUsage", "getTimeline"}
 
 log = logging.getLogger("safeshelf.api")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -94,7 +96,9 @@ def mock_answer(name: str, path_params: dict[str, Any]) -> Any:
 
 
 def check_key(request: Request) -> None:
-    if API_KEY and request.headers.get("x-api-key") != API_KEY:
+    """With API_KEY set, only that key or a tenant key (ssk_..., checked against its hash by the engine) passes."""
+    key = request.headers.get("x-api-key") or ""
+    if API_KEY and key != API_KEY and not (key.startswith("ssk_") and REAL_HANDLERS):
         raise HTTPException(status_code=401, detail="Missing or wrong X-API-Key")
 
 

@@ -1,26 +1,41 @@
 """Real handlers the API registers (api/app/main.py REAL_HANDLERS) when MOCK=0 and DATABASE_URL is set."""
+import json
+import os
+import secrets
 import time
+from pathlib import Path
 from typing import Any
 
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
 from engine import (
+    camera,
     case_file,
+    cases,
     catalog,
+    crossborder,
     evidence,
     gemini,
+    hazard_discovery,
     identity,
+    investigation,
     marks,
     owner,
     page_safety,
     passport,
     recall_catalog,
+    reviews,
     safety,
+    supply_chain,
+    tenancy,
     trace,
     trust,
+    watch,
+    webhooks,
 )
 from engine.agents import handler as agent_handler
+from engine.sources import health as source_health
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -147,6 +162,264 @@ async def catalog_scan(request: Request, params: dict[str, Any]) -> dict:
         raise HTTPException(status_code=422, detail=str(problem)) from None
 
 
+# --- plan v2.2: live investigations, sources, watchlists, review, enterprise ---------------------------------------
+
+BENCH = Path(__file__).resolve().parents[1] / "bench"
+INVESTIGATION_FIELDS = ("url", "title", "brand", "model", "gtin", "batch", "product_id", "market", "currency", "depth",
+                        "reviews", "as_of", "page_text", "category", "local_identifiers")
+
+
+def who(request: Request) -> tenancy.Caller:
+    """The caller, resolved once per request by tenant_guard (public when no key)."""
+    return getattr(request.state, "caller", None) or tenancy.Caller()
+
+
+def need(request: Request, scope: str) -> tenancy.Caller:
+    caller = who(request)
+    try:
+        tenancy.require(caller, scope)
+    except PermissionError as problem:
+        raise HTTPException(status_code=403, detail=str(problem)) from None
+    return caller
+
+
+async def body_of(request: Request) -> dict:
+    try:
+        body = await request.json()
+    except ValueError:
+        return {}
+    return body if isinstance(body, dict) else {}
+
+
+def bad_request(fn):
+    """ValueError -> 422 and KeyError -> 404, so engine modules can stay free of HTTP."""
+    async def handler(request: Request, params: dict[str, Any]):
+        try:
+            return await fn(request, params)
+        except ValueError as problem:
+            raise HTTPException(status_code=422, detail=str(problem)) from None
+        except KeyError as missing:
+            raise HTTPException(status_code=404, detail=f"Not found: {missing}") from None
+        except RuntimeError as problem:  # a feature not configured on this server
+            raise HTTPException(status_code=503, detail=str(problem)) from None
+    return handler
+
+
+@bad_request
+async def create_investigation(request: Request, params: dict[str, Any]) -> dict:
+    body = await body_of(request)
+    if body.get("image"):
+        raise ValueError("send label photos to POST /v1/camera/label first, then investigate the confirmed fields")
+    req = {k: body[k] for k in INVESTIGATION_FIELDS if body.get(k) not in (None, "", [])}
+    if not any(req.get(k) for k in ("url", "title", "brand", "model", "gtin", "product_id")):
+        raise ValueError("Give at least a url, title, brand, model, gtin or product_id")
+    caller = who(request)
+    key = request.headers.get("idempotency-key")
+    stored = await run_in_threadpool(tenancy.idempotent, caller, key, req) if key else None
+    if stored:
+        return stored
+    if req.get("depth") == "deep":
+        answer = await run_in_threadpool(investigation.start, req, caller.tenant_id)
+    else:
+        answer = await run_in_threadpool(investigation.investigate, req, None, caller.tenant_id)
+        await run_in_threadpool(webhooks.emit, caller.tenant_id, "investigation.complete",
+                                {k: answer.get(k) for k in ("investigation_id", "outcome", "headline", "market",
+                                                            "product", "snapshot_id")})
+    if key:
+        await run_in_threadpool(tenancy.remember, caller, key, req, answer)
+    return answer
+
+
+@bad_request
+async def get_investigation(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(investigation.get, params["investigation_id"], who(request).tenant_id)
+
+
+@bad_request
+async def get_investigation_sources(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(investigation.sources, params["investigation_id"], who(request).tenant_id)
+
+
+async def get_sources_health(request: Request, params: dict[str, Any]) -> dict:
+    return source_health.report()
+
+
+@bad_request
+async def recheck_product(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(investigation.investigate, {"product_id": params["product_id"]}, None,
+                                   who(request).tenant_id)
+
+
+@bad_request
+async def read_label(request: Request, params: dict[str, Any]) -> dict:
+    body = await body_of(request)
+    return await run_in_threadpool(camera.read_label, body.get("image") or "")
+
+
+def owner_caller(request: Request) -> tenancy.Caller:
+    caller = who(request)
+    if not caller.owner_ref:
+        raise HTTPException(status_code=422, detail="Send X-Owner-Ref (the screen's user id; only a hash is kept)")
+    return caller
+
+
+@bad_request
+async def create_watchlist(request: Request, params: dict[str, Any]) -> dict:
+    caller = owner_caller(request)
+    return await run_in_threadpool(watch.create, caller.tenant_id, caller.owner_ref, await body_of(request))
+
+
+@bad_request
+async def list_watchlists(request: Request, params: dict[str, Any]) -> dict:
+    caller = owner_caller(request)
+    out = await run_in_threadpool(watch.items, caller.tenant_id, caller.owner_ref)
+    out["notifications"] = await run_in_threadpool(watch.notifications, caller.tenant_id, caller.owner_ref)
+    return out
+
+
+@bad_request
+async def delete_watchlist(request: Request, params: dict[str, Any]) -> dict:
+    caller = owner_caller(request)
+    return await run_in_threadpool(watch.delete, caller.tenant_id, caller.owner_ref, params["watchlist_id"])
+
+
+@bad_request
+async def recheck_watchlists(request: Request, params: dict[str, Any]) -> dict:
+    body = await body_of(request)
+    token = os.environ.get("SAFESHELF_RECHECK_TOKEN")
+    if not (who(request).is_admin or (token and secrets.compare_digest(str(body.get("token") or ""), token))):
+        raise HTTPException(status_code=403, detail="Needs the internal key or the re-check token")
+    return await run_in_threadpool(watch.recheck, max(1, min(int(body.get("limit") or 20), 100)))
+
+
+@bad_request
+async def identity_feedback(request: Request, params: dict[str, Any]) -> dict:
+    caller = need(request, "reviewer")
+    body = await body_of(request)
+    return await run_in_threadpool(identity.feedback, body.get("source_id") or "", body.get("target_id") or "",
+                                   body.get("label") or "", reviewer_ref(request, caller), body.get("rationale") or "",
+                                   body.get("market"))
+
+
+def reviewer_ref(request: Request, caller: tenancy.Caller) -> str:
+    return caller.owner_ref or f"{caller.tenant_id}:reviewer"
+
+
+@bad_request
+async def review_report(request: Request, params: dict[str, Any]) -> dict:
+    caller = need(request, "reviewer")
+    return await run_in_threadpool(reviews.review_report, caller.tenant_id, reviewer_ref(request, caller),
+                                   params["report_id"], await body_of(request))
+
+
+@bad_request
+async def get_review_queue(request: Request, params: dict[str, Any]) -> dict:
+    caller = need(request, "reviewer")
+    return await run_in_threadpool(reviews.queue, caller.tenant_id, request.query_params.get("state") or "open")
+
+
+@bad_request
+async def decide_review(request: Request, params: dict[str, Any]) -> dict:
+    caller = need(request, "reviewer")
+    return await run_in_threadpool(reviews.decide, caller.tenant_id, reviewer_ref(request, caller),
+                                   params["case_id"], await body_of(request))
+
+
+@bad_request
+async def get_case(request: Request, params: dict[str, Any]) -> dict:
+    need(request, "reviewer")
+    return await run_in_threadpool(cases.case, params["case_id"])
+
+
+@bad_request
+async def transition_case(request: Request, params: dict[str, Any]) -> dict:
+    caller = need(request, "reviewer")
+    body = await body_of(request)
+    ref = reviewer_ref(request, caller)
+    out = await run_in_threadpool(cases.transition, params["case_id"], body.get("to") or "", ref,
+                                  body.get("rationale") or "", caller.tenant_id)
+    if body.get("action"):
+        out["action"] = await run_in_threadpool(cases.prepare_action, params["case_id"], body["action"], ref)
+    return out
+
+
+async def radar_candidates(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(hazard_discovery.candidates)
+
+
+async def cross_border_candidates(request: Request, params: dict[str, Any]) -> dict:
+    found = await run_in_threadpool(crossborder.candidates)
+    return {"candidates": found, "total": len(found),
+            "note": "Same model code in notices from two countries; tier exact = same company named. Each needs a "
+                    "person to check before it is used as a finding."}
+
+
+@bad_request
+async def product_cross_border(request: Request, params: dict[str, Any]) -> dict:
+    matches = await run_in_threadpool(crossborder.for_product, params["product_id"])
+    return {"product_id": params["product_id"], "matches": matches,
+            "note": "A foreign notice is a signal for this market, never a local confirmed recall."}
+
+
+@bad_request
+async def developer_usage(request: Request, params: dict[str, Any]) -> dict:
+    caller = need(request, "developer")
+    return await run_in_threadpool(tenancy.usage, caller)
+
+
+@bad_request
+async def create_webhook(request: Request, params: dict[str, Any]) -> dict:
+    caller = need(request, "developer")
+    body = await body_of(request)
+    return await run_in_threadpool(webhooks.create, caller.tenant_id, body.get("url") or "", body.get("events") or [])
+
+
+async def bench_runs(request: Request, params: dict[str, Any]) -> dict:
+    runs = []
+    for path in sorted((BENCH / "runs").glob("*.json"), reverse=True):
+        try:
+            run = json.loads(path.read_text())
+        except ValueError:
+            continue
+        runs.append({k: run.get(k) for k in ("run_id", "benchmark", "created_at", "policy_version", "summary")}
+                    | {"path": f"bench/runs/{path.name}"})
+    return {"runs": runs}
+
+
+async def bench_evidence(request: Request, params: dict[str, Any]) -> dict:
+    path = BENCH / "evidence_results.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="No evidence benchmark run yet (make bench-evidence)")
+    return json.loads(path.read_text())
+
+
+def tenant_guard(operation_id: str, handler):
+    """Every engine call: resolve the tenant from X-API-Key (401 for an unknown key), apply the tenant's shared rate
+    limit (Postgres, all instances), and meter the call for that tenant's usage report."""
+    async def wrapper(request: Request, params: dict[str, Any]):
+        try:
+            caller = await run_in_threadpool(tenancy.caller, request.headers)
+        except PermissionError as problem:
+            raise HTTPException(status_code=401, detail=str(problem)) from None
+        except Exception:  # noqa: BLE001  tenancy tables missing: treat as public
+            caller = tenancy.Caller(owner_ref=tenancy.owner_hash(request.headers.get("x-owner-ref")))
+        request.state.caller = caller
+        if caller.tenant_id != tenancy.PUBLIC:
+            reason = await run_in_threadpool(tenancy.allow, caller, operation_id)
+            if reason:
+                raise HTTPException(status_code=429, detail=reason, headers={"Retry-After": "60"})
+        status = 200
+        try:
+            return await handler(request, params)
+        except HTTPException as problem:
+            status = problem.status_code
+            raise
+        finally:
+            if caller.tenant_id != tenancy.PUBLIC:
+                await run_in_threadpool(tenancy.meter, caller, operation_id, status)
+    return wrapper
+
+
 HANDLERS = {
     "identifyProduct": identify_product,
     "findDuplicates": find_duplicates,
@@ -167,6 +440,31 @@ HANDLERS = {
     "catalogScan": catalog_scan,
     "listRecalls": list_recalls,
     "getRecall": get_recall,
+    "createInvestigation": create_investigation,
+    "getInvestigation": get_investigation,
+    "getInvestigationSources": get_investigation_sources,
+    "getSourcesHealth": get_sources_health,
+    "recheckProduct": recheck_product,
+    "getTimeline": by_product(passport.timeline),
+    "getSupplyChain": by_product(supply_chain.build),
+    "getCrossBorder": product_cross_border,
+    "readLabel": read_label,
+    "createWatchlist": create_watchlist,
+    "listWatchlists": list_watchlists,
+    "deleteWatchlist": delete_watchlist,
+    "recheckWatchlists": recheck_watchlists,
+    "identityFeedback": identity_feedback,
+    "reviewReport": review_report,
+    "getReviewQueue": get_review_queue,
+    "decideReview": decide_review,
+    "getCase": get_case,
+    "transitionCase": transition_case,
+    "getRadarCandidates": radar_candidates,
+    "getCrossBorderCandidates": cross_border_candidates,
+    "getDeveloperUsage": developer_usage,
+    "createWebhook": create_webhook,
+    "getBenchRuns": bench_runs,
+    "getBenchEvidence": bench_evidence,
 }
-HANDLERS = {op: traced(op, handler) for op, handler in HANDLERS.items()}
-HANDLERS["getTrace"] = get_trace
+HANDLERS = {op: tenant_guard(op, traced(op, handler)) for op, handler in HANDLERS.items()}
+HANDLERS["getTrace"] = tenant_guard("getTrace", get_trace)

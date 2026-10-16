@@ -1,0 +1,606 @@
+{
+ "investigation_id": "INV-07730B72",
+ "market": "IN",
+ "coverage": {
+  "sources": [
+   {
+    "mode": "cache",
+    "name": "India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)",
+    "role": "local",
+    "state": "no_matching_notice_found",
+    "detail": "searched the stored copy; no notice matched this product",
+    "source": "india_notices",
+    "matched": 0,
+    "authority": "CCPA / BIS",
+    "freshness": "2026-09-09",
+    "checked_at": "2026-10-16T08:05:44.243804+00:00",
+    "jurisdiction": "IN",
+    "records_returned": 0,
+    "matched_by_country": {}
+   },
+   {
+    "mode": null,
+    "name": "BIS product certification (CRS / ISI licence) verification",
+    "role": "local",
+    "state": "not_supported",
+    "detail": "no automated access exists; a person can check it by hand",
+    "source": "india_bis",
+    "matched": 0,
+    "authority": "BIS",
+    "freshness": null,
+    "checked_at": null,
+    "jurisdiction": "IN",
+    "records_returned": 0,
+    "matched_by_country": {}
+   },
+   {
+    "mode": "live",
+    "name": "U.S. Consumer Product Safety Commission recalls",
+    "role": "global",
+    "state": "checked_live",
+    "detail": "1 notice(s) that may concern this product",
+    "source": "cpsc",
+    "matched": 1,
+    "authority": "CPSC",
+    "freshness": "2026-09-24",
+    "checked_at": "2026-10-16T08:05:44.799726+00:00",
+    "jurisdiction": "US",
+    "records_returned": 1,
+    "matched_by_country": {
+     "US": 1
+    }
+   },
+   {
+    "mode": null,
+    "name": "EU Safety Gate alerts",
+    "role": "global",
+    "state": "not_supported",
+    "detail": "only searchable in a browser, and the Research Agent is not configured here",
+    "source": "eu_safety_gate",
+    "matched": 0,
+    "authority": "EU Safety Gate",
+    "freshness": null,
+    "checked_at": null,
+    "jurisdiction": "EU",
+    "records_returned": 0,
+    "matched_by_country": {}
+   },
+   {
+    "mode": null,
+    "name": "SaferProducts.gov incident reports (OData)",
+    "role": "global",
+    "state": "not_supported",
+    "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up",
+    "source": "saferproducts",
+    "matched": 0,
+    "authority": "CPSC",
+    "freshness": null,
+    "checked_at": null,
+    "jurisdiction": "US",
+    "records_returned": 0,
+    "matched_by_country": {}
+   },
+   {
+    "mode": null,
+    "name": "Manufacturer-authorised recall feeds",
+    "role": "global",
+    "state": "not_supported",
+    "detail": "no automated access exists; a person can check it by hand",
+    "source": "manufacturer",
+    "matched": 0,
+    "authority": "Manufacturer",
+    "freshness": null,
+    "checked_at": null,
+    "jurisdiction": "MULTI",
+    "records_returned": 0,
+    "matched_by_country": {}
+   },
+   {
+    "mode": "cache",
+    "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+    "role": "global",
+    "state": "checked_cache",
+    "detail": "1 notice(s) that may concern this product",
+    "source": "stored_notices",
+    "matched": 1,
+    "authority": "SafeShelf store",
+    "freshness": "2026-10-13",
+    "checked_at": "2026-10-16T08:05:44.259005+00:00",
+    "jurisdiction": "MULTI",
+    "records_returned": 1,
+    "matched_by_country": {
+     "US": 1
+    }
+   }
+  ],
+  "summary": "India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice",
+  "countries": [
+   {
+    "name": "India",
+    "notes": [
+     "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+    ],
+    "state": "no_matching_notice_found",
+    "country": "IN",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "india_notices",
+      "authority": "CCPA / BIS",
+      "freshness": "2026-09-09"
+     },
+     {
+      "mode": null,
+      "state": "not_supported",
+      "source": "india_bis",
+      "authority": "BIS",
+      "freshness": null
+     },
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": true,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "the United States",
+    "notes": [],
+    "state": "checked_live",
+    "country": "US",
+    "matched": 2,
+    "sources": [
+     {
+      "mode": "live",
+      "state": "checked_live",
+      "source": "cpsc",
+      "authority": "CPSC",
+      "freshness": "2026-09-24"
+     },
+     {
+      "mode": null,
+      "state": "not_supported",
+      "source": "saferproducts",
+      "authority": "CPSC",
+      "freshness": null
+     },
+     {
+      "mode": "cache",
+      "state": "checked_cache",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.799726+00:00"
+   },
+   {
+    "name": "Japan",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "JP",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "Australia",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "AU",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "Singapore",
+    "notes": [
+     "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+    ],
+    "state": "no_matching_notice_found",
+    "country": "SG",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "South Korea",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "KR",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "Taiwan",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "TW",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "the European Union",
+    "notes": [],
+    "state": "not_supported",
+    "country": "EU",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": null,
+      "state": "not_supported",
+      "source": "eu_safety_gate",
+      "authority": "EU Safety Gate",
+      "freshness": null
+     }
+    ],
+    "is_market": false,
+    "checked_at": null
+   },
+   {
+    "name": "Indonesia",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "ID",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "Malaysia",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "MY",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "the Philippines",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "PH",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "Thailand",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "TH",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   },
+   {
+    "name": "Vietnam",
+    "notes": [],
+    "state": "no_matching_notice_found",
+    "country": "VN",
+    "matched": 0,
+    "sources": [
+     {
+      "mode": "cache",
+      "state": "no_matching_notice_found",
+      "source": "stored_notices",
+      "authority": "SafeShelf store",
+      "freshness": "2026-10-13"
+     }
+    ],
+    "is_market": false,
+    "checked_at": "2026-10-16T08:05:44.259005+00:00"
+   }
+  ]
+ },
+ "matches": [
+  {
+   "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+   "mode": "live",
+   "tier": "exact",
+   "local": false,
+   "scope": "in_scope",
+   "title": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+   "hazard": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+   "places": {
+    "market_country": "IN",
+    "source_jurisdiction": "US",
+    "manufacturing_country": null,
+    "recall_affected_country": [
+     "US"
+    ]
+   },
+   "remedy": "Consumers should stop using the recalled power banks immediately and contact NEWDERY for instructions on how to receive a full refund. To receive a refund, consumers will be required to submit a photo of their recalled power bank showing the model number, serial number and the word “recalled” and th",
+   "source": "cpsc",
+   "reasons": [
+    "the notice names model ZHX-PB22 and this brand"
+   ],
+   "support": "supported",
+   "excluded": false,
+   "language": "en",
+   "also_from": [
+    "stored_notices"
+   ],
+   "authority": "CPSC",
+   "published": "2026-09-24",
+   "record_id": "cpsc:26792",
+   "retracted": false,
+   "attribution": "Source: U.S. CPSC recalls API",
+   "record_type": "recall_notice",
+   "authenticity": "authentic",
+   "batch_limits": [],
+   "jurisdiction": "US",
+   "models_named": [
+    "ZHX-PB22"
+   ],
+   "retrieved_at": "2026-10-16T08:05:44.799726+00:00",
+   "would_change": [
+    "whether the IN version is the same model and batch (importer, model suffix, local notice)"
+   ],
+   "original_text": null,
+   "authenticity_reason": "read live from the official source by SafeShelf"
+  }
+ ],
+ "claims": [
+  {
+   "model": "ZHX-PB22",
+   "variant": null,
+   "claim_id": "CL-9EBC0E33FB89",
+   "event_at": null,
+   "is_local": false,
+   "claim_text": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+   "claim_type": "recall",
+   "product_id": null,
+   "source_url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+   "attribution": "Source: U.S. CPSC recalls API",
+   "batch_scope": [],
+   "ingested_at": null,
+   "reviewed_at": null,
+   "source_type": "recall_notice",
+   "jurisdiction": "US",
+   "retrieved_at": "2026-10-16T08:05:44.799726Z",
+   "tool_version": "engine.sources/0.2",
+   "model_version": null,
+   "review_status": "pending",
+   "prompt_version": null,
+   "source_excerpt": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+   "source_language": "en",
+   "review_rationale": null,
+   "source_record_id": "cpsc:26792",
+   "extraction_method": "code (engine/sources/normalizer.py)",
+   "license_policy_id": "cpsc",
+   "retraction_reason": null,
+   "source_updated_at": "2026-09-24T00:00:00Z",
+   "product_match_tier": "exact",
+   "source_registry_id": "cpsc",
+   "source_published_at": "2026-09-24T00:00:00Z",
+   "supersedes_claim_id": null,
+   "verification_status": "verified",
+   "claim_support_status": "supported",
+   "raw_artifact_pointer": null,
+   "source_document_hash": "9b7dcd4e26fb24f3bf002cd3404f8bd1bf922d09fd393b1e70772d65509126c1",
+   "identity_scope_status": "in_scope",
+   "independence_group_id": null,
+   "contradicting_claim_ids": [],
+   "source_authenticity_status": "authentic"
+  },
+  {
+   "model": "ZHX-PB22",
+   "variant": null,
+   "claim_id": "CL-6306A7EB1BE0",
+   "event_at": null,
+   "is_local": false,
+   "claim_text": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+   "claim_type": "hazard",
+   "product_id": null,
+   "source_url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+   "attribution": "Source: U.S. CPSC recalls API",
+   "batch_scope": [],
+   "ingested_at": null,
+   "reviewed_at": null,
+   "source_type": "recall_notice",
+   "jurisdiction": "US",
+   "retrieved_at": "2026-10-16T08:05:44.799726Z",
+   "tool_version": "engine.sources/0.2",
+   "model_version": null,
+   "review_status": "pending",
+   "prompt_version": null,
+   "source_excerpt": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+   "source_language": "en",
+   "review_rationale": null,
+   "source_record_id": "cpsc:26792",
+   "extraction_method": "code (engine/sources/normalizer.py)",
+   "license_policy_id": "cpsc",
+   "retraction_reason": null,
+   "source_updated_at": "2026-09-24T00:00:00Z",
+   "product_match_tier": "exact",
+   "source_registry_id": "cpsc",
+   "source_published_at": "2026-09-24T00:00:00Z",
+   "supersedes_claim_id": null,
+   "verification_status": "verified",
+   "claim_support_status": "supported",
+   "raw_artifact_pointer": null,
+   "source_document_hash": "9b7dcd4e26fb24f3bf002cd3404f8bd1bf922d09fd393b1e70772d65509126c1",
+   "identity_scope_status": "in_scope",
+   "independence_group_id": null,
+   "contradicting_claim_ids": [],
+   "source_authenticity_status": "authentic"
+  },
+  {
+   "model": "ZHX-PB22",
+   "variant": null,
+   "claim_id": "CL-8EB978598F7E",
+   "event_at": null,
+   "is_local": false,
+   "claim_text": "ZHX-PB22",
+   "claim_type": "affected_models",
+   "product_id": null,
+   "source_url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+   "attribution": "Source: U.S. CPSC recalls API",
+   "batch_scope": [],
+   "ingested_at": null,
+   "reviewed_at": null,
+   "source_type": "recall_notice",
+   "jurisdiction": "US",
+   "retrieved_at": "2026-10-16T08:05:44.799726Z",
+   "tool_version": "engine.sources/0.2",
+   "model_version": null,
+   "review_status": "pending",
+   "prompt_version": null,
+   "source_excerpt": "ecall involves NEWDERY power banks with model number ZHX-PB22. The power banks are black with yellow cables. The brand name “NEWDERY” is engraved on the front a",
+   "source_language": "en",
+   "review_rationale": null,
+   "source_record_id": "cpsc:26792",
+   "extraction_method": "code (engine/sources/normalizer.py)",
+   "license_policy_id": "cpsc",
+   "retraction_reason": null,
+   "source_updated_at": "2026-09-24T00:00:00Z",
+   "product_match_tier": "exact",
+   "source_registry_id": "cpsc",
+   "source_published_at": "2026-09-24T00:00:00Z",
+   "supersedes_claim_id": null,
+   "verification_status": "verified",
+   "claim_support_status": "supported",
+   "raw_artifact_pointer": null,
+   "source_document_hash": "9b7dcd4e26fb24f3bf002cd3404f8bd1bf922d09fd393b1e70772d65509126c1",
+   "identity_scope_status": "in_scope",
+   "independence_group_id": null,
+   "contradicting_claim_ids": [],
+   "source_authenticity_status": "authentic"
+  },
+  {
+   "model": "ZHX-PB22",
+   "variant": null,
+   "claim_id": "CL-4EA278255BFE",
+   "event_at": null,
+   "is_local": false,
+   "claim_text": "Consumers should stop using the recalled power banks immediately and contact NEWDERY for instructions on how to receive a full refund. To receive a refund, consumers will be required to submit a photo of their recalled power bank showing the model number, serial number and the word “recalled” and the consumer’s last name written on the power bank in permanent marker. Consumers will also be required to confirm disposal of the power bank in accordance with applicable laws and regulations before receiving a refund. \n\nNote: Do not throw this lithium-ion battery or device in the trash, the general recycling stream (e.g., street-level or curbside recycling bins), or in used battery recycling boxes found at various retail and home improvement stores. Recalled lithium-ion batteries must be disposed of differently than other batteries, because they present a greater risk of fire. Your municipal household hazardous waste (HHW) collection center may accept this lithium-ion battery or device for d",
+   "claim_type": "remedy",
+   "product_id": null,
+   "source_url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+   "attribution": "Source: U.S. CPSC recalls API",
+   "batch_scope": [],
+   "ingested_at": null,
+   "reviewed_at": null,
+   "source_type": "recall_notice",
+   "jurisdiction": "US",
+   "retrieved_at": "2026-10-16T08:05:44.799726Z",
+   "tool_version": "engine.sources/0.2",
+   "model_version": null,
+   "review_status": "pending",
+   "prompt_version": null,
+   "source_excerpt": "Consumers should stop using the recalled power banks immediately and contact NEWDERY for instructions on how to receive a full refund. To receive a refund, consumers will be required to submit a photo of their recalled power bank showing th",
+   "source_language": "en",
+   "review_rationale": null,
+   "source_record_id": "cpsc:26792",
+   "extraction_method": "code (engine/sources/normalizer.py)",
+   "license_policy_id": "cpsc",
+   "retraction_reason": null,
+   "source_updated_at": "2026-09-24T00:00:00Z",
+   "product_match_tier": "exact",
+   "source_registry_id": "cpsc",
+   "source_published_at": "2026-09-24T00:00:00Z",
+   "supersedes_claim_id": null,
+   "verification_status": "verified",
+   "claim_support_status": "supported",
+   "raw_artifact_pointer": null,
+   "source_document_hash": "9b7dcd4e26fb24f3bf002cd3404f8bd1bf922d09fd393b1e70772d65509126c1",
+   "identity_scope_status": "in_scope",
+   "independence_group_id": null,
+   "contradicting_claim_ids": [],
+   "source_authenticity_status": "authentic"
+  }
+ ],
+ "retrieved_at": "2026-10-16T08:05:44.810741+00:00",
+ "source_mode": "partial"
+}

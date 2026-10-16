@@ -34,7 +34,8 @@ def parse_feed(xml_text: str, retrieved_at) -> list[SourceRecord]:
                                                                      description),
             title=title, jurisdiction="AU", affected_markets=["AU"], language="en",
             original_text=normalizer.excerpt(description, width=1200), legal_scope="recall",
-            publication_timezone="Australia/Sydney", authority="ACCC", attribution="Source: ACCC Product Safety Australia"))
+            publication_timezone="Australia/Sydney", authority="ACCC",
+            attribution="Source: ACCC Product Safety Australia"))
     return records
 
 

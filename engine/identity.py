@@ -12,7 +12,15 @@ from engine import gemini, store
 from engine.normalize import brand_blind_text, normalise
 from engine.rules import decide
 
-ORDER = {"exact_model": 0, "rebranded_equivalent": 1, "model_variant": 2, "shared_component": 3, "visually_similar": 4}
+ORDER = {"exact_model": 0, "rebranded_equivalent": 1, "model_variant": 2, "regional_variant": 2, "shared_component": 3,
+         "unverified_rebrand": 3, "visually_similar": 4, "distinct_product": 5}
+IDENTITY_POLICY_VERSION = "2026-10-16.1"
+# A reviewer's label -> the edge it writes (plan v2.2 workstream C). "distinct" is the negative edge: it stops any
+# recall from passing between the two products, even if a later engine run thinks they look alike.
+LABEL_EDGES = {"exact": ("exact_model", "verified"), "rebrand": ("rebranded_equivalent", "verified"),
+               "regional_variant": ("regional_variant", "verified"), "lookalike": ("visually_similar", "verified"),
+               "distinct": ("distinct_product", "verified"), "counterfeit_suspect": ("visually_similar", "unverified"),
+               "unresolvable": None}
 # What Gemini sees of each product: identity facts only, no prices or sellers.
 VIEW_FIELDS = ("brand", "model", "category", "title", "description", "attributes", "visual_features",
                "label_text", "certifications_claimed")
@@ -153,3 +161,40 @@ def relationships(product_id: str) -> dict:
                           for r in sorted(rows, key=lambda r: ORDER[r["relationship_type"]])],
         "graph_version": store.graph_version(),
     }
+
+
+def feedback(source: str, target: str, label: str, reviewer_ref: str, rationale: str, market: str | None = None,
+             batch_scope: str | None = None) -> dict:
+    """POST /v1/identity/feedback: a reviewer labels a pair. The label joins the identity gold set (identity_pairs,
+    one row per annotator), and a decisive label writes an adjudicated edge both ways. Weak edges never chain: a
+    label only ever concerns these two products."""
+    if label not in LABEL_EDGES:
+        raise ValueError(f"label must be one of {sorted(LABEL_EDGES)}")
+    if len((rationale or "").strip()) < 10:
+        raise ValueError("give a rationale (at least a sentence)")
+    for pid in (source, target):
+        if store.latest_fingerprint(pid) is None:
+            raise KeyError(pid)
+    pair_id = "|".join(sorted([source, target]))
+    store.conn().execute(
+        """INSERT INTO identity_pairs (pair_id, source_id, target_id, label, annotator, rationale, market,
+                                       guideline_version)
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+           ON CONFLICT (pair_id, annotator) DO UPDATE SET label = EXCLUDED.label, rationale = EXCLUDED.rationale,
+                                                          at = now()""",
+        (pair_id, source, target, label, reviewer_ref, rationale, market, IDENTITY_POLICY_VERSION))
+    labels = store.conn().execute("SELECT annotator, label FROM identity_pairs WHERE pair_id = %s",
+                                  (pair_id,)).fetchall()
+    agree = len({r["label"] for r in labels}) == 1
+    edge = LABEL_EDGES[label]
+    versions = []
+    if edge and agree:  # annotators disagree: no edge until someone adjudicates
+        evidence_id = store.add_evidence("identity_review", pair_id, {"label": label, "rationale": rationale,
+                                                                      "annotators": len(labels)})
+        for a, b in ((source, target), (target, source)):
+            versions.append(store.save_adjudicated_relationship(a, b, edge[0], edge[1], reviewer_ref,
+                                                                IDENTITY_POLICY_VERSION, [evidence_id], batch_scope))
+    return {"pair_id": pair_id, "label": label, "annotators": len(labels), "annotators_agree": agree,
+            "edge": {"relationship": edge[0], "status": edge[1]} if edge and agree else None,
+            "versions": versions, "identity_policy_version": IDENTITY_POLICY_VERSION,
+            "note": None if agree else "Annotators disagree on this pair; it needs adjudication before any edge."}

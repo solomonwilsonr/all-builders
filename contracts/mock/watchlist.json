@@ -1,0 +1,10 @@
+{
+ "watchlist_id": "WL-7C1E2A90",
+ "query": {
+  "brand": "NEWDERY",
+  "model": "ZHX-PB22",
+  "market": "IN"
+ },
+ "notify": true,
+ "note": "SafeShelf re-checks saved products and alerts only for this exact model and batch."
+}

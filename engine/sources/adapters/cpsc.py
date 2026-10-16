@@ -22,7 +22,7 @@ def to_record(raw: dict, retrieved_at) -> SourceRecord:
     remedy = "; ".join(r.get("Name") or "" for r in raw.get("Remedies") or [])
     named = [p.get("Model") or "" for p in products if p.get("Model")]
     text = " ".join([title, description, *[f"{p.get('Name') or ''} {p.get('Description') or ''}" for p in products]])
-    brands = [m.get("Name") for m in raw.get("Manufacturers") or []] + [m.get("Name") for m in raw.get("Importers") or []]
+    brands = [m.get("Name") for key in ("Manufacturers", "Importers") for m in raw.get(key) or []]
     ids = normalizer.identifiers(brands, text, models=[m for p in named for m in normalizer.models_in(f"model {p}")]
                                  or named)
     ids["upcs"] = [u.get("UPC") for u in raw.get("ProductUPCs") or [] if u.get("UPC")]

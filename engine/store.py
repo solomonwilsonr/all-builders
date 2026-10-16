@@ -183,6 +183,8 @@ def save_relationship(source: str, target: str, decision, would_change_if: list[
     latest = conn().execute(
         """SELECT * FROM product_relationships WHERE source_id = %s AND target_id = %s
            ORDER BY version DESC LIMIT 1""", (source, target)).fetchone()
+    if latest and latest.get("adjudicated_by"):  # a person decided this pair: the engine never overwrites it
+        return latest["version"]
     if latest and (latest["relationship_type"], latest["status"], latest["evidence_ids"]) == (
             decision.relationship, decision.status, evidence_ids):
         return latest["version"]
@@ -212,3 +214,27 @@ def latest_relationships(product_id: str) -> list[dict]:
 
 def graph_version() -> int:
     return conn().execute("SELECT count(*) AS n FROM product_relationships").fetchone()["n"]
+
+
+def save_adjudicated_relationship(source: str, target: str, relationship: str, status: str, reviewer_ref: str,
+                                  policy_version: str, evidence_ids: list[str], batch_scope: str | None = None) -> int:
+    """A reviewer's decision about a pair, as a new version (plan v2.2 workstream C). Engine runs keep it."""
+    latest = conn().execute(
+        """SELECT * FROM product_relationships WHERE source_id = %s AND target_id = %s
+           ORDER BY version DESC LIMIT 1""", (source, target)).fetchone()
+    version = (latest["version"] + 1) if latest else 1
+    conn().execute(
+        """INSERT INTO product_relationships (source_id, target_id, relationship_type, confidence, status, evidence_ids,
+                                              would_change_if, version, adjudicated_by, adjudicated_at,
+                                              identity_policy_version, affected_batch_scope)
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s, %s)""",
+        (source, target, relationship, 1.0, status, evidence_ids, [], version, reviewer_ref, policy_version,
+         batch_scope))
+    conn().execute(
+        """INSERT INTO audit_events (entity_id, entity_type, change_type, actor, before, after)
+           VALUES (%s, 'relationship', 'adjudicate', %s, %s, %s)""",
+        (f"{source}->{target}", reviewer_ref,
+         Jsonb(latest and {"relationship": latest["relationship_type"], "status": latest["status"],
+                           "version": latest["version"]}),
+         Jsonb({"relationship": relationship, "status": status, "version": version})))
+    return version

@@ -76,6 +76,11 @@ def region(product: dict) -> str:
     return market_of(product.get("listings", []))
 
 
+ASSESSMENT_FIELDS = ("outcome", "headline", "safety_concern", "evidence_strength", "identity_confidence",
+                     "lead_record", "limitations", "what_would_change", "review_required", "policy_version", "as_of",
+                     "source_mode")
+
+
 def evidence_pack(product_id: str) -> dict:
     product = passport.product(product_id)
     found = safety.safety(product_id)
@@ -98,6 +103,9 @@ def evidence_pack(product_id: str) -> dict:
                           if r["relationship"] in ("exact_model", "rebranded_equivalent")],
         "summary": "; ".join(f"{f['independent_reports']} report(s) of {f['mechanism']}" for f in findings)
                    or "no hazard findings",
+        # plan v2.2: the verified outcome for the product's market, its coverage and what a reviewer must still check
+        "assessment": {**{k: found.get(k) for k in ASSESSMENT_FIELDS},
+                       "coverage": (found.get("coverage") or {}).get("countries", [])},
     }
     pack["evidence_pack_id"] = store.add_evidence("evidence_pack", product_id, pack)
     return pack

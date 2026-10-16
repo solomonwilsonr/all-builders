@@ -24,8 +24,9 @@ OUTCOMES = ("confirmed_recall", "substantiated_hazard_signal", "potential_concer
             "insufficient_evidence")
 COLOUR = {"confirmed_recall": "red", "substantiated_hazard_signal": "amber", "potential_concern": "amber",
           "no_matching_notice_found": "green", "insufficient_evidence": "unknown"}
+POSSIBLE_TIERS = ("exact", "variant", "suspected_rebrand", "family_named")
 LEAD_FIELDS = ("record_id", "authority", "title", "url", "published", "tier", "scope", "local", "jurisdiction")
-TIER_RANK = ["exact","variant", "suspected_rebrand", "family_named", "lookalike", "unresolved", "none"]
+TIER_RANK = ["exact", "variant", "suspected_rebrand", "family_named", "lookalike", "unresolved", "none"]
 HEADLINES = {
     "confirmed_recall": "Recalled in {market}: this exact model is on an official recall list",
     "recalled_abroad_same_model": "Recalled abroad, same model number; not confirmed for {market}",
@@ -62,8 +63,7 @@ def decide(market: str | None, market_name: str, product: dict, matches: list[di
     # An official record whose wording code couldn't tie to the claim, or a record from an unofficial address, is
     # never dropped silently: it becomes a possible match for a person, so it can't turn into "no notice found".
     doubtful = [{**m, "tier": "family_named" if m["tier"] == "exact" else m["tier"]}
-                for m in live if m not in usable and m["tier"] in ("exact", "variant", "suspected_rebrand",
-                                                                    "family_named")]
+                for m in live if m not in usable and m["tier"] in POSSIBLE_TIERS]
     review_reasons: list[str] = []
     basis, outcome = None, None
     recall_types = ("recall_notice",)

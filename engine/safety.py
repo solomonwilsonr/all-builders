@@ -2,15 +2,59 @@
 
 Reviews are evidence (reviewer ids hashed). Each review's Gemini label is stored once, so a product is only
 re-read when new reviews arrive. Recall and safety-mark checks come from M5 (engine.recalls, engine.marks).
+
+Since plan v2.2 the answer also carries the evidence-verification result for the product's own market (the shop it
+is listed on): outcome, safety_concern, evidence_strength, identity_confidence, coverage, as_of and policy_version,
+from engine.investigation. The verdict colour then follows that policy: red only for a recall in the product's own
+market, so a US recall no longer shows red on an Amazon.in listing. Existing fields stay as they were.
 """
 import hashlib
 import json
+import logging
+from datetime import UTC, datetime
 
 from psycopg.types.json import Jsonb
 
 from engine import marks, radar, recalls, store
 
 LABEL = "AI finding - not a regulatory determination"
+log = logging.getLogger(__name__)
+
+
+def market_of_product(product_id: str) -> str | None:
+    """The market a stored product is sold in, from its listings' shop addresses (amazon.in -> IN)."""
+    from engine import region_policy
+    for row in store.product_listings(product_id):
+        code = region_policy.market_of(row.get("url"))
+        if code:
+            return code
+        if (row.get("marketplace") or "").startswith("amazon.com"):
+            return "US"
+    return None
+
+
+def assess_product(product_id: str, fp: dict, ai_findings: list[dict], reviews_checked: int) -> dict | None:
+    """The v2.2 assessment for this product in its own market. None if the sources could not be consulted at all."""
+    try:
+        from engine import investigation
+        market = market_of_product(product_id)
+        product = {"product_id": product_id, "brand": fp.get("brand"), "model": fp.get("model"), "gtin": fp.get("gtin"),
+                   "category": fp.get("category"), "title": (fp.get("view") or {}).get("title"), "market": market}
+        hazards, _groups, texts = investigation.hazard_groups(ai_findings)
+        collected = investigation.collect(product, market, review_texts=texts)
+        return investigation.adjudicate(collected, hazards, reviews_checked)
+    except Exception as error:  # noqa: BLE001  the radar answer stands without it
+        log.warning("assessment failed for %s: %s", product_id, type(error).__name__)
+        return None
+
+
+def colour(decision: dict, radar_verdict: str) -> str:
+    """The verdict word for the screens: red only for a confirmed local recall; green only when the radar is green."""
+    if decision["outcome"] == "no_matching_notice_found":
+        return radar_verdict if radar_verdict in ("green", "amber") else "not_enough_evidence"
+    if decision["outcome"] == "insufficient_evidence":
+        return radar_verdict if radar_verdict == "amber" else "not_enough_evidence"
+    return decision["colour"]
 
 
 def add_reviews(product_id: str, reviews: list[dict]) -> list[str]:
@@ -108,7 +152,8 @@ def save_signals(product_id: str, ai_findings: list[dict]) -> None:
                VALUES (%s, 'hazard_signal', 'update', 'engine.radar', %s)""", (signal_id, Jsonb(finding)))
 
 
-def safety(product_id: str) -> dict:
+def safety(product_id: str, assess: bool = True) -> dict:
+    """assess=False: the radar and stored recall links only, as before plan v2.2 (the investigation uses this)."""
     fp = store.latest_fingerprint(product_id)
     if fp is None:
         raise KeyError(product_id)
@@ -122,12 +167,26 @@ def safety(product_id: str) -> dict:
         finding["evidence_ids"] = [review_evidence[e.removeprefix("REV-")] for e in finding["evidence_ids"]]
     save_signals(product_id, ai_findings)
     status = official_status(product_id)
-    return {
+    radar_verdict = radar.verdict(status["recalled"], len(reviews), ai_findings)
+    answer = {
         "product_id": product_id,
-        "verdict": radar.verdict(status["recalled"], len(reviews), ai_findings),
+        "verdict": radar_verdict,
         "official_status": status,
         "ai_findings": ai_findings,
         "certifications": marks.certifications(product_id)["checks"],
         "reviews_checked": len(reviews),
         "label": LABEL,
     }
+    decision = assess_product(product_id, fp, ai_findings, len(reviews)) if assess else None
+    if decision:
+        answer.update({
+            "verdict": colour(decision, radar.verdict(False, len(reviews), ai_findings)),
+            "outcome": decision["outcome"], "headline": decision["headline"],
+            "safety_concern": decision["safety_concern"], "evidence_strength": decision["evidence_strength"],
+            "identity_confidence": decision["identity_confidence"], "coverage": decision["coverage"],
+            "limitations": decision["limitations"], "what_would_change": decision["what_would_change"],
+            "lead_record": decision["lead_record"], "review_required": decision["review_required"],
+            "source_mode": decision["source_mode"], "policy_version": decision["policy_version"],
+            "as_of": datetime.now(UTC).isoformat(timespec="seconds"),
+        })
+    return answer

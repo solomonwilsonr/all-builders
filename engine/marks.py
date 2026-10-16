@@ -135,8 +135,23 @@ def check_bis(claim: dict, fp: dict) -> dict:
             "reason": "matches the BIS mock registry"}
 
 
+BIS_LOOKUP = "https://www.bis.gov.in/bis-apps/?lang=en"
+# plan v2.2 workstream E: say where each answer came from, and never call an unchecked mark fake.
+REGISTRY_MODE = {AU: "official_open_data", BIS: "demo_mock_registry"}
+VERIFICATION = {"verified": "verified", "mismatch": "mismatch", "unknown": "not_verified"}
+
+
 def check(claim: dict, fp: dict) -> dict:
-    return check_au(claim, fp) if claim["authority"] == AU else check_bis(claim, fp)
+    result = check_au(claim, fp) if claim["authority"] == AU else check_bis(claim, fp)
+    result["registry_mode"] = REGISTRY_MODE.get(claim["authority"], "none")
+    result["verification"] = VERIFICATION[result["result"]]  # "not_verified" is never "fake"
+    if claim["authority"] == BIS:
+        result["lookup_url"] = BIS_LOOKUP
+        if result["result"] == "unknown":
+            mark = claim.get("number") or "this mark"
+            result["reason"] = (f"BIS has no automation API, so SafeShelf can't verify {mark}; check it in the BIS "
+                                "Care app or on bis.gov.in (not verified is not the same as fake)")
+    return result
 
 
 def certifications(product_id: str) -> dict:
@@ -151,4 +166,13 @@ def certifications(product_id: str) -> dict:
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
             (product_id, r["authority"], r.get("number"), r.get("claimed_value"), r.get("registry_value"),
              r["result"], r.get("field"), r["checked_at"]))
+        try:  # claimed vs registry values with scope (migration 008); absent before `make migrate`
+            store.conn().execute(
+                """INSERT INTO certification_checks (product_id, authority, number, claimed_value, registry_value,
+                                                    status, scope, source, checked_at)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                (product_id, r["authority"], r.get("number"), r.get("claimed_value"), r.get("registry_value"),
+                 r["verification"], fp.get("category"), r["registry_mode"], r["checked_at"]))
+        except Exception:  # noqa: BLE001, S110
+            pass
     return {"product_id": product_id, "checks": results}

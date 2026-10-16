@@ -1,0 +1,14 @@
+{
+ "product_id": "SS-P-20019",
+ "edges": [
+  {
+   "party_name": "Shenzhen Baseus Technology Co. Ltd., of China",
+   "role": "importer",
+   "country": null,
+   "source_record_id": "cpsc:25248",
+   "source_url": "https://www.cpsc.gov/Recalls/2025/Baseus-Portable-Chargers-Recalled-Due-to-Fire-Hazard-Sold-on-Amazon-com-by-Shenzhen-Baseus-Technology",
+   "confidence": 0.9
+  }
+ ],
+ "note": "Each party is named by an official notice (cited). Look-alike products are never linked here."
+}

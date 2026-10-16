@@ -131,8 +131,9 @@ def log_prediction(snapshot: str, product_key: str, outcome: str) -> None:
     previous = prev["entry_hash"] if prev else ""
     now = datetime.now(UTC).isoformat()
     entry = hashlib.sha256(f"{previous}|{snapshot}|{product_key}|{outcome}|{now}".encode()).hexdigest()
-    conn.execute("""INSERT INTO prediction_log (snapshot_id, product_key, outcome, predicted_at, previous_hash, entry_hash)
-                    VALUES (%s, %s, %s, %s, %s, %s)""", (snapshot, product_key, outcome, now, previous, entry))
+    conn.execute("""INSERT INTO prediction_log (snapshot_id, product_key, outcome, predicted_at, previous_hash,
+                                                entry_hash) VALUES (%s, %s, %s, %s, %s, %s)""",
+                 (snapshot, product_key, outcome, now, previous, entry))
 
 
 def snapshots(investigation_id: str) -> list[dict]:

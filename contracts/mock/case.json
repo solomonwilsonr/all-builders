@@ -1,0 +1,19 @@
+{
+ "case_id": "INV-0F7027F9",
+ "lifecycle": "triage",
+ "allowed_next": [
+  "inconclusive",
+  "investigating",
+  "unsubstantiated"
+ ],
+ "history": [
+  {
+   "from_state": "candidate",
+   "to_state": "triage",
+   "reviewer_ref": "OW-reviewer",
+   "rationale": "Exact model on a CPSC recall; checking whether the Indian listing is the same batch.",
+   "at": "2026-10-16T18:25:00+00:00"
+  }
+ ],
+ "actions": []
+}

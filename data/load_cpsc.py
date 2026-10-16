@@ -77,6 +77,10 @@ def to_row(recall: dict) -> dict:
         "scope_json": {
             k: recall.get(k)
             for k in ("Products", "Images", "Retailers", "Manufacturers", "Importers", "Distributors", "Injuries")
+        } | {  # CPSC writes model numbers, serial ranges and the remedy in these, not in the Model fields
+            "Description": recall.get("Description") or "",
+            "Action": "; ".join(r.get("Name") or "" for r in recall.get("Remedies") or []),
+            "Posted": (recall.get("LastPublishDate") or "")[:10] or None,
         },
         "url": recall.get("URL"),
     }

@@ -4,10 +4,17 @@ Built from the regulator evidence pack (engine.agents.copilot.evidence_pack), so
 IDs and exact review quotes behind it. The verdict and the rule that set it come from code, never from Gemini.
 A case file is never sent anywhere: it waits for a person to review it (review_gate) and file it themselves.
 """
+import logging
 from datetime import UTC, datetime
 
 from engine import radar
 from engine.agents.copilot import REGULATORS, evidence_pack, region
+
+log = logging.getLogger(__name__)
+EVIDENCE_FIELDS = ("investigation_id", "snapshot_id", "outcome", "basis", "headline", "safety_concern",
+                   "evidence_strength", "identity_confidence", "matches", "claims", "contradictions", "limitations",
+                   "what_would_change", "review_required", "review_reasons", "policy_version", "source_mode",
+                   "retrieved_at")
 
 LABEL = "AI findings for review by a person - not a regulatory determination"
 VERDICT_WORDS = {"red": "Red: officially recalled", "amber": "Amber: hazard reports worth a person's review",
@@ -72,6 +79,22 @@ def markdown(case: dict) -> str:
         lines += [f"- {r['target_id']}: {r['relationship'].replace('_', ' ')} ({r['status']})"
                   for r in case["same_hardware"]]
         lines.append("")
+    ev = case.get("evidence") or {}
+    if ev:
+        lines += ["## Verified evidence (plan v2.2)", "",
+                  f"**Outcome (set by code):** {ev.get('outcome', '').replace('_', ' ')} · {ev.get('headline', '')}",
+                  f"**Coverage:** {ev.get('coverage_summary') or 'n/a'}",
+                  (f"**Evidence strength:** {ev.get('evidence_strength')} · **Identity:** "
+                   f"{ev.get('identity_confidence')} · **Policy:** {ev.get('policy_version')}"), ""]
+        for m in ev.get("matches", [])[:8]:
+            lines.append(f"- {m['authority']} {m['record_id']} ({m.get('published') or 'undated'}): {m['tier']}, "
+                         f"{m['scope'].replace('_', ' ')}, {'local' if m['local'] else 'foreign'}, source "
+                         f"{m['authenticity'].replace('_', ' ')}, text {m['support']} {m.get('url') or ''}")
+        for c in ev.get("contradictions", [])[:5]:
+            lines.append(f"- Contradiction ({c['kind'].replace('_', ' ')}, {c['effect']}): {c['text']}")
+        for limit in ev.get("limitations", []):
+            lines.append(f"- Limitation: {limit}")
+        lines.append("")
     lines += ["## Where to file it", "", f"{case['regulator']['name']}: {case['regulator']['url']}", "",
               "Reviewer names and contact details are not included.", "", f"_{LABEL}_"]
     return "\n".join(lines)
@@ -102,5 +125,37 @@ def case_file(product_id: str) -> dict:
         "privacy": "No reviewer names or contact details are included.",
         "label": LABEL,
     }
+    case["evidence"] = verified_evidence(product_id)
+    if case["evidence"].get("review_required"):
+        case["review_gate"]["reviewer_status"] = "queued: " + "; ".join(case["evidence"].get("review_reasons", []))
     case["markdown"] = markdown(case)
     return case
+
+
+def verified_evidence(product_id: str) -> dict:
+    """The live investigation for this product (official sources, scope checks, contradictions, the code's outcome),
+    with an evidence timeline and how earlier assessments differed. Empty if the sources could not be consulted."""
+    try:
+        from engine import assessments, investigation
+        answer = investigation.investigate({"product_id": product_id})
+    except Exception as error:  # noqa: BLE001  the case file stands on the evidence pack without it
+        log.warning("case file without verified evidence: %s", type(error).__name__)
+        return {}
+    timeline = sorted(
+        [{"date": m.get("published"), "event": f"{m['authority']} published {m['record_id']}: {m['title'][:120]}",
+          "record_id": m["record_id"]} for m in answer.get("matches", []) if m.get("published")]
+        + [{"date": h.get("first_seen"), "event": f"first {h['hazard_type'].replace('_', ' ')} report from a buyer"}
+           for h in answer.get("hazards", []) if h.get("first_seen")],
+        key=lambda e: e["date"] or "")
+    try:
+        history = [{"snapshot_id": r["id"], "outcome": r["outcome"], "at": r["created_at"].isoformat(),
+                    "policy_version": r["policy_version"], "source_mode": r["source_mode"]}
+                   for r in assessments.product_snapshots(product_id)]
+    except Exception:  # noqa: BLE001
+        history = []
+    out = {k: answer.get(k) for k in EVIDENCE_FIELDS}
+    return {**out, "coverage_summary": answer.get("coverage", {}).get("summary"),
+            "coverage": answer.get("coverage", {}).get("countries", []), "timeline": timeline,
+            "assessment_history": history,
+            "why_it_changed": "Each row in assessment_history is a stored snapshot; compare two to see which sources, "
+                              "claims or policy version changed the outcome."}

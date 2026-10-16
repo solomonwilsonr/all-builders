@@ -1,0 +1,21 @@
+{
+ "candidates": [
+  {
+   "product_id": "SS-P-30118",
+   "brand": "VoltNova",
+   "model": "VN-65PD",
+   "category": "usb_charger",
+   "rate_per_1000_reviews": 95.2,
+   "interval_per_1000": [
+    33.1,
+    247.8
+   ],
+   "baseline_per_1000": 6.4,
+   "reviews": 21,
+   "hazard_reports": 2,
+   "status": "investigation_candidate",
+   "note": "Per 1,000 reviews, not per unit sold; a candidate needs a person's investigation."
+  }
+ ],
+ "method": "Wilson 95% interval of hazard signals per review vs. the category baseline; counts are signals, not units sold"
+}

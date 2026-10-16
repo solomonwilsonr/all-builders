@@ -1,0 +1,64 @@
+{
+ "product_id": "SS-P-10291",
+ "events": [
+  {
+   "at": "2026-10-12T18:16:38.996974Z",
+   "change_type": "identity_created",
+   "actor": "system",
+   "summary": "First seen and identified as ExampleBrand CX-65",
+   "version": 1,
+   "kind": "identity_created"
+  },
+  {
+   "at": "2026-10-12T18:16:52.698405Z",
+   "change_type": "relationship_changed",
+   "summary": "SS-P-20019 linked as exact same model (verified)",
+   "actor": "system",
+   "version": 2,
+   "kind": "relationship_changed"
+  },
+  {
+   "at": "2026-10-12T20:01:21.999874Z",
+   "change_type": "relationship_changed",
+   "summary": "SS-P-30118 linked as possible rebrand (unverified)",
+   "actor": "system",
+   "version": 3,
+   "kind": "relationship_changed"
+  },
+  {
+   "at": "2026-10-12T20:01:22.252120Z",
+   "change_type": "relationship_changed",
+   "summary": "SS-P-40007 linked as look-alike (unverified)",
+   "actor": "system",
+   "version": 4,
+   "kind": "relationship_changed"
+  },
+  {
+   "at": "2026-10-13T10:53:28.374809Z",
+   "change_type": "hazard_signal",
+   "actor": "system",
+   "summary": "First 6 fire/burn report(s), severity high: melted and plastic turned black with burning smell",
+   "evidence_ids": [
+    "EV-37A71FB5",
+    "EV-08E9C38D",
+    "EV-97A8AA0D",
+    "EV-E822ECF0",
+    "EV-EEE5C926"
+   ],
+   "version": 5,
+   "kind": "hazard_signal"
+  },
+  {
+   "at": "2026-10-13T10:53:28.377124Z",
+   "change_type": "hazard_signal",
+   "actor": "system",
+   "summary": "First 1 electric/shock report(s), severity high: sparks from the USB-C port when plugging in cable",
+   "evidence_ids": [
+    "EV-2BF949BA"
+   ],
+   "version": 6,
+   "kind": "hazard_signal"
+  }
+ ],
+ "note": "Built from SafeShelf's versioned records; dates of notices are their publication dates."
+}
