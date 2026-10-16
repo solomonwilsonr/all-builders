@@ -5,11 +5,11 @@ const ctx = {}; ctx.globalThis = ctx; vm.createContext(ctx); vm.runInContext(rea
 const P = ctx.SafeShelfPanels;
 
 const cert = P.certifications(mock("certifications"));
-assert.strictEqual(cert.rows[0].icon, "⛔"); assert.match(cert.rows[0].text, /registry says 3 stars/);
-assert.strictEqual(cert.rows[1].icon, "❔");
+assert.strictEqual(cert.rows[0].icon, "stop"); assert.match(cert.rows[0].text, /registry says 3 stars/);
+assert.strictEqual(cert.rows[1].icon, "unknown");
 assert.strictEqual(P.relationships(mock("relationships")).rows.length, 3);
 assert.match(P.duplicates(mock("duplicates")).rows[1].sub, /Differ: different brand name/);
-assert.strictEqual(P.history(mock("history")).rows[1].icon, "⚠️");
+assert.strictEqual(P.history(mock("history")).rows[1].icon, "warn");
 assert.match(P.alternatives(mock("alternatives")).rows[0].sub, /₹1,450/);
 assert.ok(P.product(mock("product")).rows.some((r) => /Brand: Kelvo/.test(r.text)));
 assert.match(P.report(mock("report_created")).rows[0].text, /SS-R-0001/);

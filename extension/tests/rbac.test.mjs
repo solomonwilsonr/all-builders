@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+const session = { uid: 'u', refreshToken: 'refresh', idToken: 'token', expiresAt: Date.now() + 3600000, role: 'admin' };
+globalThis.chrome = { storage: { local: { get: async () => ({ session }) } } };
+let role = 'user', ok = true;
+globalThis.fetch = async (url, options) => {
+  assert.ok(url.startsWith('https://firestore.googleapis.com/'));
+  assert.equal(options.headers.Authorization, 'Bearer token');
+  return { ok, status: ok ? 200 : 403, json: async () => ({ fields: { role: { stringValue: role } } }) };
+};
+const { identity, requireAdmin, adminStatus } = await import('../rbac.js');
+assert.equal((await identity()).role, 'user');
+await assert.rejects(requireAdmin, /Administrator access required/);
+role = 'admin';
+assert.equal((await requireAdmin()).role, 'admin');
+role = 'owner';
+assert.equal((await identity()).role, 'user');
+ok = false;
+await assert.rejects(requireAdmin, /Role access denied/);
+await assert.rejects(adminStatus, /Role access denied/);
+console.log('ok Firebase RBAC: local role ignored, verified admins allowed, permission errors denied');
