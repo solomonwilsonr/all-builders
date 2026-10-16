@@ -117,7 +117,7 @@ def _refund(f: dict, purchase: dict) -> dict:
     happened = purchase.get("what_happened") or "[what happened, if anything: overheating, smell, sparks…]"
     body = (f"Hello,\n\nI bought the {f['name']} from you (order {purchase.get('order_id') or '[order number]'}, "
             f"{purchase.get('date') or '[date you bought it]'}).\n\n{f['claim']}\n\n"
-            f"What I have seen: {happened}\n\nI have stopped using it. Please arrange {f['ask']}, and tell me how "
+            f"What I have seen: {happened}\n\nI have stopped using it. I am asking for {f['ask']}. Please tell me how "
             "to return it safely.\n\n"
             f"Checked with SafeShelf on {f['checked']} (reference {f['investigation_id'] or 'n/a'}).\n\n"
             "Thank you,\n[your name]")

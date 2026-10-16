@@ -1,0 +1,9 @@
+{
+ "text": "அமெரிக்காவில் திரும்பப் பெறப்பட்டது, தீ ஆபத்து காரணமாக. இந்தியாவில் இன்னும் திரும்பப் பெறப்படவில்லை. வாங்குவதற்கு முன் மாடல் எண்ணைச் சரிபார்க்கவும்.",
+ "language": "ta",
+ "speech_locale": "ta-IN",
+ "machine_translation": true,
+ "english": "Recalled in the US, because of a fire risk. Not recalled in India yet. Check the model number before you buy.",
+ "model_version": "gemini-3.5-flash-lite",
+ "note": "Read aloud from SafeShelf's answer. The result was set by code, not by the voice."
+}

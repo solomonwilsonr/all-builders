@@ -30,6 +30,8 @@ MOCK = os.environ.get("MOCK", "1") == "1"
 API_KEY = os.environ.get("API_KEY")  # unset = no key check (local development)
 MAX_BODY = 1_000_000  # bytes; listings and reports are small
 MAX_AGENT_BODY = 9_000_000  # the chat takes a screenshot: 6 MB of image is 8 MB as base64
+# Routes that take a photo (screenshot, label, incident) get the larger limit.
+PHOTO_PATHS = ("/v1/agent/sessions", "/v1/camera/", "/v1/incidents")
 # The API is public (the extension and the judges call it without a key), so engine calls that can spend Gemini
 # credit are rate-limited per caller and capped per day per instance (deploy uses --max-instances 3).
 RATE_PER_MIN = int(os.environ.get("SAFESHELF_RATE_PER_MIN", "30"))
@@ -37,7 +39,8 @@ DAILY_CAP = int(os.environ.get("SAFESHELF_DAILY_CAP", "3000"))
 # Engine calls that only read the database: browsing the Recall Catalog must not use up the AI-check limit.
 UNMETERED = {"listRecalls", "getRecall", "getSourcesHealth", "getInvestigation", "getInvestigationSources",
              "getRadarCandidates", "getCrossBorderCandidates", "getBenchRuns", "getBenchEvidence", "listWatchlists",
-             "deleteWatchlist", "getReviewQueue", "getCase", "getDeveloperUsage", "getTimeline"}
+             "deleteWatchlist", "getReviewQueue", "getCase", "getDeveloperUsage", "getTimeline",
+             "getIncidentSignals", "getRedteamRounds"}
 
 log = logging.getLogger("safeshelf.api")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -62,7 +65,7 @@ async def guard_and_log(request: Request, call_next):
     """Body size and API key checks (also for /mcp), then one JSON log line per request for Cloud Logging.
     Logs the path and outcome only, never request bodies."""
     started = time.monotonic()
-    limit = MAX_AGENT_BODY if request.url.path.startswith("/v1/agent/sessions") else MAX_BODY
+    limit = MAX_AGENT_BODY if request.url.path.startswith(PHOTO_PATHS) else MAX_BODY
     if int(request.headers.get("content-length") or 0) > limit:
         response = JSONResponse({"detail": f"Request body too large (at most {limit // 1_000_000} MB)"},
                                 status_code=413)

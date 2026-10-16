@@ -1,0 +1,30 @@
+{
+ "heard": "Is this safe?",
+ "label": {
+  "brand": "NEWDERY",
+  "model": "ZHX-PB22",
+  "is_product_label": true,
+  "visible_damage": false
+ },
+ "answer": {
+  "text": "The label says NEWDERY ZHX-PB22. This model was recalled in the US for a fire risk, but not in India yet, so check the model number before you buy and don't leave it charging unattended.",
+  "language": "en",
+  "speech_locale": "en-IN",
+  "machine_translation": false,
+  "model_version": "gemini-3.5-flash-lite"
+ },
+ "plain": {
+  "title": "Recalled in the US",
+  "tone": "amber",
+  "why": "The safety regulator in the US recalled this NEWDERY ZHX-PB22 because of a fire risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+  "todo": "Check that the model number on the box or label is exactly ZHX-PB22. If it is, avoid buying it, or don't charge or use it unattended until the seller confirms it's safe.",
+  "say": "Recalled in the US, because of a fire risk. Not recalled in India yet. Check the model number before you buy.",
+  "link": {
+   "url": "https://www.cpsc.gov/Recalls",
+   "label": "See the official recall (CPSC)"
+  }
+ },
+ "investigation_id": "INV-7Q2K9D1M",
+ "outcome": "potential_concern",
+ "note": "The result is set by code from official recall lists; Gemini read the label and put the answer into words. A photo of the outside can't show whether the inside is electrically safe."
+}

@@ -647,6 +647,135 @@ paths:
         '200': {description: Evidence metrics, content: {application/json: {schema: {type: object, required: [metrics]}}}}
 
 
+  /v1/voice/verdict:
+    post:
+      summary: The verdict read aloud in the shopper's language, short enough to hear in a shop aisle (26 JAPAC languages)
+      description: The English line is written by code (plain.say); other languages are Gemini translations, marked as such. Falls back to English.
+      operationId: speakVerdict
+      x-mock: voice_verdict.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plain: {type: object, description: The plain block of any SafeShelf answer}
+                text: {type: string, description: Or a short English line to speak}
+                language: {type: string, example: ta}
+      responses:
+        '200': {description: What to speak, content: {application/json: {schema: {type: object, required: [text, language, speech_locale]}}}}
+
+  /v1/after-purchase:
+    post:
+      summary: '"I already bought it": what to do now, a refund request and a regulator complaint filled in with the evidence, and a case file'
+      description: Drafts only; nothing is sent. Give the investigation_id from a check, or the listing.
+      operationId: afterPurchase
+      x-mock: after_purchase.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                investigation_id: {type: string}
+                url: {type: string}
+                title: {type: string}
+                brand: {type: string}
+                model: {type: string}
+                market: {type: string}
+                purchase:
+                  type: object
+                  properties:
+                    url: {type: string}
+                    order_id: {type: string}
+                    date: {type: string}
+                    what_happened: {type: string}
+      responses:
+        '200': {description: Steps, drafts and case file, content: {application/json: {schema: {type: object, required: [situation, headline, steps, drafts, case_file]}}}}
+
+  /v1/camera/ask:
+    post:
+      summary: 'Point and ask: a label photo and a spoken question ("is this safe?"), answered in the shopper''s language, ready to speak'
+      description: Follow-up questions send the earlier label and investigation_id instead of a new photo. The photo is not stored.
+      operationId: pointAndAsk
+      x-mock: camera_ask.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image: {type: string, description: 'data:image/...;base64,...'}
+                question: {type: string}
+                language: {type: string}
+                market: {type: string}
+                label: {type: object}
+                investigation_id: {type: string}
+      responses:
+        '200': {description: The answer to speak, with the result behind it, content: {application/json: {schema: {type: object, required: [answer, label]}}}}
+
+  /v1/incidents:
+    post:
+      summary: A shopper's incident report (photo of a melted charger and what happened), checked by Gemini and grouped by model
+      description: The photo is not stored (only its hash); contact details are removed. Similar independent reports add up to an early warning (never a recall).
+      operationId: reportIncident
+      x-mock: incident_created.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description]
+              properties:
+                brand: {type: string}
+                model: {type: string}
+                title: {type: string}
+                market: {type: string}
+                description: {type: string}
+                photo: {type: string, description: 'data:image/...;base64,...'}
+                happened_on: {type: string, format: date}
+      responses:
+        '201': {description: Report received, with the model's current signal, content: {application/json: {schema: {type: object, required: [report_id, status, signal]}}}}
+
+  /v1/incidents/signals:
+    get:
+      summary: Models with shopper incident reports, early warnings first (code rule; not recalls)
+      operationId: getIncidentSignals
+      x-mock: incident_signals.json
+      parameters: [{name: market, in: query, schema: {type: string}}]
+      responses:
+        '200': {description: Signals, content: {application/json: {schema: {type: object, required: [signals]}}}}
+
+  /v1/redteam/rounds:
+    get:
+      summary: 'Attacker vs defender: the 18 saved red-team rounds (what each attack tried, what the code decided)'
+      operationId: getRedteamRounds
+      x-mock: redteam_rounds.json
+      responses:
+        '200': {description: Rounds, content: {application/json: {schema: {type: object, required: [rounds, metrics]}}}}
+
+  /v1/redteam/round:
+    post:
+      summary: 'A live round: Gemini invents an attack (forged regulator page, look-alike model, hidden instructions, review farm, fake shop); SafeShelf''s code defends'
+      operationId: runRedteamRound
+      x-mock: redteam_round.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [attack]
+              properties:
+                attack: {type: string, enum: [forged_regulator, lookalike_model, injected_instructions, copied_complaints, fake_shop]}
+                market: {type: string, enum: [US, AU, JP]}
+      responses:
+        '200': {description: The attack and whether the defence held, content: {application/json: {schema: {type: object, required: [attacker, defender]}}}}
+
 components:
   securitySchemes:
     apiKey: {type: apiKey, in: header, name: X-API-Key}

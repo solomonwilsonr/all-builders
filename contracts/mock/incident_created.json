@@ -1,0 +1,34 @@
+{
+ "report_id": "IR-5KQ2M8XD",
+ "status": "received",
+ "read": {
+  "summary": "Power bank melted and the casing burned while charging on a desk.",
+  "hazard_type": "fire_burn",
+  "severity": "high",
+  "first_hand": true,
+  "injury": false,
+  "photo_damage": "heat_or_fire",
+  "photo_matches_story": true
+ },
+ "product": {
+  "brand": "NEWDERY",
+  "model": "ZHX-PB22"
+ },
+ "signal": {
+  "reports": 2,
+  "first_hand": 2,
+  "independent": 2,
+  "serious_independent": 2,
+  "with_damage_photo": 1,
+  "hazard_types": {
+   "fire_burn": 2
+  },
+  "injuries": 0,
+  "early_warning": true,
+  "rule": "Early warning: two or more independent first-hand reports of a serious hazard, or one whose photo shows fire, heat or swelling damage. Same person, same photo or copied words count once.",
+  "status": "early warning: sent for review by a person (not a recall)"
+ },
+ "photo_stored": false,
+ "next": "Thank you. If it hurt someone or caught fire, also report it to your regulator: POST /v1/after-purchase drafts that complaint for you.",
+ "label": "Gemini read the report; code decides when reports add up to an early warning. Not a recall."
+}

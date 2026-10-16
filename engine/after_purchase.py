@@ -69,8 +69,8 @@ def case_markdown(answer: dict, f: dict, purchase: dict) -> str:
     lines = [f"# SafeShelf case file {answer.get('investigation_id') or ''}".rstrip(), "",
              f"**Product:** {f['name']}" + (f" ({product.get('title')})" if product.get("title") else ""),
              f"**Listing:** {purchase.get('url') or product.get('url') or 'not given'}",
-             f"**Checked:** {f['checked']} · **Result (set by code, policy {answer.get('policy_version') or '?'}):** "
-             f"{(answer.get('plain') or {}).get('title') or answer.get('outcome')}",
+             (f"**Checked:** {f['checked']} · **Result (set by code, policy {answer.get('policy_version') or '?'}):** "
+              f"{(answer.get('plain') or {}).get('title') or answer.get('outcome')}"),
              f"**Why:** {(answer.get('plain') or {}).get('why') or answer.get('headline') or ''}", "",
              "## Official records", ""]
     lines += [f"- {m.get('authority')} {m.get('record_id')} ({m.get('published') or 'undated'}, "

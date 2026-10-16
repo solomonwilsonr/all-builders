@@ -24,6 +24,19 @@ MAX_ROWS = 1000
 REBRAND_COMPARES = 20  # Gemini pair compares per scan, closest candidates first
 REBRAND_DISTANCE = 0.12
 RANK = {"recall_match": 0, "possible_recall_match": 1, "certification_mismatch": 2, "hazard_signal": 3}
+# The retailer side: what a shop does with each item on its shelves when a recall lands (shown with every finding).
+SHOP_ACTIONS = {
+    "recall_match": ["Stop selling it now: take it off the shelf and unpublish the online listing",
+                     "Quarantine the stock you hold; don't send it back out or discount it",
+                     "Follow the recall notice's remedy and contact your supplier for the return",
+                     "Tell customers who bought it (receipts, loyalty or order records) how to get the remedy"],
+    "possible_recall_match": ["Hold sales of this item until someone compares its model number with the recall",
+                              "Ask your supplier whether your stock is the recalled product line"],
+    "certification_mismatch": ["Hold sales and ask your supplier for the valid safety certificate for this model",
+                               "Correct or remove the safety mark claim on the listing"],
+    "hazard_signal": ["Keep selling but watch it: read the buyer reports and ask your supplier about them",
+                      "Turn on recall alerts for this model (POST /v1/watchlists)"],
+}
 COLUMNS = {"title": ("title", "name", "product", "listing_title"), "brand": ("brand", "manufacturer"),
            "model": ("model", "model_number", "item_model_number", "sku_model"), "price": ("price", "mrp"),
            "url": ("url", "link", "listing_url"), "seller": ("seller", "vendor"), "gtin": ("gtin", "ean", "upc")}
@@ -225,7 +238,8 @@ def scan(body: dict) -> dict:
     for i, found in findings.items():
         evidence_ids = found.pop("evidence_ids", None) or [store.add_evidence(
             "catalog_finding", f"{rows[i]['title']}:{found['finding']}", {"row": rows[i], **found})]
-        results.append({"row": i + 2, "listing_title": rows[i]["title"], **found, "evidence_ids": evidence_ids})
+        results.append({"row": i + 2, "listing_title": rows[i]["title"], **found, "evidence_ids": evidence_ids,
+                        "shop_action": SHOP_ACTIONS[found["finding"]]})
     results.sort(key=lambda r: (RANK[r["finding"]], r["row"]))
     seconds = time.time() - started
     counts = {k: sum(r["finding"] == k for r in results) for k in RANK}

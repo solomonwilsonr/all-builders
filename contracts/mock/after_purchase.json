@@ -1,0 +1,104 @@
+{
+ "investigation_id": "INV-7Q2K9D1M",
+ "outcome": "potential_concern",
+ "basis": "recalled_abroad_same_model",
+ "situation": "recall_to_check",
+ "headline": "Recalled in the US. Check your label.",
+ "say": "Check the model number on your label. Until you know, don't leave it charging.",
+ "plain": {
+  "title": "Recalled in the US",
+  "tone": "amber",
+  "why": "The safety regulator in the US recalled this NEWDERY ZHX-PB22 because of a fire risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+  "todo": "Check that the model number on the box or label is exactly ZHX-PB22. If it is, avoid buying it, or don't charge or use it unattended until the seller confirms it's safe.",
+  "say": "Recalled in the US, because of a fire risk. Not recalled in India yet. Check the model number before you buy.",
+  "link": {
+   "url": "https://www.cpsc.gov/Recalls",
+   "label": "See the official recall (CPSC)"
+  }
+ },
+ "steps": [
+  {
+   "n": 1,
+   "title": "Compare the model number on your label with the recall",
+   "detail": "CPSC notice cpsc:example of 2024-06-13: https://www.cpsc.gov/Recalls lists the affected model numbers. Look on the label, base or box.",
+   "url": "https://www.cpsc.gov/Recalls"
+  },
+  {
+   "n": 2,
+   "title": "Until you know, use it carefully",
+   "detail": "Don't charge it or leave it running unattended or overnight. Stop if it gets hot, smells, swells or sparks."
+  },
+  {
+   "n": 3,
+   "title": "Ask the shop whether yours is affected",
+   "detail": "Use the refund request below; it asks them to confirm."
+  },
+  {
+   "n": 4,
+   "title": "Report it",
+   "detail": "Send the regulator complaint below. It is filled in with the official records; add what happened to you."
+  },
+  {
+   "n": 5,
+   "title": "Save it to My Shelf",
+   "detail": "SafeShelf tells you if it is recalled later."
+  }
+ ],
+ "drafts": [
+  {
+   "kind": "refund_request",
+   "to": "Amazon.in",
+   "how": [
+    "Contact Amazon.in customer service: https://www.amazon.in/gp/help/customer/contact-us"
+   ],
+   "subject": "Refund request: NEWDERY ZHX-PB22 - safety recall",
+   "body": "Hello,\n\nI bought the NEWDERY ZHX-PB22 from you (order [order number], [date you bought it]).\n\nThe same model (NEWDERY ZHX-PB22) has been officially recalled in the US because of a fire risk (CPSC notice cpsc:example of 2024-06-13: https://www.cpsc.gov/Recalls). It has not been recalled in India, so please confirm whether the unit sold to me is affected.\n\nWhat I have seen: [what happened, if anything: overheating, smell, sparks…]\n\nI have stopped using it. I am asking for confirmation that my unit is not affected, or a refund if it is. Please tell me how to return it safely.\n\nChecked with SafeShelf on 2026-10-16 (reference INV-7Q2K9D1M).\n\nThank you,\n[your name]",
+   "language": "en",
+   "fill_in": [
+    "[your name]",
+    "[order number]",
+    "[date you bought it]"
+   ],
+   "evidence": [
+    {
+     "label": "CPSC cpsc:example",
+     "url": "https://www.cpsc.gov/Recalls"
+    }
+   ],
+   "status": "A draft for you to check and send yourself. SafeShelf has not sent anything."
+  },
+  {
+   "kind": "regulator_complaint",
+   "to": "National Consumer Helpline (Department of Consumer Affairs)",
+   "how": [
+    "Call 1915 (toll-free)",
+    "WhatsApp 8800001915",
+    "File online at https://consumerhelpline.gov.in/",
+    "If it isn't resolved, file a case with the consumer commission at https://edaakhil.nic.in/"
+   ],
+   "url": "https://consumerhelpline.gov.in/",
+   "subject": "Unsafe product report: NEWDERY ZHX-PB22",
+   "body": "Product: NEWDERY ZHX-PB22\nBought from: Amazon.in, order [order number], on [date you bought it]\nListing: https://www.amazon.in/dp/B0EXAMPLE\n\nWhy I am reporting it: The same model (NEWDERY ZHX-PB22) has been officially recalled in the US because of a fire risk (CPSC notice cpsc:example of 2024-06-13: https://www.cpsc.gov/Recalls). It has not been recalled in India, so please confirm whether the unit sold to me is affected.\n\nWhat happened to me: [what happened: e.g. it overheated while charging; any injury]\n\nOfficial records: CPSC cpsc:example https://www.cpsc.gov/Recalls\nChecked with SafeShelf on 2026-10-16 (reference INV-7Q2K9D1M). SafeShelf's result is set by code from official recall lists; it is not a regulator's decision.\n\nI would like the regulator to look into this product and the seller.\n\n[your name], [phone or email]",
+   "language": "en",
+   "fill_in": [
+    "[your name]",
+    "[order number]",
+    "[date you bought it]",
+    "[phone or email]"
+   ],
+   "evidence": [
+    {
+     "label": "CPSC cpsc:example",
+     "url": "https://www.cpsc.gov/Recalls"
+    }
+   ],
+   "note": "The helpline passes product-safety complaints to the Central Consumer Protection Authority (CCPA). If the label shows an ISI mark, add the BIS R-number: BIS can check whether it is genuine.",
+   "status": "A draft for you to check and send yourself. SafeShelf has not sent anything."
+  }
+ ],
+ "case_file": {
+  "markdown": "# SafeShelf case file INV-7Q2K9D1M\n\n**Product:** NEWDERY ZHX-PB22 (NEWDERY 10000mAh Power Bank ZHX-PB22)\n**Listing:** https://www.amazon.in/dp/B0EXAMPLE\n**Checked:** 2026-10-16 · **Result (set by code, policy evidence-policy/1.0):** Recalled in the US\n**Why:** The safety regulator in the US recalled this NEWDERY ZHX-PB22 because of a fire risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.\n\n## Official records\n\n- CPSC cpsc:example (2024-06-13, US): NEWDERY Power Banks Recalled Due to Fire and Burn Hazards https://www.cpsc.gov/Recalls\n\n## Where SafeShelf checked\n\n- India: No recall found (India has no public recall list; we checked government safety orders)\n- United States: Recall found for this model\n\n_Guidance from official records and SafeShelf's code rules - not a regulatory determination or legal advice. No personal details are included; the shopper adds their own._",
+  "created_at": "2026-10-16T12:00:00Z"
+ },
+ "label": "Guidance from official records and SafeShelf's code rules - not a regulatory determination or legal advice"
+}

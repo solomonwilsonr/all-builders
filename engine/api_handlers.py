@@ -10,6 +10,7 @@ from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 
 from engine import (
+    after_purchase,
     camera,
     case_file,
     cases,
@@ -19,18 +20,22 @@ from engine import (
     gemini,
     hazard_discovery,
     identity,
+    incidents,
     investigation,
     marks,
     owner,
     page_safety,
     passport,
+    point_and_ask,
     recall_catalog,
+    redteam,
     reviews,
     safety,
     supply_chain,
     tenancy,
     trace,
     trust,
+    voice,
     watch,
     webhooks,
 )
@@ -256,6 +261,42 @@ async def read_label(request: Request, params: dict[str, Any]) -> dict:
     return await run_in_threadpool(camera.read_label, body.get("image") or "")
 
 
+@bad_request
+async def point_ask(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(point_and_ask.ask, await body_of(request), who(request).tenant_id)
+
+
+@bad_request
+async def speak_verdict(request: Request, params: dict[str, Any]) -> dict:
+    body = await body_of(request)
+    return await run_in_threadpool(voice.spoken, body, body.get("language"))
+
+
+@bad_request
+async def after_purchase_guide(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(after_purchase.guide, await body_of(request), who(request).tenant_id)
+
+
+@bad_request
+async def report_incident(request: Request, params: dict[str, Any]) -> dict:
+    # The reporter is kept only as a hash (the calling screen's user id, like POST /v1/reports).
+    return await run_in_threadpool(incidents.report, await body_of(request), request.headers.get("x-reporter-ref"))
+
+
+async def incident_signals(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(incidents.signals, request.query_params.get("market"))
+
+
+async def redteam_rounds(request: Request, params: dict[str, Any]) -> dict:
+    return redteam.saved()
+
+
+@bad_request
+async def redteam_round(request: Request, params: dict[str, Any]) -> dict:
+    body = await body_of(request)
+    return await run_in_threadpool(redteam.live_round, body.get("attack") or "", body.get("market") or "US")
+
+
 def owner_caller(request: Request) -> tenancy.Caller:
     caller = who(request)
     if not caller.owner_ref:
@@ -465,6 +506,13 @@ HANDLERS = {
     "createWebhook": create_webhook,
     "getBenchRuns": bench_runs,
     "getBenchEvidence": bench_evidence,
+    "pointAndAsk": point_ask,
+    "speakVerdict": speak_verdict,
+    "afterPurchase": after_purchase_guide,
+    "reportIncident": report_incident,
+    "getIncidentSignals": incident_signals,
+    "getRedteamRounds": redteam_rounds,
+    "runRedteamRound": redteam_round,
 }
 HANDLERS = {op: tenant_guard(op, traced(op, handler)) for op, handler in HANDLERS.items()}
 HANDLERS["getTrace"] = tenant_guard("getTrace", get_trace)
