@@ -72,7 +72,7 @@ def matrix(market: str | None, rows: list[dict]) -> list[dict]:
                 if not cell["matched"]:
                     cell["state"] = NO_MATCH
             by_country.setdefault(country, []).append(cell)
-    usual = ["IN", "JP", "AU", "SG", "NZ", "KR", "TW", "US", "EU"]
+    usual = ["IN", "JP", "AU", "SG", "US", "EU", "KR", "TW", "NZ"]  # the US and EU are checked for every market
     others = sorted((c for c in dict.fromkeys(usual + sorted(by_country)) if c != market),
                     key=lambda c: (-sum(x.get("matched_by_country", {}).get(c, 0) for x in by_country.get(c, [])),
                                    usual.index(c) if c in usual else len(usual)))
@@ -107,4 +107,5 @@ def summary_line(country_rows: list[dict]) -> str:
     """'India: no matching notice (stored copy) · US: 1 notice (live) · Japan: source unavailable'."""
     words = {CHECKED_LIVE: "notice found (live)", CHECKED_CACHE: "notice found (stored copy)",
              NO_MATCH: "no matching notice", UNAVAILABLE: "couldn't be checked", NOT_SUPPORTED: "not checked"}
-    return " · ".join(f"{r['name']}: {words[r['state']]}" for r in country_rows[:6])
+    checked = [r for r in country_rows if r["state"] != NOT_SUPPORTED or r.get("is_market")]
+    return " · ".join(f"{r['name']}: {words[r['state']]}" for r in checked[:7])

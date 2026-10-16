@@ -119,6 +119,8 @@ def test_tenancy_helpers(monkeypatch):
     ("NEWDERY Power Bank 10000mAh ZHX-PB22", "ZHX-PB22"),
     ("Samsung 653 L Convertible 5-in-1 RS76CG8003S9HL", "RS76CG8003S9HL"),
     ("New 65W Fast Charger USB-C", None),
+    ("V-Guard VSDI 100 Digital for Inverter Refrigerator up to 900 L, Working Range 120 VAC -280 VAC", "VSDI 100"),
+    ("ABC 500 mAh power bank", None),
 ])
 def test_title_model_keeps_the_written_form(title, model):
     assert investigation.title_model({"title": title}) == model

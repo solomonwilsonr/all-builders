@@ -80,6 +80,11 @@ def product_from(request: dict) -> dict:
     return product
 
 
+SPACED_MODEL = re.compile(r"\b[A-Z]{3,6} \d{2,5}[A-Z]?\b(?! ?(?:mAh|W|V|A|L|kg|mm|cm|GB|TB|Hz|ml|VAC|litres?|liters?|"
+                          r"inch|in\b|ft|pcs|Ampere))")
+UNIT_AFTER = re.compile(r"^\d+(?:MAH|W|V|A|L)$", re.IGNORECASE)
+
+
 def title_model(listing: dict) -> str | None:
     """The model code as written in the listing (hyphens kept: regulators' search boxes need "ZHX-PB22", not
     "ZHXPB22"): the page's "Model number" row, else the first code-like word of the title, Japanese titles included."""
@@ -87,7 +92,9 @@ def title_model(listing: dict) -> str | None:
     from engine.sources.normalizer import NOT_MODEL, TOKEN
     labelled = labelled_model(listing.get("page_text") or "")
     title = N_IN_ONE.sub(" ", locales.fold(listing.get("title") or ""))
-    for token in MODEL_TOKEN.findall(title) + TOKEN.findall(title):
+    # "V-Guard VSDI 100 Digital": a capitalised code and a number written apart are one model ("VSDI 100").
+    spaced = [m for m in SPACED_MODEL.findall(title) if not UNIT_AFTER.match(m.split()[-1])]
+    for token in spaced + MODEL_TOKEN.findall(title) + TOKEN.findall(title):
         code = norm_model(token)
         if labelled and code == labelled:
             return token
