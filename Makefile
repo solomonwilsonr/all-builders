@@ -172,3 +172,6 @@ schedule-watch-recheck: ## every 6 h: re-investigate saved products and raise al
 		gcloud scheduler jobs $$verb http safeshelf-watch-recheck --project $(GCP_PROJECT) --location $(REGION) --schedule '0 */6 * * *' \
 			--uri $(API_URL)/v1/watchlists/recheck --http-method POST --headers Content-Type=application/json \
 			--attempt-deadline 300s --message-body-from-file $$body; status=$$?; rm -f $$body; exit $$status
+
+export-bigquery: ## analytics copy: assessments, coverage, fetches, claims, predictions -> NDJSON (BQ_DATASET=... to load)
+	$(ENGINE_RUN) ../data/export_bigquery.py $(if $(BQ_DATASET),--load $(BQ_DATASET))

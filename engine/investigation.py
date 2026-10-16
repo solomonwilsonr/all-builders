@@ -259,13 +259,15 @@ def stored_links(product_id: str | None, market: str | None, seen: set[str]) -> 
 
 
 def collect(product: dict, market: str | None, depth: str = "quick", as_of: str | None = None,
-            review_texts: list[dict] | None = None) -> dict:
+            review_texts: list[dict] | None = None, only: list[str] | None = None) -> dict:
     """Sources -> dedupe -> contradictions -> scope-checked matches -> coverage. JSON-safe (pipeline state)."""
     query = query_for(product, market, as_of)
     if query.brand or query.model or query.gtin:
-        retrieved = planner.investigate(query, depth)
+        retrieved = planner.investigate(query, depth, only)
     else:
         retrieved = {"plan": planner.plan(query, depth), "results": []}
+    if only:  # a baseline run (e.g. stored copy only): the other sources are reported as not consulted
+        retrieved["plan"] = [s for s in retrieved["plan"] if s["source"] in only]
     records = dedupe(retrieved["results"])
     found = contradictions.find(product, records, review_texts or [])
     matches = verify(product, records, market, found)
@@ -336,7 +338,7 @@ def investigate(request: dict, investigation_id: str | None = None, tenant_id: s
     depth = "deep" if request.get("depth") == "deep" else "quick"
     as_of = request.get("as_of")
     hazards, reviews_checked, groups, review_texts = hazards_for(product, request)
-    collected = collect(product, market, depth, as_of, review_texts)
+    collected = collect(product, market, depth, as_of, review_texts, request.get("only_sources"))
     decision = adjudicate(collected, hazards, reviews_checked, request.get("registry_issues"), as_of)
     matches = collected["matches"]
     claims = build_claims(product, collected["records"], [m for m in matches if m["tier"] != "lookalike"][:12])

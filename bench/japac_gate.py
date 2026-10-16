@@ -22,6 +22,9 @@ def main() -> None:
     rows, coverage = [], {}
     for case in cases:
         answer = investigation.investigate({**case["request"], "skip_reviews": True})
+        # Baseline (plan v2.2 workstream H): the same question answered from SafeShelf's stored copy only.
+        cached = investigation.investigate({**case["request"], "skip_reviews": True,
+                                            "only_sources": ["stored_notices", "india_notices"]})
         market_row = next((c for c in answer["coverage"]["countries"] if c["is_market"]), {})
         ok = answer["outcome"] == case["expected_outcome"] and \
             (not case.get("expected_basis") or answer["basis"] == case["expected_basis"])
@@ -29,7 +32,8 @@ def main() -> None:
                      "basis": answer["basis"], "expected": case["expected_outcome"], "pass": ok,
                      "market_state": market_row.get("state"), "source_mode": answer["source_mode"],
                      "lead_record": answer.get("lead_record"), "seconds": answer["seconds"],
-                     "coverage": answer["coverage"]["summary"]})
+                     "coverage": answer["coverage"]["summary"], "cache_only_outcome": cached["outcome"],
+                     "live_changed_the_answer": cached["outcome"] != answer["outcome"]})
         coverage[case["id"]] = {"market": answer["market"], "countries": [
             {k: c[k] for k in ("country", "state", "checked_at", "matched")} | {
                 "sources": [(s["source"], s["state"], s["mode"]) for s in c["sources"]]}
@@ -38,7 +42,8 @@ def main() -> None:
     gate = {"each_market_investigated": {"IN", "AU", "JP", "SG"} <= markets,
             "foreign_to_local_match": any(r["basis"] == "recalled_abroad_same_model" and r["pass"] for r in rows),
             "lookalike_rejected": any(r["id"].startswith("lookalike") and r["pass"] for r in rows),
-            "all_expected": all(r["pass"] for r in rows)}
+            "all_expected": all(r["pass"] for r in rows),
+            "live_vs_cache_differences": sum(r["live_changed_the_answer"] for r in rows)}
     (HERE / "coverage_by_country.json").write_text(json.dumps(coverage, indent=1, default=str) + "\n")
     results = {"gate": gate, "cases": rows}
     path = runlog.save("japac_gate", f"{sum(r['pass'] for r in rows)}/{len(rows)} cases as expected; gate "
@@ -47,7 +52,7 @@ def main() -> None:
                                                              default=str) + "\n")
     for r in rows:
         print(("PASS " if r["pass"] else "FAIL ") + f"{r['id']:<22} {r['market']} {r['outcome']:<26} {r['basis']:<28} "
-              f"{r['market_state']} {r['seconds']}s")
+              f"{r['market_state']} {r['seconds']}s · stored copy only: {r['cache_only_outcome']}")
     print(json.dumps(gate))
 
 

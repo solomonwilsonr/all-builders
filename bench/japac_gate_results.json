@@ -3,7 +3,8 @@
   "each_market_investigated": true,
   "foreign_to_local_match": true,
   "lookalike_rejected": true,
-  "all_expected": true
+  "all_expected": true,
+  "live_vs_cache_differences": 1
  },
  "cases": [
   {
@@ -26,8 +27,10 @@
     "local": false,
     "jurisdiction": "US"
    },
-   "seconds": 0.46,
-   "coverage": "India: no matching notice \u00b7 the United States: notice found (live) \u00b7 Japan: no matching notice \u00b7 Australia: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice"
+   "seconds": 0.45,
+   "coverage": "India: no matching notice \u00b7 the United States: notice found (live) \u00b7 Japan: no matching notice \u00b7 Australia: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice",
+   "cache_only_outcome": "potential_concern",
+   "live_changed_the_answer": false
   },
   {
    "id": "JP-local-recall",
@@ -49,8 +52,10 @@
     "local": true,
     "jurisdiction": "JP"
    },
-   "seconds": 4.54,
-   "coverage": "Japan: notice found (live) \u00b7 India: no matching notice \u00b7 Australia: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice \u00b7 Taiwan: no matching notice"
+   "seconds": 4.64,
+   "coverage": "Japan: notice found (live) \u00b7 India: no matching notice \u00b7 Australia: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice \u00b7 Taiwan: no matching notice",
+   "cache_only_outcome": "no_matching_notice_found",
+   "live_changed_the_answer": true
   },
   {
    "id": "AU-local-batch",
@@ -72,8 +77,10 @@
     "local": true,
     "jurisdiction": "AU"
    },
-   "seconds": 1.82,
-   "coverage": "Australia: notice found (live) \u00b7 the United States: notice found (live) \u00b7 India: no matching notice \u00b7 Japan: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice"
+   "seconds": 1.33,
+   "coverage": "Australia: notice found (live) \u00b7 the United States: notice found (live) \u00b7 India: no matching notice \u00b7 Japan: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice",
+   "cache_only_outcome": "potential_concern",
+   "live_changed_the_answer": false
   },
   {
    "id": "SG-foreign-match",
@@ -95,8 +102,10 @@
     "local": false,
     "jurisdiction": "US"
    },
-   "seconds": 3.86,
-   "coverage": "Singapore: no matching notice \u00b7 the United States: notice found (live) \u00b7 India: no matching notice \u00b7 Japan: no matching notice \u00b7 Australia: no matching notice \u00b7 South Korea: no matching notice"
+   "seconds": 3.2,
+   "coverage": "Singapore: no matching notice \u00b7 the United States: notice found (live) \u00b7 India: no matching notice \u00b7 Japan: no matching notice \u00b7 Australia: no matching notice \u00b7 South Korea: no matching notice",
+   "cache_only_outcome": "potential_concern",
+   "live_changed_the_answer": false
   },
   {
    "id": "lookalike-AU",
@@ -108,9 +117,11 @@
    "market_state": "no_matching_notice_found",
    "source_mode": "partial",
    "lead_record": null,
-   "seconds": 3.09,
-   "coverage": "Australia: no matching notice \u00b7 India: no matching notice \u00b7 Japan: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice \u00b7 Taiwan: no matching notice"
+   "seconds": 2.52,
+   "coverage": "Australia: no matching notice \u00b7 India: no matching notice \u00b7 Japan: no matching notice \u00b7 Singapore: no matching notice \u00b7 South Korea: no matching notice \u00b7 Taiwan: no matching notice",
+   "cache_only_outcome": "no_matching_notice_found",
+   "live_changed_the_answer": false
   }
  ],
- "run_id": "japac_gate-2026-10-16T1000"
+ "run_id": "japac_gate-2026-10-16T1009"
 }

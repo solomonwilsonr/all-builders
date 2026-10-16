@@ -1,0 +1,134 @@
+{
+ "run_id": "japac_gate-2026-10-16T1009",
+ "benchmark": "japac_gate",
+ "created_at": "2026-10-16T10:09:19+00:00",
+ "policy_version": "2026-10-16.1",
+ "commit": "a8f1949",
+ "summary": "5/5 cases as expected; gate passed",
+ "results": {
+  "gate": {
+   "each_market_investigated": true,
+   "foreign_to_local_match": true,
+   "lookalike_rejected": true,
+   "all_expected": true,
+   "live_vs_cache_differences": 1
+  },
+  "cases": [
+   {
+    "id": "IN-foreign-match",
+    "market": "IN",
+    "outcome": "potential_concern",
+    "basis": "recalled_abroad_same_model",
+    "expected": "potential_concern",
+    "pass": true,
+    "market_state": "no_matching_notice_found",
+    "source_mode": "partial",
+    "lead_record": {
+     "record_id": "cpsc:26792",
+     "authority": "CPSC",
+     "title": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+     "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+     "published": "2026-09-24",
+     "tier": "exact",
+     "scope": "in_scope",
+     "local": false,
+     "jurisdiction": "US"
+    },
+    "seconds": 0.45,
+    "coverage": "India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice",
+    "cache_only_outcome": "potential_concern",
+    "live_changed_the_answer": false
+   },
+   {
+    "id": "JP-local-recall",
+    "market": "JP",
+    "outcome": "confirmed_recall",
+    "basis": "confirmed_recall",
+    "expected": "confirmed_recall",
+    "pass": true,
+    "market_state": "checked_live",
+    "source_mode": "partial",
+    "lead_record": {
+     "record_id": "jp_caa:00000035913",
+     "authority": "CAA",
+     "title": "平南商事「HAIARA モバイルバッテリー」 - 返金／回収",
+     "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+     "published": "2026-10-05",
+     "tier": "exact",
+     "scope": "in_scope",
+     "local": true,
+     "jurisdiction": "JP"
+    },
+    "seconds": 4.64,
+    "coverage": "Japan: notice found (live) · India: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
+    "cache_only_outcome": "no_matching_notice_found",
+    "live_changed_the_answer": true
+   },
+   {
+    "id": "AU-local-batch",
+    "market": "AU",
+    "outcome": "potential_concern",
+    "basis": "local_recall_batch_unknown",
+    "expected": "potential_concern",
+    "pass": true,
+    "market_state": "checked_live",
+    "source_mode": "partial",
+    "lead_record": {
+     "record_id": "oecd:AU:PS1122012",
+     "authority": "ACCC",
+     "title": "Baseus power bank 65W 30000 mAh (model number: BS-30KP365)",
+     "url": "https://www.productsafety.gov.au/search-consumer-product-recalls/baseus-power-bank-65w-30000-mah-model-number-bs-30kp365",
+     "published": "2025-05-23",
+     "tier": "exact",
+     "scope": "batch_unknown",
+     "local": true,
+     "jurisdiction": "AU"
+    },
+    "seconds": 1.33,
+    "coverage": "Australia: notice found (live) · the United States: notice found (live) · India: no matching notice · Japan: no matching notice · Singapore: no matching notice · South Korea: no matching notice",
+    "cache_only_outcome": "potential_concern",
+    "live_changed_the_answer": false
+   },
+   {
+    "id": "SG-foreign-match",
+    "market": "SG",
+    "outcome": "potential_concern",
+    "basis": "recalled_abroad_same_model",
+    "expected": "potential_concern",
+    "pass": true,
+    "market_state": "no_matching_notice_found",
+    "source_mode": "partial",
+    "lead_record": {
+     "record_id": "cpsc:25338",
+     "authority": "CPSC",
+     "title": "More than One Million Anker Power Banks Recalled Due to Fire and Burn Hazards; Manufactured by Anker Innovations",
+     "url": "https://www.cpsc.gov/Recalls/2025/More-than-One-Million-Anker-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Manufactured-by-Anker-Innovations",
+     "published": "2025-06-12",
+     "tier": "exact",
+     "scope": "batch_unknown",
+     "local": false,
+     "jurisdiction": "US"
+    },
+    "seconds": 3.2,
+    "coverage": "Singapore: no matching notice · the United States: notice found (live) · India: no matching notice · Japan: no matching notice · Australia: no matching notice · South Korea: no matching notice",
+    "cache_only_outcome": "potential_concern",
+    "live_changed_the_answer": false
+   },
+   {
+    "id": "lookalike-AU",
+    "market": "AU",
+    "outcome": "no_matching_notice_found",
+    "basis": "no_matching_notice_found",
+    "expected": "no_matching_notice_found",
+    "pass": true,
+    "market_state": "no_matching_notice_found",
+    "source_mode": "partial",
+    "lead_record": null,
+    "seconds": 2.52,
+    "coverage": "Australia: no matching notice · India: no matching notice · Japan: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
+    "cache_only_outcome": "no_matching_notice_found",
+    "live_changed_the_answer": false
+   }
+  ]
+ }
+}

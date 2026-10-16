@@ -79,9 +79,45 @@ def record(investigation_id: str, operation_id: str, seconds: float, calls: list
          cost(calls), (summary or summarize(operation_id, body))[:300], investigation_id))
 
 
+def evidence_trail(investigation_id: str) -> dict:
+    """Plan v2.2 J5: what the investigation checked and decided: each source and its state, the fetches behind them,
+    which reports were grouped as one observation, contradictions, the policy version, and the review trail."""
+    conn = store.conn()
+
+    def rows(sql: str) -> list[dict]:
+        try:  # tables from `make migrate`; an older database has no trail
+            return [{k: (v.isoformat() if hasattr(v, "isoformat") else v) for k, v in r.items()}
+                    for r in conn.execute(sql, (investigation_id,)).fetchall()]
+        except Exception:  # noqa: BLE001
+            return []
+
+    snaps = rows("SELECT id, outcome, policy_version, source_mode, source_cutoff, created_at, query FROM "
+                 "assessment_snapshots WHERE investigation_id = %s ORDER BY created_at")
+    return {
+        "assessments": snaps,
+        "coverage_checks": rows("SELECT source_id, country, state, mode, checked_at, freshness, detail FROM "
+                                "coverage_checks WHERE investigation_id = %s ORDER BY id"),
+        "observation_groups": rows("SELECT group_id, member_id, reason FROM observation_groups WHERE "
+                                   "investigation_id = %s ORDER BY group_id"),
+        "contradictions": rows("SELECT kind, record_id, text, effect FROM claim_contradictions WHERE "
+                               "investigation_id = %s"),
+        "review_trail": rows("SELECT q.id AS queue_id, q.kind, q.state, d.decision, d.rationale, d.second_review, "
+                             "d.at FROM review_queue q LEFT JOIN review_decisions d ON d.queue_id = q.id "
+                             "WHERE q.case_id = %s ORDER BY d.at NULLS FIRST"),
+        "case_history": rows("SELECT from_state, to_state, rationale, at FROM case_reviews WHERE case_id = %s "
+                             "ORDER BY at"),
+        "adjudication": "engine/evidence_verification/adjudicator.py (code); policy version per assessment above",
+    }
+
+
 def get_trace(investigation_id: str) -> dict:
     rows = store.conn().execute(
         "SELECT * FROM investigation_steps WHERE investigation_id = %s ORDER BY n", (investigation_id,)).fetchall()
+    trail = evidence_trail(investigation_id)
+    if not rows and trail["assessments"]:  # a live investigation (POST /v1/investigations) has no agent steps
+        return {"investigation_id": investigation_id, "steps": [], "evidence_trail": trail,
+                "totals": {"seconds": 0, "input_tokens": 0, "output_tokens": 0, "cost_usd": 0, "unpriced_models": [],
+                           "cost_note": "no model calls: official sources and code only"}}
     if not rows:
         raise KeyError(investigation_id)
     steps = [{"n": r["n"], "tool": r["tool"], "model": ", ".join(r["models"]) or None, "seconds": r["seconds"],
@@ -97,4 +133,5 @@ def get_trace(investigation_id: str) -> dict:
                    "cost_usd": round(sum(s["cost_usd"] or 0 for s in steps), 6),
                    "unpriced_models": unpriced,
                    "cost_note": "estimate from listed per-token prices; calls to unpriced models are not included"},
+        "evidence_trail": trail,
     }
