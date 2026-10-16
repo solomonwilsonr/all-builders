@@ -12,7 +12,7 @@ import logging
 import re
 import threading
 
-from engine import gemini, locales
+from engine import gemini, locales, telemetry
 
 log = logging.getLogger(__name__)
 MODELS = ["gemini-3.5-flash-lite", "gemini-3-flash-preview", "gemini-3.5-flash"]
@@ -64,7 +64,8 @@ def read(listing: dict, call=None) -> dict:
         if key in _cache:
             return _cache[key]
     try:
-        out = (call or gemini.structured)(PROMPT.format(listing=page[:5000]), SCHEMA, models=MODELS, timeout_s=20)
+        with telemetry.span("agent.identity"):
+            out = (call or gemini.structured)(PROMPT.format(listing=page[:5000]), SCHEMA, models=MODELS, timeout_s=20)
     except Exception as error:  # noqa: BLE001  no answer: code's own reading stands
         log.info("identity agent failed: %s", type(error).__name__)
         return {}

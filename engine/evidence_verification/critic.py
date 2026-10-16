@@ -15,7 +15,7 @@ import logging
 import re
 import threading
 
-from engine import gemini, locales
+from engine import gemini, locales, telemetry
 
 log = logging.getLogger(__name__)
 MODELS = ["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
@@ -75,8 +75,9 @@ def review(product: dict, match: dict, call=None) -> dict:
         if key in _cache:
             return _cache[key]
     try:
-        out = (call or gemini.structured)(PROMPT.format(listing=listing, notice=notice[:3000]), SCHEMA,
-                                          models=MODELS, timeout_s=20)
+        with telemetry.span("agent.critic", record=match.get("record_id")):
+            out = (call or gemini.structured)(PROMPT.format(listing=listing, notice=notice[:3000]), SCHEMA,
+                                              models=MODELS, timeout_s=20)
     except Exception as error:  # noqa: BLE001  no critique: the possible match stands for a person
         log.info("critic failed: %s", type(error).__name__)
         return {"verdict": "unavailable"}

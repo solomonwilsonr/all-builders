@@ -10,6 +10,7 @@ import asyncio
 import logging
 import time
 
+from engine import telemetry
 from engine.sources import cache, health, policy, registry
 from engine.sources.base import (
     CIRCUIT_OPEN,
@@ -52,6 +53,14 @@ def plan(query: SourceQuery, depth: str = "quick") -> list[dict]:
 
 
 async def run_one(source_id: str, query: SourceQuery) -> SourceResult:
+    with telemetry.span(f"source.{source_id}", source=source_id, market=query.market_country) as current:
+        result = await _run_one(source_id, query)
+        telemetry.note(current, status=result.status, mode=result.mode, records=len(result.records),
+                       latency_ms=result.latency_ms)
+        return result
+
+
+async def _run_one(source_id: str, query: SourceQuery) -> SourceResult:
     entry = registry.source(source_id)
     qkey = query.key()
     hit = cache.get(source_id, qkey, int(entry.get("ttl_s") or 0))

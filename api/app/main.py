@@ -47,9 +47,11 @@ Handler = Callable[[Request, dict[str, Any]], Awaitable[Any]]
 # operationId -> real handler. Engine modules (M3-M6) register here as they finish.
 REAL_HANDLERS: dict[str, Handler] = {}
 if not MOCK and (os.environ.get("DATABASE_URL") or os.environ.get("CLOUD_SQL_INSTANCE")):
+    from engine import telemetry
     from engine.api_handlers import HANDLERS  # needs the database and Vertex AI
 
     REAL_HANDLERS.update(HANDLERS)
+    telemetry.setup()  # Cloud Trace for every agent, tool and source call, when SAFESHELF_TRACE_TO_CLOUD=1
 
 spec = yaml.safe_load((CONTRACTS_DIR / "openapi.yaml").read_text())
 app = FastAPI(title=spec["info"]["title"], version=spec["info"]["version"])

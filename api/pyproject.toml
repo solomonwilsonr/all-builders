@@ -14,6 +14,7 @@ dependencies = [
     "imagehash>=4.3",
     "mcp>=2.3",  # /mcp (app/mcp_server.py), MCPServer API
     "google-adk[a2a]>=2.11",
+    "opentelemetry-exporter-otlp-proto-http>=1.42",  # Cloud Trace (engine/telemetry.py)
 ]
 
 [dependency-groups]

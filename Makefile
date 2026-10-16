@@ -7,6 +7,8 @@ GCP_PROJECT ?= $(shell gcloud config get-value project 2>/dev/null)
 REGION ?= asia-south1
 SQL_INSTANCE ?= $(GCP_PROJECT):$(REGION):safeshelf-db
 DEPLOY_MOCK ?= 0
+# Cloud Trace for the agents (engine/telemetry.py); needs: gcloud services enable telemetry.googleapis.com cloudtrace.googleapis.com
+TRACE_TO_CLOUD ?= 1
 
 API_URL ?= https://safeshelf-api-368488022657.asia-south1.run.app
 # The Research Agent service (make deploy-research); empty = the API answers research requests with 503.
@@ -68,7 +70,7 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 2Gi --timeout 300 \
 		--add-cloudsql-instances $(SQL_INSTANCE) \
 		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest)$(if $(WEBHOOK_SECRET),$(comma)SAFESHELF_WEBHOOK_KEY=webhook-key:latest) \
-		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
+		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL),SAFESHELF_TRACE_TO_CLOUD=$(TRACE_TO_CLOUD)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
 
 schedule-recheck: ## every 30 min: recall sites searched again for one saved first-look model (then run make deploy-api)
 	@gcloud secrets describe recheck-token --project $(GCP_PROJECT) >/dev/null 2>&1 || \

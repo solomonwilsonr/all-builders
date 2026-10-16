@@ -15,7 +15,7 @@ import typing
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 
-from engine import active, assessments, locales, plain, region_policy
+from engine import active, assessments, locales, plain, region_policy, telemetry
 from engine.evidence_verification import (
     POLICY_VERSION,
     adjudicator,
@@ -356,6 +356,15 @@ def hazard_groups(findings: list[dict]) -> tuple[list[dict], list[dict], list[di
 
 
 def investigate(request: dict, investigation_id: str | None = None, tenant_id: str = "public") -> dict:
+    with telemetry.span("safeshelf.investigation", depth=request.get("depth") or "quick") as current:
+        answer = _investigate(request, investigation_id, tenant_id)
+        telemetry.note(current, investigation_id=answer["investigation_id"], market=answer.get("market"),
+                       outcome=answer["outcome"], basis=answer.get("basis"), source_mode=answer.get("source_mode"),
+                       seconds=answer.get("seconds"))
+        return answer
+
+
+def _investigate(request: dict, investigation_id: str | None = None, tenant_id: str = "public") -> dict:
     started = time.monotonic()
     investigation_id = investigation_id or new_id()
     market = region_policy.market_of(request.get("url"), request.get("currency"), request.get("market"))

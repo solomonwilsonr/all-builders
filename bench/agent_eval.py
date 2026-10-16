@@ -114,6 +114,35 @@ CASES = [
                                             for s in r["research"]["sources"] for m in s.get("matches", [])))]),
     ("ACCC block is reported, not hidden", "au", {"mode": "research", "brand": "Anker", "model": "A1263", "sources": ["accc"]},
      [("says blocked", lambda r: r["research"]["sources"][0]["status"] in ("blocked", "captcha", "found", "not_found"))]),
+    # --- Plan v2.2 agents: official sources, identity agent, critic, plain answers ---
+    ("Recall abroad is amber and names the country", "in", {"mode": "investigate", "product_id": "unmatched", "listing": {
+        "url": "https://www.flipkart.com/anker-10000-mah-power-bank-a1263011-core/p/itmeygphsqt2yccx",
+        "title": "Anker 10000 mAh Power Bank", "price": 3399, "currency": "INR", "page_text": "Model Number: A1263011"}},
+     [("safety amber, never red", lambda r: r["verdict"]["safe"] == "amber"),
+      ("outcome recalled abroad", lambda r: r["verdict"].get("basis") == "recalled_abroad_same_model"),
+      ("plain title names the US", lambda r: "US" in r["verdict"]["plain"]["title"]),
+      ("answer doesn't claim an Indian recall", lambda r: not re.search(r"\b(?:is|was|has been) (?:officially )?"
+                                                                       r"recalled in India", text(r), re.IGNORECASE)),
+      ("no safety promise", lambda r: not OVERCLAIM.search(text(r)))]),
+    ("Recall in Japan is red (CAA read live)", "jp", {"mode": "investigate", "product_id": "unmatched", "listing": {
+        "url": "https://www.amazon.co.jp/dp/SAFESHELF-W5PRO", "title": "HAIARA モバイルバッテリー W5PRO 10000mAh",
+        "price": 2980, "currency": "JPY"}},
+     [("safety red", lambda r: r["verdict"]["safe"] == "red"),
+      ("confirmed recall", lambda r: r["verdict"].get("outcome") == "confirmed_recall"),
+      ("CAA is the source", lambda r: (r["verdict"].get("lead_record") or {}).get("authority") == "CAA")]),
+    ("Identity agent reads a model number code can't", "in", {"mode": "investigate", "product_id": "unmatched", "listing": {
+        "url": "https://www.flipkart.com/boat-stone-350/p/itm0000", "title": "boAt Stone 350 Bluetooth Speaker 10 W",
+        "price": 1499, "currency": "INR"}},
+     [("model read", lambda r: r["checks"]["official_sources"]["product"]["model"] == "Stone 350"),
+      ("read by the identity agent, quoted", lambda r: r["checks"]["official_sources"]["product"]["identity_source"]
+       .startswith("identity agent"))]),
+    ("Critic sets aside look-alike recalls", "us", {"mode": "investigate", "product_id": "unmatched", "listing": {
+        "url": "https://www.amazon.com/dp/B07QXV6N1B", "title": "Anker Power Bank PowerCore Slim 10000, 10,000mAh",
+        "price": 21.99, "currency": "USD", "page_text": "Model Number: A1229"}},
+     [("not called recalled", lambda r: r["verdict"]["safe"] != "red"),
+      ("look-alikes set aside", lambda r: all(c["effect"] == "set_aside" for c in
+                                               r["checks"]["official_sources"]["critiques"])),
+      ("plain answer present", lambda r: bool(r["verdict"]["plain"]["why"]))]),
 ]
 
 
