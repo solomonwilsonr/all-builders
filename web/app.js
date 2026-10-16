@@ -117,6 +117,23 @@ const STATES = { checked_live: ["●", "notice found (live)"], checked_cache: ["
 const OUTCOMES = { confirmed_recall: "Confirmed recall in this country", substantiated_hazard_signal: "Substantiated hazard reports",
   potential_concern: "Potential concern", no_matching_notice_found: "No matching notice (not proof of safety)", insufficient_evidence: "Not enough evidence" };
 
+// The answer in everyday words (engine/plain.py) leads; the country table and records stay under "Show details".
+const MARKS = { ok: "✓", warn: "!", maybe: "?", skip: "–" };
+function plainBlock(v) {
+  const p = v.plain;
+  if (!p) return null;
+  return el("div", { className: "plain" },
+    el("h3", { className: `ptitle ${p.tone}`, textContent: p.title }),
+    el("p", { className: "pwhy", textContent: p.why }),
+    el("div", { className: "ptodo" }, el("strong", { textContent: "What you can do" }), el("p", { textContent: p.todo }),
+      ...(p.link?.url ? [el("a", { href: p.link.url, target: "_blank", rel: "noopener", textContent: p.link.label })] : [])),
+    el("div", { className: "pplaces" }, el("strong", { textContent: "Where we checked official recall lists" }),
+      el("ul", {}, ...(p.checked || []).map((c) => el("li", { className: c.mark },
+        el("span", { className: "pm", textContent: MARKS[c.mark] || "–" }), `${c.flag} `,
+        el("b", { textContent: `${c.name}${c.yours ? " (shopper's country)" : ""}: ` }), c.status)))),
+    el("p", { className: "muted", textContent: p.note }));
+}
+
 function coverageBlock(v) {
   const countries = v.coverage?.countries || [];
   if (!v.outcome || !countries.length) return null;
@@ -157,8 +174,10 @@ function verdictBlock(result, expect) {
     parts.push(el("details", { open: true }, el("summary", { textContent: `Why: ${v.reasons.length} reason${v.reasons.length === 1 ? "" : "s"}, written by code` }),
       el("ul", { className: "reasons" }, ...v.reasons.map((r) => el("li", { textContent: r.text })))));
   }
+  const plain = plainBlock(v);
+  if (plain) parts.push(plain);
   const cov = coverageBlock(v);
-  if (cov) parts.push(cov);
+  if (cov) { cov.open = !plain; cov.querySelector("summary").textContent = plain ? "Show details: sources, records and rules" : cov.querySelector("summary").textContent; parts.push(cov); }
   const ids = [...new Set([...(result.messages?.[0]?.evidence_ids || []), ...(v.evidence_ids || [])])];
   if (ids.length) {
     const box = el("div", { className: "evidence" });

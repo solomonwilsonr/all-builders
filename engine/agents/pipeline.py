@@ -297,15 +297,19 @@ def decide(state: dict) -> dict:
     assessment = assess(state)
     if assessment:
         safe = sources_colour(assessment, s)
-        lead = assessment.get("lead_record") or {}
-        source = f" ({lead['authority']} {lead['record_id']}, {lead.get('published') or 'undated'})" if lead else ""
-        say(assessment["headline"] + source)
-        say("Checked: " + assessment["coverage"]["summary"])
+        words = assessment.get("plain") or {}
+        say(words.get("why") or assessment["headline"])
+        places = [f"{c['name']}: {c['status'].split(' (')[0].lower()}" for c in words.get("checked", [])[:6]]
+        if places:
+            say("Where we checked: " + "; ".join(places))
         for f in s.get("ai_findings", []) if ok(s) else []:
-            say(f"{f['independent_reports']} buyer report(s) of {f['mechanism']} (AI finding, under review; "
-                f"{f.get('with_photos', 0)} with photos)", f.get("evidence_ids", [])[:4])
+            n = f["independent_reports"]
+            who = f"{n} buyer{'s' if n != 1 else ''}"
+            say(f"{who} reported {f['mechanism']} (from reviews, not checked by a regulator)",
+                f.get("evidence_ids", [])[:4])
         if safe == "unknown" and ok(s) and assessment["outcome"] != "insufficient_evidence":
-            say(f"Only {s.get('reviews_checked', 0)} review(s) read: too few to call it safe")
+            n = s.get("reviews_checked", 0)
+            say(f"We read {n} buyer review{'s' if n != 1 else ''}: too few to judge from reviews alone")
     elif ok(s):
         status = s.get("official_status") or {}
         safe = {"red": "red", "amber": "amber", "green": "green"}.get(s.get("verdict"), "unknown")
@@ -386,7 +390,7 @@ def decide(state: dict) -> dict:
 
 ASSESSMENT_KEYS = ("outcome", "basis", "headline", "safety_concern", "evidence_strength", "identity_confidence",
                    "lead_record", "coverage", "limitations", "what_would_change", "review_required", "review_reasons",
-                   "policy_version", "source_mode", "rules")
+                   "policy_version", "source_mode", "rules", "plain")
 MATCH_KEYS = ("record_id", "authority", "title", "url", "published", "jurisdiction", "tier", "scope", "local",
               "authenticity", "support", "models_named", "batch_limits")
 

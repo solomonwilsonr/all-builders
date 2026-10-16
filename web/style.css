@@ -157,3 +157,15 @@ details summary { cursor:pointer; font-weight:700; }
 .coverage h4 { margin:10px 0 4px; font-size:14px; }
 .coverage .muted { opacity:.75; font-size:13px; }
 @media (max-width:600px) { .coverage td:last-child { display:none; } }
+
+/* The plain answer (plan v2.2 UX) */
+.plain { margin:12px 0; padding:14px 18px; border-radius:18px; background:var(--card); box-shadow:var(--shadow); }
+.plain .ptitle { margin:0 0 4px; font-size:22px; }
+.plain .ptitle.red { color:#b3261e; } .plain .ptitle.amber { color:#a15c00; } .plain .ptitle.green { color:#1b7a3a; }
+.plain .pwhy { margin:0 0 10px; font-size:16px; }
+.plain .ptodo { padding:10px 14px; border-radius:14px; background:rgba(0,0,0,.04); margin-bottom:10px; }
+.plain .ptodo p { margin:4px 0; }
+.plain .pplaces ul { list-style:none; padding:0; margin:6px 0; } .plain .pplaces li { margin:4px 0; }
+.plain .pm { display:inline-block; width:1.2em; font-weight:800; }
+.plain li.ok .pm { color:#1b7a3a; } .plain li.warn .pm { color:#b3261e; } .plain li.maybe .pm { color:#a15c00; }
+.plain .muted { opacity:.75; font-size:13px; margin:6px 0 0; }

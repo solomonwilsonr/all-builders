@@ -187,6 +187,7 @@ def safety(product_id: str, assess: bool = True) -> dict:
             "limitations": decision["limitations"], "what_would_change": decision["what_would_change"],
             "lead_record": decision["lead_record"], "review_required": decision["review_required"],
             "source_mode": decision["source_mode"], "policy_version": decision["policy_version"],
+            "plain": decision.get("plain"),
             "as_of": datetime.now(UTC).isoformat(timespec="seconds"),
         })
     return answer

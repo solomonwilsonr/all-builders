@@ -1,4 +1,4 @@
-const ICON = { unknown: "Not enough evidence yet", green: "Looks fine so far", amber: "Be careful: under review", red: "Danger or not real" };
+const ICON = { unknown: "Can't tell yet", green: "No problems found", amber: "Be careful", red: "Don't buy" };
 const list = document.getElementById("list");
 const empty = document.getElementById("empty");
 

@@ -87,7 +87,7 @@
     button:focus-visible { outline: 3px solid #2f5fb3; outline-offset: 2px; }
     @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } .bar.busy i { animation: none; } }`;
   const HIGHLIGHT = "outline: 4px solid #4361ee !important; outline-offset: 3px !important; transition: transform .25s; transform: scale(1.04);";
-  const WORDS = { red: "⛔ Danger or not real", amber: "⚠️ Be careful: under review", green: "✅ Nothing found in what was checked", unknown: "❔ Not enough evidence yet" };
+  const WORDS = { red: "⛔ Don't buy", amber: "⚠️ Be careful", green: "✅ No problems found", unknown: "❔ Can't tell yet" };
 
   const agent = (body, timeout) => new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ type: "safeshelf:agent", body, timeout }, (res) => (res?.ok ? resolve(res.result) : reject(new Error(res?.error || chrome.runtime.lastError?.message || "no answer"))));

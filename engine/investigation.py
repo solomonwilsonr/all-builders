@@ -15,7 +15,7 @@ import typing
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 
-from engine import active, assessments, locales, region_policy
+from engine import active, assessments, locales, plain, region_policy
 from engine.evidence_verification import (
     POLICY_VERSION,
     adjudicator,
@@ -312,6 +312,7 @@ def adjudicate(collected: dict, hazards: list[dict], reviews_checked: int, regis
                             "summary": coverage.summary_line(collected["country_rows"])}
     decision["source_mode"] = collected["source_mode"]
     decision["rules"] = region_policy.rules(market)
+    decision["plain"] = plain.shopper(decision, product, collected["matches"], collected["country_rows"], market)
     return decision
 
 

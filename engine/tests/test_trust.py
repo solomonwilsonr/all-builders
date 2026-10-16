@@ -112,8 +112,8 @@ def test_good_signs_for_an_unknown_product():
               "website_age": {"result": "skipped"}}
     assert trust.good_signs(checks, "https://www.amazon.in/dp/B0DT3HZQ5K") == [
         "Sold by the brand itself (JETech India)",
-        "Price is 27% below the M.R.P. on the page, a normal discount",
-        "Sold on amazon.in, a large established marketplace"]
+        "Price is 27% below the printed M.R.P., a normal discount",
+        "Sold on amazon.in, a big, well-known shop"]
 
 
 def test_a_look_alike_is_never_the_price_reference(monkeypatch):
@@ -150,17 +150,17 @@ def test_a_brand_store_link_is_not_the_seller():
     out = trust.seller_check("Samsung", "DAWNTECH ELECTRONICS PRIVATE LIMITED", "https://www.amazon.in/dp/B0BQC4Y4TP",
                              AMAZON_SAMSUNG_FRIDGE)
     assert out["relationship"] == "third_party" and out["ships_from"] == "Amazon"
-    assert "not Samsung's own store" in out["reason"]
-    assert '"Visit the Samsung Store" link is Samsung\'s brand page, not the seller' in out["reason"]
+    assert "not by Samsung itself" in out["reason"]
+    assert '"Visit the Samsung Store" is only Samsung\'s brand page, not the seller' in out["reason"]
     assert "not on the list of official sellers Samsung published" in out["reason"]
     signs = trust.good_signs({"seller": out, "price": trust.mrp_check(79990, 113000), "website_age": {"result": "skipped"}},
                              "https://www.amazon.in/dp/B0BQC4Y4TP")
-    assert any(s.startswith("Ships from Amazon:") and "does not show the seller is authorised" in s for s in signs)
+    assert any(s.startswith("Shipped by Amazon") and "doesn't prove the seller is official" in s for s in signs)
     # A brand with no published list keeps the plain wording
-    assert "cannot confirm it is authorised to sell Nutrela" in trust.seller_check("Nutrela", "MegaDealz24", None)["reason"]
+    assert "can't confirm they're an official Nutrela seller" in trust.seller_check("Nutrela", "MegaDealz24", None)["reason"]
 
 
 def test_a_seller_named_after_the_brand_is_said_but_not_trusted():
     out = trust.seller_check("NUTRELA", "PATANJALI NUTRELA NUTRITION", "https://www.amazon.in/dp/B09BFX21D1")
-    assert out["result"] == "unknown" and out["relationship"] == "brand_named" and "may be the brand" in out["reason"]
+    assert out["result"] == "unknown" and out["relationship"] == "brand_named" and "can't confirm it's NUTRELA's own store" in out["reason"]
     assert trust.seller_check("Nutrela", "MegaDealz24", None)["relationship"] == "third_party"

@@ -3,10 +3,10 @@
 import { API_BASE, API_KEY } from "./config.js";
 
 const VERDICT = {
-  green: { icon: "✅", word: "Looks fine so far" },
-  amber: { icon: "⚠️", word: "Be careful: under review" },
-  red: { icon: "⛔", word: "Danger or not real" },
-  unknown: { icon: "❔", word: "Not enough evidence yet" },
+  green: { icon: "✅", word: "No problems found" },
+  amber: { icon: "⚠️", word: "Be careful" },
+  red: { icon: "⛔", word: "Don't buy" },
+  unknown: { icon: "❔", word: "Can't tell yet" },
 };
 
 export async function api(path, options = {}, base = API_BASE) {
@@ -37,6 +37,12 @@ const CHECK_WORDS = {
   spec: (c) => c.conflicts?.length && `Spec conflicts: ${c.conflicts.join(", ")}`,
 };
 const CHECK_NAMES = { copied_photos: "photos", price: "price", website_age: "website age", spec: "specs", seller: "seller" };
+// A check that couldn't decide, in plain words: the seller's line already reads as a sentence.
+const unknownLine = (k, c) => {
+  const why = c.reason || "not enough information";
+  if (k === "seller" && /^Sold by/.test(why)) return why;
+  return `Couldn't check the ${CHECK_NAMES[k] || k}: ${why}`;
+};
 
 // How the engine matched the listing. A look-alike is only a similar product, so it is never treated as this product.
 const STRONG_MATCHES = new Set(["url", "model_number"]);
@@ -236,12 +242,12 @@ async function runCheckNow(page) {
   const safetyEvidence = (pid ? [] : safety?.ai_findings || []).flatMap((f) => f.evidence_ids || []);
 
   const realLines = Object.entries(trust.checks).flatMap(([k, c]) =>
-    c.result === "flag" ? [CHECK_WORDS[k]?.(c)] : c.result === "unknown" ? [`Could not verify ${CHECK_NAMES[k] || k}: ${c.reason || "no data"}`] : [],
+    c.result === "flag" ? [CHECK_WORDS[k]?.(c)] : c.result === "unknown" ? [unknownLine(k, c)] : [],
   ).filter(Boolean);
-  if (trust.hidden_instructions_found) realLines.push("Page has hidden text trying to instruct AI. Ignored.");
+  if (trust.hidden_instructions_found) realLines.push("This page hides text meant to trick AI tools, which is a warning sign. We ignored it.");
   // For a product SafeShelf has no genuine version of, the engine also says what looked right (seller, M.R.P., site).
   realLines.push(...(trust.good_signs || []));
-  const real = card(realLevel(trust.checks), realLines.length ? realLines : ["No warning signs found"]);
+  const real = card(realLevel(trust.checks), realLines.length ? realLines : ["Nothing suspicious about the seller or price"]);
 
   // No warning is not good news when checks could not run, so the API's reassuring sentence is not used then.
   const worst = [safeLevel, real.level].includes("red") ? "red" : [safeLevel, real.level].includes("amber") ? "amber" : null;
@@ -270,6 +276,7 @@ async function runCheckNow(page) {
     label: [safety?.label, trust.label].filter(Boolean).join(" · "),
     // Plan v2.2: what was checked, country by country, and the official records behind the answer.
     outcome: outcome ? { outcome: outcome.outcome, headline: outcome.headline, source_mode: outcome.source_mode,
+      plain: outcome.plain || null, // the answer in everyday words (engine/plain.py): shown first
       coverage: outcome.coverage?.countries || [], what_would_change: outcome.what_would_change || [],
       sources: (inv?.matches || []).filter((m) => m.tier !== "lookalike").slice(0, 4).map((m) => ({ authority: m.authority, record_id: m.record_id, url: m.url, title: m.title, local: m.local, tier: m.tier })),
       lead: outcome.lead_record || null, limitations: outcome.limitations || [], policy_version: outcome.policy_version } : null,

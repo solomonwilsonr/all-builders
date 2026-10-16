@@ -1,0 +1,40 @@
+[debug] [2026-10-16T11:09:21.520Z] ----------------------------------------------------------------------
+[debug] [2026-10-16T11:09:21.522Z] Command:       /opt/homebrew/Cellar/node/26.8.2/bin/node /opt/homebrew/bin/firebase deploy --only hosting --project project-03d8d835-d5c5-4ad4-bf8
+[debug] [2026-10-16T11:09:21.522Z] CLI Version:   15.30.2
+[debug] [2026-10-16T11:09:21.522Z] Platform:      darwin
+[debug] [2026-10-16T11:09:21.522Z] Node Version:  v26.8.2
+[debug] [2026-10-16T11:09:21.522Z] Detected Agent: unknown
+[debug] [2026-10-16T11:09:21.522Z] Time:          Fri Oct 16 2026 16:39:21 GMT+0530 (India Standard Time)
+[debug] [2026-10-16T11:09:21.522Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-10-16T11:09:21.527Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-10-16T11:09:22.303Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-10-16T11:09:22.304Z] > authorizing via signed-in user (pixelnormad165@gmail.com)
+[debug] [2026-10-16T11:09:22.304Z] [iam] checking project project-03d8d835-d5c5-4ad4-bf8 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-10-16T11:09:22.304Z] Checked if tokens are valid: false, expires at: 1790030153997
+[debug] [2026-10-16T11:09:22.304Z] Checked if tokens are valid: false, expires at: 1790030153997
+[debug] [2026-10-16T11:09:22.304Z] > refreshing access token with scopes: []
+[debug] [2026-10-16T11:09:22.305Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-10-16T11:09:22.305Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-10-16T11:09:22.500Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-10-16T11:09:22.500Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-10-16T11:09:22.513Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/project-03d8d835-d5c5-4ad4-bf8:testIamPermissions [none]
+[debug] [2026-10-16T11:09:22.513Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/project-03d8d835-d5c5-4ad4-bf8:testIamPermissions  x-goog-user-project=project-03d8d835-d5c5-4ad4-bf8
+[debug] [2026-10-16T11:09:22.513Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/project-03d8d835-d5c5-4ad4-bf8:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-10-16T11:09:23.003Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-10-16T11:09:23.003Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-10-16T11:09:24.435Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/project-03d8d835-d5c5-4ad4-bf8:testIamPermissions 403
+[debug] [2026-10-16T11:09:24.436Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/project-03d8d835-d5c5-4ad4-bf8:testIamPermissions {"error":{"code":403,"message":"Caller does not have required permission to use project project-03d8d835-d5c5-4ad4-bf8. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=project-03d8d835-d5c5-4ad4-bf8 and then retry. Propagation of the new permission may take a few minutes.","status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"USER_PROJECT_DENIED","domain":"googleapis.com","metadata":{"containerInfo":"project-03d8d835-d5c5-4ad4-bf8","service":"cloudresourcemanager.googleapis.com","consoleUrl":"https://console.developers.google.com/iam-admin/iam?project=project-03d8d835-d5c5-4ad4-bf8","consumer":"projects/project-03d8d835-d5c5-4ad4-bf8"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Caller does not have required permission to use project project-03d8d835-d5c5-4ad4-bf8. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=project-03d8d835-d5c5-4ad4-bf8 and then retry. Propagation of the new permission may take a few minutes."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developer console IAM admin","url":"https://console.developers.google.com/iam-admin/iam?project=project-03d8d835-d5c5-4ad4-bf8"}]}]}}
+[debug] [2026-10-16T11:09:24.436Z] [iam] error while checking permissions, command may fail: Request to https://cloudresourcemanager.googleapis.com/v1/projects/project-03d8d835-d5c5-4ad4-bf8:testIamPermissions had HTTP Error: 403, Caller does not have required permission to use project project-03d8d835-d5c5-4ad4-bf8. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=project-03d8d835-d5c5-4ad4-bf8 and then retry. Propagation of the new permission may take a few minutes.
+[debug] [2026-10-16T11:09:24.437Z] Checked if tokens are valid: true, expires at: 1792152561500
+[debug] [2026-10-16T11:09:24.437Z] Checked if tokens are valid: true, expires at: 1792152561500
+[debug] [2026-10-16T11:09:24.437Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/project-03d8d835-d5c5-4ad4-bf8 [none]
+[debug] [2026-10-16T11:09:25.015Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/project-03d8d835-d5c5-4ad4-bf8 403
+[debug] [2026-10-16T11:09:25.015Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/project-03d8d835-d5c5-4ad4-bf8 {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-10-16T11:09:25.016Z] Request to https://firebase.googleapis.com/v1beta1/projects/project-03d8d835-d5c5-4ad4-bf8 had HTTP Error: 403, The caller does not have permission
+[debug] [2026-10-16T11:09:25.329Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/project-03d8d835-d5c5-4ad4-bf8 had HTTP Error: 403, The caller does not have permission
+    at responseToError (/opt/homebrew/lib/node_modules/firebase-tools/lib/responseToError.js:53:12)
+    at RetryOperation._fn (/opt/homebrew/lib/node_modules/firebase-tools/lib/apiv2.js:415:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to get Firebase project project-03d8d835-d5c5-4ad4-bf8. Please make sure the project exists and your account has permission to access it.

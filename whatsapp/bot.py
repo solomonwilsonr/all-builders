@@ -206,7 +206,17 @@ def reply(identity: dict, safety: dict, lang: str = "en", trust: dict | None = N
     status = safety.get("official_status") or {}
     lead = safety.get("lead_record") or {}
     basis = safety.get("basis")
-    if verdict == "red":
+    words = safety.get("plain") or {}
+    if words and lang == "en":  # the answer in everyday words (engine/plain.py), same as the extension and web page
+        icon = {"red": "⛔", "amber": "⚠️", "green": "✅"}.get(words.get("tone"), "ℹ️")
+        lines.append(f"{icon} {words['title'].upper()}. {words['why']}")
+        lines.append(f"What you can do: {words['todo']}")
+        places = [f"{c['flag']} {c['name']}: {c['status'].split(' (')[0]}" for c in words.get("checked", [])[:5]]
+        if places:
+            lines.append("Where we checked:\n" + "\n".join(places))
+        if words.get("link"):
+            lines.append(f"{words['link']['label']}: {words['link']['url']}")
+    elif verdict == "red":
         recalls = lead.get("record_id") or ", ".join(status.get("recall_ids") or [])
         lines.append(t["red"].format(name=name, recalls=recalls))
     elif basis in ("recalled_abroad_same_model", "local_recall_batch_unknown") and lead:
@@ -224,7 +234,7 @@ def reply(identity: dict, safety: dict, lang: str = "en", trust: dict | None = N
     if status.get("recall_ids_under_review") and verdict != "red" and not lead:
         lines.append(t["under_review_recall"])
     summary = (safety.get("coverage") or {}).get("summary")
-    if summary:  # plan v2.2: which countries' sources were checked (no match in one country is not an all-clear)
+    if summary and not (words and lang == "en"):  # plan v2.2: which countries' sources were checked (no match in one country is not an all-clear)
         lines.append(t["checked"].format(summary=summary))
     shop = shop_line(trust or {}, lang)
     if shop:

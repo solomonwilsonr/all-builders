@@ -406,6 +406,18 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .sec h3 { margin:0 0 2px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
     .verdict { font-size:12px; font-weight:700; padding:2px 10px; border-radius:999px; background:#fff; }
     .sec.green .verdict { color:var(--green); } .sec.amber .verdict { color:var(--amber); } .sec.red .verdict { color:var(--red); } .sec.unknown .verdict { color:var(--unknown); }
+    /* Plain answer: what to do, where we checked (plan v2.2 UX) */
+    .todo { margin-top:10px; padding:12px 14px; border-radius:16px; background:#fff; border:1px solid rgba(0,0,0,.08); }
+    .todo strong { display:block; font-size:14px; margin-bottom:4px; }
+    .todo p { margin:0 0 6px; font-size:14px; line-height:1.45; }
+    .todo .btnlink { display:inline-block; margin-top:4px; font-weight:600; font-size:13px; }
+    .places { margin-top:10px; padding:10px 14px; border-radius:16px; background:var(--unknown-bg); font-size:13.5px; }
+    .places > strong { display:block; margin-bottom:4px; }
+    .places ul { list-style:none; margin:0; padding:0; } .places li { display:flex; gap:6px; align-items:baseline; margin:5px 0; line-height:1.35; }
+    .places .pm { width:1.1em; font-weight:800; flex:none; text-align:center; }
+    .places li.ok .pm { color:var(--green); } .places li.warn .pm { color:var(--red); } .places li.maybe .pm { color:var(--amber); } .places li.skip .pm { color:var(--unknown); }
+    .places .flag { flex:none; } .places .note { color:var(--unknown); font-size:12px; margin:6px 0 0; }
+    details.more { margin-top:10px; } details.more > summary { cursor:pointer; font-weight:600; font-size:13px; color:var(--unknown); padding:6px 2px; }
     /* What was checked, by country (plan v2.2) */
     .coverage { margin-top:8px; padding:8px 14px; border-radius:16px; background:var(--unknown-bg); font-size:13px; }
     .coverage summary { cursor:pointer; font-weight:600; }
@@ -782,6 +794,20 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       el("p", { className: "note", textContent: "The result is set by code from these sources; no matching notice is not proof of safety." }));
   };
 
+  // The answer in everyday words (engine/plain.py): a title, why, what to do, and where SafeShelf looked.
+  const MARKS = { ok: "✓", warn: "!", maybe: "?", skip: "–" };
+  const todoBox = (plain) => plain && el("div", { className: "todo" },
+    el("strong", { textContent: "What you can do" }), el("p", { textContent: plain.todo }),
+    ...(plain.link?.url ? [el("a", { className: "btnlink", href: plain.link.url, target: "_blank", rel: "noopener", textContent: plain.link.label })] : []));
+  const placesBlock = (plain) => plain?.checked?.length ? el("div", { className: "places" },
+    el("strong", { textContent: "Where we checked official recall lists" }),
+    el("ul", {}, ...plain.checked.map((c) => el("li", { className: c.mark },
+      el("span", { className: "pm", ariaHidden: "true", textContent: MARKS[c.mark] || "–" }),
+      el("span", { className: "flag", ariaHidden: "true", textContent: c.flag }),
+      el("span", {}, el("b", { textContent: `${c.name}${c.yours ? " (you)" : ""}: ` }), c.status)))),
+    el("p", { className: "note", textContent: plain.note })) : null;
+  const detailsBox = (...nodes) => el("details", { className: "more" }, el("summary", { textContent: "Show details" }), ...nodes.filter(Boolean));
+
   // Side-rail icons: plain stroked paths, one family, drawn in the button's text colour.
   const ICON_PATHS = {
     check: "M12 3l7 3v5c0 5-3.2 8.2-7 10-3.8-1.8-7-5-7-10V6z M9 12l2 2 4-4",
@@ -813,7 +839,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   const brandRow = (badge) => el("div", { className: "brand-row" },
     el("span", { className: "mark", ariaHidden: "true", textContent: "✦" }), el("span", { className: "brand", textContent: "SafeShelf" }), el("span", { className: "badge", textContent: badge }));
 
-  const VERDICT_WORD = { red: "Danger", amber: "Be careful", unknown: "Not enough evidence", green: "OK so far" };
+  const VERDICT_WORD = { red: "Don't buy", amber: "Be careful", unknown: "Can't tell yet", green: "No problems found" };
   const VERDICT_ICON = { red: "stop", amber: "warn", unknown: "help", green: "check" };
 
   // A small icon button. `text` shows a word next to the icon; the label is always there for screen readers and as a tooltip.
@@ -1166,25 +1192,32 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
     // The verdict at the top of the card. `note` says when a first look changed it.
     let heroEl = null;
-    const hero = (lvl, summary, note) => el("div", { className: `hero ${lvl}` }, el("div", { className: "ic" }, icon(VERDICT_ICON[lvl])),
-      el("h2", { className: `headline ${lvl}`, textContent: VERDICT_WORD[lvl] }), ...(summary ? [el("p", { className: "sum", textContent: summary })] : []),
+    const hero = (lvl, summary, note, title) => el("div", { className: `hero ${lvl}` }, el("div", { className: "ic" }, icon(VERDICT_ICON[lvl])),
+      el("h2", { className: `headline ${lvl}`, textContent: title || VERDICT_WORD[lvl] }), ...(summary ? [el("p", { className: "sum", textContent: summary })] : []),
       ...(note ? [el("span", { className: "upd", textContent: note })] : []));
+    // The plain answer leads, unless the seller check is the bigger worry (then that leads, in its own words).
+    const plainHero = (r, lvl, note) => {
+      const plain = r.outcome?.plain;
+      const rank = { red: 3, amber: 2, unknown: 1, green: 0 };
+      if (!plain || rank[r.real.level] > rank[r.safe.level] && ["red", "amber"].includes(r.real.level)) return hero(lvl, r.summary, note);
+      return hero(lvl, plain.why, note, plain.title);
+    };
 
     // First look: a product SafeShelf has never seen is looked up right away (agent mode "discover"): up to 60
     // critical reviews, recall notices, the market's official recall sites, and the genuine product found online.
     // Each lookup ticks off as it finishes; if the colour changes, the card says so. The server saves the lookup by
     // model number, so the next shopper on this model gets it at once.
     let discoveryRun = 0; // a newer check or another product makes an older first look's answer stale
-    const FIRST_LOOK = [["reviews", "Reading buyer reviews and recall notices"], ["real", "Checking the shop and price"],
-      ["reference", "Finding the genuine product online"], ["sites", "Searching official recall sites"]];
+    const FIRST_LOOK = [["reviews", "Reading what buyers say"], ["real", "Checking the seller and price"],
+      ["reference", "Finding the genuine product online"], ["sites", "Searching government recall lists"]];
     const firstLook = (r, fresh) => {
       const run = ++discoveryRun;
       const before = level(r);
       const items = Object.fromEntries(FIRST_LOOK.map(([k, t]) => [k, el("li", {}, el("span", { textContent: `${t}…` }))]));
       const tag = el("span", { className: "tag", textContent: "Working" });
-      const lede = el("p", { className: "lede", textContent: "SafeShelf is seeing this product for the first time, so it is looking it up now. This usually takes under a minute; you can keep browsing." });
+      const lede = el("p", { className: "lede", textContent: "First time we've seen this product, so we're looking it up now. It takes about a minute – you can keep browsing." });
       const found = el("div");
-      const section = el("div", { className: "first" }, el("h3", {}, "First look", tag), lede, el("ol", {}, ...Object.values(items)), found);
+      const section = el("div", { className: "first" }, el("h3", {}, "Taking a closer look", tag), lede, el("ol", {}, ...Object.values(items)), found);
       section.setAttribute("aria-live", "polite");
       const tick = (k, text, cls = "done") => { items[k].className = cls; items[k].replaceChildren(el("span", { textContent: text })); };
       // retrying: after a dropped connection or "Try again". Never forced fresh, so whatever the server already found
@@ -1222,14 +1255,18 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           lede.textContent = v.discovery?.from_saved
             ? `This model was looked up ${v.discovery.saved_minutes_ago < 90 ? `${v.discovery.saved_minutes_ago} minutes` : `${Math.round(v.discovery.saved_minutes_ago / 60)} hours`} ago, so that lookup was reused with this page's own checks. What SafeShelf found:`
             : "What SafeShelf found:";
-          found.replaceChildren(el("ul", { className: "found" }, ...(verdict.reasons || []).map((x) => el("li", { textContent: x.text }))), sourcesBlock(verdict.evidence_ids || []));
+          const fp = verdict.plain;
+          const technical = el("ul", { className: "found" }, ...(verdict.reasons || []).map((x) => el("li", { textContent: x.text })));
+          found.replaceChildren(...(fp ? [todoBox(fp), placesBlock(fp), detailsBox(technical, sourcesBlock(verdict.evidence_ids || []))]
+            : [technical, sourcesBlock(verdict.evidence_ids || [])]));
           const word = VERDICT_WORD[lvl];
           fab.className = `fab ${lvl}`;
           label(fab, `SafeShelf: ${word}`, word);
           box.className = `box ${lvl}`;
           const changed = lvl !== before;
           const summary = !changed ? r.summary : ["red", "amber"].includes(lvl) ? "The first look found warning signs: see First look below." : "The first look found no warning signs in what it checked.";
-          const updated = hero(lvl, summary, changed ? `Updated after the first look (was ${VERDICT_WORD[before]})` : null);
+          const updated = fp ? hero(lvl, fp.why, changed ? `Updated after a closer look (was: ${VERDICT_WORD[before]})` : null, fp.title)
+            : hero(lvl, summary, changed ? `Updated after the first look (was ${VERDICT_WORD[before]})` : null);
           heroEl?.replaceWith(updated);
           heroEl = updated;
           if (box.hidden) toast(`SafeShelf finished its first look at this product: ${word}.`, "Show", () => setOpen(true));
@@ -1279,17 +1316,19 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       if (askBtn) askBtn.onclick = () => setChatOpen(true);
       // Only on a product page, for a product SafeShelf has no exact match for, and never for example data.
       const deeper = mode === "float" && !r.product_id && r.source !== "mock" ? firstLook(r, fresh) : null;
-      heroEl = hero(lvl, r.summary);
+      heroEl = plainHero(r, lvl);
+      const plain = r.outcome?.plain;
       show(
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
         cardHead(r.host, closeX()),
         heroEl,
         panelTabs(r, [
+          ...(plain ? [todoBox(plain)] : []),
           ...(deeper ? [deeper] : []),
-          section("Is it safe?", r.safe),
-          ...(coverageBlock(r.outcome) ? [coverageBlock(r.outcome)] : []),
-          section("Is it real?", r.real),
-          el("details", { className: "read" }, el("summary", { textContent: "What SafeShelf read from this page" }), contextCard(getPage())),
+          ...(plain ? [placesBlock(plain)] : [section("Is it safe?", r.safe)]),
+          section("Is the seller genuine?", r.real),
+          detailsBox(...(plain ? [section("Safety check, in detail", r.safe)] : []), coverageBlock(r.outcome),
+            el("details", { className: "read" }, el("summary", { textContent: "What SafeShelf read from this page" }), contextCard(getPage()))),
           el("p", { className: "foot", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),
           ...(mode === "inline" ? [inlineChat(r)] : []),
         ]),

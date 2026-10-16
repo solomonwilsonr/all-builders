@@ -227,19 +227,19 @@ def seller_check(brand: str, seller: str | None, url: str | None, page_text: str
         return {"result": "ok", "seller": seller, "relationship": "authorised", "brand": brand, **extra}
     if len(b) >= 4 and b in s_:  # "PATANJALI NUTRELA NUTRITION" for Nutrela: plausibly the brand's store, not proven
         return {"result": "unknown", "seller": seller, "relationship": "brand_named", "brand": brand, **extra,
-                "reason": f"sold by {seller}: the seller's name includes {brand}, so it may be the brand's own store, "
-                          "but SafeShelf cannot confirm it (shops can use a brand's name)"}
+                "reason": f"Sold by {seller}. The name includes {brand}, but we can't confirm it's {brand}'s own "
+                          "store (any shop can use a brand's name)"}
     # 16 Oct: a shopper took Amazon's "Visit the Samsung Store" link for the seller of a fridge sold by DAWNTECH.
-    reason = f"sold by {seller}, a third-party seller, not {brand or 'the brand'}'s own store"
+    who = brand or "the brand"
+    reason = f"Sold by {seller}, not by {who} itself"
+    if entry.get("sellers") and entry.get("source_url"):
+        reason += f". They're not on the list of official sellers {who} published"
+    else:
+        reason += f". We can't confirm they're an official {who} seller"
     store_link = re.search(r"Visit the (.+?) Store", page_text or "")
     if store_link:
         name = store_link.group(1).strip()
-        reason += f' (the "Visit the {name} Store" link is {name}\'s brand page, not the seller)'
-    if entry.get("sellers") and entry.get("source_url"):
-        reason += f"; it is not on the list of official sellers {brand} published, so SafeShelf cannot confirm it " \
-                  "is authorised"
-    else:
-        reason += f"; SafeShelf cannot confirm it is authorised to sell {brand or 'this brand'}"
+        reason += f' ("Visit the {name} Store" is only {name}\'s brand page, not the seller)'
     return {"result": "unknown", "seller": seller, "relationship": "third_party", "brand": brand, **extra,
             "reason": reason}
 
@@ -267,18 +267,18 @@ def good_signs(checks: dict, url: str | None) -> list[str]:
         signs.append(f"Sold by {seller['seller']}, an authorised seller of {seller['brand']}" +
                      (f" (on the list {seller['brand']} published)" if seller.get("source") else ""))
     if seller.get("ships_from") and seller.get("relationship") not in ("brand", "authorised"):
-        signs.append(f"Ships from {seller['ships_from']}: Amazon stores it and handles returns, which helps a little "
-                     "but does not show the seller is authorised")
+        signs.append(f"Shipped by {seller['ships_from']}, so returns are easy (this doesn't prove the seller is "
+                     "official)")
     price = checks["price"]
     if price["result"] == "ok" and price.get("mrp"):
         off = round(100 * (1 - price["ratio"]))
-        signs.append(f"Price is {off}% below the M.R.P. on the page, a normal discount" if off else
-                     "Price matches the M.R.P. on the page")
+        signs.append(f"Price is {off}% below the printed M.R.P., a normal discount" if off else
+                     "Price matches the printed M.R.P.")
     website = checks["website_age"]
     if website["result"] == "ok":
         signs.append(f"Website registered {website['domain_registered_days_ago'] // 365} years ago")
     elif website["result"] == "skipped" and host(url):
-        signs.append(f"Sold on {host(url)}, a large established marketplace")
+        signs.append(f"Sold on {host(url)}, a big, well-known shop")
     return signs
 
 
