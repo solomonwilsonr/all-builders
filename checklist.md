@@ -1,6 +1,6 @@
 # SafeShelf checklist
 
-**Last updated:** 16 Oct 2026, evening (Day 5 of 6) · **Score: 76/100** → 94 if the plan lands ([score](#-score-out-of-100))
+**Last updated:** 16 Oct 2026, night (Day 5 of 6) · **Score: 76/100** → 94 if the plan lands ([score](#-score-out-of-100))
 **Deadline:** 18 Oct 2026, 11:59 PM IST · **Feature freeze:** evening of 16 Oct (after that, only fixes, data, measurements and the story)
 
 Updated with every change. For the details behind each line, see [plan.md](plan.md).
@@ -28,14 +28,18 @@ From where we stand against ≈267 public entries ([COMPETITOR_ENTRIES.md](COMPE
 - [ ] **F. Regulator report** · Claude · 1–2 h. A weekly report for CCPA, ACCC or CAA: products recalled in another country but still sold locally, with evidence, built from the cross-border scan and case files. Sample PDF + one slide. Moves the story from "protects one shopper" to safety infrastructure
 - [ ] **G. Who pays** · one deck slide. Marketplaces (check listings when sellers upload, avoid BIS raids), insurers and payment providers (risk flag on purchases), regulators (report F). The tenant keys, webhooks and usage metering are already built
 - [ ] **H. One person, one product, one moment** in the deck and video (items 15 and 16): an Indian parent buying a power bank on Amazon.in gets the Hindi WhatsApp answer. Everything else goes on one "under the hood" slide
-- [ ] **I. Ideas borrowed from the top 10** (our picks, [COMPETITOR_ENTRIES.md](COMPETITOR_ENTRIES.md)):
-  - **"Already bought it?" + a pre-filled complaint** (Decision Safety Network, Kavach): stop using it, refund, report, with a drafted complaint to the marketplace and the regulator (National Consumer Helpline, ACCC, CAA). Reuses owner guidance and the case file
-  - **Clickable evidence + "checked by code, not guessed" badge** (LedgerLens, Andon Agent): every fact in the verdict links to its official notice. UI only; the evidence trail already holds the links
-  - **Attacker vs. defender on the judges' page** (ReadiCheck, ClaimGuard Arena): show the evidence red-team (18/18) as Gemini inventing fake listings and SafeShelf catching them
-  - **A voice or camera moment in the video** (Gapline, Harvest, AIRA): 15 s of someone asking out loud about a label they're holding up
+- [x] **I. Ideas borrowed from the top 10, all built 16 Oct night** (commits 80f3050 to 0a569df; tests: engine 232, contract 60, extension 7/7, WhatsApp 11; checked in a real browser against the local API). **Needs `make migrate` (009 `incident_reports`) and `make deploy-api`, then `make deploy-web` and an extension reload (2.10.0).** Slide text and video beats: [docs/deck-additions.md](docs/deck-additions.md)
+  - [x] **Voice mode, 26 JAPAC languages** (`POST /v1/voice/verdict`, `engine/voice.py`): a short spoken verdict written by code (`plain.say`), translated by Gemini (marked as machine translation, polite form, English if it fails). Extension: Read aloud + "Speak every answer"; web: Listen on every answer; WhatsApp voice note now says the short line
+  - [x] **Before and after purchase** (`POST /v1/after-purchase`, `engine/after_purchase.py`, `engine/complaints.py`): the extension **steps in when you click Buy now / Add to cart** on a red or amber answer (why, Listen, "Buy anyway"); **"I already bought it"**: steps, a refund request to the marketplace and a complaint to the regulator, already filled in with the official record (India NCH 1915, ACCC, CAA + 188 with Japanese drafts, CPSO, 1372, CPSC), plus a case file. Written by code, never sent by SafeShelf
+  - [x] **"Checked by code, not guessed" badge** on every "Where we checked" line, linked to the official record or list (extension, web)
+  - [x] **Ask out loud with Gemini Live** (WebSocket `/v1/live`, `engine/live.py`, `gemini-3.8-live` in us-central1): camera + voice; Live must call SafeShelf's tools (label read + investigation), code sets the result. Measured: Hindi spoken answer in 13 s through the API. Photo + spoken-question fallback `POST /v1/camera/ask`. Judges' page tab "Ask out loud", large text, made for visually impaired and low-literacy shoppers
+  - [x] **Attacker vs defender** (`GET /v1/redteam/rounds`, `POST /v1/redteam/round`, judges' page tab): 18 saved rounds replayed; live rounds where Gemini invents the attack. **It found two real holes, fixed the same night:** reposts with a few words changed counted as separate owners (word-alignment rule; bench still 18/18), and fake-shop notices "for AI shopping assistants" got past the filter (sentence rule: 13/13 attacks caught, 0 false alarms on 27,822 real listings, 10/10 fresh rounds held). Limits stated on the panel
+  - [x] **Shopper incident reports** (`POST /v1/incidents`, `GET /v1/incidents/signals`, migration 009): Gemini checks the photo and report; code counts independent reports and raises an early warning (never a recall) by the review rule. On the judges' page under "I already bought it"
+  - [x] **Retailer side**: Catalog Scan findings now say what a shop should do with each item (stop selling, quarantine, notify buyers…)
+  - [x] **Fix found on the way**: the camera label check returned the AI model's name ("gemini-3-flash-preview") as the product's model number, because `gemini.structured()` overwrites a schema field called "model". Label photos now read the real model (ANKER A1263)
+  - [ ] **Open (policy call for Solomon):** a forged regulator page can't make a product "recalled", but it still makes it amber "possible match, a person must check". Should an unofficial domain count at all?
 
-**"What's next" slide only (too big before the 18th):** shopper incident reports that add up to an early warning (Luwas); a retailer view of which items on their shelves a new recall hits (Taal).
-
+**"What's next" slide:** none of the above is "next" any more. Migrants and cross-border families are named on the "who it's for" slide text
 ---
 
 ## 🧭 Implementation plan v2.2 (decided 16 Oct: build all of it)
