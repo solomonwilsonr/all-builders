@@ -5,10 +5,36 @@
 
 Updated with every change. For the details behind each line, see [plan.md](plan.md).
 
-**Contents:** [Plan](#-plan-work-through-in-order) · [Score](#-score-out-of-100) · [By region](#-by-region) · [Built, waiting for deploy](#-built-waiting-for-deploy) · [Done](#-done) · [Risks](#%EF%B8%8F-risks-and-heads-ups)
+**Contents:** [Must do](#-must-do-added-16-oct-after-the-ninth-competitor-scan) · [Plan](#-plan-work-through-in-order) · [Score](#-score-out-of-100) · [By region](#-by-region) · [Built, waiting for deploy](#-built-waiting-for-deploy) · [Done](#-done) · [Risks](#%EF%B8%8F-risks-and-heads-ups)
 
 ## In one line
 The engine, agents and data are built. Judges can't see the latest work until it's deployed, and all our measured proof is from US data while the pitch is JAPAC. The plan fixes both: **deploy, then measure SafeShelf on JAPAC and Indian data, then tell that story.**
+
+---
+
+## 🚨 Must do (added 16 Oct, after the ninth competitor scan)
+From where we stand against ≈267 public entries ([COMPETITOR_ENTRIES.md](COMPETITOR_ENTRIES.md)). What's missing is proof, focus and staying up, not features. Anything not deployed and in the video by the 18th earns nothing.
+
+**Tonight, 16 Oct**
+- [ ] **A. Keep the demo alive through judging (shortlist 7 Nov)** · Solomon · 20 min. The hackathon credit expires ~24 Oct. Check which billing account Cloud Run, Cloud SQL and Firebase use; move anything on the hackathon credit to the free trial (until Jan 2027). Set Cloud Run min instances to 1 on the API. The judges' page demo cases answer from the stored copy when a live source is down. Upload a backup video of the full flow in case Amazon.in stalls (item 8)
+- [ ] **B. Judges' web page live** (= item 5): the single biggest gap; judges won't install the extension
+
+**17 Oct morning: proof**
+- [ ] **C. One checked real-world finding** (= items 12 and 13) · Solomon · 30 min. Open the 7 links in [bench/fixtures/india/still_on_sale.md](bench/fixtures/india/still_on_sale.md) and the 3 exact-model US leads. One confirmed row gives the deck "A product India ordered recalled is still for sale on ___". Claim only what a person confirmed
+- [ ] **D. JAPAC identity accuracy** · Seshu · 30 min. Label the 16 pairs from `bench/label_pairs.py`, then `make bench-identity`. Gives a measured number not based on US data (SKUdesk and LedgerLens both show precision)
+- [ ] **E. "Recalled abroad, still sold here" count** · Claude · 2 h, after item 10. Match the 41 cross-border models against Indian (and Australian) listings: "N models recalled abroad, still sold here, X listings". The impact number of our own that problem fit is missing
+
+**17 Oct afternoon: story**
+- [ ] **F. Regulator report** · Claude · 1–2 h. A weekly report for CCPA, ACCC or CAA: products recalled in another country but still sold locally, with evidence, built from the cross-border scan and case files. Sample PDF + one slide. Moves the story from "protects one shopper" to safety infrastructure
+- [ ] **G. Who pays** · one deck slide. Marketplaces (check listings when sellers upload, avoid BIS raids), insurers and payment providers (risk flag on purchases), regulators (report F). The tenant keys, webhooks and usage metering are already built
+- [ ] **H. One person, one product, one moment** in the deck and video (items 15 and 16): an Indian parent buying a power bank on Amazon.in gets the Hindi WhatsApp answer. Everything else goes on one "under the hood" slide
+- [ ] **I. Ideas borrowed from the top 10** (our picks, [COMPETITOR_ENTRIES.md](COMPETITOR_ENTRIES.md)):
+  - **"Already bought it?" + a pre-filled complaint** (Decision Safety Network, Kavach): stop using it, refund, report, with a drafted complaint to the marketplace and the regulator (National Consumer Helpline, ACCC, CAA). Reuses owner guidance and the case file
+  - **Clickable evidence + "checked by code, not guessed" badge** (LedgerLens, Andon Agent): every fact in the verdict links to its official notice. UI only; the evidence trail already holds the links
+  - **Attacker vs. defender on the judges' page** (ReadiCheck, ClaimGuard Arena): show the evidence red-team (18/18) as Gemini inventing fake listings and SafeShelf catching them
+  - **A voice or camera moment in the video** (Gapline, Harvest, AIRA): 15 s of someone asking out loud about a label they're holding up
+
+**"What's next" slide only (too big before the 18th):** shopper incident reports that add up to an early warning (Luwas); a retailer view of which items on their shelves a new recall hits (Taal).
 
 ---
 
