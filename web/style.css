@@ -234,72 +234,14 @@ button.ext:hover, button.ext.on { background-color: var(--blue-pale); box-shadow
 .pick p { margin: 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; }
 .pick ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
 .pick ul li:has(#remote-left:empty) { display: none; }
-/* a small preview of what each choice opens, so it can be seen before choosing */
-.pv { position: relative; height: 168px; margin: -8px -8px 6px; border-radius: 10px; overflow: hidden; padding: 18px 18px 0; }
-.pv-real { background: radial-gradient(120% 90% at 0% 100%, #9cc8fb 0%, transparent 55%), radial-gradient(90% 80% at 100% 0%, #dcecfe 0%, transparent 60%), var(--blue-pale); }
-.pv-test { background: radial-gradient(120% 90% at 100% 100%, #c6f7ca 0%, transparent 55%), var(--soft); display: grid; align-content: start; gap: 8px; }
-.pv-win { height: 100%; border-radius: 8px 8px 0 0; background: #fff; box-shadow: 0 10px 28px rgba(0, 17, 35, .14), 0 0 0 1px rgba(0, 17, 35, .06); overflow: hidden; }
-.pv-bar { display: flex; align-items: center; gap: 10px; height: 24px; padding: 0 10px; background: var(--line-2); }
-.pv-lights { display: flex; gap: 4px; } .pv-lights i { width: 7px; height: 7px; border-radius: 50%; background: #ff5f57; } .pv-lights i:nth-child(2) { background: #febc2e; } .pv-lights i:nth-child(3) { background: #28c840; }
-.pv-url { flex: 1; font: 10.5px/16px var(--mono); color: var(--muted); background: #fff; border-radius: 99px; padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pv-page { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; padding: 10px; }
-.pv-prod, .pv-panel { display: grid; align-content: start; gap: 5px; min-width: 0; }
-.pv-img { height: 40px; border-radius: 4px; background: linear-gradient(135deg, #eef0f3, #dfe3e8); }
-.pv-ln { height: 5px; border-radius: 3px; background: var(--line); } .w60 { width: 60%; } .w70 { width: 70%; } .w80 { width: 80%; } .w90 { width: 90%; }
-.pv-price { font-size: 12px; font-weight: 600; } .pv-buy { justify-self: start; font-size: 9.5px; padding: 2px 7px; border-radius: 3px; background: #ffd814; }
-.pv-panel { padding: 8px; border-radius: 6px; box-shadow: 0 0 0 1px var(--line), 0 6px 14px rgba(0, 17, 35, .08); }
-.pv-brand { display: flex; align-items: center; gap: 4px; font: 600 10px var(--display); } .pv-brand svg { width: 12px; height: 12px; }
-.pv-verdict { justify-self: start; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
-.pv-verdict.red, .pv-cases b.red { background: var(--red-bg); color: var(--red); }
-.pv-cases b.amber { background: var(--amber-bg); color: var(--amber); } .pv-cases b.green { background: var(--green-bg); color: var(--green); }
-.pv-why { font-size: 10px; line-height: 1.3; color: var(--ink-2); }
-.pv-live { position: absolute; top: 10px; right: 12px; display: flex; align-items: center; gap: 5px; font-size: 10.5px; padding: 2px 8px; border-radius: 99px; background: #fff; color: var(--ink-2); box-shadow: 0 2px 8px rgba(0, 17, 35, .1); }
-.pv-live i { width: 6px; height: 6px; border-radius: 50%; background: #28c840; animation: pv-pulse 1.6s ease-in-out infinite; }
+/* a preview of what each choice opens, before choosing: a short recording of the real extension (web/media/, made from
+   the recorded sample answers in web/samples/, so no live checks were spent); the poster is its last frame */
+.pv { position: relative; margin: -8px -8px 6px; border-radius: 10px; overflow: hidden; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); aspect-ratio: 840 / 470; }
+.pv video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.pv-cap { position: absolute; left: 10px; bottom: 10px; display: flex; align-items: center; gap: 6px; max-width: calc(100% - 20px); font-size: 11.5px; padding: 3px 10px; border-radius: 99px; background: rgba(255, 255, 255, .92); color: var(--ink-2); box-shadow: 0 2px 8px rgba(0, 17, 35, .12); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-cap i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pv-pulse 1.6s ease-in-out infinite; }
 @keyframes pv-pulse { 50% { opacity: .35; } }
-.pv-tabs { position: relative; display: flex; gap: 4px; } .pv-tabs i { flex: 1; height: 8px; border-radius: 3px 3px 0 0; background: #dfe3e8; }
-.pv-ind { position: absolute; left: 0; top: 0; width: calc((100% - 24px) / 7); height: 8px; border-radius: 3px 3px 0 0; background: var(--blue); }
-.pick ul.pv-cases { list-style: none; padding: 0; gap: 5px; color: var(--ink-2); font-size: 12px; }
-.pv-cases li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 17, 35, .05), 0 3px 8px rgba(0, 17, 35, .05); }
-.pv-cases span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pv-cases b { flex: none; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 4px; }
-.pv-more { justify-self: end; font-size: 11px; color: var(--muted); }
-.pick:hover .pv-win { transform: translateY(-2px); } .pv-win { transition: transform .2s ease; }
-/* the previews play as short loops: real browser = click Check, panel slides in, checks tick, answer pops; test pages = each sample is checked in turn */
-.pv-page { position: relative; }
-.pv-stage { display: grid; } .pv-stage > * { grid-area: 1 / 1; }
-.pv-result { display: grid; align-content: start; gap: 5px; }
-.pick ul.pv-steps { list-style: none; padding: 0; gap: 4px; font-size: 10px; color: var(--ink-2); }
-.pv-steps li { display: flex; align-items: center; gap: 5px; }
-.pv-steps li::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='m2.6 5.2 1.6 1.6 3.2-3.4' fill='none' stroke='%23fff' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px no-repeat; }
-.pv-check { position: absolute; right: 0; top: 18px; padding: 8px 4px; border-radius: 5px 0 0 5px; background: var(--blue); color: #fff; font-size: 9.5px; font-weight: 600; writing-mode: vertical-rl; opacity: 0; }
-.pv-cursor { position: absolute; width: 14px; height: 18px; left: calc(100% - 34px); top: 74px; opacity: 0; filter: drop-shadow(0 2px 3px rgba(0, 17, 35, .3)); pointer-events: none; }
-.pv-real .pv-check { animation: pv-check 8s ease infinite; }
-.pv-real .pv-cursor { animation: pv-cursor 8s cubic-bezier(.5, 0, .3, 1) infinite; }
-.pv-real .pv-panel { animation: pv-panel 8s cubic-bezier(.2, .8, .2, 1) infinite; }
-.pv-real .pv-steps { animation: pv-steps 8s ease infinite; }
-.pv-real .pv-steps li { animation: pv-step 8s ease infinite backwards; } .pv-steps li:nth-child(2) { animation-delay: .45s; } .pv-steps li:nth-child(3) { animation-delay: .9s; }
-.pv-real .pv-result { animation: pv-result 8s ease infinite; }
-.pv-real .pv-verdict { animation: pv-pop 8s ease infinite; }
-@keyframes pv-check { 0%, 2% { opacity: 0; transform: translateX(100%); } 7%, 19% { opacity: 1; transform: none; background: var(--blue); } 21% { background: var(--blue-2); transform: scale(.94); } 25%, 100% { opacity: 0; transform: translateX(100%); } }
-@keyframes pv-cursor { 0% { opacity: 0; left: 30%; top: 150px; } 5% { opacity: 1; left: 30%; top: 150px; } 18% { left: calc(100% - 34px); top: 74px; transform: none; } 21% { transform: scale(.8); } 23% { transform: none; opacity: 1; } 32%, 100% { opacity: 0; left: calc(100% - 60px); top: 110px; } }
-@keyframes pv-panel { 0%, 22% { opacity: 0; transform: translateX(30px); } 30%, 88% { opacity: 1; transform: none; } 96%, 100% { opacity: 0; transform: translateX(30px); } }
-@keyframes pv-steps { 0%, 52% { opacity: 1; } 56%, 100% { opacity: 0; } }
-@keyframes pv-step { 0%, 32% { opacity: .25; transform: translateX(-4px); } 37%, 100% { opacity: 1; transform: none; } }
-@keyframes pv-result { 0%, 54% { opacity: 0; } 58%, 100% { opacity: 1; } }
-@keyframes pv-pop { 0%, 55% { transform: scale(.6); } 60% { transform: scale(1.12); } 64%, 100% { transform: none; } }
-.pv-test .pv-ind { animation: pv-ind 7.5s cubic-bezier(.6, 0, .3, 1) infinite; }
-.pv-test .pv-cases li:nth-child(1) { animation: pv-row1 7.5s ease infinite; } .pv-test .pv-cases li:nth-child(1) b { animation: pv-chip1 7.5s ease infinite; }
-.pv-test .pv-cases li:nth-child(2) { animation: pv-row2 7.5s ease infinite; } .pv-test .pv-cases li:nth-child(2) b { animation: pv-chip2 7.5s ease infinite; }
-.pv-test .pv-cases li:nth-child(3) { animation: pv-row3 7.5s ease infinite; } .pv-test .pv-cases li:nth-child(3) b { animation: pv-chip3 7.5s ease infinite; }
-.pv-test .pv-more { animation: pv-more 7.5s ease infinite; }
-@keyframes pv-ind { 0%, 10% { transform: none; } 13%, 22% { transform: translateX(calc(100% + 4px)); } 25%, 34% { transform: translateX(calc(200% + 8px)); } 38%, 46% { transform: translateX(calc(300% + 12px)); } 49%, 56% { transform: translateX(calc(400% + 16px)); } 59%, 66% { transform: translateX(calc(500% + 20px)); } 69%, 84% { transform: translateX(calc(600% + 24px)); } 92%, 100% { transform: none; } }
-@keyframes pv-row1 { 0%, 0%, 14%, 100% { background: #fff; box-shadow: 0 0 0 1px rgba(0, 17, 35, .05), 0 3px 8px rgba(0, 17, 35, .05); } 2%, 10% { background: var(--blue-pale); box-shadow: 0 0 0 1.5px var(--blue), 0 3px 8px rgba(0, 17, 35, .05); } }
-@keyframes pv-chip1 { 0%, 9% { opacity: 0; transform: scale(.6); } 12% { opacity: 1; transform: scale(1.15); } 15%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; transform: scale(.6); } }
-@keyframes pv-row2 { 0%, 12%, 26%, 100% { background: #fff; box-shadow: 0 0 0 1px rgba(0, 17, 35, .05), 0 3px 8px rgba(0, 17, 35, .05); } 14%, 22% { background: var(--blue-pale); box-shadow: 0 0 0 1.5px var(--blue), 0 3px 8px rgba(0, 17, 35, .05); } }
-@keyframes pv-chip2 { 0%, 21% { opacity: 0; transform: scale(.6); } 24% { opacity: 1; transform: scale(1.15); } 27%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; transform: scale(.6); } }
-@keyframes pv-row3 { 0%, 24%, 38%, 100% { background: #fff; box-shadow: 0 0 0 1px rgba(0, 17, 35, .05), 0 3px 8px rgba(0, 17, 35, .05); } 26%, 34% { background: var(--blue-pale); box-shadow: 0 0 0 1.5px var(--blue), 0 3px 8px rgba(0, 17, 35, .05); } }
-@keyframes pv-chip3 { 0%, 33% { opacity: 0; transform: scale(.6); } 36% { opacity: 1; transform: scale(1.15); } 39%, 86% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; transform: scale(.6); } }
-@keyframes pv-more { 0%, 38% { opacity: 0; } 44%, 86% { opacity: 1; } 92%, 100% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .pv *, .pv-live i { animation: none !important; } .pv-steps { opacity: 0; } .pv-win { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .pv-cap i { animation: none; } }
 .pick .jbtn { justify-self: start; margin-top: 6px; }
 .choose-msg { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--muted); }
 .choose-msg:empty { display: none; }

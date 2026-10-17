@@ -377,6 +377,8 @@ function setUpRemote() {
   $("real-row").hidden = false;
   mode("choose");
   left();
+  // the two previews are short recordings of the real extension; with reduced motion they stay on their last frame
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) panel.querySelectorAll(".pv video").forEach((v) => { v.removeAttribute("autoplay"); v.pause(); });
   $("test-start").onclick = () => { $("choose-msg").textContent = ""; mode("test"); mac.scrollIntoView({ behavior: "smooth", block: "start" }); };
   let timer = null;
   const end = (text) => {
