@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261017n">
+<link rel="stylesheet" href="style.css?v=20261017p">
 <script type="module" src="app.js?v=20261017n"></script>
 </head>
 <body>
@@ -100,6 +100,16 @@
     <div class="trypanel" role="tabpanel" id="shop-page" aria-labelledby="tab-shop-page" data-mode="test">
       <div class="choose" id="real-row" hidden>
         <article class="pick pick-real">
+          <div class="pv pv-real" aria-hidden="true">
+            <div class="pv-win">
+              <div class="pv-bar"><span class="pv-lights"><i></i><i></i><i></i></span><span class="pv-url">amazon.in/dp/B0C…</span></div>
+              <div class="pv-page">
+                <div class="pv-prod"><span class="pv-img"></span><span class="pv-ln w80"></span><span class="pv-ln w60"></span><span class="pv-price">₹1,299</span><span class="pv-buy">Add to cart</span></div>
+                <div class="pv-panel"><span class="pv-brand"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</span><span class="pv-verdict red">Don't buy</span><span class="pv-why">Recalled: same model, official notice</span><span class="pv-ln w90"></span><span class="pv-ln w70"></span></div>
+              </div>
+            </div>
+            <span class="pv-live"><i></i>Live Chrome</span>
+          </div>
           <span class="pick-tag">Real website</span>
           <h3>Real browser</h3>
           <p>A real Chrome with the SafeShelf extension, on the real Amazon or Flipkart. Open any product and press Check.</p>
@@ -107,6 +117,15 @@
           <button class="jbtn" type="button" id="remote-start">Start a real browser</button>
         </article>
         <article class="pick pick-test">
+          <div class="pv pv-test" aria-hidden="true">
+            <div class="pv-tabs"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <ul class="pv-cases">
+              <li><span>Power bank recalled in Japan</span><b class="red">Don't buy</b></li>
+              <li><span>Borrowed safety mark</span><b class="amber">Be careful</b></li>
+              <li><span>Clean product (must stay quiet)</span><b class="green">No problems</b></li>
+            </ul>
+            <span class="pv-more">+4 more test pages</span>
+          </div>
           <span class="pick-tag">Instant</span>
           <h3>Test pages</h3>
           <p>Seven shop pages where we already know the right answer, including a safe product that must stay quiet.</p>
