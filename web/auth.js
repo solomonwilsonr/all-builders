@@ -4,7 +4,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { API, FIREBASE } from "./firebase-config.js";
-import { rememberAccount, signInCard } from "./signin-card.js";
+import { rememberAccount, signInCard } from "./signin-card.js?v=20261017u";
 
 export { API };
 export const auth = getAuth(initializeApp(FIREBASE));

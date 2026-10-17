@@ -5,7 +5,7 @@
 // demo's Gemini budget lasts.
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js?v=20261017m";
-import { auth, authFetch, requireSignIn } from "./auth.js";
+import { auth, authFetch, requireSignIn } from "./auth.js?v=20261017u";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
 
