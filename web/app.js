@@ -8,7 +8,7 @@ import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedte
 import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261017v";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
-import { setUpRoles } from "./roles.js?v=20261017w";
+import { setUpRoles } from "./roles.js?v=20261017x";
 
 
 const el = (tag, props = {}, ...kids) => {

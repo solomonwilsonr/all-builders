@@ -630,15 +630,17 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
 
 /* ---------- 01 who are you: one product, four views (roles.js) ---------- */
 .fv-picks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.fv-pick { position: relative; display: flex; align-items: center; gap: 14px; min-height: 0; padding: 18px; border-radius: 0; border-right: 1px solid var(--line); background: #fff; box-shadow: none; text-align: left; color: var(--ink-2); }
+.fv-pick { position: relative; display: flex; align-items: center; gap: 16px; min-height: 0; padding: 16px 18px; border-radius: 0; border-right: 1px solid var(--line); background: #fff; box-shadow: none; text-align: left; color: var(--ink-2); }
 .fv-pick:last-child { border-right: 0; }
 .fv-pick::before { content: ""; position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: var(--blue); transition: width .35s ease; }
 .fv-pick:hover { box-shadow: none; color: var(--blue); background: var(--soft); }
 .fv-pick[aria-pressed=true] { background: var(--soft); color: var(--ink); }
 .fv-pick[aria-pressed=true]::before { width: 100%; }
-.fv-i { display: grid; place-items: center; width: 40px; height: 40px; flex: none; border-radius: 10px; background: var(--blue-pale); color: var(--blue); transition: background-color .15s ease, color .15s ease; }
-.fv-i svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-[aria-pressed=true] .fv-i { background: var(--blue); color: #fff; }
+.fv-i { position: relative; display: block; width: 72px; height: 72px; flex: none; overflow: hidden; border-radius: 16px; background: #eaf2fd; box-shadow: 0 0 0 1px rgba(0, 17, 35, .06); transition: box-shadow .2s ease, transform .2s ease; }
+.fv-i.marketplace { background: #fdf6e6; } .fv-i.regulator { background: #eef8ee; } .fv-i.developer { background: #f0eefb; }
+.fv-i img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fv-pick:hover .fv-i { transform: translateY(-2px); }
+[aria-pressed=true] .fv-i { box-shadow: 0 0 0 2px var(--blue), 0 6px 16px rgba(2, 113, 228, .18); }
 .fv-t { display: grid; gap: 2px; min-width: 0; }
 .fv-t b { font: 500 1.1rem var(--display); letter-spacing: -.02em; color: var(--ink); }
 .fv-t small { font-size: 13px; color: var(--muted); line-height: 1.4; }
@@ -701,7 +703,8 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
 @media (max-width: 900px) { .fv-picks { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fv-pick:nth-child(2) { border-right: 0; } .fv-pick:nth-child(-n+2) { border-bottom: 1px solid var(--line); } }
 @media (max-width: 640px) {
   .fv-picks { grid-template-columns: minmax(0, 1fr); }
-  .fv-pick { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px 12px; }
+  .fv-pick { border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
+  .fv-i { width: 56px; height: 56px; border-radius: 13px; }
   .fv-pick:last-child { border-bottom: 0; }
   .fv-step { padding: 16px; gap: 10px; }
   .fv-queue td:last-child, .fv-queue th:last-child { display: none; }

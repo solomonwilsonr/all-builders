@@ -7,12 +7,7 @@ import { API, el } from "./actions.js?v=20261017v";
 
 const STORY = "recall_jp"; // the sample every view tells
 const KEY = "safeshelf-view";
-const ICONS = {
-  shopper: "M6 7h12l-1 13H7zM9 7a3 3 0 0 1 6 0",
-  marketplace: "M4 10h16M5 10l1-5h12l1 5M6 10v9h12v-9M10 19v-5h4v5",
-  regulator: "M12 3 3 8h18zM5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18",
-  developer: "m8 7-5 5 5 5M16 7l5 5-5 5",
-};
+// Eddy, the mascot, in each person's pose (site/assets/eddy-<view>.png)
 const VIEWS = [
   { id: "shopper", label: "Shopper", who: "Rahul, about to buy a power bank", ask: "Is it safe to buy?" },
   { id: "marketplace", label: "Marketplace or seller", who: "Anjali, trust and safety at a marketplace", ask: "Which listings need action first?" },
@@ -28,15 +23,6 @@ const AGENT = { page_reader: "Page reader", twin_finder: "Twin finder", recall_c
   research_agent: "Research agent", safety_radar: "Safety Radar", is_it_real: "Is it real?", official_sources: "Official sources",
   verdict: "Verdict, set by code", verdict_writer: "Gemini writes the answer" };
 
-const svg = (d) => {
-  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  s.setAttribute("viewBox", "0 0 24 24");
-  s.setAttribute("aria-hidden", "true");
-  const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  p.setAttribute("d", d);
-  s.append(p);
-  return s;
-};
 const resultOf = (sample) => sample.events.find((e) => e.type === "done")?.result;
 const money = (n, cur) => { try { return new Intl.NumberFormat("en", { style: "currency", currency: cur, maximumFractionDigits: 0 }).format(n); } catch (_) { return `${cur} ${n}`; } };
 const pct = (x) => `${Math.round(100 * x)}%`;
@@ -373,7 +359,7 @@ export async function setUpRoles() {
 
   for (const view of VIEWS) {
     const b = el("button", { type: "button", className: "fv-pick", "data-view": view.id, "aria-pressed": "false" },
-      el("span", { className: "fv-i" }, svg(ICONS[view.id])),
+      el("span", { className: `fv-i ${view.id}` }, el("img", { src: `site/assets/eddy-${view.id}.png`, alt: "", width: 72, height: 72, decoding: "async" })),
       el("span", { className: "fv-t" }, el("b", { textContent: view.label }), el("small", { textContent: view.ask })));
     b.onclick = () => show(view.id, { scroll: matchMedia("(max-width: 640px)").matches });
     cards.append(b);
