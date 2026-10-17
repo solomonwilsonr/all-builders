@@ -11,3 +11,6 @@ skills-lock.json
 .codegraph/
 .build-research/
 extension/config.generated.js
+
+# copied from extension/ by `make web-ext`
+web/ext/

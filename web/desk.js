@@ -50,7 +50,9 @@ function productArt(title = "") {
 // The text a listing hides from people but not from AI readers (the fake-shop test case).
 const HIDDEN = /ignore (all |your )?previous instructions|verified safe|system prompt/i;
 
-export function renderPage(box, { listing = {}, preset = null, index = 0, total = 0 } = {}) {
+// bare: only the shop page, for the real extension to read (web/ext-frame.html). The sample's note and the expected
+// answer stay outside it, so they never reach the check; the hidden AI text is really hidden, as on the real page.
+export function renderPage(box, { listing = {}, preset = null, index = 0, total = 0, bare = false } = {}) {
   const host = hostOf(listing.url);
   const store = storeOf(host);
   box.className = `store store-${store}`;
@@ -72,17 +74,19 @@ export function renderPage(box, { listing = {}, preset = null, index = 0, total 
     el("span", { className: "s-cart", textContent: "Cart" }));
 
   const info = el("div", { className: "s-info" },
-    preset ? el("p", { className: "s-market", textContent: preset.market }) : null,
-    el("h3", { className: "s-title", textContent: listing.title || listing.url || "Product page" }),
-    listing.seller ? el("p", { className: "s-seller", textContent: `Sold by ${listing.seller}` }) : null,
-    listing.price !== undefined ? el("p", { className: "s-price", textContent: money(listing.price, listing.currency) }) : null,
+    preset && !bare ? el("p", { className: "s-market", textContent: preset.market }) : null,
+    el(bare ? "h1" : "h3", { className: "s-title", id: bare ? "title" : "", textContent: listing.title || listing.url || "Product page" }),
+    listing.seller ? el("p", { className: "s-seller" }, "Sold by ", el("span", { id: bare ? "seller" : "", textContent: listing.seller })) : null,
+    listing.price !== undefined ? el("p", { className: "s-price", id: bare ? "price" : "", textContent: money(listing.price, listing.currency) }) : null,
     el("div", { className: "s-btns" }, el("span", { className: "s-cartbtn", textContent: "Add to cart" }), el("span", { className: "s-buy", textContent: "Buy now" })),
     shown.length ? el("div", { className: "s-details" }, el("p", { className: "s-dt", textContent: "Product details" }),
       el("ul", {}, ...shown.map((l) => el("li", { textContent: l })))) : null,
-    hidden.length ? el("div", { className: "s-hidden" },
+    hidden.length && bare ? el("div", { className: "s-offscreen", "aria-hidden": "true", textContent: hidden.join(" ") }) : null,
+    hidden.length && !bare ? el("div", { className: "s-hidden" },
       el("p", { className: "s-hidden-label", textContent: "Hidden on the real page (white text on white), but read by AI:" }),
       ...hidden.map((l) => el("p", { className: "s-hidden-text", textContent: l }))) : null);
 
+  if (bare) { box.replaceChildren(head, el("div", { className: "s-main" }, productArt(listing.title), info)); return; }
   box.replaceChildren(note, head, el("div", { className: "s-main" }, productArt(listing.title), info),
     el("p", { className: "s-foot", textContent: preset
       ? "A demo page built from this test case's listing. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional; the recalls and registries checked are real."

@@ -23,13 +23,19 @@ WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PR
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
 	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery
 
-web:            ## the judges' page on :8095 (calls the live API)
+web-ext:        ## copy the extension into web/ext/ for "Try a sample" (signed in through the judges' page, no extension sign-in)
+	rm -rf web/ext && mkdir -p web/ext
+	cp extension/manifest.json extension/background.js extension/check.js extension/ops.js extension/panels.js \
+		extension/investigate.js extension/aftercare.js extension/content.js web/ext/
+	cp web/ext-shim/*.js web/ext/
+
+web: web-ext     ## the judges' page on :8095 (calls the live API)
 	cd web && python3 -m http.server 8095
 
 web-samples:    ## re-record the judges' page samples from the live API (after deploy-api)
 	API_URL=$(API_URL) python3 web/record_samples.py
 
-deploy-web:     ## the judges' page to Firebase Hosting, with the latest bench results
+deploy-web: web-ext ## the judges' page to Firebase Hosting, with the latest bench results
 	cp bench/results.json web/data/bench.json && cp bench/agent_eval_results.json web/data/agent_eval.json && \
 		cp bench/catalog_results.json web/data/catalog.json
 	cd web && firebase deploy --only hosting --project $(FIREBASE_PROJECT)

@@ -1,15 +1,14 @@
 // SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same API as the extension, signed in
 // with Google (auth.js); nothing runs until the person signs in.
-// Samples replay a saved run of the live API at real speed; "Run it live" streams a new one
-// (POST /v1/agent/sessions/stream, server-sent events), capped per browser so the demo's Gemini budget lasts.
+// "Try a sample" runs the real SafeShelf extension on each sample listing (web/ext/, make web-ext); "Check your own
+// listing" streams a live run (POST /v1/agent/sessions/stream, server-sent events). Both are capped per browser so the
+// demo's Gemini budget lasts.
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
-import { authFetch, requireSignIn } from "./auth.js";
-import { renderPage, setAddress, startClock } from "./desk.js?v=20261017f";
+import { auth, authFetch, requireSignIn } from "./auth.js";
+import { setAddress, startClock } from "./desk.js?v=20261017g";
 
 const LIVE_PER_DAY = 10;
-const LONG_WAIT_MS = 3000; // in a replay, a wait longer than this is shortened to SHORT_WAIT_MS (and the page says so)
-const SHORT_WAIT_MS = 1000;
 
 const el = (tag, props = {}, ...kids) => {
   const e = document.createElement(tag);
@@ -20,7 +19,6 @@ const el = (tag, props = {}, ...kids) => {
   e.append(...kids.filter((k) => k !== null && k !== undefined && k !== false));
   return e;
 };
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // --- The agents of the Investigate pipeline, in the order a judge reads them ---
 const AGENTS = [
@@ -229,22 +227,6 @@ function traceLink(id) {
   return a;
 }
 
-// --- A saved run, replayed at the speed it really happened ---
-async function replay(view, rec) {
-  const events = rec.events;
-  let last = 0;
-  for (const e of events) {
-    const gap = e._ms - last;
-    await wait(gap > LONG_WAIT_MS ? SHORT_WAIT_MS : gap);
-    last = e._ms;
-    if (!view.alive()) return;
-    view.clock(e._ms);
-    if (e.type === "done") return e.result;
-    view.event(e);
-  }
-  throw new Error("the saved run has no answer");
-}
-
 // --- A live run: the API's own event stream ---
 async function live(view, request) {
   const started = performance.now();
@@ -283,52 +265,39 @@ async function live(view, request) {
   }
 }
 
-function liveButton(onRun) {
-  const btn = el("button", { type: "button", className: "primary" });
-  const note = el("span", { className: "quota", "data-quota": "" });
-  const draw = () => {
-    btn.disabled = !quota.left();
-    btn.textContent = quota.left() ? "Run it live with Gemini" : "Live runs used up today";
-    note.textContent = quotaText();
+// --- Try a sample: the real SafeShelf extension (web/ext/, copied from extension/) on each sample listing ---
+// The frame borrows this page's Google sign-in, its API and its daily limit through SafeShelfDemo, so the widget
+// never shows its own sign-in. The sample's description and expected answer stay out here, never in what is checked.
+function shareWithFrame() {
+  window.SafeShelfDemo = {
+    api: API,
+    token: (fresh) => auth.currentUser.getIdToken(fresh),
+    who: () => ({ email: auth.currentUser?.email || "", name: auth.currentUser?.displayName || "", role: document.documentElement.dataset.role || "shopper" }),
+    quota: { left: () => quota.left(), take: () => { quota.take(); refreshQuota(); } },
+    notice: (text) => { const n = document.getElementById("demo-note"); if (n) n.replaceChildren(el("b", { textContent: "Note" }), el("span", { textContent: text })); },
   };
-  draw();
-  btn.onclick = () => { if (!quota.left()) return; quota.take(); refreshQuota(); onRun(); };
-  return el("div", { className: "actions" }, btn, note);
 }
+const frame = () => document.getElementById("ext-frame");
+const loadFrame = (query) => { frame().src = `ext-frame.html?${query}&v=20261017g`; };
 
-// --- Try a sample ---
-async function showSample(preset, button) {
+function showSample(preset, button) {
   document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", String(b === button)); b.setAttribute("aria-selected", String(b === button)); });
-  const box = document.getElementById("run");
   setAddress(preset.request.listing.url);
-  renderPage(document.getElementById("page"), { listing: preset.request.listing, preset, index: presetsAll.indexOf(preset), total: presetsAll.length });
-  const sub = `${preset.what} · ${preset.market}`;
-  let rec;
-  try {
-    rec = await (await fetch(`samples/${preset.id}.json`)).json();
-    setListing(preset.request.listing);
-  } catch (_) { box.replaceChildren(el("p", { className: "error", textContent: "This sample's saved run could not be loaded." })); return; }
-  const runLive = () => {
-    const view = runView(box, { title: preset.name, sub, expect: preset.expect, pill: el("span", { className: "pill live", textContent: "Live now · Gemini on Vertex AI" }) });
-    live(view, preset.request).then((r) => view.finish(r, again())).catch((err) => view.fail(err.message));
-  };
-  const again = () => el("div", {}, el("p", { className: "muted", textContent: "Run it again for a fresh answer. The API reuses an answer for the same listing for 10 minutes, and says so." }), liveButton(runLive));
-  const view = runView(box, { title: preset.name, sub, expect: preset.expect,
-    pill: el("span", { className: "pill", textContent: `Saved run of the live API · ${rec.recorded_at} · waits over ${LONG_WAIT_MS / 1000} s shortened` }) });
-  try {
-    const result = await replay(view, rec);
-    if (result) view.finish(result, el("div", {}, el("p", { className: "muted",
-      textContent: `That run took ${(rec.events.at(-1)._ms / 1000).toFixed(1)} s on the live API. Now make Gemini do it again:` }), liveButton(runLive)));
-  } catch (err) { view.fail(err.message); }
+  setListing(preset.request.listing);
+  const note = document.getElementById("demo-note");
+  note.replaceChildren(el("b", { textContent: `Sample ${presetsAll.indexOf(preset) + 1} of ${presetsAll.length}` }), el("span", { textContent: preset.what }),
+    el("span", { className: "exp", textContent: `Expected: ${preset.expect.label}` }), el("span", { className: "exp", "data-quota": "", textContent: quotaText() }));
+  loadFrame(`sample=${encodeURIComponent(preset.id)}`);
 }
 
 let presetsAll = [];
 async function setUpSamples() {
+  shareWithFrame();
   const { presets } = await (await fetch("samples/presets.json")).json();
   presetsAll = presets;
   const list = document.getElementById("samples");
   presets.forEach((p, i) => {
-    // each sample is a tab of the browser window; its page is built from the sample's real listing
+    // each sample is a tab of the browser window, with the extension running on its page
     const b = el("button", { type: "button", role: "tab", title: `${p.what} · Expected: ${p.expect.label}` },
       el("span", { className: "fav", "aria-hidden": "true", textContent: p.control ? "✓" : String(i + 1) }),
       el("span", { className: "name", textContent: p.name }),
@@ -341,33 +310,22 @@ async function setUpSamples() {
   list.querySelector("button")?.click();
 }
 
-// The address bar: a link typed here is checked live, the same as "Check your own listing"
+// The address bar loads any product link the same way; the toolbar shield opens the extension, like Chrome's toolbar button
 function setUpOmnibox() {
   const form = document.getElementById("omnibox");
   if (!form) return;
-  const ext = document.getElementById("ext-toggle");
-  ext?.addEventListener("click", () => {
-    const run = document.getElementById("run");
-    run.hidden = !run.hidden;
-    ext.classList.toggle("on", !run.hidden);
-    ext.setAttribute("aria-pressed", String(!run.hidden));
-  });
+  document.getElementById("ext-toggle")?.addEventListener("click", () => frame().contentWindow?.postMessage({ type: "safeshelf:open" }, location.origin));
   form.addEventListener("submit", (ev) => {
     ev.preventDefault();
     const raw = document.getElementById("omni-url").value.trim();
     if (!raw) return;
     const url = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
-    const box = document.getElementById("run");
-    if (!quota.left()) { box.replaceChildren(el("p", { className: "error", textContent: "Live runs are used up on this browser today. The sample tabs still replay real runs." })); return; }
     document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-selected", "false"); });
-    const listing = { url };
-    setListing(listing);
+    setListing({ url });
     setAddress(url);
-    renderPage(document.getElementById("page"), { listing });
-    quota.take();
-    refreshQuota();
-    const view = runView(box, { title: "Your link", sub: url, pill: el("span", { className: "pill live", textContent: "Live now · Gemini on Vertex AI" }) });
-    live(view, { mode: "investigate", product_id: "unmatched", listing }).then((r) => view.finish(r)).catch((err) => view.fail(err.message));
+    document.getElementById("demo-note").replaceChildren(el("b", { textContent: "Your link" }), el("span", { textContent: "Press Check on the page to have SafeShelf read this listing live." }),
+      el("span", { className: "exp", "data-quota": "", textContent: quotaText() }));
+    loadFrame(`url=${encodeURIComponent(url)}`);
   });
 }
 
@@ -377,7 +335,7 @@ function setUpOwn() {
   const box = document.getElementById("own-run");
   form.addEventListener("submit", (ev) => {
     ev.preventDefault();
-    if (!quota.left()) { box.hidden = false; box.replaceChildren(el("p", { className: "error", textContent: "Live runs are used up on this browser today. The samples still replay real runs." })); return; }
+    if (!quota.left()) { box.hidden = false; box.replaceChildren(el("p", { className: "error", textContent: "Live runs are used up on this browser today. Try again tomorrow." })); return; }
     const f = new FormData(form);
     const listing = {};
     for (const k of ["title", "url", "seller", "page_text", "currency"]) if (String(f.get(k) || "").trim()) listing[k] = String(f.get(k)).trim();

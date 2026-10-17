@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261017f">
-<script type="module" src="app.js?v=20261017f"></script>
+<link rel="stylesheet" href="style.css?v=20261017g">
+<script type="module" src="app.js?v=20261017g"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the samples</a>
@@ -47,7 +47,7 @@
 
   <section class="block" id="try" aria-labelledby="h-try">
     <header class="block-head"><span class="block-n">01</span><h2 id="h-try">Try a sample</h2><p>Listings with known right answers, including a clean control that must stay quiet.</p></header>
-    <p class="hint">Each browser tab is a test listing. The SafeShelf panel on the right replays a real run of the live API at its real speed; press <b>Run it live</b> to make Gemini do it again now, or paste any product link into the address bar and press Enter.</p>
+    <p class="hint">Each browser tab is a test listing with the real SafeShelf extension running on it, signed in through this page. Press the SafeShelf <b>Check</b> button on the page's right edge (or the shield in the toolbar) to run a live check, ask a question, or save it. Paste any product link into the address bar to load it the same way.</p>
     <div class="mac">
       <div class="menubar" aria-hidden="true">
         <span class="mb-mark"></span><b>Browser</b><span>File</span><span>Edit</span><span>View</span><span>History</span><span class="mb-hide">Bookmarks</span><span class="mb-hide">Window</span>
@@ -67,13 +67,11 @@
             <input id="omni-url" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste a product link and press Enter">
             <span class="omni-go" aria-hidden="true">↵ Check live</span>
           </form>
-          <button class="ext on" type="button" id="ext-toggle" aria-pressed="true" aria-controls="run" title="SafeShelf extension: show or hide the panel"><span class="sr">SafeShelf panel</span></button>
+          <button class="ext" type="button" id="ext-toggle" title="SafeShelf: check this page"><span class="sr">SafeShelf: check this page</span></button>
         </div>
+        <div class="demo-note" id="demo-note" aria-live="polite"></div>
         <div class="viewport">
-          <article class="store" id="page" aria-label="The shop page"></article>
-          <aside class="run" id="run" aria-live="polite" aria-label="SafeShelf extension panel">
-            <p class="empty">Pick a tab.</p>
-          </aside>
+          <iframe class="ext-frame" id="ext-frame" title="The shop page, with the SafeShelf extension" src="about:blank"></iframe>
         </div>
       </div>
       <div class="dock" aria-hidden="true"><i class="d1"></i><i class="d2"></i><i class="d3 on"></i><i class="d4"></i><i class="d5"></i></div>
