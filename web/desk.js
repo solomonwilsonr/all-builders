@@ -93,10 +93,10 @@ export function renderPage(box, { listing = {}, preset = null, index = 0, total 
     const art = photo ? el("div", { className: "pa pa-photo", id: "gallery" }, el("img", { src: photo, alt: listing.title || "Product photo", referrerPolicy: "no-referrer" })) : productArt(listing.title);
     const reviews = (listing.reviews || []).filter((r) => r.text).slice(0, 12);
     box.replaceChildren(head, el("div", { className: "s-main" }, art, info),
-      reviews.length ? el("section", { className: "s-reviews", id: "reviews" }, el("h4", { textContent: `Customer reviews (${reviews.length} shown)` }),
+      ...(reviews.length ? [el("section", { className: "s-reviews", id: "reviews" }, el("h4", { textContent: `Customer reviews (${reviews.length} shown)` }),
         ...reviews.map((r) => el("article", { className: "review" },
           r.rating ? el("span", { className: "stars", textContent: `${"★".repeat(Math.round(r.rating))}${"☆".repeat(5 - Math.round(r.rating))}` }) : null,
-          r.title ? el("strong", { textContent: r.title }) : null, el("p", { textContent: r.text })))) : null);
+          r.title ? el("strong", { textContent: r.title }) : null, el("p", { textContent: r.text }))))] : []));
     return;
   }
   box.replaceChildren(note, head, el("div", { className: "s-main" }, productArt(listing.title), info),

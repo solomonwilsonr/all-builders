@@ -1,7 +1,7 @@
 // Starts the real SafeShelf extension on one sample listing inside the judges' page:
 // draws the shop page from the sample's listing, loads the extension's background code, then its content scripts
 // in the manifest's order, exactly as Chrome would on a product page.
-import { renderMessage, renderPage } from "../desk.js?v=20261017h";
+import { renderMessage, renderPage } from "../desk.js?v=20261017j";
 
 const params = new URLSearchParams(location.search);
 const box = document.getElementById("page");

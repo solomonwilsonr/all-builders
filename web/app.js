@@ -6,7 +6,7 @@
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
 import { auth, authFetch, requireSignIn } from "./auth.js";
-import { setAddress, startClock } from "./desk.js?v=20261017h";
+import { setAddress, startClock } from "./desk.js?v=20261017j";
 
 const LIVE_PER_DAY = 10;
 
@@ -285,7 +285,7 @@ function shareWithFrame() {
   };
 }
 const frame = () => document.getElementById("ext-frame");
-const loadFrame = (query) => { frame().src = `ext-frame.html?${query}&v=20261017h`; };
+const loadFrame = (query) => { frame().src = `ext-frame.html?${query}&v=20261017j`; };
 
 function showSample(preset, button) {
   document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", String(b === button)); b.setAttribute("aria-selected", String(b === button)); });
