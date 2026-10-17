@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="theme.css?v=20261017e">
+  <link rel="stylesheet" href="theme.css?v=20261018a">
 </head>
 <body>
 <div class="page">
@@ -38,37 +38,75 @@
       </div>
 
       <div class="strip" aria-hidden="true">
-        <div class="tile scene" style="background-image:url(assets/sea.png)">
-          <div class="card" style="left:-30%;right:12%;top:20%">
-            <div class="box-t" style="margin:0"><span>Reports</span><small>•••</small></div>
-            <span class="big-num">9</span> <span class="up">under review</span>
-            <div class="spark"></div>
-            <p class="note-line">USB-C port overheating, reported by buyers.</p>
+        <!-- Chrome extension: the black rail at the edge of a listing -->
+        <div class="tile scene t-ext" style="background-image:url(assets/sea.png)" data-loop="7">
+          <span class="ptag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 9h8M9.4 13.5 5.4 6.6M14.6 13.5l-4 6.9"/></svg>Chrome</span>
+          <div class="ext-page"><i class="ep-img"></i><i class="ep-l w1"></i><i class="ep-l w2"></i><i class="ep-l w3"></i><b class="ep-price">₹299</b></div>
+          <div class="ext-rail">
+            <span class="ext-logo"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</span>
+            <span class="ext-check" data-at="1">Check</span>
+            <span class="ext-bar" data-at="1" data-off="3"><i></i></span>
+            <div class="ext-verdict" data-at="3"><b>Careful</b><small>3 things to look at</small></div>
+            <ul class="ext-rows">
+              <li data-at="4"><i class="bad"></i>Photos copied</li>
+              <li data-at="5"><i class="warn"></i>Price 79% below</li>
+              <li data-at="6"><i class="bad"></i>Shop 19 days old</li>
+            </ul>
           </div>
         </div>
-        <div class="tile plain">
-          <div class="hex"><img src="assets/burnt-out-sansai-usb-charger-20190728-001.jpg" alt=""></div>
-          <span class="mark-dot"><svg viewBox="0 0 32 32"><path d="m9 16 5 5 9-10" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <span class="chip chip-pink"><small>Below genuine price</small><b>79%</b></span>
-          <span class="chip chip-green"><i>!</i><span><b style="font-size:.85rem">Recalled abroad</b><br>Same model, US</span></span>
+
+        <!-- the evidence photo, scanned -->
+        <div class="tile plain t-photo" data-loop="5">
+          <div class="hex"><img src="assets/burnt-out-sansai-usb-charger-20190728-001.jpg" alt=""><i class="scan"></i></div>
+          <span class="mark-dot" data-at="4"><svg viewBox="0 0 32 32"><path d="m9 16 5 5 9-10" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="chip chip-pink" data-at="1"><small>Below genuine price</small><b data-count="79" data-unit="%">79%</b></span>
+          <span class="chip chip-green" data-at="2"><i>!</i><span><b style="font-size:.85rem">Recalled abroad</b><br>Same model, US</span></span>
         </div>
-        <div class="tile scene" style="background-image:url(assets/hill.png)">
-          <div class="card" style="left:9%;right:9%;top:12%">
-            <div class="person"><span class="avatar">CX</span><div><b>CX-65 Charger</b><small>MegaDealz24</small></div><span class="when">Checked now</span></div>
-            <div class="trio"><div><small>Photos</small><b class="bad">Copied</b></div><div><small>Price</small><b class="warn">21%</b></div><div><small>Shop age</small><b class="bad">19 days</b></div></div>
-            <div class="insight"><span><svg viewBox="0 0 16 16"><path d="M8 1v3M8 12v3M1 8h3M12 8h3M3 3l2 2M11 11l2 2M3 13l2-2M11 5l2-2"/></svg>Evidence summary</span>Photos match the official listing, but this seller is not on the brand's list.</div>
+
+        <!-- the web page on a phone -->
+        <div class="tile scene t-web" style="background-image:url(assets/hill.png)" data-loop="9">
+          <span class="ptag"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg>Phone</span>
+          <div class="phone">
+            <span class="ph-notch"></span>
+            <div class="ph-top"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf<span class="ph-go" data-at="2">Check</span></div>
+            <div class="ph-input"><span data-type="amazon.in/dp/B0CX65SFC" data-at="1"></span><i class="caret"></i></div>
+            <span class="ph-prog" data-at="2" data-off="4"><i></i></span>
+            <div class="ph-card" data-at="4">
+              <div class="person"><span class="avatar">CX</span><div><b>CX-65 Charger</b><small>MegaDealz24</small></div><span class="vpill warn">Careful</span></div>
+              <div class="trio"><div data-at="5"><small>Photos</small><b class="bad">Copied</b></div><div data-at="6"><small>Price</small><b class="warn">21%</b></div><div data-at="7"><small>Shop age</small><b class="bad">19 days</b></div></div>
+              <div class="insight" data-at="8"><span><svg viewBox="0 0 16 16"><path d="M8 1v3M8 12v3M1 8h3M12 8h3M3 3l2 2M11 11l2 2M3 13l2-2M11 5l2-2"/></svg>Evidence summary</span>Photos match the official listing, but this seller is not on the brand's list.</div>
+            </div>
           </div>
         </div>
-        <div class="tile orange">
-          <div class="card" style="left:10%;right:10%;top:12%;padding:12px">
-            <div class="person"><span class="avatar" style="width:26px;height:26px;font-size:.62rem">CX</span><div><b style="font-size:.7rem">CX-65 · Appario</b><small>Verified seller</small></div></div>
-            <div class="trio" style="font-size:.6rem"><div><small>Recall</small><b class="ok">None</b></div><div><small>Price</small><b>₹1,349</b></div><div><small>Mark</small><b class="ok">ISI</b></div></div>
-            <div class="insight" style="font-size:.62rem">The genuine listing, at the genuine price.</div>
+
+        <!-- WhatsApp: a link in, a text and a voice note back -->
+        <div class="tile orange t-wa" data-loop="6">
+          <span class="ptag"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/></svg>WhatsApp</span>
+          <div class="wa">
+            <div class="wa-head"><span class="wa-av"><svg viewBox="0 0 32 32"><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><b>SafeShelf</b><small><span class="wa-on">online</span><span class="wa-typ">typing…</span></small></div></div>
+            <div class="wa-body">
+              <div class="bub me" data-at="1">amazon.in/dp/B0NWDRY<small>10:42 ✓✓</small></div>
+              <div class="bub dots" data-at="2" data-off="4"><i></i><i></i><i></i></div>
+              <div class="bub bot" data-at="4"><b>Don't buy.</b> The same power bank is recalled in the US for fire and burn hazards.<small>10:42</small></div>
+              <div class="bub bot voice" data-at="5"><span class="vplay">▶</span><span class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><small>0:09 · हिंदी</small></div>
+            </div>
           </div>
         </div>
-        <div class="tile photo">
+
+        <!-- your agent, over MCP -->
+        <div class="tile photo t-agent" data-loop="7">
           <img src="assets/2-touchstones.jpg" alt="">
-          <div class="round-btns"><span>▶</span><span>⌁</span><span class="end">✕</span></div>
+          <span class="ptag"><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg>Agent · MCP</span>
+          <div class="term">
+            <div class="term-top"><i></i><i></i><i></i><span>/mcp</span></div>
+            <pre><span class="c">// read-only tool call</span>
+<span class="k">check_listing</span>(
+  url=<span class="s" data-type="&quot;amazon.in/dp/B0CX65SFC&quot;" data-at="1"></span>)
+<span data-at="3"><span class="c">→</span> verdict: <span class="s">"careful"</span></span>
+<span data-at="4">  photos: <span class="s">"copied"</span></span>
+<span data-at="5">  shop_age_days: <span class="n">19</span></span>
+<span data-at="6">  evidence: [<span class="n">ev_412</span>, <span class="n">ev_413</span>]</span></pre>
+          </div>
         </div>
       </div>
     </section>
