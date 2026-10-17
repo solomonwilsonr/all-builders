@@ -3,19 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SafeShelf</title>
+<title>SafeShelf — Try it live</title>
 <meta name="description" content="Is it safe? Is it real? SafeShelf checks a product listing against official recalls, buyer reviews, safety-mark registries and the genuine product.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z' fill='%230271E4'/><path d='m10.5 16 4 4 7-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261017i">
-<script type="module" src="app.js?v=20261017j"></script>
+<link rel="stylesheet" href="style.css?v=20261017m">
+<script type="module" src="app.js?v=20261017m"></script>
 </head>
 <body>
 <a class="skip" href="#try">Skip to the demo</a>
 <header class="top">
-  <div class="brand-row"><a class="home" href="site/index.html" aria-label="SafeShelf home"><span class="mark" aria-hidden="true">✦</span><span class="brand">SafeShelf</span></a><nav class="sitelinks" aria-label="Site"><a href="site/index.html">Product</a><a href="site/how.html">How it works</a><a href="site/agents.html">For agents</a><a href="site/results.html">Results</a><a href="index.html" aria-current="page">Try it live</a></nav><span class="badge">AI Builder Cup 2026 · Retail &amp; Commerce</span></div>
+  <nav class="nav brand-row" aria-label="Primary navigation">
+    <a class="logo" href="site/index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+    <div class="links" id="links"><a href="site/index.html">Product</a><a href="site/how.html">How it works</a><a href="site/agents.html">For agents</a><a href="site/results.html">Results</a><a href="site/team.html">Team</a><a href="index.html" aria-current="page">Try it live</a></div>
+    <div class="nav-end"><a class="btn btn-ink btn-sm" href="site/get.html">Get SafeShelf</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
+  </nav>
 </header>
 
 <section class="jhero" aria-labelledby="hero-h">
@@ -29,13 +33,6 @@
       <div class="hero-btns"><a class="jbtn" href="#try">Try it now</a><a class="jbtn line" href="#accuracy">See the proof</a></div>
     </div>
   </div>
-  <div class="answers" aria-label="The four answers SafeShelf gives">
-    <span class="ans red"><b>Don't buy</b>recalled or fake</span>
-    <span class="ans amber"><b>Be careful</b>reports under review</span>
-    <span class="ans green"><b>No problems found</b>in what was checked</span>
-    <span class="ans grey"><b>Can't tell yet</b>never a guess</span>
-    <p class="ans-note">Code picks the answer from the evidence. The AI only explains it.</p>
-  </div>
   <ul class="facts" aria-label="Real data behind every answer">
     <li><b>8,689</b>official recalls<span>US and 7 Asia-Pacific regulators</span></li>
     <li><b>29,379</b>buyer reviews<span>read for fire, burn and shock</span></li>
@@ -45,59 +42,155 @@
 </section>
 
 <nav class="jump" aria-label="On this page">
-  <a href="#try"><span>01</span>Try it</a>
-  <a href="#products"><span>02</span>What you get</a>
-  <a href="#check-own"><span>03</span>Check yours</a>
-  <a href="#ask-out-loud"><span>04</span>Ask out loud</a>
-  <a href="#accuracy"><span>05</span>Is it accurate?</a>
-  <a href="#attack"><span>06</span>Can it be fooled?</a>
+  <a href="#answers"><span>01</span>How it answers</a>
+  <a href="#try"><span>02</span>Try it</a>
+  <a href="#accuracy"><span>03</span>Is it accurate?</a>
+  <a href="#attack"><span>04</span>Can it be fooled?</a>
+  <a href="#products"><span>05</span>Where to use it</a>
 </nav>
 
 <main id="main">
 
-  <section class="block" id="try" aria-labelledby="h-try">
-    <header class="block-head"><span class="block-n">01</span><h2 id="h-try">Try it</h2><p>Seven shop pages with a known right answer, each with the real SafeShelf extension on it.</p></header>
-    <ol class="steps3" aria-label="How to try it">
-      <li><b>1</b>Pick a tab</li>
-      <li><b>2</b>Press <em>Check</em> on the page's right edge</li>
-      <li><b>3</b>Read the answer and its evidence</li>
-      <li class="aside">Or paste any product link in the address bar</li>
-    </ol>
-    <div class="mac">
-      <div class="menubar" aria-hidden="true">
-        <span class="mb-mark"></span><b>Browser</b><span>File</span><span>Edit</span><span>View</span><span>History</span><span class="mb-hide">Bookmarks</span><span class="mb-hide">Window</span>
-        <span class="mb-right"><span class="mb-ico">⌁</span><span id="mac-date"></span><span id="mac-time"></span></span>
+  <section class="block" id="answers" aria-labelledby="h-answers">
+    <header class="block-head"><span class="block-n">01</span><h2 id="h-answers">How it answers</h2><p>Two questions about every listing, then one of four answers, each with the evidence behind it.</p></header>
+    <div class="how3">
+      <div class="how-q">
+        <span class="how-step">It asks</span>
+        <h3><span class="dot2 red"></span>Is it safe?</h3>
+        <ul><li>Official recalls from the US and 7 Asia-Pacific regulators, India included</li><li>Buyer reviews and photos, read for fire, burn and shock</li><li>Safety marks, such as BIS, against the registry</li></ul>
       </div>
-      <div class="win" role="group" aria-label="Browser window with the SafeShelf extension">
-        <div class="win-top">
-          <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-          <ol class="samples" id="samples" role="tablist" aria-label="Sample listings, one per tab"></ol>
-          <span class="newtab" aria-hidden="true">+</span>
-        </div>
-        <div class="toolbar">
-          <span class="navs" aria-hidden="true"><i>‹</i><i>›</i><i>↻</i></span>
-          <form class="omni" id="omnibox" role="search">
-            <span class="omni-lock" aria-hidden="true"></span>
-            <label class="sr" for="omni-url">Product link to check</label>
-            <input id="omni-url" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste a product link and press Enter">
-            <span class="omni-go" aria-hidden="true">↵ Check live</span>
-          </form>
-          <button class="ext" type="button" id="ext-toggle" title="SafeShelf: check this page"><span class="sr">SafeShelf: check this page</span></button>
-        </div>
-        <div class="demo-note" id="demo-note" aria-live="polite"></div>
-        <div class="viewport">
-          <iframe class="ext-frame" id="ext-frame" title="The shop page, with the SafeShelf extension" src="about:blank"></iframe>
-        </div>
+      <div class="how-q">
+        <span class="how-step">and</span>
+        <h3><span class="dot2 amber"></span>Is it real?</h3>
+        <ul><li>Photos copied from the official listing</li><li>A price far below the genuine product</li><li>A brand-new shop, and hidden text aimed at AI tools</li></ul>
       </div>
-      <div class="dock" aria-hidden="true"><i class="d1"></i><i class="d2"></i><i class="d3 on"></i><i class="d4"></i><i class="d5"></i></div>
+      <div class="how-a">
+        <span class="how-step">You get one answer</span>
+        <ul class="answers" aria-label="The four answers SafeShelf gives">
+          <li class="ans red"><b>Don't buy</b>recalled or fake</li>
+          <li class="ans amber"><b>Be careful</b>reports under review</li>
+          <li class="ans green"><b>No problems found</b>in what was checked</li>
+          <li class="ans grey"><b>Can't tell yet</b>never a guess</li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules">
+      <p><b>Code picks the answer.</b> Plain rules turn the evidence into a colour; Gemini only explains it, in your language.</p>
+      <p><b>Exact model only.</b> A look-alike's recall is never blamed on the wrong product.</p>
     </div>
   </section>
 
+  <section class="block" id="try" aria-labelledby="h-try">
+    <header class="block-head"><span class="block-n">02</span><h2 id="h-try">Try it</h2><p>Three ways to use the live product. Pick one.</p></header>
+    <div class="trytabs" role="tablist" aria-label="Ways to try SafeShelf">
+      <button type="button" role="tab" id="tab-shop-page" aria-controls="shop-page" aria-selected="true">
+        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M6.5 6.5h.01M9.5 6.5h.01"/></svg></span>
+        <span class="tt-t"><b>On a shop page</b><small>The real Chrome extension on 7 sample listings</small></span>
+      </button>
+      <button type="button" role="tab" id="tab-check-own" aria-controls="check-own" aria-selected="false" tabindex="-1">
+        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>
+        <span class="tt-t"><b>Paste a listing</b><small>Check any product from any shop, live</small></span>
+      </button>
+      <button type="button" role="tab" id="tab-ask-out-loud" aria-controls="ask-out-loud" aria-selected="false" tabindex="-1">
+        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
+        <span class="tt-t"><b>Ask out loud</b><small>Talk to it, or show it the label</small></span>
+      </button>
+    </div>
+
+    <div class="trypanel" role="tabpanel" id="shop-page" aria-labelledby="tab-shop-page">
+      <ol class="steps3" aria-label="How to try it">
+        <li><b>1</b>Pick a tab in the browser below</li>
+        <li><b>2</b>Press <em>Check</em> on the page's right edge</li>
+        <li><b>3</b>Read the answer and its evidence</li>
+        <li class="aside">Or paste any product link in the address bar</li>
+      </ol>
+      <div class="real-row" id="real-row" hidden>
+        <button class="jbtn" type="button" id="remote-start">Start a real browser</button>
+        <p>A real Chrome with the SafeShelf extension, on the real Amazon or Flipkart, for 5 minutes. <span id="remote-left"></span></p>
+      </div>
+      <div class="mac">
+        <div class="menubar" aria-hidden="true">
+          <span class="mb-mark"></span><b>Browser</b><span>File</span><span>Edit</span><span>View</span><span>History</span><span class="mb-hide">Bookmarks</span><span class="mb-hide">Window</span>
+          <span class="mb-right"><span class="mb-ico">⌁</span><span id="mac-date"></span><span id="mac-time"></span></span>
+        </div>
+        <div class="win" role="group" aria-label="Browser window with the SafeShelf extension">
+          <div class="win-top">
+            <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+            <ol class="samples" id="samples" role="tablist" aria-label="Sample listings, one per tab"></ol>
+            <span class="newtab" aria-hidden="true">+</span>
+          </div>
+          <div class="toolbar">
+            <span class="navs" aria-hidden="true"><i>‹</i><i>›</i><i>↻</i></span>
+            <form class="omni" id="omnibox" role="search">
+              <span class="omni-lock" aria-hidden="true"></span>
+              <label class="sr" for="omni-url">Product link to check</label>
+              <input id="omni-url" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste a product link and press Enter">
+              <span class="omni-go" aria-hidden="true">↵ Check live</span>
+            </form>
+            <button class="ext" type="button" id="ext-toggle" title="SafeShelf: check this page"><span class="sr">SafeShelf: check this page</span></button>
+          </div>
+          <div class="demo-note" id="demo-note" aria-live="polite"></div>
+          <div class="viewport">
+            <iframe class="ext-frame" id="ext-frame" title="The shop page, with the SafeShelf extension" src="about:blank"></iframe>
+          </div>
+        </div>
+        <div class="rwin" id="rwin" hidden>
+          <div class="rbar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><b>Real Chrome</b><span class="rstate" id="rstate">Starting…</span><span class="rtime" id="rtime"></span><button class="rend" type="button" id="remote-end">End session</button></div>
+          <iframe class="rframe" id="rframe" title="A real Chrome browser with the SafeShelf extension" allow="clipboard-read; clipboard-write" src="about:blank"></iframe>
+          <p class="rnote">A shared cloud browser: don't sign in to your own shopping accounts here. It closes by itself after 5 minutes.</p>
+        </div>
+        <div class="dock" aria-hidden="true"><i class="d1"></i><i class="d2"></i><i class="d3 on"></i><i class="d4"></i><i class="d5"></i></div>
+      </div>
+    </div>
+
+    <div class="trypanel" role="tabpanel" id="check-own" aria-labelledby="tab-check-own" hidden>
+      <div class="own-wrap">
+        <form class="own card" id="own">
+          <h3>Copy a listing from any shop</h3>
+          <label>Product title <input type="text" name="title" required maxlength="300" placeholder="Anker PowerCore 10000 Power Bank A1263"></label>
+          <label><span>Link to the listing <span class="optl">optional</span></span><input type="url" name="url" maxlength="500" placeholder="https://www.flipkart.com/…"></label>
+          <div class="row2">
+            <label>Price <input type="number" name="price" min="0" step="any" placeholder="1799"></label>
+            <label>Currency <select name="currency"><option>INR</option><option>JPY</option><option>AUD</option><option>SGD</option><option>NZD</option><option>KRW</option><option>USD</option></select></label>
+            <label>Seller <input type="text" name="seller" maxlength="120" placeholder="optional"></label>
+          </div>
+          <label><span>Anything else on the page <span class="optl">optional</span></span><textarea name="page_text" rows="3" maxlength="4000" placeholder="Brand, model number, safety marks, the label text"></textarea></label>
+          <div class="actions"><button class="primary" type="submit">Check it live</button><span class="quota" data-quota></span></div>
+        </form>
+        <aside class="own-help" aria-label="What happens when you check">
+          <h3>What happens next</h3>
+          <ol>
+            <li><b>Eight agents check it</b>You watch each one light up: page reader, recalls, reviews, safety marks and fake-shop signs.</li>
+            <li><b>Code sets the colour</b>Red, amber, green or grey, from the evidence alone.</li>
+            <li><b>Gemini explains it</b>A plain answer you can read or listen to, with every quote one click away.</li>
+          </ol>
+          <p class="own-tip"><b>Only the title is required.</b> The model number and the label text make the check sharper. A real link can take up to two minutes.</p>
+        </aside>
+      </div>
+      <div class="run card" id="own-run" aria-live="polite" hidden></div>
+    </div>
+
+    <div class="trypanel" role="tabpanel" id="ask-out-loud" aria-labelledby="tab-ask-out-loud" hidden>
+      <p class="panel-lede">Made for people who would rather not read small print: older shoppers, people who read little, and people who can't see the screen.</p>
+      <div id="ask"></div>
+    </div>
+  </section>
+
+  <section class="block" id="accuracy" aria-labelledby="h-vs-gemini">
+    <header class="block-head"><span class="block-n">03</span><h2 id="h-vs-gemini">Is it accurate?</h2><p>Tested on 25 real recalls and 40 products that were never recalled, against Gemini alone and keyword rules.</p></header>
+    <div id="vs"></div>
+  </section>
+
+  <section class="block" id="attack" aria-labelledby="h-attack">
+    <header class="block-head"><span class="block-n">04</span><h2 id="h-attack">Can it be fooled?</h2><p>We attacked our own code: fake regulator pages, look-alike models, hidden instructions. Here is what it decided.</p></header>
+    <div id="redteam"></div>
+  </section>
+
   <section class="block" id="products" aria-labelledby="h-products">
-    <header class="block-head"><span class="block-n">02</span><h2 id="h-products">What you get</h2><p>One checking engine, five ways to use it.</p></header>
+    <header class="block-head"><span class="block-n">05</span><h2 id="h-products">Where to use it</h2><p>One checking engine, five ways to reach it.</p></header>
     <div class="prods">
       <article class="prod-card"><span class="pi" style="background:#0271e4"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 9h8M9.4 13.5 5.4 6.6M14.6 13.5l-4 6.9"/></svg></span>
-        <span class="st built">Built</span><h3>Chrome extension</h3><p>A Check button on Amazon and Flipkart product pages. Ask questions, listen to the answer, save products for later recall alerts.</p><a href="#try">It's running above</a></article>
+        <span class="st built">Built</span><h3>Chrome extension</h3><p>A Check button on Amazon and Flipkart product pages. Ask questions, listen to the answer, save products for later recall alerts.</p><a href="#shop-page">Try it above</a></article>
       <article class="prod-card"><span class="pi" style="background:#f0a020"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span>
         <span class="st live">Live</span><h3>Web page</h3><p>The same check in any browser, on a phone too. Paste a listing, talk to it, or show it a label.</p><a href="#check-own">You're on it</a></article>
       <article class="prod-card"><span class="pi" style="background:#1d9b52"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/></svg></span>
@@ -107,49 +200,28 @@
       <article class="prod-card"><span class="pi" style="background:#001123"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg></span>
         <span class="st live">Live</span><h3>API for AI agents</h3><p>Shopping assistants ask SafeShelf the same questions: 10 read-only tools over MCP, plus REST.</p><a href="site/agents.html">For developers</a></article>
     </div>
-    <div class="checks2">
-      <div><h3><span class="dot2 red"></span>Is it safe?</h3><ul><li>Official recalls from the US and 7 Asia-Pacific regulators, India included</li><li>Buyer reviews and photos, read for fire, burn and shock</li><li>Safety marks, such as BIS, against the registry</li></ul></div>
-      <div><h3><span class="dot2 amber"></span>Is it real?</h3><ul><li>Photos copied from the official listing</li><li>A price far below the genuine product</li><li>A brand-new shop, and hidden text aimed at AI tools</li></ul></div>
-      <p class="checks2-note"><b>Exact model only.</b> A look-alike's recall is never blamed on the wrong product.</p>
+    <div class="cta">
+      <h2>Want SafeShelf on your own shop pages?</h2>
+      <p>The Chrome extension and the WhatsApp number are coming soon. Developers can use the API today.</p>
+      <div class="hero-btns"><a class="jbtn" href="site/get.html">Get SafeShelf</a><a class="jbtn line" href="site/agents.html">For developers</a></div>
     </div>
-  </section>
-
-  <section class="block" id="check-own" aria-labelledby="h-check-own">
-    <header class="block-head"><span class="block-n">03</span><h2 id="h-check-own">Check yours</h2><p>Copy a listing from any shop and run it live. Real links can take up to two minutes.</p></header>
-    <form class="own card" id="own">
-      <label>Product title <input type="text" name="title" required maxlength="300" placeholder="Anker PowerCore 10000 Power Bank A1263"></label>
-      <label>Link to the listing <input type="url" name="url" maxlength="500" placeholder="https://www.flipkart.com/…"></label>
-      <div class="row2">
-        <label>Price <input type="number" name="price" min="0" step="any" placeholder="1799"></label>
-        <label>Currency <select name="currency"><option>INR</option><option>JPY</option><option>AUD</option><option>SGD</option><option>NZD</option><option>KRW</option><option>USD</option></select></label>
-        <label>Seller <input type="text" name="seller" maxlength="120" placeholder="optional"></label>
-      </div>
-      <label>Anything else on the page <textarea name="page_text" rows="3" maxlength="4000" placeholder="optional: brand, model number, safety marks, the label text"></textarea></label>
-      <div class="actions"><button class="primary" type="submit">Check it live</button><span class="quota" data-quota></span></div>
-    </form>
-    <div class="run card" id="own-run" aria-live="polite" hidden></div>
-  </section>
-
-  <section class="block" id="ask-out-loud" aria-labelledby="h-ask-out-loud">
-    <header class="block-head"><span class="block-n">04</span><h2 id="h-ask-out-loud">Ask out loud</h2><p>For people who would rather not read small print: talk to it, or show it the label.</p></header>
-    <div id="ask"></div>
-  </section>
-
-  <section class="block" id="accuracy" aria-labelledby="h-vs-gemini">
-    <header class="block-head"><span class="block-n">05</span><h2 id="h-vs-gemini">Is it accurate?</h2><p>Tested on 25 real recalls and 40 products that were never recalled, against Gemini alone and keyword rules.</p></header>
-    <div id="vs"></div>
-  </section>
-
-  <section class="block" id="attack" aria-labelledby="h-attack">
-    <header class="block-head"><span class="block-n">06</span><h2 id="h-attack">Can it be fooled?</h2><p>We attacked our own code: fake regulator pages, look-alike models, hidden instructions. Here is what it decided.</p></header>
-    <div id="redteam"></div>
   </section>
 </main>
 
 <footer class="foot">
-  <p>Colours are set by code from the evidence; AI findings marked "under review" are not regulatory determinations. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; recalls, reviews and registries are real data.</p>
-  <p class="foot-links"><a href="site/index.html">SafeShelf home</a><a href="site/results.html">Results</a><a href="site/agents.html">For agents</a><a href="https://safeshelf-api-368488022657.asia-south1.run.app/docs" target="_blank" rel="noopener">API docs</a><a href="https://safeshelf-api-368488022657.asia-south1.run.app/.well-known/agent-card.json" target="_blank" rel="noopener">A2A agent card</a><a href="site/get.html">Chrome extension and WhatsApp: coming soon</a></p>
-  <p>© 2026 Team Hashes · AI Builder Cup 2026</p>
+  <div class="cols">
+    <div><h4>Product</h4><ul><li><a href="site/index.html">Trust check</a></li><li><a href="site/how.html#identity">Product identity</a></li><li><a href="site/get.html">Get SafeShelf</a></li><li><a href="index.html">Try it live</a></li></ul></div>
+    <div><h4>Learn</h4><ul><li><a href="site/how.html">How it works</a></li><li><a href="site/results.html">Results</a></li><li><a href="site/results.html#backtest">SafeShelfBench</a></li></ul></div>
+    <div><h4>Builders</h4><ul><li><a href="site/agents.html">MCP server</a></li><li><a href="https://safeshelf-api-368488022657.asia-south1.run.app/docs" target="_blank" rel="noopener">API docs</a></li><li><a href="https://safeshelf-api-368488022657.asia-south1.run.app/.well-known/agent-card.json" target="_blank" rel="noopener">A2A agent card</a></li></ul></div>
+    <div><h4>Project</h4><ul><li><a href="site/team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li></ul></div>
+    <div><h4>Records from</h4><ul><li>CPSC · ACCC · KATS</li><li>CAA · CCPA · BIS</li><li>BSMI · CPSO · ASEAN</li></ul></div>
+  </div>
+  <p class="foot-note">Colours are set by code from the evidence; AI findings marked "under review" are not regulatory determinations. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; recalls, reviews and registries are real data.</p>
+  <div class="foot-bar">
+    <a class="logo" href="site/index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+    <span>Verdicts are evidence for shoppers, not legal findings.</span>
+    <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
+  </div>
 </footer>
 </body>
 </html>

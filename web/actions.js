@@ -206,7 +206,7 @@ export function setUpAsk() {
   const askBtn = el("button", { type: "button", className: "big", textContent: "📷 Ask with a photo" });
   const micBtn = "webkitSpeechRecognition" in window || "SpeechRecognition" in window ? el("button", { type: "button", textContent: "🎤 Say the question" }) : null;
   root.append(el("div", { className: "askgrid" },
-    el("div", { className: "card askcard" }, el("h2", { textContent: "Ask out loud" }),
+    el("div", { className: "card askcard" }, el("h3", { textContent: "Talk to it, camera on" }),
       el("p", { className: "muted", textContent: "Talk to SafeShelf like a shop assistant. Gemini Live listens and answers by voice in your language, but it can only say what SafeShelf's code found in official recall lists. Made for shoppers who'd rather not read small print: older shoppers, people who read little, and people who can't see the screen." }),
       el("div", { className: "actions" }, lang, market), video, el("div", { className: "actions" }, talk), status, log, card),
     el("div", { className: "card askcard" }, el("h3", { textContent: "No microphone? Ask with a photo" }),
@@ -370,15 +370,16 @@ export async function setUpRedteam(takeQuota) {
   const go = el("button", { type: "button", className: "primary", textContent: "Let Gemini attack now" });
   const liveBox = el("div", { "aria-live": "polite" });
   root.replaceChildren(
-    el("h2", { className: "vs-head", textContent: "Attacker vs defender" }),
-    el("p", { className: "muted", textContent: "Every SafeShelf answer comes from code that checks whether a source is official, whether a notice covers this exact model, and whether reports are really independent. Here we attack that code: forged regulator pages, look-alike models, hidden instructions, copied complaints, fake shops. Left: what the attack tried. Right: what the code decided." }),
+    el("h3", { className: "vs-head", textContent: "Attacker vs defender" }),
+    el("p", { className: "muted", textContent: "Every SafeShelf answer comes from code that checks whether a source is official, whether a notice covers this exact model, and whether reports are really independent. Here we attack that code: forged regulator pages, look-alike models, hidden instructions, copied complaints, fake shops. Each round below shows what the attack tried and what the code decided." }),
     el("div", { className: "vs-grid" },
       el("div", { className: "vs-card card" }, el("h3", {}, "Saved red-team: ", score), el("p", { className: "muted", textContent: `${data.metrics.hard_negatives} of these are traps that must not become a recall; the others are controls that must still be caught. Invented hard cases: they show the rules behave as designed, not real-world accuracy.` }),
-        el("div", { className: "actions" }, replay), list),
+        el("div", { className: "actions" }, replay)),
       el("div", { className: "vs-card card" }, el("h3", { textContent: "Live round: Gemini is the attacker" }),
         el("p", { className: "muted", textContent: "Gemini invents a new attack of the kind you pick. The same code that answers shoppers defends; whether it held is decided by a fixed rule, not by either model." }),
         el("div", { className: "actions" }, kind, go, el("span", { className: "quota", "data-quota": "" })), liveBox,
-        el("details", {}, el("summary", { textContent: "What the defence doesn't claim" }), el("ul", { className: "caveats" }, ...(data.limits || []).map((t) => el("li", { textContent: t })))))));
+        el("details", {}, el("summary", { textContent: "What the defence doesn't claim" }), el("ul", { className: "caveats" }, ...(data.limits || []).map((t) => el("li", { textContent: t })))))),
+    list);
   const draw = async (animate) => {
     list.replaceChildren();
     let held = 0;
