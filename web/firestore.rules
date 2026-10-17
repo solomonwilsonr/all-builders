@@ -30,6 +30,21 @@ service cloud.firestore {
       allow list, delete: if false;
     }
 
+    // My Shelf, synced by the extension (extension/shelf-sync.js) and shown on the website (web/site/shelf.html).
+    // Each person reads and changes only their own; an item holds only these short text fields.
+    match /users/{uid}/shelf/{item} {
+      function owner() { return request.auth != null && request.auth.uid == uid; }
+      function text(k, n) { return request.resource.data[k] == null || (request.resource.data[k] is string && request.resource.data[k].size() <= n); }
+      function shape() {
+        return request.resource.data.keys().hasOnly(['key', 'url', 'title', 'host', 'image_url', 'level', 'product_id', 'saved_at'])
+          && request.resource.data.key is string && request.resource.data.key.size() <= 2000
+          && text('url', 2000) && text('title', 2000) && text('host', 255) && text('image_url', 2000)
+          && text('level', 16) && text('product_id', 255) && text('saved_at', 40);
+      }
+      allow read, delete: if owner();
+      allow create, update: if owner() && shape();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

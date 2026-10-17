@@ -69,6 +69,11 @@ export async function acceptSession({ idToken: token, refreshToken, name, email 
   return who;
 }
 
+// The signed-in person's Firebase uid (My Shelf is kept under it in Firestore), or null when signed out.
+export async function signedInUid() {
+  return (await load())?.uid || null;
+}
+
 // The locally stored Firebase profile; no app API call is needed.
 export async function account() {
   const s = await load();

@@ -1,7 +1,7 @@
 // Sign-in for the website: its own login, separate from the judges' demo (../firebase-app.js). The site stays
 // readable signed out; the nav gets a "Sign in" button that opens the shared sign-in card (Google, email and
 // password, or a guest). Signed in, the nav shows the person's photo (or "Guest") with a menu: who, checks left,
-// Chat with Eddy, Try it live, Sign out. AI features (the chat) use window.safeshelfAccount.take() for each check:
+// My Shelf, Chat with Eddy, Try it live, Sign out. AI features (the chat) use window.safeshelfAccount.take() for each check:
 // a guest gets 1 ever on this browser, an account 5 a day (../quota.js, counted in Firestore). Other scripts listen
 // for "safeshelf:account"; window.safeshelfSignIn() opens the card.
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
@@ -78,7 +78,8 @@ function render(user) {
       up.onclick = async () => { await signOut(auth); openModal(toggle); };
       items.push(up);
     }
-    items.push(make("a", { href: "chat.html", role: "menuitem", textContent: "Chat with Eddy" }),
+    items.push(make("a", { href: "shelf.html", role: "menuitem", textContent: "My Shelf" }),
+      make("a", { href: "chat.html", role: "menuitem", textContent: "Chat with Eddy" }),
       make("a", { href: "../index.html", role: "menuitem", textContent: "Try it live" }), out);
     const menu = make("div", { className: "acct-menu", role: "menu", hidden: true }, ...items);
     menuOpen = (open, refocus) => {
