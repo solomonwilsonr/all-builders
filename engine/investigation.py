@@ -117,7 +117,18 @@ def title_model(listing: dict) -> str | None:
         if len(code) >= 4 and not NOT_MODELS.match(code) and not NOT_MODEL.match(token) and \
                 re.search(r"[A-Z]", code) and re.search(r"\d", code):
             return None if labelled else token
-    return labelled or None
+    return labelled or brand_code(title, listing) or None
+
+
+def brand_code(title: str, listing: dict) -> str | None:
+    """A short code written straight after the brand ("OnePlus N6", "Redmi A3"): too short to trust anywhere else
+    in a title, but next to the brand it is the model."""
+    from engine.normalize import NOT_MODELS, norm_model
+    brand = title_brand(listing)
+    if not brand:
+        return None
+    found = re.search(rf"\b{re.escape(brand)}\s+([A-Z]{{1,2}}\d{{1,3}}[A-Z]?)\b", title, re.IGNORECASE)
+    return found.group(1) if found and not NOT_MODELS.match(norm_model(found.group(1))) else None
 
 
 def title_brand(listing: dict) -> str | None:

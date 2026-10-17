@@ -122,6 +122,9 @@ def test_tenancy_helpers(monkeypatch):
     ("V-Guard VSDI 100 Digital for Inverter Refrigerator up to 900 L, Working Range 120 VAC -280 VAC", "VSDI 100"),
     ("ABC 500 mAh power bank", None),
     ("エレコム モバイルバッテリー 10000mAh 型番 DE-C38-10000BK ブラック", "DE-C38-10000BK"),
+    # camera megapixels and warranty months are not models; a short code right after the brand is
+    ("OnePlus N6 | 4GB+128GB | Fresh Mint | 8000mAh Battery | 45W Charging | 48-Month Smoothness | 50MP Camera", "N6"),
+    ("Redmi A3 64MP camera", "A3"),
 ])
 def test_title_model_keeps_the_written_form(title, model):
     assert investigation.title_model({"title": title}) == model
