@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="theme.css?v=20261017c">
+  <link rel="stylesheet" href="theme.css?v=20261017d">
   <style>
     .chat-page { --card:#fff; --link:var(--blue); --green:var(--ok); --green-bg:var(--ok-bg); --unknown:#4a5560; --unknown-bg:#eceff3;
       --shadow:0 14px 32px rgba(0,17,35,.10), 0 0 0 1px rgba(0,17,35,.04);
@@ -363,6 +363,7 @@
   </aside>
 
 <script src="site.js"></script>
+<script type="module" src="account.js?v=20261017a"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -639,7 +640,9 @@
   };
 
   // ---- Things to do with an answer: watch it, a safer option, I already bought it, report a problem ----
+  // Signed in with Google (account.js), My Shelf follows the account; signed out, it is this browser's own id.
   const owner = () => {
+    if (window.safeshelfAccount) return `google-${window.safeshelfAccount.uid}`;
     let id = store.get("safeshelf-owner", "");
     if (!id) { id = `web-${(crypto.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36))}`; store.set("safeshelf-owner", id); }
     return id;
@@ -1168,7 +1171,7 @@
     rec.start();
   }
 
-  // ---- My Shelf: the shopper's watched products (GET/DELETE /v1/watchlists, keyed by this browser's id) ----
+  // ---- My Shelf: the shopper's watched products (GET/DELETE /v1/watchlists, keyed by the Google account or this browser's id) ----
   const names = (() => { try { return JSON.parse(store.get("safeshelf-shelf-names", "{}")) || {}; } catch (_) { return {}; } })();
   const OUTCOME = { confirmed_recall: "Recalled", recalled_abroad_same_model: "Recalled abroad", potential_concern: "Possible concern", substantiated_hazard_signal: "Hazard reports",
     no_matching_notice_found: "No recall found", insufficient_evidence: "Not enough evidence yet" };
@@ -1326,6 +1329,7 @@
   newSession();
   health();
   refreshShelf();
+  addEventListener("safeshelf:account", () => { watched.clear(); refreshShelf(); });
   $("q").focus();
 })();
 </script>
