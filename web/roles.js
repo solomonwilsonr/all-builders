@@ -359,7 +359,8 @@ export async function setUpRoles() {
 
   for (const view of VIEWS) {
     const b = el("button", { type: "button", className: "fv-pick", "data-view": view.id, "aria-pressed": "false" },
-      el("span", { className: `fv-i ${view.id}` }, el("img", { src: `site/assets/eddy-${view.id}.png`, alt: "", width: 72, height: 72, decoding: "async" })),
+      el("span", { className: `fv-art ${view.id}` }, el("img", { src: `site/assets/eddy-${view.id}.png`, alt: "", decoding: "async" })),
+      el("span", { className: "fv-check", "aria-hidden": "true", textContent: "✓" }),
       el("span", { className: "fv-t" }, el("b", { textContent: view.label }), el("small", { textContent: view.ask })));
     b.onclick = () => show(view.id, { scroll: matchMedia("(max-width: 640px)").matches });
     cards.append(b);
