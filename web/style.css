@@ -119,9 +119,9 @@ h1 { margin: 0; font-size: clamp(2.3rem, 1.3rem + 3.8vw, 4.3rem); line-height: 1
 .rules b { color: var(--ink); }
 
 /* ---------- 02 try it: three ways, as the site's tab row ---------- */
-.trytabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 22px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.trytabs { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); margin-bottom: 22px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .trytabs [role=tab] { position: relative; display: flex; align-items: center; gap: 14px; min-height: 0; padding: 18px 18px; border-radius: 0; border-right: 1px solid var(--line); background: #fff; box-shadow: none; text-align: left; color: var(--ink-2); }
-.trytabs [role=tab]:last-child { border-right: 0; }
+.trytabs [role=tab]:last-child, .trytabs [role=tab].last-on { border-right: 0; }
 .trytabs [role=tab]::before { content: ""; position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: var(--blue); transition: width .35s ease; }
 .trytabs [role=tab]:hover { box-shadow: none; color: var(--blue); background: var(--soft); }
 .trytabs [role=tab][aria-selected=true] { background: var(--soft); color: var(--ink); }
@@ -145,7 +145,7 @@ h1 { margin: 0; font-size: clamp(2.3rem, 1.3rem + 3.8vw, 4.3rem); line-height: 1
 .steps3 li:has(+ .aside)::after { display: none; }
 
 /* ---------- 05: where to use it ---------- */
-.prods { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.prods { display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: 12px; }
 .prod-card { position: relative; display: grid; grid-template-rows: auto auto auto 1fr auto; gap: 8px; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
 .pi { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
 .pi svg { width: 21px; height: 21px; fill: none; stroke: #fff; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -159,11 +159,12 @@ h1 { margin: 0; font-size: clamp(2.3rem, 1.3rem + 3.8vw, 4.3rem); line-height: 1
 .cta h2 { margin: 0; font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.2rem); line-height: 1.1; }
 .cta p { margin: 0; max-width: 480px; color: var(--muted); }
 .cta .hero-btns { justify-content: center; margin-top: 6px; }
+.trytabs.solo { display: none; }
 
 /* ---------- jump menu: the five sections ---------- */
-.jump { position: sticky; top: 76px; z-index: 20; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: clamp(40px, 5vw, 64px) var(--gut) 0; background: rgba(255, 255, 255, .95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.jump { position: sticky; top: 76px; z-index: 20; display: grid; grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); margin: clamp(40px, 5vw, 64px) var(--gut) 0; background: rgba(255, 255, 255, .95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .jump a { position: relative; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 12px 16px; border-right: 1px solid var(--line); color: var(--ink-2); font-size: 15px; }
-.jump a:last-child { border-right: 0; }
+.jump a:last-child, .jump a.last-on { border-right: 0; }
 .jump a span { font: 500 12px var(--mono); color: var(--dim); }
 .jump a::before { content: ""; position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: var(--blue); transition: width .35s ease; }
 .jump a:hover { color: var(--blue); text-decoration: none; background: var(--soft); }
@@ -715,7 +716,7 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
   .how-a { grid-column: 1 / -1; }
   .how-a::before { left: 50%; top: -12px; transform: translate(-50%, -50%) rotate(90deg); }
   .links { gap: 20px; }
-  .jump { grid-template-columns: repeat(6, max-content); overflow-x: auto; scrollbar-width: none; }
+  .jump { grid-template-columns: repeat(var(--n, 6), max-content); overflow-x: auto; scrollbar-width: none; }
   .jump::-webkit-scrollbar { display: none; }
   .jump a { white-space: nowrap; }
 }

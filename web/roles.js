@@ -3,7 +3,7 @@
 // Everything here is drawn from what the API really returned (samples/*.json, data/catalog.json); the developer view
 // also calls the live API. The chosen view is kept in the address (?for=marketplace, or #for=…) and on this browser.
 // Plain module, no build step. Text is always set as text, never as HTML.
-import { API, el } from "./actions.js?v=20261017m";
+import { API, el } from "./actions.js?v=20261017v";
 
 const STORY = "recall_jp"; // the sample every view tells
 const KEY = "safeshelf-view";
@@ -246,6 +246,71 @@ const BUILD = {
   },
 };
 
+// --- The rest of the page follows the view: each person sees only their sections, ways to try it and products ---
+const SAY = {
+  shopper: { try: "Three ways to check before you buy. Pick one.", "prod-h": "Where you can use it", "prod-p": "Check a product wherever you shop.",
+    "cta-h": "Check before you pay, wherever you shop.", "cta-p": "The Chrome extension and the WhatsApp number are coming soon. The web page works today, on a phone too.",
+    "cta-btns": [["site/get.html", "Get SafeShelf"], ["site/chat.html", "Open the chat"]], "hero-2": ["#try", "Try it now"] },
+  marketplace: { try: "Paste a seller's listing and watch every check run live.", "prod-h": "What marketplaces use", "prod-p": "Scan the whole catalog, or check each listing as it goes live.",
+    "cta-h": "Scan your catalog with SafeShelf", "cta-p": "Send a product list; get back the listings that need action, each with its evidence.",
+    "cta-btns": [["site/get.html", "Talk to us"], ["site/agents.html", "Connect over the API"]], "hero-2": ["#check-own", "Check a listing"] },
+  regulator: { try: "Paste any listing and watch the investigation run, step by step.", "hero-2": ["#accuracy", "See the proof"] },
+  developer: { "prod-h": "What you build on", "prod-p": "The same engine, as read-only tools for your agent.",
+    "cta-h": "Build on the evidence", "cta-p": "Read-only tools, sourced answers, and a verdict set by code.",
+    "cta-btns": [["site/agents.html", "For developers"], [`${API}/docs`, "API docs"]], "hero-2": ["#accuracy", "See the proof"] },
+};
+const SHARED = { // the proof sections each person still sees
+  shopper: [],
+  marketplace: [["#accuracy", "how accurate it is"]],
+  regulator: [["#accuracy", "how accurate it is"], ["#attack", "whether it can be fooled"]],
+  developer: [["#accuracy", "how accurate it is"], ["#attack", "whether it can be fooled"]],
+};
+function applyView(id) {
+  for (const e of document.querySelectorAll("[data-for]")) e.hidden = !e.dataset.for.split(" ").includes(id);
+  const visible = (sel) => [...document.querySelectorAll(sel)].filter((e) => !e.hidden);
+  const lastOn = (items) => items.forEach((e, i) => e.classList.toggle("last-on", i === items.length - 1));
+
+  // sections and the jump menu, numbered again in order
+  const blocks = visible("main > section.block");
+  blocks.forEach((b, i) => { const n = b.querySelector(".block-n"); if (n) n.textContent = String(i + 1).padStart(2, "0"); });
+  const jump = document.querySelector(".jump");
+  const links = [...jump.querySelectorAll("a")];
+  links.forEach((a) => { a.hidden = !blocks.some((b) => `#${b.id}` === a.getAttribute("href")); });
+  const shown = links.filter((a) => !a.hidden);
+  shown.forEach((a, i) => { a.querySelector("span").textContent = String(i + 1).padStart(2, "0"); });
+  jump.style.setProperty("--n", shown.length);
+  lastOn(shown);
+
+  // ways to try it: if the open one is gone, open the first one left; one way alone needs no tab row
+  const tabs = [...document.querySelectorAll(".trytabs [role=tab]")];
+  const tabsOn = tabs.filter((t) => !t.hidden);
+  const row = document.querySelector(".trytabs");
+  row.style.setProperty("--n", tabsOn.length || 1);
+  row.classList.toggle("solo", tabsOn.length < 2);
+  lastOn(tabsOn);
+  if (tabsOn.length && !tabsOn.some((t) => t.getAttribute("aria-selected") === "true")) {
+    const keep = location.hash;
+    tabsOn[0].click();
+    try { history.replaceState(null, "", location.pathname + location.search + keep); } catch (_) { /* file:// */ }
+  }
+
+  const prods = document.querySelector(".prods");
+  prods?.style.setProperty("--n", Math.max(3, visible(".prod-card").length)); // one or two cards keep their usual width
+
+  // words for this person
+  for (const e of document.querySelectorAll("[data-say]")) {
+    if (!("was" in e.dataset)) e.dataset.was = e.dataset.say === "cta-btns" ? e.innerHTML : e.textContent;
+    const say = SAY[id]?.[e.dataset.say];
+    if (e.dataset.say === "cta-btns") {
+      if (say) e.replaceChildren(...say.map(([href, text], i) => el("a", { className: `jbtn${i ? " line" : ""}`, href, textContent: text })));
+    } else if (e.dataset.say === "hero-2") {
+      const [href, text] = say || ["#try", e.dataset.was];
+      e.href = href;
+      e.textContent = text;
+    } else e.textContent = say || e.dataset.was;
+  }
+}
+
 // --- The picker ---
 function chosen() {
   const q = new URLSearchParams(location.search).get("for") || location.hash.match(/^#for=([a-z]+)/)?.[1];
@@ -289,6 +354,7 @@ export async function setUpRoles() {
         history.replaceState(null, "", u);
       } catch (_) { /* file:// */ }
     }
+    applyView(id);
     panel.replaceChildren(el("p", { className: "muted", textContent: "Loading…" }));
     const body = await BUILD[id]();
     if (mine !== run) return;
@@ -300,8 +366,8 @@ export async function setUpRoles() {
         el("div", {}, el("span", { className: "fv-tag", textContent: view.who }), el("h3", { textContent: view.ask })),
         copyBtn("Copy a link to this view", link.href)),
       ...body,
-      el("p", { className: "fv-shared" }, "The proof is the same for everyone: ", el("a", { href: "#accuracy", textContent: "how accurate it is" }),
-        " and ", el("a", { href: "#attack", textContent: "whether it can be fooled" }), "."));
+      ...(SHARED[id].length ? [el("p", { className: "fv-shared" }, "Below: ", ...SHARED[id].flatMap(([href, text], i) =>
+        [i ? " and " : null, el("a", { href, textContent: text })]), ".")] : []));
     if (scroll) panel.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 

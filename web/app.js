@@ -1,16 +1,15 @@
-// SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same API as the extension, signed in
-// with Google (auth.js); nothing runs until the person signs in.
+// SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same API as the extension, with the
+// demo's own sign-in (auth.js: Google, email or guest); nothing runs until the person signs in.
 // "Try a sample" runs the real SafeShelf extension on each sample listing (web/ext/, make web-ext); "Check your own
-// listing" streams a live run (POST /v1/agent/sessions/stream, server-sent events). Both are capped per browser so the
-// demo's Gemini budget lasts.
+// listing" streams a live run (POST /v1/agent/sessions/stream, server-sent events). Every AI check counts against the
+// person's limit (quota.js: a guest gets 1, an account 5 a day) so the demo's Gemini budget lasts.
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
-import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js?v=20261017m";
-import { auth, authFetch, requireSignIn } from "./auth.js?v=20261017u";
+import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js?v=20261017v";
+import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261017v";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
-import { setUpRoles } from "./roles.js?v=20261017v";
+import { setUpRoles } from "./roles.js?v=20261017w";
 
-const LIVE_PER_DAY = 10;
 
 const el = (tag, props = {}, ...kids) => {
   const e = document.createElement(tag);
@@ -52,17 +51,8 @@ function levelOf(agent, summary = "") {
 }
 const readable = (s = "") => s.replace(/not_enough_evidence/g, "not enough evidence");
 
-// --- Live runs left on this browser (the API also limits every caller and the whole day) ---
-const quota = {
-  key: "safeshelf-live-runs",
-  today: () => new Date().toISOString().slice(0, 10),
-  used() {
-    try { const v = JSON.parse(localStorage.getItem(this.key) || "{}"); return v.day === this.today() ? v.used : 0; } catch (_) { return 0; }
-  },
-  take() { try { localStorage.setItem(this.key, JSON.stringify({ day: this.today(), used: this.used() + 1 })); } catch (_) { /* private mode: no cap kept */ } },
-  left() { return Math.max(0, LIVE_PER_DAY - this.used()); },
-};
-const quotaText = () => (quota.left() ? `${quota.left()} live run${quota.left() === 1 ? "" : "s"} left today on this browser` : "Live runs used up on this browser today");
+// --- Checks left for this person (quota.js, counted in Firestore: a guest gets 1, an account 5 a day) ---
+const quotaText = () => quota.text();
 const refreshQuota = () => document.querySelectorAll("[data-quota]").forEach((q) => { q.textContent = quotaText(); });
 
 // --- One run on screen: the agents light up as events arrive, then the verdict ---
@@ -275,7 +265,7 @@ function shareWithFrame() {
     api: API,
     token: (fresh) => auth.currentUser.getIdToken(fresh),
     who: () => ({ email: auth.currentUser?.email || "", name: auth.currentUser?.displayName || "", role: document.documentElement.dataset.role || "shopper" }),
-    quota: { left: () => quota.left(), take: () => { quota.take(); refreshQuota(); } },
+    quota: { left: () => quota.left(), take: () => { quota.take().catch(() => {}); } },
     // a real product page, read live by the API; one live run per page opened (it may use a real browser)
     readPage: async (url) => {
       const res = await authFetch(`${API}/v1/listings/read`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }), signal: AbortSignal.timeout(120000) });
@@ -335,9 +325,8 @@ function setUpOmnibox() {
       note(el("b", { textContent: "Not a web address" }), el("span", { textContent: "Paste a product link, like https://www.amazon.in/dp/… or https://www.flipkart.com/…/p/…" }));
       return;
     }
-    if (!quota.left()) { note(el("b", { textContent: "Used up" }), el("span", { textContent: "Live runs are used up on this browser today. The sample tabs still work." })); return; }
-    quota.take();
-    refreshQuota();
+    if (!quota.left()) { note(el("b", { textContent: "Used up" }), el("span", { textContent: `${quota.usedUpText()} The sample tabs still work.` })); return; }
+    quota.take().catch(() => {});
     document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-selected", "false"); });
     setListing({ url: url.href });
     setAddress(url.href);
@@ -358,12 +347,6 @@ function setUpOmnibox() {
 }
 
 // --- A real Chrome in the cloud (browser/, Cloud Run): it starts only when a judge presses Start, for 5 minutes ---
-const REMOTE_PER_DAY = 3;
-const remoteCount = {
-  key: "safeshelf-real-browser",
-  used() { try { const v = JSON.parse(localStorage.getItem(this.key)); return v?.day === new Date().toISOString().slice(0, 10) ? v.used : 0; } catch (_) { return 0; } },
-  take() { try { localStorage.setItem(this.key, JSON.stringify({ day: new Date().toISOString().slice(0, 10), used: this.used() + 1 })); } catch (_) {} },
-};
 function setUpRemote() {
   const local = new URLSearchParams(location.search).get("browser");
   const base = local && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(local) ? local : BROWSER_URL;
@@ -371,7 +354,9 @@ function setUpRemote() {
   const origin = new URL(base).origin;
   const $ = (id) => document.getElementById(id);
   const mac = document.querySelector(".mac");
-  const left = () => { const n = Math.max(0, REMOTE_PER_DAY - remoteCount.used()); $("remote-left").textContent = n ? `${n} of ${REMOTE_PER_DAY} left today.` : "None left today."; $("remote-start").disabled = !n; };
+  // each 5-minute session is one check
+  const left = () => { $("remote-left").textContent = `Uses 1 check. ${quota.text()}.`; $("remote-start").disabled = !quota.left(); };
+  quota.onChange(left);
   // two choices first: the real browser, or the instant test pages
   const panel = $("shop-page");
   const mode = (m) => { panel.dataset.mode = m; $("mode-name").textContent = m === "real" ? "Real browser" : "Test pages"; };
@@ -390,9 +375,8 @@ function setUpRemote() {
     left();
   };
   $("remote-start").onclick = () => {
-    if (remoteCount.used() >= REMOTE_PER_DAY) return;
-    remoteCount.take();
-    left();
+    if (!quota.left()) { $("choose-msg").textContent = quota.usedUpText(); return; }
+    quota.take().catch(() => {});
     $("choose-msg").textContent = "";
     mode("real");
     mac.classList.add("remote");
@@ -429,14 +413,13 @@ function setUpOwn() {
   const box = document.getElementById("own-run");
   form.addEventListener("submit", (ev) => {
     ev.preventDefault();
-    if (!quota.left()) { box.hidden = false; box.replaceChildren(el("p", { className: "error", textContent: "Live runs are used up on this browser today. Try again tomorrow." })); return; }
+    if (!quota.left()) { box.hidden = false; box.replaceChildren(el("p", { className: "error", textContent: quota.usedUpText() })); return; }
     const f = new FormData(form);
     const listing = {};
     for (const k of ["title", "url", "seller", "page_text", "currency"]) if (String(f.get(k) || "").trim()) listing[k] = String(f.get(k)).trim();
     if (String(f.get("price") || "").trim()) listing.price = Number(f.get("price"));
     setListing(listing);
-    quota.take();
-    refreshQuota();
+    quota.take().catch(() => {});
     const view = runView(box, { title: listing.title, sub: listing.url || "No link given",
       pill: el("span", { className: "pill live", textContent: "Live now · Gemini on Vertex AI" }) });
     box.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -563,7 +546,9 @@ setUpRoles();
 setUpOmnibox();
 setUpOwn();
 refreshQuota();
+quota.onChange(refreshQuota);
 setUpSamples();
 setUpVs();
-setUpAsk();
-setUpRedteam(() => { if (!quota.left()) return false; quota.take(); refreshQuota(); return true; });
+const takeQuota = () => { if (!quota.left()) return false; quota.take().catch(() => {}); return true; };
+setUpAsk(takeQuota, () => quota.usedUpText());
+setUpRedteam(takeQuota);
