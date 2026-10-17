@@ -216,6 +216,7 @@ All of these go live with item 4 (`make deploy-api`); the web page with item 5.
 - [x] Chat page (`extension/demo/chat.html`) for shoppers: example questions, live agent steps, paste or drop a screenshot, language picker, works on a phone; developer controls in a Tools drawer
 - [x] WhatsApp bot built and tested: link or photo in, Hindi or English text + voice note out (Meta number is item 6)
 - [x] Project website (`web/site/`, 17 Oct): Home, How it works, For agents, Results, Team, redesigned on the AIRecruit360 reference (blue #0271E4 / mint / ink, grotesk type, pixel-dither sky and grass scenes drawn by code in `assets/`); every number from `bench/` and `web/data/`. Served at `/site/` with `make deploy-web`
+- [x] Mascot "Shelly" (17 Oct): shield-shaped guardian on the logo shape; antenna light and chest badge follow the verdict (green, amber, red, grey; blue while checking), so a worried Shelly never shows a green tick. Six SVG poses in `web/site/assets/mascot/`, character sheet at `web/site/mascot.html`
 
 ---
 
