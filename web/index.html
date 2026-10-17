@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261017g">
+<link rel="stylesheet" href="style.css?v=20261017h">
 <script type="module" src="app.js?v=20261017g"></script>
 </head>
 <body>
-<a class="skip" href="#main">Skip to the samples</a>
+<a class="skip" href="#try">Skip to the demo</a>
 <header class="top">
   <div class="brand-row"><a class="home" href="site/index.html" aria-label="SafeShelf home"><span class="mark" aria-hidden="true">✦</span><span class="brand">SafeShelf</span></a><nav class="sitelinks" aria-label="Site"><a href="site/index.html">Product</a><a href="site/how.html">How it works</a><a href="site/agents.html">For agents</a><a href="site/results.html">Results</a><a href="index.html" aria-current="page">Try it live</a></nav><span class="badge">AI Builder Cup 2026 · Retail &amp; Commerce</span></div>
 </header>
@@ -22,32 +22,47 @@
   <div class="jhero-top">
     <div>
       <div class="laurels"><span>Live API on Cloud Run</span><span>Gemini on Vertex AI</span></div>
-      <h1 id="hero-h">Shopping sites tell you the price. SafeShelf tells you if it's recalled, or isn't real.</h1>
+      <h1 id="hero-h">Is it safe? Is it real? Know before you pay.</h1>
     </div>
-    <p class="lede">Give it a product listing. Gemini agents read official recalls, buyer reviews, safety-mark registries and the genuine product, then <strong>plain code sets the colour</strong>, so a page's text or the model can't talk it into green.</p>
+    <div class="hero-side">
+      <p class="lede">SafeShelf checks a product listing against official recalls, buyer reports and the signs of a fake shop, then answers in plain words, <strong>with its proof</strong>.</p>
+      <div class="hero-btns"><a class="jbtn" href="#try">Try it now</a><a class="jbtn line" href="#accuracy">See the proof</a></div>
+    </div>
+  </div>
+  <div class="answers" aria-label="The four answers SafeShelf gives">
+    <span class="ans red"><b>Don't buy</b>recalled or fake</span>
+    <span class="ans amber"><b>Be careful</b>reports under review</span>
+    <span class="ans green"><b>No problems found</b>in what was checked</span>
+    <span class="ans grey"><b>Can't tell yet</b>never a guess</span>
+    <p class="ans-note">Code picks the answer from the evidence. The AI only explains it.</p>
   </div>
   <ul class="facts" aria-label="Real data behind every answer">
-    <li><b>8,689</b> official recalls and notices<span>US CPSC and 7 JAPAC sources, India included</span></li>
-    <li><b>29,379</b> real buyer reviews<span>read for fire, burn and shock reports</span></li>
-    <li><b>8,470</b> Australian energy-registry records<span>to check star-rating claims</span></li>
-    <li><b>21 / 22</b> agent test cases pass<span>on the live API, 16 Oct, with known right answers</span></li>
-    <li><b>26</b> JAPAC languages, spoken<span>answers read aloud, or ask out loud with Gemini Live</span></li>
+    <li><b>8,689</b>official recalls<span>US and 7 Asia-Pacific regulators</span></li>
+    <li><b>29,379</b>buyer reviews<span>read for fire, burn and shock</span></li>
+    <li><b>2 / 40</b>false alarms<span>Gemini alone: 6, keyword rules: 11</span></li>
+    <li><b>26</b>languages<span>answers read aloud</span></li>
   </ul>
 </section>
 
 <nav class="jump" aria-label="On this page">
-  <a href="#try"><span>01</span>Try a sample</a>
-  <a href="#check-own"><span>02</span>Check your own listing</a>
-  <a href="#ask-out-loud"><span>03</span>Ask out loud</a>
-  <a href="#vs-gemini"><span>04</span>SafeShelf vs Gemini alone</a>
-  <a href="#attack"><span>05</span>Attacker vs defender</a>
+  <a href="#try"><span>01</span>Try it</a>
+  <a href="#products"><span>02</span>What you get</a>
+  <a href="#check-own"><span>03</span>Check yours</a>
+  <a href="#ask-out-loud"><span>04</span>Ask out loud</a>
+  <a href="#accuracy"><span>05</span>Is it accurate?</a>
+  <a href="#attack"><span>06</span>Can it be fooled?</a>
 </nav>
 
 <main id="main">
 
   <section class="block" id="try" aria-labelledby="h-try">
-    <header class="block-head"><span class="block-n">01</span><h2 id="h-try">Try a sample</h2><p>Listings with known right answers, including a clean control that must stay quiet.</p></header>
-    <p class="hint">Each browser tab is a test listing with the real SafeShelf extension running on it, signed in through this page. Press the SafeShelf <b>Check</b> button on the page's right edge (or the shield in the toolbar) to run a live check, ask a question, or save it. Paste any product link into the address bar to load it the same way.</p>
+    <header class="block-head"><span class="block-n">01</span><h2 id="h-try">Try it</h2><p>Seven shop pages with a known right answer, each with the real SafeShelf extension on it.</p></header>
+    <ol class="steps3" aria-label="How to try it">
+      <li><b>1</b>Pick a tab</li>
+      <li><b>2</b>Press <em>Check</em> on the page's right edge</li>
+      <li><b>3</b>Read the answer and its evidence</li>
+      <li class="aside">Or paste any product link in the address bar</li>
+    </ol>
     <div class="mac">
       <div class="menubar" aria-hidden="true">
         <span class="mb-mark"></span><b>Browser</b><span>File</span><span>Edit</span><span>View</span><span>History</span><span class="mb-hide">Bookmarks</span><span class="mb-hide">Window</span>
@@ -78,11 +93,30 @@
     </div>
   </section>
 
+  <section class="block" id="products" aria-labelledby="h-products">
+    <header class="block-head"><span class="block-n">02</span><h2 id="h-products">What you get</h2><p>One checking engine, five ways to use it.</p></header>
+    <div class="prods">
+      <article class="prod-card"><span class="pi" style="background:#0271e4"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 9h8M9.4 13.5 5.4 6.6M14.6 13.5l-4 6.9"/></svg></span>
+        <span class="st built">Built</span><h3>Chrome extension</h3><p>A Check button on Amazon and Flipkart product pages. Ask questions, listen to the answer, save products for later recall alerts.</p><a href="#try">It's running above</a></article>
+      <article class="prod-card"><span class="pi" style="background:#f0a020"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span>
+        <span class="st live">Live</span><h3>Web page</h3><p>The same check in any browser, on a phone too. Paste a listing, talk to it, or show it a label.</p><a href="#check-own">You're on it</a></article>
+      <article class="prod-card"><span class="pi" style="background:#1d9b52"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/></svg></span>
+        <span class="st soon">Soon</span><h3>WhatsApp</h3><p>Send a link or a photo of the label; get a text and a voice note back in English or Hindi.</p><span class="pc-note">Built and tested; number pending</span></article>
+      <article class="prod-card"><span class="pi" style="background:#7b5cd6"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 9v11"/></svg></span>
+        <span class="st built">Built</span><h3>Catalog scan</h3><p>For sellers and marketplaces: scan a whole product list for recall matches and fake safety marks.</p><span class="pc-note">Found 49 of 50 planted problems in 500 listings</span></article>
+      <article class="prod-card"><span class="pi" style="background:#001123"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg></span>
+        <span class="st live">Live</span><h3>API for AI agents</h3><p>Shopping assistants ask SafeShelf the same questions: 10 read-only tools over MCP, plus REST.</p><a href="site/agents.html">For developers</a></article>
+    </div>
+    <div class="checks2">
+      <div><h3><span class="dot2 red"></span>Is it safe?</h3><ul><li>Official recalls from the US and 7 Asia-Pacific regulators, India included</li><li>Buyer reviews and photos, read for fire, burn and shock</li><li>Safety marks, such as BIS, against the registry</li></ul></div>
+      <div><h3><span class="dot2 amber"></span>Is it real?</h3><ul><li>Photos copied from the official listing</li><li>A price far below the genuine product</li><li>A brand-new shop, and hidden text aimed at AI tools</li></ul></div>
+      <p class="checks2-note"><b>Exact model only.</b> A look-alike's recall is never blamed on the wrong product.</p>
+    </div>
+  </section>
+
   <section class="block" id="check-own" aria-labelledby="h-check-own">
-    <header class="block-head"><span class="block-n">02</span><h2 id="h-check-own">Check your own listing</h2><p>Paste what a shop page says and run it live.</p></header>
+    <header class="block-head"><span class="block-n">03</span><h2 id="h-check-own">Check yours</h2><p>Copy a listing from any shop and run it live. Real links can take up to two minutes.</p></header>
     <form class="own card" id="own">
-      <h2>Check a listing you found</h2>
-      <p class="muted">Copy what the shop page says. Live run with Gemini; real marketplace links can take up to two minutes.</p>
       <label>Product title <input type="text" name="title" required maxlength="300" placeholder="Anker PowerCore 10000 Power Bank A1263"></label>
       <label>Link to the listing <input type="url" name="url" maxlength="500" placeholder="https://www.flipkart.com/…"></label>
       <div class="row2">
@@ -97,17 +131,17 @@
   </section>
 
   <section class="block" id="ask-out-loud" aria-labelledby="h-ask-out-loud">
-    <header class="block-head"><span class="block-n">03</span><h2 id="h-ask-out-loud">Ask out loud</h2><p>Talk to it, or ask with a photo of the label.</p></header>
+    <header class="block-head"><span class="block-n">04</span><h2 id="h-ask-out-loud">Ask out loud</h2><p>For people who would rather not read small print: talk to it, or show it the label.</p></header>
     <div id="ask"></div>
   </section>
 
-  <section class="block" id="vs-gemini" aria-labelledby="h-vs-gemini">
-    <header class="block-head"><span class="block-n">04</span><h2 id="h-vs-gemini">SafeShelf vs Gemini alone</h2><p>The backtest, on real recalls and never-recalled products.</p></header>
+  <section class="block" id="accuracy" aria-labelledby="h-vs-gemini">
+    <header class="block-head"><span class="block-n">05</span><h2 id="h-vs-gemini">Is it accurate?</h2><p>Tested on 25 real recalls and 40 products that were never recalled, against Gemini alone and keyword rules.</p></header>
     <div id="vs"></div>
   </section>
 
   <section class="block" id="attack" aria-labelledby="h-attack">
-    <header class="block-head"><span class="block-n">05</span><h2 id="h-attack">Attacker vs defender</h2><p>Attacks on the code, and what it decided.</p></header>
+    <header class="block-head"><span class="block-n">06</span><h2 id="h-attack">Can it be fooled?</h2><p>We attacked our own code: fake regulator pages, look-alike models, hidden instructions. Here is what it decided.</p></header>
     <div id="redteam"></div>
   </section>
 </main>

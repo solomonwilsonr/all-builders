@@ -69,13 +69,56 @@ body > header.top { position: sticky; top: 0; z-index: 30; background: rgba(255,
 h1 { margin: 0; font-size: clamp(2.3rem, 1.3rem + 3.8vw, 4.3rem); line-height: 1.05; letter-spacing: -.04em; text-wrap: balance; }
 .lede { margin: 0; color: var(--ink-2); font-size: 1.0625rem; line-height: 1.65; max-width: 470px; }
 .lede strong { font-weight: 600; color: var(--ink); }
-.facts { list-style: none; margin: clamp(36px, 5vw, 56px) 0 0; padding: clamp(28px, 4vw, 44px) clamp(16px, 3vw, 36px); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; background: url(site/assets/band.png) center bottom / cover; image-rendering: pixelated; }
+.facts { list-style: none; margin: clamp(28px, 4vw, 44px) 0 0; padding: clamp(28px, 4vw, 44px) clamp(16px, 3vw, 36px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; background: url(site/assets/band.png) center bottom / cover; image-rendering: pixelated; }
 .facts li { image-rendering: auto; padding: 18px; background: linear-gradient(180deg, rgba(255, 255, 255, .86), #fff 50%); font-size: 13px; color: var(--muted); line-height: 1.45; }
 .facts b { display: block; margin-bottom: 4px; font: 500 2rem/1.05 var(--display); letter-spacing: -.05em; color: var(--ink); font-variant-numeric: tabular-nums; }
 .facts span { display: block; }
 
+/* ---------- hero additions: two buttons, and the four answers SafeShelf can give ---------- */
+.hero-side { display: grid; gap: 22px; }
+.hero-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.jbtn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px; border-radius: 2px; background: var(--blue); color: #fff; font-size: 15px; }
+.jbtn:hover { background: var(--blue-2); text-decoration: none; }
+.jbtn.line { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink-2); }
+.jbtn.line:hover { color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); background: #fff; }
+.answers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: clamp(32px, 4vw, 48px); }
+.ans { display: grid; gap: 2px; padding: 14px 16px; border-radius: 10px; font-size: 13px; color: var(--ink-2); border-top: 4px solid; background: var(--soft); }
+.ans b { font: 500 1.15rem var(--display); letter-spacing: -.02em; }
+.ans.red { border-color: var(--red); background: var(--red-bg); } .ans.red b { color: var(--red); }
+.ans.amber { border-color: #f0a020; background: var(--amber-bg); } .ans.amber b { color: var(--amber); }
+.ans.green { border-color: #3bbf63; background: var(--green-bg); } .ans.green b { color: var(--green); }
+.ans.grey { border-color: #9aa3ad; background: var(--unknown-bg); } .ans.grey b { color: var(--unknown); }
+.ans-note { grid-column: 1 / -1; margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+
+/* ---------- 01: three steps instead of a paragraph ---------- */
+.steps3 { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 14px; color: var(--ink-2); }
+.steps3 li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 7px; border-radius: 99px; background: var(--soft); }
+.steps3 li b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 12px; font-weight: 600; }
+.steps3 li em { font-style: normal; font-weight: 600; color: var(--ink); }
+.steps3 li:not(:last-child):not(.aside)::after { content: "→"; margin-left: 6px; color: var(--dim); }
+.steps3 .aside { background: transparent; padding-left: 4px; color: var(--muted); }
+
+/* ---------- 02: what you get ---------- */
+.prods { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.prod-card { position: relative; display: grid; grid-template-rows: auto auto auto 1fr auto; gap: 8px; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.pi { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+.pi svg { width: 21px; height: 21px; fill: none; stroke: #fff; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.st { position: absolute; top: 20px; right: 18px; font-size: 11.5px; padding: 3px 10px; border-radius: 99px; }
+.st.live { background: var(--mint); color: var(--mint-ink); } .st.built { background: var(--blue-pale); color: var(--blue); } .st.soon { background: var(--amber-bg); color: var(--amber); }
+.prod-card h3 { margin: 6px 0 0; font-size: 1.15rem; }
+.prod-card p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.prod-card a, .pc-note { font-size: 13px; }
+.pc-note { color: var(--dim); }
+.checks2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.checks2 > div { padding: 20px 22px; border-radius: 12px; background: var(--soft); }
+.checks2 h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: 1.15rem; }
+.dot2 { width: 10px; height: 10px; border-radius: 50%; } .dot2.red { background: var(--red); } .dot2.amber { background: #f0a020; }
+.checks2 ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+.checks2-note { grid-column: 1 / -1; margin: 0; padding: 12px 16px; border-left: 3px solid var(--blue); background: var(--blue-pale); font-size: 14px; color: var(--ink-2); }
+.checks2-note b { color: var(--ink); }
+
 /* ---------- jump menu: the five sections, stacked one after another ---------- */
-.jump { position: sticky; top: 72px; z-index: 20; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: clamp(40px, 5vw, 64px) var(--gut) 0; background: rgba(255, 255, 255, .95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.jump { position: sticky; top: 72px; z-index: 20; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: clamp(40px, 5vw, 64px) var(--gut) 0; background: rgba(255, 255, 255, .95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .jump a { position: relative; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 12px 16px; border-right: 1px solid var(--line); color: var(--ink-2); font-size: 15px; }
 .jump a:last-child { border-right: 0; }
 .jump a span { font: 500 12px var(--mono); color: var(--dim); }
@@ -373,8 +416,10 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
 
 /* ---------- narrow screens ---------- */
 @media (max-width: 1000px) {
-  .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .jump { grid-template-columns: repeat(5, max-content); overflow-x: auto; scrollbar-width: none; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .prods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .answers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .jump { grid-template-columns: repeat(6, max-content); overflow-x: auto; scrollbar-width: none; }
   .jump::-webkit-scrollbar { display: none; }
   .jump a { white-space: nowrap; }
 }
@@ -392,12 +437,12 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
   .brand-row { min-height: 64px; }
   .badge { display: none; }
   .facts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 16px; }
-  .facts li:last-child { grid-column: 1 / -1; }
   .facts b { font-size: 1.6rem; }
   .jump { top: 64px; margin-left: 0; margin-right: 0; }
   .jump a { font-size: 14px; min-height: 48px; padding: 10px 14px; }
   .block { scroll-margin-top: 130px; }
-  .verdict, .row2, .round, .liveround { grid-template-columns: minmax(0, 1fr); }
+  .verdict, .row2, .round, .liveround, .prods, .checks2 { grid-template-columns: minmax(0, 1fr); }
+  .steps3 li:not(:last-child):not(.aside)::after { display: none; }
   .own { padding: 20px; }
   .mac { padding: 0 6px 76px; border-radius: 10px; }
   .menubar { margin-left: -6px; margin-right: -6px; gap: 12px; font-size: 12px; }
