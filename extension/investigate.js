@@ -56,37 +56,38 @@
     return out;
   };
 
-  // Same look as the check card (content.js): pastel frame, white card, navy ink, lime accent.
+  // Same look as the check card (content.js), in the website's theme: a white card with a blue top bar, ink #001123.
   const STYLE = `
     :host { all: initial; }
     .ov { position: fixed; right: 84px; bottom: 16px; z-index: 2147483647; width: min(390px, calc(100vw - 100px)); max-height: 76vh; overflow: auto; box-sizing: border-box;
-      padding: 10px; border-radius: 28px; box-shadow: 0 18px 50px rgba(19,35,58,.28); font: 14px/1.45 "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: -.01em; color: #13233a;
-      background: radial-gradient(120% 70% at 0% 0%, #b9d4ee 0%, transparent 60%), radial-gradient(120% 70% at 100% 100%, #f6c9b4 0%, transparent 60%), linear-gradient(180deg, #d6e4f2, #f3ddd2); }
-    .card { background: #fdfcfa; border-radius: 22px; padding: 16px; }
-    .head { display: flex; align-items: center; gap: 6px; font-size: 14px; }
-    .mark { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: #dff0a8; font-size: 13px; }
-    .badge { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 6px; background: #f1f3f6; color: #5a6a7c; }
-    .timer { margin-left: auto; font-size: 12px; font-weight: 600; color: #5a6a7c; font-variant-numeric: tabular-nums; }
-    h2 { margin: 10px 0 2px; font-size: 20px; letter-spacing: -.03em; }
-    .muted { color: #5a6a7c; font-size: 12px; margin: 0; }
-    .bar { height: 6px; border-radius: 3px; background: #f1f3f6; margin: 12px 0 8px; overflow: hidden; }
-    .bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: #c9e383; transition: width .4s ease; }
+      padding: 0; border-radius: 14px; border-top: 4px solid #0271e4; box-shadow: 0 24px 60px rgba(0,17,35,.22), 0 0 0 1px rgba(0,17,35,.06); font: 14px/1.45 "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif; letter-spacing: -.01em; color: #001123;
+      background: #fff; }
+    .card { background: #fff; border-radius: 10px; padding: 16px 18px 18px; }
+    .head { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    .head strong { font-weight: 600; font-size: 15.5px; letter-spacing: -.02em; }
+    .mark { display: block; width: 22px; height: 22px; flex: none; font-size: 0; color: transparent; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z' fill='%230271E4'/%3E%3Cpath d='m10.5 16 4 4 7-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+    .badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 99px; background: #f5f6f7; color: #5d6874; }
+    .timer { margin-left: auto; font-size: 12px; font-weight: 500; color: #5d6874; font-variant-numeric: tabular-nums; font-family: ui-monospace, Menlo, monospace; }
+    h2 { margin: 12px 0 2px; font-size: 20px; font-weight: 600; letter-spacing: -.03em; }
+    .muted { color: #5d6874; font-size: 12px; margin: 0; }
+    .bar { height: 6px; border-radius: 99px; background: #eef1f4; margin: 12px 0 8px; overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: #0271e4; transition: width .4s ease; }
     .bar.busy i { width: 35% !important; animation: slide 1.2s ease-in-out infinite; }
     @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
     .now { font-weight: 600; margin: 4px 0 6px; }
     ol { list-style: none; margin: 0; padding: 0; max-height: 28vh; overflow: auto; font-size: 13px; }
-    li { display: flex; gap: 8px; padding: 3px 0; } li::before { content: "✓"; flex: none; width: 1em; color: #0a6b2d; font-weight: 700; }
-    li.skip { color: #8a5a00; } li.skip::before { content: "–"; color: #8a5a00; }
-    .verdict { padding: 10px 12px; border-radius: 16px; margin: 12px 0 6px; font-weight: 700; font-size: 16px; }
-    .red { background: #fbe3e1; color: #b3261e; } .amber { background: #fbefd6; color: #8a5a00; } .green { background: #e3f3e7; color: #0a6b2d; } .unknown { background: #eceff3; color: #4a5560; }
-    .out ul { margin: 6px 0; padding-left: 18px; } .out p { margin: 6px 0; } .out a { color: #2f5fb3; font-weight: 600; }
+    li { display: flex; gap: 8px; padding: 3px 0; } li::before { content: "✓"; flex: none; width: 1em; color: #1d7f3e; font-weight: 700; }
+    li.skip { color: #a35f00; } li.skip::before { content: "–"; color: #a35f00; }
+    .verdict { padding: 12px 14px; border-radius: 10px; margin: 12px 0 6px; font-weight: 600; font-size: 16px; }
+    .red { background: #fdebe9; color: #c93a2f; } .amber { background: #fff2dc; color: #a35f00; } .green { background: #e4f7e6; color: #1d7f3e; } .unknown { background: #eceff2; color: #4f5a66; }
+    .out ul { margin: 6px 0; padding-left: 18px; } .out p { margin: 6px 0; } .out a { color: #0271e4; font-weight: 500; }
     .row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
-    button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 12px; border: 1px solid #e3e7ec; background: #fff; color: #13233a; cursor: pointer; }
-    button:hover { background: #f1f3f6; }
-    button.stop { background: #13233a; border-color: #13233a; color: #fff; }
-    button:focus-visible { outline: 3px solid #2f5fb3; outline-offset: 2px; }
+    button { font: inherit; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 4px; border: 1.5px solid #e4e7eb; background: #fff; color: #001123; cursor: pointer; }
+    button:hover { border-color: #0271e4; color: #0271e4; }
+    button.stop { background: #0271e4; border-color: #0271e4; color: #fff; }
+    button:focus-visible { outline: 2px solid #0271e4; outline-offset: 2px; }
     @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } .bar.busy i { animation: none; } }`;
-  const HIGHLIGHT = "outline: 4px solid #4361ee !important; outline-offset: 3px !important; transition: transform .25s; transform: scale(1.04);";
+  const HIGHLIGHT = "outline: 4px solid #0271e4 !important; outline-offset: 3px !important; transition: transform .25s; transform: scale(1.04);";
   const WORDS = { red: "⛔ Don't buy", amber: "⚠️ Be careful", green: "✅ No problems found", unknown: "❔ Can't tell yet" };
 
   const agent = (body, timeout) => new Promise((resolve, reject) => {

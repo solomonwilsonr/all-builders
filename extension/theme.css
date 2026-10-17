@@ -1,38 +1,39 @@
-/* SafeShelf look, shared by the popup, My Shelf and the Lab: pastel frame, white cards, navy ink, lime accent. */
+/* SafeShelf look for the popup and the sign-in cover, in the website's theme: white, ink #001123, blue #0271E4, mint #A2F1A9. */
 :root {
-  --ink:#13233a; --muted:#5a6a7c; --line:#e3e7ec; --soft:#f1f3f6; --card:#fdfcfa; --lime:#dff0a8; --lime-d:#c9e383; --link:#2f5fb3;
-  --primary:#13233a; --on-primary:#fff; --focus:#2f5fb3;
-  --green:#0a6b2d; --green-bg:#e3f3e7; --amber:#8a5a00; --amber-bg:#fbefd6; --red:#b3261e; --red-bg:#fbe3e1; --unknown:#4a5560; --unknown-bg:#eceff3;
-  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --sky:radial-gradient(120% 70% at 0% 0%, #b9d4ee 0%, transparent 60%), radial-gradient(120% 70% at 100% 100%, #f6c9b4 0%, transparent 60%), linear-gradient(180deg, #d6e4f2, #f3ddd2);
-  --shadow:0 6px 24px rgba(19,35,58,.10);
+  --ink:#001123; --muted:#5d6874; --line:#e4e7eb; --soft:#f5f6f7; --card:#ffffff; --lime:#e8f2fd; --lime-d:#0271e4; --link:#0271e4;
+  --primary:#0271e4; --on-primary:#fff; --focus:#0271e4; --mint:#a2f1a9; --mint-ink:#12632a;
+  --green:#1d7f3e; --green-bg:#e4f7e6; --amber:#a35f00; --amber-bg:#fff2dc; --red:#c93a2f; --red-bg:#fdebe9; --unknown:#4f5a66; --unknown-bg:#eceff2;
+  --font:"Helvetica Neue",Helvetica,Arial,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --sky:#ffffff;
+  --shield:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z' fill='%230271E4'/%3E%3Cpath d='m10.5 16 4 4 7-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --shadow:0 0 0 1px rgba(0,17,35,.06), 0 14px 32px rgba(0,17,35,.08);
   color-scheme:light;
 }
 :root[data-theme="dark"] {
-    --ink:#e4e4e7; --muted:#a1a1aa; --line:#3f3f46; --soft:#303036; --card:#222225; --lime:#d4d4d8; --lime-d:#a1a1aa; --link:#c4c4d0;
-    --primary:#d4d4d8; --on-primary:#202024; --focus:#c4c4d0;
+    --ink:#eef2f7; --muted:#9aa5b2; --line:#2c3642; --soft:#1e2630; --card:#151b23; --lime:#102a44; --lime-d:#3b8ff0; --link:#9cc8ff;
+    --primary:#3b8ff0; --on-primary:#fff; --focus:#9cc8ff;
     --green:#7fd99a; --green-bg:#173325; --amber:#f2c66b; --amber-bg:#3a2d12; --red:#ff9b92; --red-bg:#3d1c1a; --unknown:#b4b4be; --unknown-bg:#35353c;
-    --sky:radial-gradient(120% 70% at 0% 0%, #303036 0%, transparent 60%), radial-gradient(120% 70% at 100% 100%, #29292e 0%, transparent 60%), linear-gradient(180deg, #18181b, #202024);
+    --sky:#0b0f14;
     --shadow:0 6px 24px rgba(0,0,0,.35);
     color-scheme:dark;
 }
 * { box-sizing:border-box; }
 html { background:var(--sky) fixed; min-height:100%; }
 body { margin:0; font:16px/1.55 var(--font); letter-spacing:-.01em; color:var(--ink); background:transparent; }
-.card { background:var(--card); border-radius:24px; box-shadow:var(--shadow); }
+.card { background:var(--card); border-radius:12px; box-shadow:var(--shadow); }
 
 .brand-row { display:flex; align-items:center; gap:6px; font-size:14px; }
-.brand-row .mark { display:grid; place-items:center; width:24px; height:24px; border-radius:8px; background:var(--lime); color:#13233a; font-size:14px; }
-.brand-row .brand { font-weight:700; font-size:15px; }
-.badge { font-size:11px; font-weight:600; padding:1px 7px; border-radius:6px; background:var(--soft); color:var(--muted); }
+.brand-row .mark { display:block; width:24px; height:24px; flex:none; font-size:0; color:transparent; background:var(--shield) center / contain no-repeat; }
+.brand-row .brand { font-weight:600; font-size:16px; letter-spacing:-.02em; }
+.badge { font-size:11px; font-weight:500; padding:2px 8px; border-radius:99px; background:var(--soft); color:var(--muted); }
 
-h1 { margin:0; font-weight:700; letter-spacing:-.04em; line-height:1; }
-a { color:var(--link); font-weight:600; }
-button { font:inherit; font-weight:600; padding:9px 16px; border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--ink); cursor:pointer; transition:transform .12s ease, background-color .12s ease; }
-button:hover { background:var(--soft); }
+h1 { margin:0; font-weight:600; letter-spacing:-.035em; line-height:1.05; }
+a { color:var(--link); font-weight:500; }
+button { font:inherit; font-weight:500; padding:9px 16px; border:1.5px solid var(--line); border-radius:4px; background:var(--card); color:var(--ink); cursor:pointer; transition:transform .12s ease, background-color .12s ease, border-color .12s ease; }
+button:hover { border-color:var(--lime-d); }
 button:active { transform:scale(.97); }
 button.primary { background:var(--primary); border-color:var(--primary); color:var(--on-primary); }
-button.primary:hover { filter:brightness(1.1); }
-input[type=text], textarea { font:inherit; padding:10px 14px; border:1px solid var(--line); border-radius:14px; color:var(--ink); background:var(--soft); }
-a:focus-visible, button:focus-visible, input:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+button.primary:hover { filter:brightness(.92); border-color:var(--primary); }
+input[type=text], textarea { font:inherit; padding:10px 14px; border:1px solid var(--line); border-radius:4px; color:var(--ink); background:var(--soft); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
 @media (prefers-reduced-motion: reduce) { button { transition:none; } button:active { transform:none; } }

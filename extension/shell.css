@@ -1,21 +1,23 @@
-/* Shared frame for Settings, My Shelf and the Lab: a quiet sidebar, a colour wash at the top of the page,
-   and surfaces with a faint edge. Loaded last on each page. Change --wash to retint every page. */
+/* Shared frame for Settings, My Shelf and the Lab, in the website's theme: white pages, a light grey sidebar,
+   ink #001123, blue #0271E4 actions, near-square controls. Loaded last on each page. Change --wash to retint every page. */
 :root{
-  --ground:#fafaf9; --rail:#f2f2f0; --surface:#fff; --surface-2:#efefec; --line:rgba(24,24,27,.08);
-  --ink:#18181b; --ink-2:#5f5f67; --accent:#dff0a8; --accent-ink:#2c3a12;
-  --action:#18181b; --on-action:#fff; --track:#d4d4d8;
+  --ground:#ffffff; --rail:#f5f6f7; --surface:#fff; --surface-2:#eef1f4; --line:rgba(0,17,35,.09);
+  --ink:#001123; --ink-2:#5d6874; --accent:#e8f2fd; --accent-ink:#0271e4;
+  --action:#0271e4; --on-action:#fff; --track:#d5dbe1;
+  --display:"Schibsted Grotesk","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --shield:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z' fill='%230271E4'/%3E%3Cpath d='m10.5 16 4 4 7-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --frost:rgba(255,255,255,.55); --frost-edge:rgba(255,255,255,.75); /* frosted glass, used sparingly */
-  --accent-rgb:223,240,168; --wash-strength:1;
+  --accent-rgb:232,242,253; --wash-strength:1;
   --wash:linear-gradient(180deg,rgba(var(--accent-rgb),var(--wash-strength)) 0,rgba(var(--accent-rgb),0) 100%);
   --icon-stroke:1.7;
-  --font:Geist,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --round:999px;
+  --font:"Helvetica Neue",Helvetica,Arial,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --round:6px;
   color:var(--ink); background:var(--ground); font-family:var(--font);
 }
 :root[data-theme=dark]{
-  --ground:#0e0e0f; --rail:#151516; --surface:#18181a; --surface-2:#232326; --line:rgba(255,255,255,.07);
-  --ink:#f2f2f3; --ink-2:#9b9ba3; --accent:#2a301c; --accent-ink:#e6f2c0;
-  --action:#f2f2f3; --on-action:#111113; --track:#3a3a3f;
+  --ground:#0b0f14; --rail:#11161d; --surface:#151b23; --surface-2:#1e2630; --line:rgba(255,255,255,.08);
+  --ink:#eef2f7; --ink-2:#9aa5b2; --accent:#102a44; --accent-ink:#9cc8ff;
+  --action:#3b8ff0; --on-action:#fff; --track:#36404c;
   --frost:rgba(30,30,33,.55); --frost-edge:rgba(255,255,255,.09);
   --wash-strength:.22;
 }
@@ -23,6 +25,8 @@ body{background:var(--ground);color:var(--ink)}
 
 /* Theme settings (Settings > Theme). Each choice is an attribute on <html>, or on a preview element, so it can be shown before saving. */
 :root,[data-accent]{--field:color-mix(in srgb,var(--accent) 38%,var(--surface))}
+[data-accent=blue]{--accent:#e8f2fd;--accent-ink:#0271e4;--accent-rgb:232,242,253}
+[data-theme=dark][data-accent=blue],[data-theme=dark] [data-accent=blue]{--accent:#102a44;--accent-ink:#9cc8ff}
 [data-accent=lime]{--accent:#dff0a8;--accent-ink:#2c3a12;--accent-rgb:223,240,168}
 [data-accent=mint]{--accent:#c9f0dc;--accent-ink:#12382a;--accent-rgb:201,240,220}
 [data-accent=sky]{--accent:#cfe4fb;--accent-ink:#12304f;--accent-rgb:207,228,251}
@@ -36,7 +40,7 @@ body{background:var(--ground);color:var(--ink)}
 [data-theme=dark][data-accent=peach],[data-theme=dark] [data-accent=peach]{--accent:#352419;--accent-ink:#fbdcc9}
 [data-theme=dark][data-accent=sand],[data-theme=dark] [data-accent=sand]{--accent:#2f2a1c;--accent-ink:#efe5c9}
 [data-font]{font-family:var(--font)}
-[data-font=geist]{--font:Geist,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-font=geist]{--font:Geist,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif}
 [data-font=system]{--font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 [data-font=rounded]{--font:Nunito,ui-rounded,system-ui,sans-serif}
 [data-font=serif]{--font:"Iowan Old Style",Palatino,Georgia,serif}
@@ -44,18 +48,19 @@ body{background:var(--ground);color:var(--ink)}
 [data-icons=light]{--icon-stroke:1.25}
 [data-icons=bold]{--icon-stroke:2.3}
 .sidebar svg,.page-top svg,.i svg *,.shelf-search svg,.product-placeholder svg,.look-preview svg{stroke-width:var(--icon-stroke)}
-:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+h1,h2,h3,.page-top h1,.brand{font-family:var(--display);letter-spacing:-.02em}
 
 /* Sidebar */
 .sidebar{background:var(--rail);border:0;border-right:1px solid var(--line);padding:28px 16px 24px}
 .brand{font-size:19px;letter-spacing:-.4px;font-weight:600;gap:11px;padding:0 8px;color:var(--ink)}
-.brand-mark{width:30px;height:30px;font-size:18px;border-radius:9px;background:var(--action);color:var(--on-action)}
+.brand-mark{width:30px;height:30px;font-size:0;color:transparent;border-radius:0;background:var(--shield) center / contain no-repeat}
 .sidebar nav{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);gap:2px}
-.sidebar nav a{gap:12px;font-size:15px;font-weight:450;padding:10px 12px;border-radius:10px;color:var(--ink-2)}
+.sidebar nav a{gap:12px;font-size:15px;font-weight:450;padding:10px 12px;border-radius:6px;color:var(--ink-2)}
 .sidebar nav a svg{width:19px;height:19px;flex:none}
 .sidebar nav a:hover{background:var(--surface-2);color:var(--ink)}
 .sidebar nav a.selected{background:var(--surface-2);color:var(--ink)}
-:root:not([data-theme=dark]) .sidebar nav a.selected{background:#fff;color:#18181b;font-weight:550;box-shadow:0 1px 3px rgba(24,24,27,.05),inset 0 0 0 1px rgba(24,24,27,.09)}
+.sidebar nav a.selected{background:var(--accent);color:var(--accent-ink);font-weight:550;box-shadow:inset 3px 0 0 var(--action)}
 .sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);min-width:0}
 .sidebar-note{margin:0;padding:0 8px;font-size:13px;line-height:1.55;color:var(--ink-2)}
 .sidebar-account{display:flex;align-items:center;gap:10px;padding:0 8px 16px;min-width:0}
@@ -89,7 +94,7 @@ body{background:var(--ground);color:var(--ink)}
 .page-foot>span:last-child{font-size:13px;letter-spacing:0}
 
 /* Shelf and Lab cards */
-.settings-shell,.lab-content .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:none}
+.settings-shell,.lab-content .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:none}
 
 /* Narrow windows: the sidebar becomes a bar above the page */
 @media(max-width:1150px){.page-top{padding-inline:25px}}

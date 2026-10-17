@@ -1,19 +1,29 @@
-body { width:300px; padding:10px; font-size:15px; }
-main { padding:18px 16px 16px; }
-h1 { font-size:1.6rem; margin:14px 0 4px; }
-.lede { margin:0 0 18px; color:var(--muted); }
-ul { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
-.nav:first-of-type { margin-top:10px; }
-ul button { width:100%; padding:12px 14px; border-radius:16px; background:var(--soft); border-color:transparent; text-align:left; }
-ul button:hover { background:var(--line); }
+/* The toolbar popup, in the website's theme: a pixel-sky header, one blue action, quiet rows below. */
+html { background:var(--card); }
+body { width:320px; padding:0; font-size:15px; }
+.pop-head { height:78px; padding:14px 16px; background:url(assets/sky.png) center 30% / cover; image-rendering:pixelated; display:flex; align-items:flex-start; }
+.pop-head .brand-row { image-rendering:auto; padding:6px 12px 6px 8px; border-radius:99px; background:rgba(255,255,255,.92); box-shadow:0 6px 16px rgba(0,17,35,.14); }
+.pop-head .badge { background:var(--lime); color:var(--lime-d); }
+main { position:relative; margin:-18px 10px 10px; padding:20px 16px 14px; }
+h1 { font-size:1.55rem; margin:0 0 6px; }
+.lede { margin:0 0 18px; color:var(--muted); font-size:14px; line-height:1.5; }
+ul { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+.nav:first-of-type { margin-top:8px; }
+ul button { width:100%; padding:12px 14px; border-radius:6px; background:var(--soft); border-color:transparent; text-align:left; font-size:14.5px; }
+ul button:hover { background:var(--lime); border-color:transparent; color:var(--lime-d); }
 button.row { display:flex; justify-content:space-between; align-items:center; gap:8px; }
 ul button.primary { background:var(--primary); color:var(--on-primary); text-align:center; }
-.state { font-size:.8rem; font-weight:700; padding:2px 10px; border-radius:8px; background:var(--lime); color:#13233a; }
-button[aria-checked="false"] .state { background:var(--red-bg); color:var(--red); }
-.spend { font-size:.85rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center; gap:8px; padding:0 4px; }
-button.link { width:auto; background:none; border:0; padding:4px 8px; text-decoration:underline; font-size:.85rem; color:var(--link); }
-button.big { width:100%; padding:13px 16px; border-radius:16px; font-size:1rem; }
-.hint { margin:8px 4px 16px; font-size:.82rem; color:var(--muted); }
+/* On / off as a switch */
+.state { position:relative; flex:none; width:38px; height:22px; border-radius:99px; background:var(--lime-d); font-size:0; color:transparent; transition:background-color .15s ease; }
+.state::after { content:""; position:absolute; top:3px; left:19px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,17,35,.3); transition:left .15s ease; }
+button[aria-checked="false"] .state { background:#c5ccd4; }
+button[aria-checked="false"] .state::after { left:3px; }
+.spend { font-size:.82rem; color:var(--muted); display:flex; justify-content:space-between; align-items:center; gap:8px; padding:2px 4px; }
+button.link { width:auto; background:none; border:0; padding:4px 6px; text-decoration:underline; text-underline-offset:2px; font-size:.82rem; color:var(--link); }
+button.link:hover { background:none; color:var(--link); }
+button.big { width:100%; min-height:48px; padding:13px 16px; border-radius:4px; font-size:1rem; }
+.hint { margin:8px 2px 16px; font-size:.8rem; line-height:1.45; color:var(--muted); }
 .hint.warn { color:var(--amber); }
-.account { margin-top:6px; }
+.account { margin-top:8px; padding-top:10px; border-top:1px solid var(--line); }
 .account #who { overflow-wrap:anywhere; }
+@media (prefers-reduced-motion: reduce) { .state, .state::after { transition:none; } }

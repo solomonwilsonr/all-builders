@@ -4,7 +4,7 @@
   globalThis.SafeShelfAppearance?.cleanup();
   const media = globalThis.matchMedia?.('(prefers-color-scheme: dark)');
   const hosts = new Set();
-  const LOOK = { gradient: ['off','on'], accent: ['lime','mint','sky','lilac','peach','sand'], font: ['geist','system','rounded','serif'], icons: ['regular','light','bold'] };
+  const LOOK = { gradient: ['off','on'], accent: ['blue','lime','mint','sky','lilac','peach','sand'], font: ['geist','system','rounded','serif'], icons: ['regular','light','bold'] };
   let preference = 'system';
   const look = Object.fromEntries(Object.entries(LOOK).map(([k, v]) => [k, v[0]]));
   const resolved = () => preference === 'system' ? (media?.matches ? 'dark' : 'light') : preference;

@@ -3,7 +3,7 @@ import { API_BASE, SHELF_SYNC } from './config.js';
 const CHOICES = {
  gradient: [['off','Off'],['on','On']],
  appearance: [['light','Light'],['dark','Dark'],['system','System']],
- accent: [['lime','Lime'],['mint','Mint'],['sky','Sky'],['lilac','Lilac'],['peach','Peach'],['sand','Sand']],
+ accent: [['blue','Blue'],['lime','Lime'],['mint','Mint'],['sky','Sky'],['lilac','Lilac'],['peach','Peach'],['sand','Sand']],
  font: [['geist','Geist'],['system','System'],['rounded','Rounded'],['serif','Serif']],
  icons: [['regular','Regular'],['light','Light'],['bold','Bold']],
  widgetSide: [['right','Right'],['left','Left']],
