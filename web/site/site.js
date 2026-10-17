@@ -53,7 +53,8 @@
       tile.classList.toggle("typing", tile.querySelector(".dots.on") !== null);
       if (s < 0) { typed.forEach((el) => { clearInterval(el._t); el.textContent = ""; }); counts.forEach((el) => { el.textContent = "0" + (el.dataset.unit || ""); }); }
     };
-    if (still) { show(last); typed.forEach((el) => { el.textContent = el.dataset.type; }); counts.forEach((el) => { el.textContent = el.dataset.count + (el.dataset.unit || ""); }); return; }
+    if (still) return; // the finished frame is already in the page
+    tile.closest(".strip").classList.add("live");
     // one step every 0.9s, hold the answer for 3.5s, then start again
     const next = () => {
       const s = step >= last ? -1 : step + 1;
