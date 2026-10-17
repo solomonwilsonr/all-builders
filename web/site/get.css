@@ -1,5 +1,5 @@
 /* Get SafeShelf: the download page, after the mobile-banking reference (phone mockups on a blue gradient,
-   floating cards, a pill tab bar, an icon dock, a dark install band), in the SafeShelf theme from theme.css. */
+   floating cards, a pill tab bar, an icon dock), in the SafeShelf theme from theme.css. */
 
 /* ---------- phone mockup ---------- */
 .phone { position: relative; width: 300px; aspect-ratio: 9 / 19.2; padding: 11px; border-radius: 50px; background: linear-gradient(145deg, #3a3f47, #0d0f12 40%, #2a2e35); box-shadow: 0 40px 80px rgba(0, 17, 35, .35), inset 0 0 0 2px #50555e; flex: none; }
@@ -156,30 +156,6 @@
 .help b { display: block; margin-top: 40px; font: 500 1.2rem var(--display); }
 .help small { color: var(--muted); font-size: .9rem; }
 
-/* ---------- install band (dark) ---------- */
-.install { margin: 0 var(--gut); background: #0b0d10; color: #fff; padding: clamp(48px, 7vw, 88px) clamp(20px, 4vw, 48px) 0; overflow: hidden; }
-.install-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 24px 48px; align-items: start; }
-.install .label { background: #1e2228; color: #d7dce3; }
-.install h2 { margin-top: 16px; }
-.install-head > p { color: #9aa3ad; font-size: .9rem; line-height: 1.65; }
-.wires { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: clamp(40px, 5vw, 64px); }
-.wire { border-radius: 18px 18px 0 0; background: linear-gradient(180deg, #2a2f36, #1a1d22); padding: 18px; min-height: 280px; display: grid; gap: 12px; align-content: start; }
-.wire.on { background: #fff; color: var(--ink); }
-.wire .n { font: 600 2.4rem/1 var(--display); color: rgba(255, 255, 255, .25); letter-spacing: -.04em; }
-.wire.on .n { color: var(--blue); }
-.wire b { font: 500 1.15rem var(--display); letter-spacing: -.02em; }
-.wire p { font-size: .86rem; color: #9aa3ad; }
-.wire.on p { color: var(--muted); }
-.wire code { background: rgba(255, 255, 255, .1); padding: 2px 6px; border-radius: 4px; font-size: .78rem; }
-.wire.on code { background: var(--soft); }
-.wire .fake { margin-top: 6px; display: grid; gap: 7px; }
-.wire .fake i { height: 10px; border-radius: 99px; background: rgba(255, 255, 255, .1); }
-.wire.on .fake i { background: var(--soft); }
-.wire .fake i:nth-child(2) { width: 70%; } .wire .fake i:nth-child(3) { width: 45%; }
-.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; color: #9aa3ad; }
-.toggle span { width: 34px; height: 20px; border-radius: 99px; background: var(--blue); position: relative; }
-.toggle span::after { content: ""; position: absolute; right: 3px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
-
 /* ---------- closing ---------- */
 .thanks { margin: 0 var(--gut); padding: clamp(64px, 9vw, 120px) 20px clamp(48px, 6vw, 72px); text-align: center; color: #fff; background: linear-gradient(180deg, rgba(255, 255, 255, 0) 55%, #fff), url(assets/band.png) center top / cover; image-rendering: pixelated; }
 .thanks > * { image-rendering: auto; }
@@ -193,10 +169,7 @@
 
 @media (max-width: 1100px) { .ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } .f1, .f2 { display: none; } .section-row { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 900px) {
-  .g-intro, .show, .install-head { grid-template-columns: minmax(0, 1fr); }
-  .wires { grid-template-columns: minmax(0, 1fr); }
-  .wire { border-radius: 18px; min-height: 0; }
-  .wires { padding-bottom: 32px; }
+  .g-intro, .show { grid-template-columns: minmax(0, 1fr); }
   .show-art { min-height: 520px; }
 }
 @media (max-width: 640px) {
