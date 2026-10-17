@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SafeShelf real browser</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0b1220; overflow: hidden; font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  #screen { position: absolute; inset: 0; }
+  #status { position: absolute; inset: 0; display: grid; place-items: center; color: #dbe7f5; text-align: center; padding: 24px; }
+  #status[hidden] { display: none; }
+  #status b { display: block; font-size: 18px; font-weight: 500; margin-bottom: 6px; color: #fff; }
+  #status .dots::after { content: ""; animation: dots 1.4s steps(4) infinite; }
+  @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+</style>
+</head>
+<body>
+<div id="screen"></div>
+<div id="status"><div><b>Starting a real Chrome<span class="dots"></span></b>With the SafeShelf extension. About 15 seconds.</div></div>
+<script type="module">
+// The SafeShelf page hands this viewer the judge's sign-in token; the token goes to the server in the WebSocket
+// protocol header (never in a URL), and the server checks it before starting Chrome.
+import RFB from "/novnc/core/rfb.js";
+const EMBEDDERS = __EMBEDDERS__;
+const statusBox = document.getElementById("status");
+let rfb = null, owner = null;
+const tell = (msg) => owner && parent.postMessage(msg, owner);
+const show = (title, text) => { statusBox.hidden = false; statusBox.innerHTML = ""; const d = document.createElement("div"); const b = document.createElement("b"); b.textContent = title; d.append(b, text || ""); statusBox.append(d); };
+addEventListener("message", (e) => {
+  if (!EMBEDDERS.includes(e.origin)) return;
+  if (e.data?.type === "start" && !rfb && typeof e.data.token === "string") {
+    owner = e.origin;
+    const url = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/session`;
+    rfb = new RFB(document.getElementById("screen"), url, { wsProtocols: ["binary", `ss.${e.data.token}`] });
+    rfb.scaleViewport = true;
+    rfb.focusOnClick = true;
+    rfb.addEventListener("connect", () => { statusBox.hidden = true; tell({ type: "safeshelf-browser:ready", seconds: __SECONDS__ }); });
+    rfb.addEventListener("disconnect", (ev) => { show("The browser session has ended", ev.detail?.clean ? "" : "It closed unexpectedly, or all browsers are busy. Try again in a minute."); tell({ type: "safeshelf-browser:ended", clean: !!ev.detail?.clean }); rfb = null; });
+  }
+  if (e.data?.type === "end") rfb?.disconnect();
+});
+for (const origin of EMBEDDERS) parent.postMessage({ type: "safeshelf-browser:loaded" }, origin);
+</script>
+</body>
+</html>

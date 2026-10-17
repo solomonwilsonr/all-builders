@@ -80,6 +80,19 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest)$(if $(WEBHOOK_SECRET),$(comma)SAFESHELF_WEBHOOK_KEY=webhook-key:latest)$(if $(FIRECRAWL_SECRET),$(comma)FIRECRAWL_API_KEY=firecrawl-key:latest) \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL),SAFESHELF_TRACE_TO_CLOUD=$(TRACE_TO_CLOUD)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
 
+browser-ext:    ## copy the extension into browser/ext/ for the real-browser container
+	rm -rf browser/ext && mkdir -p browser/ext
+	cp -R extension/. browser/ext/ && rm -rf browser/ext/node_modules browser/ext/demo browser/ext/config.generated.js browser/ext/tests
+
+deploy-browser: browser-ext ## the real Chrome for "Try it" on Cloud Run: starts only when a judge presses Start (then make deploy-web)
+	gcloud run deploy safeshelf-browser --source browser --project $(GCP_PROJECT) --region $(REGION) \
+		--allow-unauthenticated --concurrency 1 --min-instances 0 --max-instances 5 --cpu 2 --memory 4Gi \
+		--timeout 900 --execution-environment gen2 \
+		--set-env-vars API_BASE=$(API_URL),FIREBASE_PROJECT=$(FIREBASE_PROJECT),SESSION_SECONDS=300
+	@url=$$(gcloud run services describe safeshelf-browser --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)'); \
+		printf '// Written by make deploy-browser: the real-browser service for "Try it".\nexport const BROWSER_URL = "%s";\n' "$$url" > web/browser-config.js; \
+		echo "safeshelf-browser: $$url (written to web/browser-config.js; now run make deploy-web)"
+
 firecrawl-secret: ## once: FIRECRAWL_API_KEY from .env into Secret Manager, so the judges' page browser can load full shop pages (then make deploy-api)
 	@key=$$(grep -E '^FIRECRAWL_API_KEY=' .env | head -1 | cut -d= -f2-); test -n "$$key" || { echo "FIRECRAWL_API_KEY is not in .env"; exit 1; }; \
 		if gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) >/dev/null 2>&1; then printf '%s' "$$key" | gcloud secrets versions add firecrawl-key --project $(GCP_PROJECT) --data-file=-; \
