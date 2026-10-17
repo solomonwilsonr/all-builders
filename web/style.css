@@ -224,6 +224,27 @@ button.ext:hover, button.ext.on { background-color: var(--blue-pale); box-shadow
 .dock .on::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: #fff; }
 
 /* the real browser: a button under the steps, and the remote Chrome in place of the sample window while it runs */
+/* Try it on a shop page: two choices first (real browser / test pages), then the chosen window */
+.choose { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.pick { display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 10px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.pick-real { box-shadow: 0 0 0 2px var(--blue), 0 18px 40px rgba(2, 113, 228, .12); }
+.pick-tag { justify-self: start; font-size: 12px; padding: 3px 10px; border-radius: 99px; background: var(--blue-pale); color: var(--blue); }
+.pick-test .pick-tag { background: var(--mint); color: var(--mint-ink); }
+.pick h3 { margin: 0; font-size: 1.5rem; }
+.pick p { margin: 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; }
+.pick ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
+.pick ul li:has(#remote-left:empty) { display: none; }
+.pick .jbtn { justify-self: start; margin-top: 6px; }
+.choose-msg { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--muted); }
+.choose-msg:empty { display: none; }
+.modebar { display: flex; align-items: center; gap: 14px; margin: 0 0 14px; }
+.modebar b { font-weight: 600; font-size: 15px; }
+button.back { min-height: 36px; padding: 6px 14px; font-size: 13.5px; }
+#shop-page[data-mode="choose"] :is(.mac, .steps3, .modebar) { display: none; }
+#shop-page[data-mode="real"] .steps3 { display: none; }
+#shop-page[data-mode="test"] .choose, #shop-page[data-mode="real"] .choose { display: none; }
+#real-row[hidden] ~ .modebar { display: none; }
+@media (max-width: 760px) { .choose { grid-template-columns: minmax(0, 1fr); } }
 .real-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: -4px 0 18px; padding: 14px 16px; border-radius: 10px; background: var(--blue-pale); }
 .real-row p { margin: 0; font-size: 14px; color: var(--ink-2); flex: 1; min-width: 240px; }
 .real-row span { color: var(--muted); }

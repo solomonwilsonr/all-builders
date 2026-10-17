@@ -7,7 +7,7 @@
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js?v=20261017m";
 import { auth, authFetch, requireSignIn } from "./auth.js";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
-import { BROWSER_URL } from "./browser-config.js?v=20261017k";
+import { BROWSER_URL } from "./browser-config.js?v=20261017n";
 
 const LIVE_PER_DAY = 10;
 
@@ -371,22 +371,29 @@ function setUpRemote() {
   const $ = (id) => document.getElementById(id);
   const mac = document.querySelector(".mac");
   const left = () => { const n = Math.max(0, REMOTE_PER_DAY - remoteCount.used()); $("remote-left").textContent = n ? `${n} of ${REMOTE_PER_DAY} left today.` : "None left today."; $("remote-start").disabled = !n; };
+  // two choices first: the real browser, or the instant test pages
+  const panel = $("shop-page");
+  const mode = (m) => { panel.dataset.mode = m; $("mode-name").textContent = m === "real" ? "Real browser" : "Test pages"; };
   $("real-row").hidden = false;
+  mode("choose");
   left();
+  $("test-start").onclick = () => { $("choose-msg").textContent = ""; mode("test"); mac.scrollIntoView({ behavior: "smooth", block: "start" }); };
   let timer = null;
   const end = (text) => {
     clearInterval(timer); timer = null;
     $("rframe").src = "about:blank";
     $("rwin").hidden = true;
     mac.classList.remove("remote");
-    $("remote-start").textContent = "Start a real browser";
-    if (text) document.getElementById("demo-note").replaceChildren(el("b", { textContent: "Real browser" }), el("span", { textContent: text }));
+    $("choose-msg").textContent = text || "";
+    if (panel.dataset.mode === "real") mode("choose");
     left();
   };
   $("remote-start").onclick = () => {
     if (remoteCount.used() >= REMOTE_PER_DAY) return;
     remoteCount.take();
     left();
+    $("choose-msg").textContent = "";
+    mode("real");
     mac.classList.add("remote");
     $("rwin").hidden = false;
     $("rstate").textContent = "Starting…";
@@ -395,6 +402,7 @@ function setUpRemote() {
     mac.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   $("remote-end").onclick = () => { $("rframe").contentWindow?.postMessage({ type: "end" }, origin); end("Session ended."); };
+  $("mode-back").onclick = () => { if (panel.dataset.mode === "real") $("remote-end").click(); else mode("choose"); };
   addEventListener("message", async (e) => {
     if (e.origin !== origin) return;
     if (e.data?.type === "safeshelf-browser:loaded") {

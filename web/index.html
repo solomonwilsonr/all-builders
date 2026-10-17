@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261017m">
-<script type="module" src="app.js?v=20261017m"></script>
+<link rel="stylesheet" href="style.css?v=20261017n">
+<script type="module" src="app.js?v=20261017n"></script>
 </head>
 <body>
 <a class="skip" href="#try">Skip to the demo</a>
@@ -85,7 +85,7 @@
     <div class="trytabs" role="tablist" aria-label="Ways to try SafeShelf">
       <button type="button" role="tab" id="tab-shop-page" aria-controls="shop-page" aria-selected="true">
         <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M6.5 6.5h.01M9.5 6.5h.01"/></svg></span>
-        <span class="tt-t"><b>On a shop page</b><small>The real Chrome extension on 7 sample listings</small></span>
+        <span class="tt-t"><b>On a shop page</b><small>A real browser, or 7 test pages</small></span>
       </button>
       <button type="button" role="tab" id="tab-check-own" aria-controls="check-own" aria-selected="false" tabindex="-1">
         <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>
@@ -97,17 +97,31 @@
       </button>
     </div>
 
-    <div class="trypanel" role="tabpanel" id="shop-page" aria-labelledby="tab-shop-page">
+    <div class="trypanel" role="tabpanel" id="shop-page" aria-labelledby="tab-shop-page" data-mode="test">
+      <div class="choose" id="real-row" hidden>
+        <article class="pick pick-real">
+          <span class="pick-tag">Real website</span>
+          <h3>Real browser</h3>
+          <p>A real Chrome with the SafeShelf extension, on the real Amazon or Flipkart. Open any product and press Check.</p>
+          <ul><li>Any real product page</li><li>5 minutes, about 15 seconds to start</li><li><span id="remote-left"></span></li></ul>
+          <button class="jbtn" type="button" id="remote-start">Start a real browser</button>
+        </article>
+        <article class="pick pick-test">
+          <span class="pick-tag">Instant</span>
+          <h3>Test pages</h3>
+          <p>Seven shop pages where we already know the right answer, including a safe product that must stay quiet.</p>
+          <ul><li>Recalled, fake, borrowed safety mark and more</li><li>Opens at once, no waiting</li><li>Works even if the real browser is busy</li></ul>
+          <button class="jbtn line" type="button" id="test-start">Open the test pages</button>
+        </article>
+        <p class="choose-msg" id="choose-msg" aria-live="polite"></p>
+      </div>
+      <div class="modebar" id="modebar"><button class="back" type="button" id="mode-back">← Back to the two choices</button><b id="mode-name">Test pages</b></div>
       <ol class="steps3" aria-label="How to try it">
         <li><b>1</b>Pick a tab in the browser below</li>
         <li><b>2</b>Press <em>Check</em> on the page's right edge</li>
         <li><b>3</b>Read the answer and its evidence</li>
         <li class="aside">Or paste any product link in the address bar</li>
       </ol>
-      <div class="real-row" id="real-row" hidden>
-        <button class="jbtn" type="button" id="remote-start">Start a real browser</button>
-        <p>A real Chrome with the SafeShelf extension, on the real Amazon or Flipkart, for 5 minutes. <span id="remote-left"></span></p>
-      </div>
       <div class="mac">
         <div class="menubar" aria-hidden="true">
           <span class="mb-mark"></span><b>Browser</b><span>File</span><span>Edit</span><span>View</span><span>History</span><span class="mb-hide">Bookmarks</span><span class="mb-hide">Window</span>
