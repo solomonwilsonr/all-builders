@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261017d">
+<link rel="stylesheet" href="style.css?v=20261017e">
 <script type="module" src="app.js"></script>
 </head>
 <body>
@@ -47,12 +47,36 @@
 
   <section class="block" id="try" aria-labelledby="h-try">
     <header class="block-head"><span class="block-n">01</span><h2 id="h-try">Try a sample</h2><p>Listings with known right answers, including a clean control that must stay quiet.</p></header>
-    <p class="hint">Pick a listing. You'll see a real run of the live API replayed at its real speed. Then press <b>Run it live</b> to make Gemini do it again now.</p>
-    <div class="layout">
-      <ol class="samples" id="samples" aria-label="Sample listings"></ol>
-      <div class="run card" id="run" aria-live="polite">
-        <p class="empty">Pick a sample on the left.</p>
+    <p class="hint">Each browser tab is a test listing. The SafeShelf panel on the right replays a real run of the live API at its real speed; press <b>Run it live</b> to make Gemini do it again now, or paste any product link into the address bar and press Enter.</p>
+    <div class="mac">
+      <div class="menubar" aria-hidden="true">
+        <span class="mb-mark"></span><b>Browser</b><span>File</span><span>Edit</span><span>View</span><span>History</span><span class="mb-hide">Bookmarks</span><span class="mb-hide">Window</span>
+        <span class="mb-right"><span class="mb-ico">⌁</span><span id="mac-date"></span><span id="mac-time"></span></span>
       </div>
+      <div class="win" role="group" aria-label="Browser window with the SafeShelf extension">
+        <div class="win-top">
+          <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+          <ol class="samples" id="samples" role="tablist" aria-label="Sample listings, one per tab"></ol>
+          <span class="newtab" aria-hidden="true">+</span>
+        </div>
+        <div class="toolbar">
+          <span class="navs" aria-hidden="true"><i>‹</i><i>›</i><i>↻</i></span>
+          <form class="omni" id="omnibox" role="search">
+            <span class="omni-lock" aria-hidden="true"></span>
+            <label class="sr" for="omni-url">Product link to check</label>
+            <input id="omni-url" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste a product link and press Enter">
+            <span class="omni-go" aria-hidden="true">↵ Check live</span>
+          </form>
+          <button class="ext on" type="button" id="ext-toggle" aria-pressed="true" aria-controls="run" title="SafeShelf extension: show or hide the panel"><span class="sr">SafeShelf panel</span></button>
+        </div>
+        <div class="viewport">
+          <article class="store" id="page" aria-label="The shop page"></article>
+          <aside class="run" id="run" aria-live="polite" aria-label="SafeShelf extension panel">
+            <p class="empty">Pick a tab.</p>
+          </aside>
+        </div>
+      </div>
+      <div class="dock" aria-hidden="true"><i class="d1"></i><i class="d2"></i><i class="d3 on"></i><i class="d4"></i><i class="d5"></i></div>
     </div>
   </section>
 

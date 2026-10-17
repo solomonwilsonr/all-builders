@@ -5,6 +5,7 @@
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
 import { authFetch, requireSignIn } from "./auth.js";
+import { renderPage, setAddress, startClock } from "./desk.js";
 
 const LIVE_PER_DAY = 10;
 const LONG_WAIT_MS = 3000; // in a replay, a wait longer than this is shortened to SHORT_WAIT_MS (and the page says so)
@@ -297,8 +298,10 @@ function liveButton(onRun) {
 
 // --- Try a sample ---
 async function showSample(preset, button) {
-  document.querySelectorAll(".samples button").forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+  document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", String(b === button)); b.setAttribute("aria-selected", String(b === button)); });
   const box = document.getElementById("run");
+  setAddress(preset.request.listing.url);
+  renderPage(document.getElementById("page"), { listing: preset.request.listing, preset, index: presetsAll.indexOf(preset), total: presetsAll.length });
   const sub = `${preset.what} · ${preset.market}`;
   let rec;
   try {
@@ -319,20 +322,53 @@ async function showSample(preset, button) {
   } catch (err) { view.fail(err.message); }
 }
 
+let presetsAll = [];
 async function setUpSamples() {
   const { presets } = await (await fetch("samples/presets.json")).json();
+  presetsAll = presets;
   const list = document.getElementById("samples");
-  for (const p of presets) {
-    const b = el("button", { type: "button", className: "card" },
-      p.control ? el("span", { className: "control", textContent: "Control: should stay quiet" }) : null,
+  presets.forEach((p, i) => {
+    // each sample is a tab of the browser window; its page is built from the sample's real listing
+    const b = el("button", { type: "button", role: "tab", title: `${p.what} · Expected: ${p.expect.label}` },
+      el("span", { className: "fav", "aria-hidden": "true", textContent: p.control ? "✓" : String(i + 1) }),
       el("span", { className: "name", textContent: p.name }),
-      el("span", { className: "what", textContent: p.what }),
-      el("span", { className: "exp", textContent: `Expected: ${p.expect.label}` }));
+      el("span", { className: "x", "aria-hidden": "true", textContent: "×" }));
     b.setAttribute("aria-pressed", "false");
+    b.setAttribute("aria-selected", "false");
     b.onclick = () => showSample(p, b);
-    list.append(el("li", {}, b));
-  }
+    list.append(el("li", { role: "presentation" }, b));
+  });
   list.querySelector("button")?.click();
+}
+
+// The address bar: a link typed here is checked live, the same as "Check your own listing"
+function setUpOmnibox() {
+  const form = document.getElementById("omnibox");
+  if (!form) return;
+  const ext = document.getElementById("ext-toggle");
+  ext?.addEventListener("click", () => {
+    const run = document.getElementById("run");
+    run.hidden = !run.hidden;
+    ext.classList.toggle("on", !run.hidden);
+    ext.setAttribute("aria-pressed", String(!run.hidden));
+  });
+  form.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const raw = document.getElementById("omni-url").value.trim();
+    if (!raw) return;
+    const url = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const box = document.getElementById("run");
+    if (!quota.left()) { box.replaceChildren(el("p", { className: "error", textContent: "Live runs are used up on this browser today. The sample tabs still replay real runs." })); return; }
+    document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-selected", "false"); });
+    const listing = { url };
+    setListing(listing);
+    setAddress(url);
+    renderPage(document.getElementById("page"), { listing });
+    quota.take();
+    refreshQuota();
+    const view = runView(box, { title: "Your link", sub: url, pill: el("span", { className: "pill live", textContent: "Live now · Gemini on Vertex AI" }) });
+    live(view, { mode: "investigate", product_id: "unmatched", listing }).then((r) => view.finish(r)).catch((err) => view.fail(err.message));
+  });
 }
 
 // --- Check your own listing ---
@@ -449,7 +485,9 @@ function setUpTabs() {
 }
 
 await requireSignIn();
+startClock();
 setUpTabs();
+setUpOmnibox();
 setUpOwn();
 refreshQuota();
 setUpSamples();
