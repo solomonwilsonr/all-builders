@@ -119,6 +119,7 @@ Each is worth about +1 to Problem fit but doesn't fit before the deadline.
 - [ ] Same-currency reference prices: add Amazon.co.jp, .com.au and .sg to `REFERENCE_MARKETPLACES` (needs listings from those shops first)
 - [ ] A forward JAPAC test: run the first look on each new ACCC, CAA and KATS recall as it arrives and record what reviews showed beforehand
 - [ ] Popup and README wording once more shops work
+- [ ] **Limits off for testing (18 Oct, Solomon's request):** `UNLIMITED = true` in `web/quota.js` gives every signed-in person (guest too) unlimited checks and counts nothing. Set it back to `false` and `make deploy-web` before judging
 - [ ] My Shelf rechecks and alerts through the API watchlists (`SHELF_SYNC`); the shelf itself now syncs through Firestore (see Built, waiting for deploy)
 - [ ] Accessibility pass (Lighthouse ≥ 95)
 

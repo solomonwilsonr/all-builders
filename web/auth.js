@@ -6,7 +6,7 @@
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { firebaseArea } from "./firebase-app.js?v=20261017v";
 import { API } from "./firebase-config.js";
-import { makeQuota } from "./quota.js?v=20261017v";
+import { makeQuota } from "./quota.js?v=20261018u";
 import { rememberAccount, signInCard } from "./signin-card.js?v=20261017v";
 
 export { API };

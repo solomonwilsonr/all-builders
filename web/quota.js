@@ -5,6 +5,9 @@
 import { doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 export const LIMITS = { guest: 1, account: 5 };
+// While we test: every signed-in person (guest too) gets unlimited checks and nothing is counted.
+// Set back to false to turn the limits on again.
+export const UNLIMITED = true;
 const today = () => Math.floor(Date.now() / 86400000);
 
 export function makeQuota(db, area) {
@@ -20,7 +23,7 @@ export function makeQuota(db, area) {
     get guest() { return state.guest; },
     get ready() { return state.ready; },
     limit,
-    left: () => (state.user ? Math.max(0, limit() - state.used) : 0),
+    left: () => (!state.user ? 0 : UNLIMITED ? Infinity : Math.max(0, limit() - state.used)),
     onChange(f) { listeners.add(f); return () => listeners.delete(f); },
     /** Load the count for this person (call on every sign-in change). */
     async load(user) {
@@ -39,6 +42,7 @@ export function makeQuota(db, area) {
     /** Use one check. Resolves true if it was allowed and counted, false if none are left. */
     async take() {
       if (!api.left()) return false;
+      if (UNLIMITED) return true;
       state.used += 1; // shown at once; put back below if Firestore refuses
       changed();
       try {
@@ -69,6 +73,7 @@ export function makeQuota(db, area) {
     /** One line for the page: what is left and why. */
     text() {
       if (!state.user) return "Sign in to run checks";
+      if (UNLIMITED) return "Unlimited checks while we test";
       const n = api.left();
       if (state.guest) return n ? "1 free guest check on this browser" : "Guest check used: sign in for 5 checks a day";
       return n ? `${n} of ${LIMITS.account} checks left today` : "Today's 5 checks are used: more tomorrow";

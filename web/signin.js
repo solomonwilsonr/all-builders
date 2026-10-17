@@ -1,7 +1,7 @@
 // The extension's sign-in page. The extension opens signin.html?ext=<its ID>; after Google sign-in this page hands
 // the session (ID token and refresh token) to that extension, which keeps it and sends the token on every API call.
 // Only an extension whose manifest lists this site under externally_connectable can receive it.
-import { requireSignIn } from "./auth.js?v=20261017v";
+import { requireSignIn } from "./auth.js?v=20261018u";
 import { EXTENSION_IDS } from "./firebase-config.js";
 
 const ext = new URLSearchParams(location.search).get("ext");

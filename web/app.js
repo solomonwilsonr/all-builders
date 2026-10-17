@@ -5,7 +5,7 @@
 // person's limit (quota.js: a guest gets 1, an account 5 a day) so the demo's Gemini budget lasts.
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js?v=20261017v";
-import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261017v";
+import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018u";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
 import { setUpRoles } from "./roles.js?v=20261017y";
