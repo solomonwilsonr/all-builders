@@ -4,6 +4,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { API, FIREBASE } from "./firebase-config.js";
+import { rememberAccount, signInCard } from "./signin-card.js";
 
 export { API };
 export const auth = getAuth(initializeApp(FIREBASE));
@@ -35,35 +36,33 @@ function lock() {
     gate.hidden = false;
     return;
   }
-  const error = make("p", { className: "gate-error", role: "alert" });
-  const button = make("button", { type: "button", className: "primary", textContent: "Sign in with Google" });
-  button.onclick = async () => {
-    button.disabled = true;
-    error.textContent = "";
-    try {
-      const result = await signInWithPopup(auth, provider);
-      if (chooseAccount) completeSignIn(result.user);
-    } catch (err) {
-      if (err.code === "auth/popup-blocked") {
-        if (chooseAccount) {
-          error.textContent = "Allow popups for this page, then click Sign in with Google to choose your account.";
-          return;
+  const card = signInCard({
+    title: root.dataset.gateTitle,
+    text: root.dataset.gateText || "Checks, chat and the agents are for signed-in people.",
+    onGoogle: async (hint) => {
+      try {
+        const result = await signInWithPopup(auth, providerFor(hint));
+        if (chooseAccount) completeSignIn(result.user);
+      } catch (err) {
+        if (err.code === "auth/popup-blocked") {
+          if (chooseAccount) throw new Error("Allow popups for this page, then choose your Google account again.");
+          return signInWithRedirect(auth, providerFor(hint));
         }
-        return signInWithRedirect(auth, provider);
+        if (!["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(err.code)) throw new Error(signInProblem(err));
       }
-      if (!["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(err.code)) error.textContent = signInProblem(err);
-    } finally {
-      button.disabled = false;
-    }
-  };
-  gate = make("div", { className: "gate" },
-    make("section", { className: "gate-card card", role: "dialog", "aria-modal": "true", "aria-label": "Sign in" },
-      make("div", { className: "brand-row" }, make("span", { className: "mark", "aria-hidden": "true", textContent: "✦" }), make("span", { className: "brand", textContent: "SafeShelf" })),
-      make("h1", { textContent: root.dataset.gateTitle || "Sign in to use SafeShelf" }),
-      make("p", { className: "muted", textContent: root.dataset.gateText || "Checks, chat and the agents are for signed-in people. Use your Google account: SafeShelf sees your name, email and profile photo, nothing else." }),
-      button, error));
+    },
+  });
+  gate = make("div", { className: "gate" }, card.el);
   document.body.prepend(gate);
-  button.focus();
+  card.focus();
+}
+
+// Google's account picker, with the remembered account preselected for "Continue as".
+function providerFor(hint) {
+  if (!hint) return provider;
+  const p = new GoogleAuthProvider();
+  p.setCustomParameters({ prompt: "select_account", login_hint: hint });
+  return p;
 }
 
 function signInProblem(err) {
@@ -74,6 +73,7 @@ function signInProblem(err) {
 
 function completeSignIn(user) {
   accountChosen = true;
+  rememberAccount(user);
   root.classList.remove("auth-locked");
   if (gate) gate.hidden = true;
   resolveSignedIn(user);

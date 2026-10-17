@@ -1,14 +1,13 @@
 // Google sign-in for the website, the same Firebase project as the judges' page (../auth.js), but optional: the
 // site stays readable signed out. The nav gets a "Sign in" button; signed in, it shows the person's photo with a
-// menu (name, email, Try it live, Sign out). Other scripts read window.safeshelfAccount and listen for
-// "safeshelf:account" (the chat keys My Shelf to the Google account).
+// menu (name, email, Try it live, Sign out). Sign in opens the shared sign-in card (../signin-card.js) over the page.
+// Other scripts read window.safeshelfAccount and listen for "safeshelf:account" (the chat keys My Shelf to it).
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { FIREBASE } from "../firebase-config.js";
+import { rememberAccount, signInCard } from "../signin-card.js";
 
 const auth = getAuth(initializeApp(FIREBASE));
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
 
 const end = document.querySelector(".nav-end");
 const make = (tag, props = {}, ...kids) => {
@@ -24,27 +23,49 @@ const make = (tag, props = {}, ...kids) => {
 function problem(err) {
   if (err.code === "auth/unauthorized-domain") return `${location.hostname} isn't an authorised sign-in domain yet.`;
   if (err.code === "auth/network-request-failed") return "No connection. Check your internet and try again.";
-  return `Sign-in didn't work (${err.code || err.message}).`;
+  return `Sign-in didn't work (${err.code || err.message}). Try again.`;
 }
 
-async function signIn(button) {
-  button.disabled = true;
-  try {
-    await signInWithPopup(auth, provider);
-  } catch (err) {
-    if (err.code === "auth/popup-blocked") return signInWithRedirect(auth, provider);
-    if (!["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(err.code)) button.title = problem(err);
-  } finally {
-    button.disabled = false;
-  }
+// The sign-in card over the page; rebuilt each time so "Welcome back" shows the latest account.
+let modal = null;
+let opener = null;
+function closeModal() {
+  if (!modal) return;
+  modal.remove();
+  modal = null;
+  document.body.style.overflow = "";
+  opener?.focus();
 }
+function openModal(from) {
+  opener = from;
+  const card = signInCard({
+    onClose: closeModal,
+    onGoogle: async (hint) => {
+      const p = new GoogleAuthProvider();
+      p.setCustomParameters(hint ? { prompt: "select_account", login_hint: hint } : { prompt: "select_account" });
+      try {
+        await signInWithPopup(auth, p);
+        closeModal();
+      } catch (err) {
+        if (err.code === "auth/popup-blocked") return signInWithRedirect(auth, p);
+        if (!["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(err.code)) throw new Error(problem(err));
+      }
+    },
+  });
+  modal = make("div", { className: "ssa-modal" }, card.el);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  document.body.append(modal);
+  document.body.style.overflow = "hidden";
+  card.focus();
+}
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal) closeModal(); });
 
 let slot = null;
 function render(user) {
   slot?.remove();
   if (!user) {
     const button = make("button", { type: "button", className: "btn btn-ghost btn-sm acct-in", textContent: "Sign in" });
-    button.onclick = () => signIn(button);
+    button.onclick = () => openModal(button);
     slot = button;
   } else {
     const name = user.displayName || user.email || "Signed in";
@@ -69,6 +90,7 @@ function render(user) {
 }
 
 onAuthStateChanged(auth, (user) => {
+  if (user) rememberAccount(user);
   window.safeshelfAccount = user ? { uid: user.uid, email: user.email, name: user.displayName, token: (fresh) => user.getIdToken(fresh) } : null;
   document.documentElement.classList.toggle("signed-in", Boolean(user));
   render(user);
