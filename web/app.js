@@ -5,7 +5,7 @@
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
 import { authFetch, requireSignIn } from "./auth.js";
-import { renderPage, setAddress, startClock } from "./desk.js";
+import { renderPage, setAddress, startClock } from "./desk.js?v=20261017f";
 
 const LIVE_PER_DAY = 10;
 const LONG_WAIT_MS = 3000; // in a replay, a wait longer than this is shortened to SHORT_WAIT_MS (and the page says so)
