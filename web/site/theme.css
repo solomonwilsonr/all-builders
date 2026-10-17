@@ -169,10 +169,15 @@ h3.display { font-size: clamp(1.3rem, 1.1rem + .8vw, 1.75rem); letter-spacing: -
 
 /* ---------- sources row ---------- */
 .sources { padding: clamp(48px, 6vw, 80px) var(--gut) clamp(32px, 4vw, 56px); text-align: center; }
-.sources p { color: var(--ink-2); margin-bottom: 30px; }
-.src { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 26px 20px; align-items: center; }
-.src li { display: flex; align-items: center; justify-content: center; gap: 8px; font: 600 1.2rem var(--display); letter-spacing: -.03em; color: var(--ink-2); }
-.src li small { font: 400 .72rem var(--sans); letter-spacing: 0; color: var(--dim); }
+.sources h2 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem); margin-bottom: clamp(32px, 4vw, 56px); }
+/* logo-wall grid: hairline cells, greyed marks that sharpen on hover */
+.src { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.src li { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: clamp(96px, 9vw, 132px); padding: 16px 12px;
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  font: 700 clamp(1.3rem, 1rem + 1vw, 1.9rem)/1 var(--display); letter-spacing: -.04em; color: #b4bac1; transition: color .2s, background .2s; }
+.src li small { font: 500 .72rem var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); transition: color .2s; }
+.src li:hover { color: var(--ink); background: var(--soft); }
+.src li:hover small { color: var(--blue); }
 
 /* ---------- the problem ---------- */
 .problem { padding: clamp(56px, 7vw, 100px) var(--gut) 0; }
@@ -457,7 +462,6 @@ td.ep { font: .82rem var(--mono); white-space: nowrap; }
   .code { font-size: 11px; padding: 16px; }
   .privacy { padding: 28px 20px; }
   .src { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .src li { font-size: 1rem; }
   .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stats { grid-template-columns: minmax(0, 1fr); }
   .stat b { font-size: 2.2rem; }
