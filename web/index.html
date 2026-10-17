@@ -5,24 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SafeShelf</title>
 <meta name="description" content="Is it safe? Is it real? SafeShelf checks a product listing against official recalls, buyer reviews, safety-mark registries and the genuine product.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23dff0a8'/><text x='16' y='22' font-size='17' text-anchor='middle' fill='%2313233a'>✦</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z' fill='%230271E4'/><path d='m10.5 16 4 4 7-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the samples</a>
 <header class="top">
-  <div class="brand-row"><span class="mark" aria-hidden="true">✦</span><span class="brand">SafeShelf</span><span class="badge">Google Cloud AI Builder Cup 2026 · Retail &amp; Commerce</span></div>
-  <h1>Shopping sites tell you the price.<br>SafeShelf tells you if it's been recalled, or isn't real.</h1>
-  <p class="lede">Give it a product listing. Gemini agents read official recalls, buyer reviews, safety-mark registries and the genuine product, then <strong>plain code sets the colour</strong>, so a page's text or the model can't talk it into green.</p>
+  <div class="brand-row"><a class="home" href="site/index.html" aria-label="SafeShelf home"><span class="mark" aria-hidden="true">✦</span><span class="brand">SafeShelf</span></a><nav class="sitelinks" aria-label="Site"><a href="site/index.html">Product</a><a href="site/how.html">How it works</a><a href="site/agents.html">For agents</a><a href="site/results.html">Results</a><a href="index.html" aria-current="page">Try it live</a></nav><span class="badge">AI Builder Cup 2026 · Retail &amp; Commerce</span></div>
+</header>
+
+<section class="jhero" aria-labelledby="hero-h">
+  <div class="jhero-top">
+    <div>
+      <div class="laurels"><span>Live API on Cloud Run</span><span>Gemini on Vertex AI</span></div>
+      <h1 id="hero-h">Shopping sites tell you the price. SafeShelf tells you if it's recalled, or isn't real.</h1>
+    </div>
+    <p class="lede">Give it a product listing. Gemini agents read official recalls, buyer reviews, safety-mark registries and the genuine product, then <strong>plain code sets the colour</strong>, so a page's text or the model can't talk it into green.</p>
+  </div>
   <ul class="facts" aria-label="Real data behind every answer">
-    <li><b>8,653</b> real official recalls<span>US CPSC + Japan, Australia, Korea, Taiwan, Singapore, ASEAN</span></li>
+    <li><b>8,689</b> official recalls and notices<span>US CPSC and 7 JAPAC sources, India included</span></li>
     <li><b>29,379</b> real buyer reviews<span>read for fire, burn and shock reports</span></li>
     <li><b>8,470</b> Australian energy-registry records<span>to check star-rating claims</span></li>
-    <li><b>18 / 18</b> agent test cases pass<span>on the live API, with known right answers</span></li>
+    <li><b>21 / 22</b> agent test cases pass<span>on the live API, 16 Oct, with known right answers</span></li>
     <li><b>26</b> JAPAC languages, spoken<span>answers read aloud, or ask out loud with Gemini Live</span></li>
   </ul>
-</header>
+</section>
 
 <nav class="tabs" role="tablist" aria-label="Sections">
   <button role="tab" id="tab-try" aria-controls="panel-try" aria-selected="true">Try a sample</button>
@@ -76,7 +87,8 @@
 
 <footer class="foot">
   <p>Colours are set by code from the evidence; AI findings marked "under review" are not regulatory determinations. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; recalls, reviews and registries are real data.</p>
-  <p><a href="https://safeshelf-api-368488022657.asia-south1.run.app/docs" target="_blank" rel="noopener">API docs</a> · <a href="https://safeshelf-api-368488022657.asia-south1.run.app/.well-known/agent-card.json" target="_blank" rel="noopener">A2A agent card</a> · Also a Chrome extension and a WhatsApp bot</p>
+  <p class="foot-links"><a href="site/index.html">SafeShelf home</a><a href="site/results.html">Results</a><a href="site/agents.html">For agents</a><a href="https://safeshelf-api-368488022657.asia-south1.run.app/docs" target="_blank" rel="noopener">API docs</a><a href="https://safeshelf-api-368488022657.asia-south1.run.app/.well-known/agent-card.json" target="_blank" rel="noopener">A2A agent card</a><a href="site/get.html">Chrome extension and WhatsApp: coming soon</a></p>
+  <p>© 2026 Team Hashes · AI Builder Cup 2026</p>
 </footer>
 </body>
 </html>
