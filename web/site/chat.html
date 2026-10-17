@@ -39,21 +39,18 @@
     #log { flex:1; min-height:0; overflow:auto; padding:24px var(--gut); display:flex; flex-direction:column; gap:16px; }
     .welcome { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; }
     .hello { margin:auto 0; padding:8px 0 32px; }
-    .hello-mark { display:block; width:120px; margin:0 auto; }
-    .hello-mark img { display:block; width:100%; height:auto; filter:drop-shadow(0 10px 14px rgba(0,17,35,.14)); }
-    .hello .kicker { margin:22px 0 10px; }
+    .hello-mark { display:flex; align-items:flex-end; justify-content:center; width:112px; height:112px; margin:0 auto 24px; border-radius:50%; overflow:hidden; background:radial-gradient(circle at 50% 35%, #fff 0%, var(--blue-pale) 70%); box-shadow:inset 0 0 0 1px rgba(2,113,228,.10); }
+    .hello-mark img { display:block; width:92px; height:auto; }
     .hello h1 { font-size:clamp(2rem, 1.2rem + 2.8vw, 3.25rem); }
     .hello h1 span { display:block; color:var(--dim); }
-    .hello .lead { max-width:560px; margin:16px auto 0; }
-    .hello .fine { font-size:.75rem; color:var(--dim); margin:10px auto 0; max-width:56ch; }
+    .hello .lead { max-width:480px; margin:14px auto 0; }
     .starters { width:100%; display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:16px; text-align:left; }
-    .starter { display:flex; flex-direction:column; gap:3px; min-height:150px; padding:16px; border:0; border-radius:10px; background:#fff; box-shadow:var(--shadow); cursor:pointer; text-align:left; transition:transform .15s ease, box-shadow .15s ease; }
+    .starter { display:flex; align-items:center; gap:12px; padding:14px 16px; border:0; border-radius:10px; background:#fff; box-shadow:var(--shadow); cursor:pointer; text-align:left; transition:transform .15s ease, box-shadow .15s ease; }
     .starter:hover { transform:translateY(-2px); box-shadow:0 18px 36px rgba(2,113,228,.16), 0 0 0 1.5px var(--blue); }
-    .starter .ic { display:grid; place-items:center; width:36px; height:36px; border-radius:8px; background:var(--ink); color:#fff; margin-bottom:auto; }
+    .starter .ic { display:grid; place-items:center; width:36px; height:36px; border-radius:8px; background:var(--ink); color:#fff; flex:none; }
     .starter:nth-child(1) .ic { background:var(--blue); } .starter:nth-child(3) .ic { background:var(--orange); color:var(--ink); } .starter:nth-child(4) .ic { background:var(--mint); color:var(--mint-ink); }
     .starter .ic svg { width:18px; height:18px; }
-    .starter b { font:500 1rem/1.3 var(--display); letter-spacing:-.015em; margin-top:18px; color:var(--ink); }
-    .starter > span { font-size:.8125rem; color:var(--muted); line-height:1.45; }
+    .starter b { font:500 .9375rem/1.3 var(--display); letter-spacing:-.015em; color:var(--ink); }
 
     .row { display:flex; gap:12px; align-items:flex-start; }
     .row.user { justify-content:flex-end; }
@@ -141,13 +138,13 @@
     .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; } .grid2 .btn { white-space:normal; text-align:center; }
     .inline { display:flex; gap:8px; } .inline input { flex:1; }
 
-    @media (max-width:900px) { .starters { grid-template-columns:repeat(2, minmax(0, 1fr)); } .starter { min-height:120px; } }
+    @media (max-width:900px) { .starters { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
     @media (max-width:640px) {
-      .chat-bar { padding:10px 16px; } .about .lbl, .hint, .hello .fine, .hello .kicker { display:none; } #pick { min-width:0; flex:1; } #pick select { width:100%; }
+      .chat-bar { padding:10px 16px; } .about .lbl, .hint { display:none; } #pick { min-width:0; flex:1; } #pick select { width:100%; }
       .status { padding:6px 9px; font-size:0; gap:0; } .status::before { margin:0; }
       #log { padding:16px; } .composer { padding:8px 16px 12px; } .msg { max-width:92%; } .row .mark { display:none; }
-      .hello { padding-bottom:20px; } .hello-mark { width:96px; } .hello .lead { font-size:.9375rem; margin-top:12px; }
-      .starter { min-height:0; padding:14px; } .starter b { margin-top:10px; font-size:.9375rem; }
+      .hello { padding-bottom:20px; } .hello-mark { width:88px; height:88px; margin-bottom:18px; } .hello-mark img { width:72px; } .hello .lead { font-size:.9375rem; margin-top:12px; }
+      .starter { padding:12px 14px; }
       .tools-btn { width:42px; height:42px; } .attached { margin-left:0; } .send span { display:none; } .send { padding:0 10px; } .langpick { max-width:5.2em; }
     }
     @media (prefers-reduced-motion: reduce) { .typing i, .progress li::before { animation:none; } .starter { transition:none; } }
@@ -190,10 +187,8 @@
       <section class="welcome" id="welcome">
         <div class="hello">
           <span class="hello-mark"><img src="assets/eddy.png" alt="Eddy, the SafeShelf mascot" width="176" height="200"></span>
-          <p class="kicker">SafeShelf Chat · 26 JAPAC languages</p>
-          <h1 class="display"><span>Hi, I'm SafeShelf</span>Is it safe? Is it real?</h1>
-          <p class="lead">Paste a product link, drop a screenshot of a listing, or ask about one of the demo products. Answers come from recalls, buyer reviews and safety registries, with sources.</p>
-          <p class="fine">The colours (red, amber, green, grey) are set by code from the evidence, never by the AI. Grey means not enough evidence, not "safe".</p>
+          <h1 class="display"><span>Hi, I'm Eddy</span>Is it safe? Is it real?</h1>
+          <p class="lead">Paste a product link or a screenshot of a listing. I check recalls, reviews and safety registries, and show my sources.</p>
         </div>
         <div class="starters" id="starters"></div>
       </section>
@@ -659,7 +654,8 @@
 
   // ---- Wiring ----
   for (const s of STARTERS) {
-    const b = node("button", { type: "button", className: "starter" }, node("i", { className: "ic", ariaHidden: "true" }, icon(s.icon)), node("b",{ textContent: s.title }), node("span", { textContent: s.sub }));
+    const b = node("button", { type: "button", className: "starter" }, node("i", { className: "ic", ariaHidden: "true" }, icon(s.icon)), node("b",{ textContent: s.title }));
+    b.title = s.sub;
     b.onclick = () => {
       if (s.product) { $("product").value = s.product; $("custom").hidden = true; }
       if (s.lang) setLang(s.lang);
