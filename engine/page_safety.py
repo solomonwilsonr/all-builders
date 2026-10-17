@@ -47,9 +47,16 @@ def page_reviews(listing: dict) -> list[dict]:
             datetime.fromisoformat(date)
         except ValueError:
             date = today  # undated: counts as seen today, so the trend is never invented from it
+        verified = review.get("verified_purchase")
         out.append({"title": str(review.get("title") or "")[:200] or None, "text": text[:1500],
-                    "rating": review.get("rating"), "date": date})
+                    "rating": review.get("rating"), "date": date,
+                    "verified_purchase": verified if isinstance(verified, bool) else None})
     return out
+
+
+def listing_key(listing: dict) -> str:
+    """Where a listing's reviews and their labels are kept, so the safety check and the review verdict share them."""
+    return f"listing:{listing.get('url') or listing.get('title') or ''}"
 
 
 def kind_words(title: str) -> str:
@@ -98,7 +105,7 @@ def listing_safety(listing: dict) -> dict:
         fp["category"] = kind_words(re.sub(re.escape(brand), "", title, flags=re.IGNORECASE) if brand else title)
     status = recall_status(searchable_brand(listing, brand), fp)
 
-    key = f"listing:{listing.get('url') or listing.get('title') or ''}"
+    key = listing_key(listing)
     reviews = page_reviews(listing)
     if reviews:
         safety.add_reviews(key, reviews)

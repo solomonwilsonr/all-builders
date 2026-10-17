@@ -1,0 +1,57 @@
+{
+  "_about": "Physical limits the claims check (engine/claims_check.py) applies in code, per kind of product. They are generous on purpose: a claim is called not_possible only when it breaks the limit of the best technology there is, and doubtful when it breaks what is normal on the market. Add a kind of product by adding a block here and a rule in engine/claims_check.py.",
+  "_updated": "2026-10-17",
+  "power_bank": {
+    "nominal_cell_volts": 3.7,
+    "_why_volts": "Power-bank mAh is quoted at the lithium cell's 3.7 V, so energy (Wh) = mAh x 3.7 / 1000.",
+    "impossible_wh_per_kg": 270,
+    "_why_impossible": "Best lithium-ion cells today hold about 250-270 Wh per kg, before the casing and circuit. Under this weight the cells alone cannot fit.",
+    "doubtful_wh_per_kg": 200,
+    "_why_doubtful": "A finished power bank (cells, case, circuit) rarely reaches 200 Wh per kg."
+  },
+  "charger": {
+    "impossible_w_per_gram": 2.4,
+    "doubtful_w_per_gram": 1.2,
+    "_why": "The smallest GaN chargers on sale carry about 1 W per gram. Twice that is beyond current technology; over 1.2 W per gram is unusual.",
+    "usb_pd_max_watts": 240,
+    "_why_usb_pd": "USB Power Delivery 3.1 (the USB-C standard) tops out at 240 W, so a USB-C charger or cable cannot claim more."
+  },
+  "energy_saver": {
+    "claim_words": [
+      "electricity saver",
+      "power saver",
+      "energy saver",
+      "electric saver",
+      "electricity saving device",
+      "power saving device",
+      "energy saving device",
+      "power saving box",
+      "electricity saving box",
+      "save electricity",
+      "saves electricity",
+      "save energy bill",
+      "reduce electricity bill",
+      "reduces electricity bill",
+      "reduce your electricity bill",
+      "reduces your electricity bill",
+      "save power bill"
+    ],
+    "real_saving_products": [
+      "led",
+      "bulb",
+      "inverter",
+      "air conditioner",
+      " ac ",
+      "fan",
+      "refrigerator",
+      "fridge",
+      "star rated",
+      "bldc",
+      "smart plug",
+      "standby",
+      "timer",
+      "solar"
+    ],
+    "_why": "A plug-in box cannot cut a home's bill: home meters bill the energy a device actually uses (kWh), and these boxes only change the power factor, which household meters do not bill. A product that really uses less energy (an LED bulb, an inverter AC) says what it does."
+  }
+}

@@ -47,7 +47,9 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       anchor: "#corePrice_feature_div, #apex_desktop, #title_feature_div",
       cards: { selector: "[data-component-type='s-search-result'][data-asin]:not([data-asin=''])", title: "h2", price: ".a-price .a-offscreen", link: "h2 a, a[href*='/dp/']", image: "img.s-image" },
       // The reviews shown on the page, for "Is it safe?" on products SafeShelf has no data for. Never the reviewer's name.
-      reviews: { item: "[data-hook='review']", title: "[data-hook='review-title'] span:not(.a-letter-space):not(.a-icon-alt), [data-hook='reviewTitle']", body: "[data-hook='reviewRichContentContainer'], [data-hook='review-body'], [data-hook='reviewText']", rating: "[data-hook='review-star-rating'], [data-hook='cmps-review-star-rating']", date: "[data-hook='review-date']" }, // Amazon's 2025 and 2026 markup
+      reviews: { item: "[data-hook='review']", title: "[data-hook='review-title'] span:not(.a-letter-space):not(.a-icon-alt), [data-hook='reviewTitle']", body: "[data-hook='reviewRichContentContainer'], [data-hook='review-body'], [data-hook='reviewText']", rating: "[data-hook='review-star-rating'], [data-hook='cmps-review-star-rating']", date: "[data-hook='review-date']", verified: "[data-hook='avp-badge'], [data-hook='avp-badge-linkless']" }, // Amazon's 2025 and 2026 markup
+      // The star summary above the reviews: every rating, not only the few reviews shown. For "Is it any good?".
+      ratings: { average: "[data-hook='rating-out-of-text'], #acrPopover", count: "[data-hook='total-review-count'], #acrCustomerReviewText", bars: "#histogramTable [aria-label], #histogramTable li, #histogramTable tr" },
     },
     {
       match: (h) => /(^|\.)flipkart\.com$/.test(h),
@@ -68,7 +70,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       images: "#gallery img",
       anchor: "#price",
       hiddenText: true, // demo pages carry a hidden prompt-injection test
-      reviews: { item: "article.review", title: "strong", body: "p", rating: ".stars", date: "time" },
+      reviews: { item: "article.review", title: "strong", body: "p", rating: ".stars", date: "time", verified: ".verified" },
+      ratings: { average: "#ratings .avg", count: "#ratings .count", bars: "#ratings li" },
       cards: { selector: ".result[data-listing-id]", title: ".result-title", price: ".result-price", link: "a", image: "img" },
     },
   ];
@@ -214,8 +217,30 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         text: mask(words(inside(el, r.body))).slice(0, 1500),
         rating,
         date: isNaN(parsed) ? null : parsed.toISOString().slice(0, 10),
+        ...(r.verified ? { verified_purchase: !!inside(el, r.verified) } : {}),
       };
     }).filter((x) => x.text);
+  };
+
+  // The star summary: "4.1 out of 5", "3,412 ratings" and the percent of ratings per star. null when the shop shows none.
+  // Falls back to schema.org data (average and count only, no bars).
+  const readRatingSummary = () => {
+    const r = site.ratings;
+    const words = (n) => (n ? `${n.getAttribute("title") || ""} ${n.getAttribute("aria-label") || ""} ${n.textContent || ""}` : "");
+    const average = Number(words(r && qs(r.average)).match(/([\d.]+) out of 5/)?.[1]) || null;
+    const count = Number(words(r && qs(r.count)).replace(/,/g, "").match(/(\d+)\s*(global\s+)?(ratings?|reviews?)/i)?.[1]) || null;
+    const distribution = {};
+    for (const bar of r?.bars ? document.querySelectorAll(r.bars) : []) {
+      const t = words(bar).replace(/\s+/g, " ");
+      const said = t.match(/(\d{1,3})\s*percent of (?:reviews|ratings) have ([1-5]) stars?/i); // "58 percent of reviews have 5 stars"
+      const shown = t.match(/\b([1-5])\s*stars?\b[^\d%]{0,20}(\d{1,3})\s*%/i); // "5 star 58%"
+      const [star, pct] = said ? [said[2], said[1]] : shown ? [shown[1], shown[2]] : [];
+      if (star && !(star in distribution)) distribution[star] = Number(pct);
+    }
+    const agg = jsonLd()?.aggregateRating;
+    const summary = { average: average ?? (Number(agg?.ratingValue) || null), count: count ?? (Number(agg?.ratingCount || agg?.reviewCount) || null),
+      ...(Object.keys(distribution).length === 5 ? { distribution } : {}) };
+    return summary.average || summary.count || summary.distribution ? summary : null;
   };
 
   // Amazon shows only a few reviews on the product page, mostly positive. The product's critical (1-3 star) reviews
@@ -223,12 +248,14 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   // reviews go first, since hazard reports live there. Remembered per product and page for the visit.
   // The quick check reads page 1; a first look at a product SafeShelf has never seen reads pages 1-3 (up to 60).
   const criticalCache = new Map();
-  const criticalPage = (asin, n) => {
-    const key = `${asin}|${n}`;
+  // filter: "critical" (1-3 stars), or one star level ("one_star" ... "five_star", for "Is it any good?").
+  // sort: "recent", or "helpful" (the reviews other buyers found most useful: they explain a problem best).
+  const criticalPage = (asin, n, filter = "critical", sort = "recent") => {
+    const key = `${asin}|${filter}|${sort}|${n}`;
     if (!criticalCache.has(key)) {
       criticalCache.set(key, (async () => {
         try {
-          const res = await fetch(`/product-reviews/${asin}/?filterByStar=critical&sortBy=recent&reviewerType=all_reviews&pageNumber=${n}`, { credentials: "include" });
+          const res = await fetch(`/product-reviews/${asin}/?filterByStar=${filter}&sortBy=${sort}&reviewerType=all_reviews&pageNumber=${n}`, { credentials: "include" });
           if (!res.ok || /\/ap\/signin/.test(res.url)) return [];
           return readReviews(new DOMParser().parseFromString(await res.text(), "text/html"));
         } catch (_) { return []; }
@@ -255,6 +282,20 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     return { ...page, reviews };
   };
   window.__safeshelfMoreReviews = withMoreReviews;
+
+  // "Is it any good?": one page (about 10 reviews) per star level, so every kind of buyer is heard, and the page's own
+  // reviews, at most 60, plus the star summary that covers every rating. The server weights each star by its real
+  // share of all ratings. 1-3 star pages are the most helpful first (they explain a problem best), 4-5 the newest.
+  // Read after the card is shown, in the shopper's own browser.
+  const STAR_PAGES = [["one_star", "helpful"], ["two_star", "helpful"], ["three_star", "helpful"], ["four_star", "recent"], ["five_star", "recent"]];
+  const reviewsForVerdict = async (page) => {
+    const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
+    const amazon = asin && /(^|\.)amazon\./.test(location.hostname);
+    const extra = amazon ? (await Promise.all(STAR_PAGES.map(([star, sort]) => criticalPage(asin, 1, star, sort)))).flat() : [];
+    const seen = new Set();
+    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(x.text) && seen.add(x.text)).slice(0, 60);
+    return { url: page.url, title: page.title, page_text: page.page_text, currency: page.currency, reviews, rating_summary: readRatingSummary() };
+  };
 
   // Data for one product card on a results page (no page load needed)
   const readCard = (card) => {
@@ -485,6 +526,43 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .verdict { font-size:12px; font-weight:700; padding:2px 10px; border-radius:999px; background:#fff; }
     .sec.green .verdict { color:var(--green); } .sec.amber .verdict { color:var(--amber); } .sec.red .verdict { color:var(--red); } .sec.unknown .verdict { color:var(--unknown); }
     .sec.green .t svg { color:var(--green); } .sec.amber .t svg { color:var(--amber); } .sec.red .t svg { color:var(--red); } .sec.unknown .t svg { color:var(--unknown); }
+    /* "Is it any good?": a small widget under the verdict. Quality only, so it never uses red (red is for recalls). */
+    .rv { margin:10px 0 0; padding:9px 12px; border-radius:14px; background:var(--soft); font-size:13px; line-height:1.4; }
+    .rv-top { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+    .rv-word { font-weight:700; font-size:14px; } .rv.good .rv-word { color:var(--green); } .rv.mixed .rv-word, .rv.poor .rv-word { color:var(--amber); }
+    .rv-stars { color:var(--muted); white-space:nowrap; } .rv-note { display:block; color:var(--muted); font-size:12px; }
+    .rv-row { display:flex; gap:6px; align-items:flex-start; margin-top:5px; } .rv-row svg { width:14px; height:14px; flex:none; margin-top:2px; }
+    .rv-row.up svg { color:var(--green); } .rv-row.down svg { color:var(--amber); } .rv-sub { color:var(--muted); }
+    .rv-c summary { cursor:pointer; list-style:none; } .rv-c summary::-webkit-details-marker { display:none; }
+    .rv-c summary::after { content:"▸"; margin-left:auto; padding-left:8px; color:var(--link); font-size:11px; } .rv-c[open] summary::after { content:"▾"; }
+    .rv-revs { list-style:none; margin:6px 0 2px 20px; padding:0; display:grid; gap:8px; max-height:220px; overflow:auto; }
+    .rv-revs li { padding:6px 9px; border-radius:10px; background:var(--card); font-size:12px; line-height:1.4; } .rv-meta { color:var(--amber); font-size:11px; letter-spacing:.5px; }
+    /* "Is it possible?": price chart and claims. Amber at worst, never red (red is for recalls). */
+    .ip { margin:10px 0 0; padding:9px 12px; border-radius:14px; background:var(--soft); font-size:13px; line-height:1.4; }
+    .ip-top { display:flex; align-items:baseline; justify-content:space-between; gap:8px; } .ip-word { font-weight:700; font-size:14px; }
+    .ip-sec.ok .ip-word { color:var(--green); } .ip-sec.warn .ip-word { color:var(--amber); } .ip-sec + .ip-sec { margin-top:8px; padding-top:8px; border-top:1px solid var(--line); }
+    .ip-demo { font-size:11px; font-weight:700; color:var(--amber); background:var(--amber-bg); border-radius:8px; padding:1px 7px; }
+    .ip-line { color:var(--muted); margin-top:2px; }
+    .ip-chart { position:relative; height:10px; margin:10px 2px 4px; border-radius:5px; background:var(--line); }
+    .ip-band { position:absolute; top:0; bottom:0; border-radius:5px; background:var(--green-bg); box-shadow:inset 0 0 0 1px var(--green); }
+    .ip-median { position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--green); }
+    .ip-dot { position:absolute; top:50%; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; background:var(--amber); box-shadow:0 0 0 2px var(--card); }
+    .ip-sec.ok .ip-dot { background:var(--green); } .ip-sec.none .ip-dot { background:var(--unknown); }
+    .ip-wait { color:var(--muted); font-size:12px; } .ip-q { color:var(--muted); font-size:12px; } .ip-sec.warn .ip-word { font-size:15px; } .ip-sec .ip-line { color:var(--ink); }
+    .ip-h { margin-top:6px; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+    .ip-value { margin-top:6px; font-size:12px; color:var(--muted); } .ip-value strong { color:var(--ink); } .ip-value.warn strong { color:var(--amber); } .ip-value.ok strong { color:var(--green); }
+    .ip-cmp { margin:4px 0 0; padding:0; list-style:none; font-size:12px; color:var(--muted); } .ip-cmp a { color:var(--link); }
+    .ip-claim { display:flex; gap:6px; align-items:flex-start; margin-top:5px; } .ip-claim svg { width:14px; height:14px; flex:none; margin-top:2px; }
+    .ip-claim.check svg { color:var(--green); } .ip-claim.warn svg, .ip-claim.stop svg { color:var(--amber); } .ip-claim.help svg { color:var(--unknown); }
+    .ip-why { color:var(--muted); font-size:12px; } .ip-why a { color:var(--link); }
+    .ip-more { margin-top:4px; } .ip-more summary { cursor:pointer; color:var(--link); font-size:12px; } .ip-more ul { margin:4px 0 0; padding-left:18px; }
+    .ip.loading .ip-line { animation:ss-rv-pulse 1.2s ease-in-out infinite alternate; }
+    @media (prefers-reduced-motion: reduce) { .ip.loading .ip-line { animation:none; } }
+    .rv-flag { margin-top:6px; padding:5px 8px; border-radius:10px; background:var(--amber-bg); color:var(--amber); font-size:12px; }
+    .rv-why { margin-top:4px; } .rv-why summary { cursor:pointer; color:var(--link); font-size:12px; }
+    .rv-why ul { margin:4px 0 0; padding-left:18px; }
+    .rv.loading .rv-stars { animation:ss-rv-pulse 1.2s ease-in-out infinite alternate; } @keyframes ss-rv-pulse { to { opacity:.4; } }
+    @media (prefers-reduced-motion: reduce) { .rv.loading .rv-stars { animation:none; } }
     /* Plain answer: what to do, where we checked (plan v2.2 UX) */
     .todo { margin-top:10px; padding:12px 14px; border-radius:16px; background:#fff; border:1px solid rgba(0,0,0,.08); }
     .todo strong { display:block; font-size:14px; margin-bottom:4px; }
@@ -1503,6 +1581,131 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       return section;
     };
 
+    // "Is it any good?": a small widget under the verdict. It fills in once the extra reviews are read, after the card is
+    // shown, so the check itself is no slower. About quality only: it never changes the verdict above it.
+    const reviewsWidget = () => {
+      const top = (word, stars, note) => el("div", {}, el("div", { className: "rv-top" }, el("span", { className: "rv-word", textContent: word }),
+        el("span", { className: "rv-stars", textContent: stars })), ...(note ? [el("span", { className: "rv-note", textContent: note })] : []));
+      const w = el("div", { className: "rv loading", role: "group", ariaLabel: "What buyers say" }, top("What buyers say", "Reading reviews…"));
+      const fill = (vm) => {
+        const rows = [];
+        if (vm.liked.length) rows.push(el("div", { className: "rv-row up" }, icon("check"), el("span", { textContent: vm.liked.join(" · ") })));
+        // A complaint opens to the reviews counted for it (they come in the API answer itself). Review text is set as text only.
+        const row = (c) => {
+          const head = el("summary", { className: "rv-row down" }, icon("warn"), el("span", {}, el("span", { textContent: c.text }), el("span", { className: "rv-sub", textContent: ` · ${c.sub}` })));
+          const counted = c.reviews.map((r) => el("li", {}, el("div", { className: "rv-meta", textContent: [r.stars, r.date].filter(Boolean).join(" · ") }),
+            ...(r.title ? [el("strong", { textContent: r.title })] : []), el("div", { textContent: r.text })));
+          const d = el("details", { className: "rv-c" }, head, counted.length ? el("ul", { className: "rv-revs" }, ...counted) : el("div", { className: "rv-note", textContent: "These reviews are not in this answer." }));
+          d.addEventListener("toggle", place);
+          return d;
+        };
+        rows.push(...vm.complaints.map(row)); // every complaint (at most ten), none hidden
+        if (vm.warning) rows.push(el("div", { className: "rv-flag", textContent: vm.warning }));
+        const why = el("details", { className: "rv-why" }, el("summary", { textContent: "Why this verdict" }), el("ul", {}, ...vm.reasons.map((t) => el("li", { textContent: t }))));
+        why.addEventListener("toggle", place);
+        w.className = `rv ${vm.tone}`;
+        w.replaceChildren(top(vm.word, vm.stars, vm.note), ...rows, why);
+        place();
+      };
+      const failed = (why) => { w.className = "rv"; w.replaceChildren(top("What buyers say", "Not available"), el("span", { className: "rv-note", textContent: why })); place(); };
+      (async () => {
+        try {
+          if (!(await guard("check", getPage().url, "Check this product", getPage()))) return w.remove(); // TEMP cost guard: approved with the check
+          const listing = await reviewsForVerdict(getPage());
+          chrome.runtime.sendMessage({ type: "safeshelf:reviews", listing }, (res) => {
+            if (!res?.ok) return failed(`Couldn't read the reviews this time (${res?.error || chrome.runtime.lastError?.message || "no answer"}).`);
+            if (!res.result) return w.remove();
+            fill(res.result);
+          });
+        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+      })();
+      return w;
+    };
+
+    // "Is it possible?": the technology first (can what the listing claims exist at all?). Only if it can, the price: is
+    // this product possible at this price? Technology that cannot exist stops it there: the price is never looked up.
+    // Price and physics only: it never changes the verdict above it.
+    const possibleWidget = () => {
+      const w = el("div", { className: "ip loading", role: "group", ariaLabel: "Is it possible?" },
+        el("div", { className: "ip-q", textContent: "Is it possible?" }), el("div", { className: "ip-line", textContent: "Checking the technology…" }));
+      const state = { claims: null, price: null, answer: null, demo: false, stage: "tech", priceError: null };
+      const link = (u, t) => el("a", { href: u, target: "_blank", rel: "noopener", textContent: t });
+      const claimLine = (x) => el("div", { className: `ip-claim ${x.mark}` }, icon(x.mark), el("span", {}, el("span", { textContent: x.text }), el("div", { className: "ip-why", textContent: x.why })));
+      const chart = (p) => el("div", { className: `ip-sec ${p.tone}` },
+        ...(p.chart ? [el("div", { className: "ip-chart", role: "img", ariaLabel: p.chart.label },
+          el("div", { className: "ip-band", style: `left:${p.chart.band[0]}%;width:${Math.max(1, p.chart.band[1] - p.chart.band[0])}%` }),
+          el("div", { className: "ip-median", style: `left:${p.chart.median}%` }),
+          ...(p.chart.dot != null ? [el("div", { className: "ip-dot", style: `left:${p.chart.dot}%` })] : []))] : []),
+        el("div", { className: "ip-line", textContent: p.line }));
+      const draw = () => {
+        const a = state.answer;
+        const claims = state.claims?.claims || [];
+        const problems = claims.filter((x) => x.result === "not_possible" || x.result === "doubtful");
+        // Nothing wrong found and no price answer (the kind of product is not covered yet): one slim line, so it is
+        // clear the check ran. No "can't tell" headline, no bare price, no "?" rows.
+        if (state.stage === "done" && !problems.length && (!a || a.verdict === "cant_tell")) {
+          const said = state.claims ? "Nothing impossible found in the technology the listing claims." : "The technology could not be checked this time.";
+          const price = state.price || !state.claims ? "" : " The price check does not cover this kind of product yet.";
+          w.className = "ip";
+          w.replaceChildren(el("div", { className: "ip-q", textContent: "Is it possible?" }), el("div", { className: "ip-line", textContent: said + price }));
+          return place();
+        }
+        const fine = claims.filter((x) => !problems.includes(x));
+        const stopped = state.claims?.verdict === "not_possible"; // the technology cannot exist: no price was looked up
+        const kids = [];
+        if (state.demo) kids.push(el("span", { className: "ip-demo", textContent: "Demo data: example answer from the local API" }));
+        const head = el("div", { className: `ip-sec ${a?.tone || "none"}` },
+          el("div", { className: "ip-q", textContent: a?.question ? `Is ${a.question} possible?` : "Is it possible?" }));
+        if (state.stage === "tech") head.append(el("div", { className: "ip-line", textContent: "Checking the technology…" }));
+        else if (a) head.append(el("div", { className: "ip-top" }, el("span", { className: "ip-word", textContent: a.word })), el("div", { className: "ip-line", textContent: a.text }));
+        else head.append(el("div", { className: "ip-line", textContent: state.stage === "price" ? "Checking the price…" : "Nothing to judge on this page." }));
+        kids.push(head);
+        if (state.stage === "price" && a) kids.push(el("div", { className: "ip-line ip-wait", textContent: "Checking the price…" }));
+        // The technology result, then the price chart (never for technology that cannot exist)
+        if (state.claims) {
+          if (problems.length) kids.push(el("div", { className: "ip-sec warn" }, el("div", { className: "ip-h", textContent: "Technology" }), ...problems.map(claimLine)));
+          else if (!stopped) kids.push(el("div", { className: "ip-sec ok" }, el("div", { className: "ip-h", textContent: "Technology" }),
+            fine.length ? claimLine(fine[0]) : el("div", { className: "ip-line", textContent: "Nothing impossible found in what the listing claims." })));
+        }
+        if (stopped) kids.push(el("div", { className: "ip-line ip-wait", textContent: "The price was not checked: this technology cannot exist." }));
+        else if (state.price?.chart) kids.push(el("div", { className: "ip-h", textContent: "Price" }), chart(state.price));
+        else if (state.priceError) kids.push(el("div", { className: "ip-line ip-wait", textContent: `The price could not be checked this time (${state.priceError}).` }));
+        const reasons = [...(state.price?.reasons || []), ...(state.claims?.reasons || [])];
+        const inside = [];
+        if (state.price?.comparables.length) inside.push(el("div", { className: "ip-h", textContent: "Genuine prices compared" }), el("ul", { className: "ip-cmp" },
+          ...state.price.comparables.map((c) => el("li", {}, c.text, ...(c.url ? [" · ", link(c.url, c.source || "source")] : [])))));
+        if (problems.length && fine.length) inside.push(el("div", { className: "ip-h", textContent: "Other claims checked" }), ...fine.map(claimLine));
+        if (state.claims?.sources.length) inside.push(el("div", { className: "ip-why" }, "Sources: ", ...state.claims.sources.flatMap((src, i) => [...(i ? [" · "] : []), link(src.url, src.title)])));
+        if (reasons.length) inside.push(el("div", { className: "ip-h", textContent: "How this was decided" }), el("ul", {}, ...reasons.map((t) => el("li", { textContent: t }))));
+        if (inside.length && state.stage === "done") {
+          const more = el("details", { className: "ip-more" }, el("summary", { textContent: "Why this verdict" }), ...inside);
+          more.addEventListener("toggle", place);
+          kids.push(more);
+        }
+        w.className = state.stage === "done" ? "ip" : "ip loading";
+        w.replaceChildren(...kids);
+        place();
+      };
+      const ask = (msg) => new Promise((resolve) => { try { chrome.runtime.sendMessage(msg, (res) => resolve(res)); } catch (_) { resolve(null); } });
+      (async () => {
+        try {
+          if (!(await guard("check", getPage().url, "Check this product", getPage()))) return w.remove(); // TEMP cost guard: approved with the check
+          const { url, title, price, currency, seller, page_text } = getPage();
+          const listing = { url, title, price, currency, seller, page_text };
+          const t = await ask({ type: "safeshelf:tech", listing }); // 1. the technology
+          if (t?.ok && t.result) { state.claims = t.result.claims; state.answer = t.result.answer; state.demo ||= t.result.demo; }
+          if (state.claims?.verdict === "not_possible") { state.stage = "done"; return draw(); } // cannot exist: forget the price
+          state.stage = "price"; draw();
+          const p = await ask({ type: "safeshelf:price", listing, claims: state.claims }); // 2. the price, for technology that can exist
+          if (p?.ok && p.result) { state.price = p.result.price; state.answer = p.result.answer; state.demo ||= p.result.demo; }
+          else state.priceError = p?.error || chrome.runtime.lastError?.message || "no answer";
+          if (!state.claims && !state.price) { state.stage = "done"; w.className = "ip"; w.replaceChildren(el("div", { className: "ip-q", textContent: "Is it possible?" }), el("div", { className: "ip-line", textContent: `Not available this time (${state.priceError}).` })); return place(); }
+          state.stage = "done"; draw();
+        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+      })();
+      return w;
+    };
+
     const render = (r, fresh = false) => {
       stopTicker();
       result = r;
@@ -1530,6 +1733,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
         cardHead(r.host, closeX()),
         heroEl,
+        ...(mode === "float" && r.source !== "mock" ? [reviewsWidget(), possibleWidget()] : []), // product pages only, never for example data
         panelTabs(r, [
           ...(plain ? [todoBox(plain)] : []),
           // Before purchase the buy button is guarded (below); after purchase: steps, refund and complaint drafts.

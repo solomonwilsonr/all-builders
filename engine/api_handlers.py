@@ -15,6 +15,7 @@ from engine import (
     case_file,
     cases,
     catalog,
+    claims_check,
     crossborder,
     evidence,
     gemini,
@@ -27,8 +28,10 @@ from engine import (
     page_safety,
     passport,
     point_and_ask,
+    price_benchmark,
     recall_catalog,
     redteam,
+    review_verdict,
     reviews,
     safety,
     supply_chain,
@@ -88,6 +91,30 @@ async def listing_safety_check(request: Request, params: dict[str, Any]) -> dict
     if not any(listing.get(k) for k in ("url", "title")):
         raise HTTPException(status_code=422, detail="Give at least a url or title")
     return await run_in_threadpool(page_safety.listing_safety, listing)
+
+
+async def listing_price_benchmark(request: Request, params: dict[str, Any]) -> dict:
+    listing = await request.json()
+    if not any(listing.get(k) for k in ("url", "title")):
+        raise HTTPException(status_code=422, detail="Give at least a url or title")
+    def run() -> dict:
+        refs, kind = price_benchmark.references_for(listing, gemini.grounded)
+        return price_benchmark.benchmark(listing, refs, kind)
+    return await run_in_threadpool(run)
+
+
+async def listing_claims_check(request: Request, params: dict[str, Any]) -> dict:
+    listing = await request.json()
+    if not any(listing.get(k) for k in ("url", "title")):
+        raise HTTPException(status_code=422, detail="Give at least a url or title")
+    return await run_in_threadpool(claims_check.check, listing, gemini.grounded)
+
+
+async def listing_review_verdict(request: Request, params: dict[str, Any]) -> dict:
+    listing = await request.json()
+    if not any(listing.get(k) for k in ("url", "title")):
+        raise HTTPException(status_code=422, detail="Give at least a url or title")
+    return await run_in_threadpool(review_verdict.review_verdict, listing)
 
 
 async def get_evidence(request: Request, params: dict[str, Any]) -> list[dict]:
@@ -469,6 +496,9 @@ HANDLERS = {
     "getCertifications": get_certifications,
     "trustCheck": trust_check,
     "listingSafetyCheck": listing_safety_check,
+    "listingReviewVerdict": listing_review_verdict,
+    "listingPriceBenchmark": listing_price_benchmark,
+    "listingClaimsCheck": listing_claims_check,
     "getProduct": by_product(passport.product),
     "getHistory": by_product(passport.history),
     "getAlternatives": by_product(passport.alternatives),

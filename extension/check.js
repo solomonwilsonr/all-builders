@@ -20,7 +20,8 @@ async function signedFetch(url, options, fresh = false) {
   return res;
 }
 
-export async function api(path, options = {}, base = API_BASE) {
+// allowMock: only for a local API (make api), so a new endpoint's sample answer can be shown, labelled as a demo.
+export async function api(path, options = {}, base = API_BASE, allowMock = false) {
   // The real engine can take a minute on a cold start, so wait up to 150 s instead of hanging forever.
   const res = await signedFetch(base + path, { signal: AbortSignal.timeout(150000), ...options });
   if (!res.ok) {
@@ -28,7 +29,7 @@ export async function api(path, options = {}, base = API_BASE) {
     throw new Error(typeof detail === "string" ? detail : `${path} answered ${res.status}`);
   }
   const source = res.headers.get("X-SafeShelf-Source");
-  if (source === "mock") throw new Error("Demo data was rejected. Restart the local API with make api to use real results.");
+  if (source === "mock" && !allowMock) throw new Error("Demo data was rejected. Restart the local API with make api to use real results.");
   return { body: await res.json(), source };
 }
 
@@ -208,6 +209,127 @@ export function outcomeLines(o) {
   const next = (o.what_would_change || [])[0];
   if (next && o.outcome !== "confirmed_recall") lines.push(`What would change this: ${next.fact}`);
   return lines;
+}
+
+// "Is it any good?" as a small widget under the verdict (POST /v1/listings/review-verdict). About quality only: it is
+// never red and never changes the safety colour. null when there is nothing to show.
+const REVIEW_TONE = { good: "good", mixed: "mixed", poor: "poor", not_enough_reviews: "none" };
+const upper = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
+export function reviewWidget(v) {
+  if (!v || !REVIEW_TONE[v.verdict]) return null;
+  const r = v.rating || {};
+  const stars = [r.average && `★ ${r.average}`, r.count && `${r.count.toLocaleString("en-IN")} rating${r.count === 1 ? "" : "s"}`].filter(Boolean).join(" · ");
+  const flag = (v.trust?.flags || [])[0];
+  return {
+    tone: REVIEW_TONE[v.verdict],
+    word: v.headline,
+    stars: [stars, v.reviews_read && `${v.reviews_read} review${v.reviews_read === 1 ? "" : "s"} read`].filter(Boolean).join(" · "),
+    liked: (v.liked || []).slice(0, 2).map((t) => upper(t.phrase)),
+    // Up to ten, most common first: the share of buyers when the reviews read allow one, else how many reviews say it
+    complaints: (v.complaints || []).slice(0, 10).map((c) => ({
+      text: upper(c.phrase),
+      sub: c.share_estimate ? `about ${Math.max(1, Math.round(100 * c.share_estimate))}% of buyers` : `${c.mentions} review${c.mentions === 1 ? "" : "s"}`,
+      // The reviews counted for it, from the API's own answer: opening a complaint shows them, no second call
+      reviews: (c.reviews || []).map((r) => ({ stars: r.rating ? "★".repeat(Math.round(r.rating)) : "", date: r.date || "", title: r.title || "", text: r.text || "" })),
+    })),
+    warning: v.trust?.may_be_inflated && flag ? `Some reviews may not be genuine: ${flag.detail}` : null,
+    note: v.verdict === "not_enough_reviews" ? "Too few ratings to judge" : v.confidence === "low" ? "Low confidence" : null,
+    reasons: v.reasons || [],
+  };
+}
+
+// "Is it possible?": is the price believable, and can the listing's technical claims be true? Two APIs, so the price
+// chart can show while the slower claims check is still running. About price and physics only: never red, and it never
+// changes the safety verdict.
+const money = (n, cur = "INR") => (n == null ? "" : `${cur === "INR" ? "₹" : `${cur} `}${Math.round(n).toLocaleString("en-IN")}`);
+const PRICE_TONE = { too_low: ["warn", "Price looks too low"], below_usual: ["warn", "Cheaper than usual"], normal: ["ok", "Price looks normal"],
+  high: ["none", "Pricier than usual"], not_enough_data: ["none", "Not enough price data"] };
+const CLAIM_TONE = { possible: ["ok", "Claims look possible"], doubtful: ["warn", "Some claims look doubtful"], not_possible: ["warn", "A claim looks impossible"], cant_tell: ["none", "Can't tell if the claims hold"] };
+const CLAIM_MARK = { possible: "check", doubtful: "warn", not_possible: "stop", cant_tell: "help" };
+const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : null);
+
+// The range chart: positions are percent of the track, which runs from 0 to 10% past the dearest price shown.
+// The question answered in one line, from the price answer and the claims answer: the worse of the two. Code only.
+const ANSWER_WORD = { not_possible: "Not possible at this price", unlikely: "Unlikely at this price", possible: "Possible at this price", cant_tell: "Can't tell if this price is possible" };
+const RANK = { not_possible: 3, unlikely: 2, cant_tell: 1, possible: 0 };
+export function possibleAnswer(price, claims) {
+  const fromPrice = price?.answer || null;
+  const bad = (claims?.claims || []).find((c) => c.result === "not_possible") || (claims?.claims || []).find((c) => c.result === "doubtful");
+  const fromClaims = bad ? { verdict: bad.result === "not_possible" ? "not_possible" : "unlikely", text: `${bad.claim}: ${bad.why}`,
+    word: bad.result === "not_possible" ? "A claim is not possible" : "A claim looks doubtful" } : null;
+  const picks = [fromPrice, fromClaims].filter(Boolean);
+  if (!picks.length) return null;
+  const top = picks.reduce((a, b) => (RANK[b.verdict] > RANK[a.verdict] ? b : a));
+  const subject = price?.answer?.subject;
+  return { tone: top.verdict === "possible" ? "ok" : top.verdict === "cant_tell" ? "none" : "warn", verdict: top.verdict,
+    word: top.word || ANSWER_WORD[top.verdict],
+    question: top === fromPrice && subject && price.listing != null ? `${money(price.listing, price.currency)} for a ${subject}` : top === fromClaims ? `"${bad.claim}"` : null,
+    text: top.text };
+}
+
+export function priceWidget(v) {
+  const tone = v && PRICE_TONE[v.verdict];
+  if (!tone) return null;
+  const cur = v.currency || "INR";
+  const top = Math.max(v.genuine_range?.high || 0, v.listing_price || 0, ...(v.comparables || []).map((c) => c.price)) * 1.1;
+  const at = (n) => (top > 0 && n != null ? Math.min(100, Math.max(0, (100 * n) / top)) : null);
+  const range = v.genuine_range;
+  return {
+    tone: tone[0], word: v.headline || tone[1], answer: v.answer || null, listing: v.listing_price ?? null, currency: cur,
+    line: v.listing_price != null
+      ? `${money(v.listing_price, cur)}${range ? ` · genuine ${v.category || "products"}: ${money(range.low, cur)} – ${money(range.high, cur)}` : ""}`
+      : "No price found on this page",
+    chart: range ? { band: [at(range.low), at(range.high)], median: at(range.median), dot: at(v.listing_price),
+      label: `This listing ${money(v.listing_price, cur)}; genuine range ${money(range.low, cur)} to ${money(range.high, cur)}` } : null,
+    // Price against the technology: a design cannot be sold below what it costs to build
+    value: v.value ? { tone: { too_cheap_for_tech: "warn", cheap_for_tech: "warn", fair: "ok", pricey_for_tech: "none" }[v.value.verdict] || "none",
+      text: v.value.text, word: { too_cheap_for_tech: "Too cheap for the technology it claims", cheap_for_tech: "Cheap for the technology", fair: "Fair for the technology", pricey_for_tech: "Pricey for the technology" }[v.value.verdict] || "" } : null,
+    comparables: (v.comparables || []).slice(0, 6).map((c) => ({ text: `${c.name} · ${money(c.price, cur)}`, url: safeUrl(c.source_url), source: c.source || "" })),
+    reasons: v.reasons || [],
+  };
+}
+
+export function claimsWidget(v) {
+  const tone = v && CLAIM_TONE[v.verdict];
+  if (!tone) return null;
+  return {
+    verdict: v.verdict, tone: tone[0], word: v.headline || tone[1],
+    claims: (v.claims || []).map((c) => ({ result: c.result, claim: c.claim, mark: CLAIM_MARK[c.result] || "help", text: c.claim, why: c.why, basis: c.basis,
+      sources: (c.sources || []).filter((x) => safeUrl(x.url)).map((x) => ({ title: x.title || x.url, url: x.url })) })),
+    // The same pages back every cited claim, so they are listed once under the claims, not under each one
+    sources: [...new Map((v.claims || []).flatMap((c) => c.sources || []).filter((x) => safeUrl(x.url)).map((x) => [x.url, { title: x.title || x.url, url: x.url }])).values()].slice(0, 4),
+    reasons: v.reasons || [],
+  };
+}
+
+// The technology first: can what the listing claims exist at all? Only if it can is the price looked up (so an impossible
+// technology costs nothing more and shows no price). Two calls, one after the other, so the technology shows first.
+// demo: a local API's sample answers, labelled as such; any other API's sample answers are rejected.
+const localApi = () => /\/\/(localhost|127\.0\.0\.1)/.test(API_BASE);
+const askPossible = (path, listing) => api(path, { method: "POST", body: JSON.stringify(listing) }, API_BASE, localApi());
+
+export async function techCheck(listing) {
+  const { body, source } = await askPossible("/v1/listings/claims-check", listing);
+  const claims = claimsWidget(body);
+  return { claims, answer: possibleAnswer(null, claims), demo: source === "mock" };
+}
+
+// claims: the technology result from techCheck, so the answer can weigh both (a doubtful claim lowers a fine price)
+export async function priceCheck(listing, claims = null) {
+  const { body, source } = await askPossible("/v1/listings/price-benchmark", listing);
+  const price = priceWidget(body);
+  return { price, answer: possibleAnswer(price, claims), demo: source === "mock" };
+}
+
+// Remembered per page for 10 minutes, like the check. A mock answer is rejected by api(), so no example is ever shown.
+const verdicts = new Map();
+export function reviewSummary(listing) {
+  const hit = verdicts.get(listing.url);
+  if (hit && Date.now() - hit.at < 10 * 60 * 1000) return hit.promise;
+  const promise = api("/v1/listings/review-verdict", { method: "POST", body: JSON.stringify(listing) }).then(({ body }) => reviewWidget(body));
+  verdicts.set(listing.url, { at: Date.now(), promise });
+  promise.catch(() => verdicts.delete(listing.url)); // never remember a failure
+  return promise;
 }
 
 // One check per page at a time, remembered for 10 minutes: Check, Save and Ask all need it, and the real engine is slow.

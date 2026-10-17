@@ -1,0 +1,90 @@
+{
+  "listing_url": "https://www.amazon.in/dp/B0EXAMPLE1",
+  "verdict": "mixed",
+  "headline": "Mixed reviews",
+  "confidence": "medium",
+  "rating": {
+    "average": 4.1,
+    "count": 3412,
+    "positive_share": 0.76,
+    "source": "page_summary"
+  },
+  "reviews_read": 38,
+  "reviews_labelled": 38,
+  "liked": [
+    {
+      "aspect": "performance",
+      "phrase": "charges fast",
+      "mentions": 9,
+      "share_estimate": 0.41,
+      "evidence_ids": [
+        "EV-301",
+        "EV-302"
+      ]
+    },
+    {
+      "aspect": "value",
+      "phrase": "good value",
+      "mentions": 6,
+      "share_estimate": 0.28,
+      "evidence_ids": [
+        "EV-303"
+      ]
+    }
+  ],
+  "complaints": [
+    {
+      "aspect": "durability",
+      "phrase": "stopped working after 2 months",
+      "mentions": 11,
+      "share_estimate": 0.12,
+      "evidence_ids": [
+        "EV-311",
+        "EV-312",
+        "EV-313"
+      ],
+      "quote": "Worked well at first but died after 8 weeks. Replacement did the same.",
+      "reviews": [
+        {
+          "rating": 1,
+          "date": "2026-09-02",
+          "title": "Died after 8 weeks",
+          "text": "Worked well at first but died after 8 weeks. Replacement did the same."
+        },
+        {
+          "rating": 2,
+          "date": "2026-08-21",
+          "title": null,
+          "text": "Stopped charging after two months. Support asked me to ship it back."
+        }
+      ]
+    },
+    {
+      "aspect": "size_fit",
+      "phrase": "cable too short",
+      "mentions": 3,
+      "share_estimate": 0.03,
+      "evidence_ids": [
+        "EV-314"
+      ],
+      "quote": "Good charger, cable is too short for my desk.",
+      "reviews": [
+        {
+          "rating": 3,
+          "date": "2026-09-10",
+          "title": "Good charger",
+          "text": "Good charger, cable is too short for my desk."
+        }
+      ]
+    }
+  ],
+  "trust": {
+    "may_be_inflated": false,
+    "flags": []
+  },
+  "reasons": [
+    "76% of 3,412 ratings are 4 or 5 stars, but about 12% of buyers hit \"stopped working after 2 months\""
+  ],
+  "policy_version": "review-verdict-v1",
+  "label": "AI summary of buyer reviews - about quality, not safety"
+}

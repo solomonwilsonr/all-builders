@@ -157,6 +157,68 @@ paths:
       responses:
         '200': {description: Safety from the listing alone, content: {application/json: {schema: {$ref: '#/components/schemas/ListingSafety'}}}}
 
+  /v1/listings/review-verdict:
+    post:
+      summary: '"Is it any good?" from buyer reviews: the page''s star summary, what buyers liked and complained about (Gemini labels, shared with the safety check), signs of inflated reviews; code sets the verdict. About quality, never safety: it does not change the safety colour'
+      operationId: listingReviewVerdict
+      x-mock: review_verdict.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - {$ref: '#/components/schemas/ListingInput'}
+                - type: object
+                  properties:
+                    reviews:
+                      type: array
+                      description: The reviews read in the shopper's browser (critical ones first; at most 60 are used; no reviewer names)
+                      items:
+                        type: object
+                        required: [text]
+                        properties:
+                          title: {type: string}
+                          text: {type: string}
+                          rating: {type: number}
+                          date: {type: string, format: date}
+                          verified_purchase: {type: boolean}
+                    rating_summary:
+                      type: object
+                      description: The page's star summary, covering every rating, not only the reviews read
+                      properties:
+                        average: {type: number, description: e.g. 4.1 (out of 5)}
+                        count: {type: integer, description: number of ratings}
+                        distribution: {type: object, description: 'percent of ratings per star, keys "5" to "1"; used only when all five add up to about 100'}
+      responses:
+        '200': {description: What buyers say, content: {application/json: {schema: {$ref: '#/components/schemas/ReviewVerdict'}}}}
+
+  /v1/listings/price-benchmark:
+    post:
+      summary: '"Is it possible?" part 1: what genuine versions and comparable genuine products cost, and where this listing''s price sits (range chart data). Alerts only with at least 3 reference prices; code sets the verdict'
+      operationId: listingPriceBenchmark
+      x-mock: price_benchmark.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ListingInput'}
+      responses:
+        '200': {description: Price against genuine products, content: {application/json: {schema: {$ref: '#/components/schemas/PriceBenchmark'}}}}
+
+  /v1/listings/claims-check:
+    post:
+      summary: '"Is it possible?" part 2: are the listing''s technical claims possible? Physical-limit rules in code first; a cited-source check for gadgets the rules do not cover. Without citations the answer is cant_tell'
+      operationId: listingClaimsCheck
+      x-mock: claims_check.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ListingInput'}
+      responses:
+        '200': {description: Whether the claims hold up, content: {application/json: {schema: {$ref: '#/components/schemas/ClaimsCheck'}}}}
+
   /v1/reports:
     post:
       summary: Submit a consumer or analyst report (personal details are masked)
@@ -958,6 +1020,130 @@ components:
         ai_findings: {type: array, items: {type: object}}
         reviews_checked: {type: integer, description: Reviews from this page read so far (this visit and earlier ones)}
         label: {type: string}
+
+    ReviewTheme:
+      type: object
+      required: [aspect, phrase, mentions]
+      properties:
+        aspect: {type: string, enum: [build_quality, durability, performance, value, as_described, size_fit, ease_of_use, delivery_packaging, seller_service, other]}
+        phrase: {type: string, description: 'The most common wording, e.g. "stopped working after 2 months"'}
+        mentions: {type: integer, description: Reviews read that mention it}
+        share_estimate: {type: [number, 'null'], description: 'Estimated share of all buyers (0-1), weighted by the star summary; null when too few reviews were read'}
+        evidence_ids: {type: array, items: {type: string}}
+        quote: {type: string, description: complaints only - a buyer's own words}
+        reviews:
+          type: array
+          description: Complaints only - every review counted for it (lowest stars first), so a screen can show them without another call
+          items:
+            type: object
+            properties:
+              rating: {type: [number, 'null']}
+              date: {type: [string, 'null']}
+              title: {type: [string, 'null']}
+              text: {type: string}
+
+    ReviewVerdict:
+      type: object
+      required: [verdict, headline, confidence, rating, reviews_read, liked, complaints, trust, reasons, label]
+      properties:
+        listing_url: {type: [string, 'null']}
+        verdict: {type: string, enum: [good, mixed, poor, not_enough_reviews], description: 'good = at least 75% 4-5 stars and no complaint from about 1 buyer in 10; mixed = a complaint from about 1 buyer in 10 or more (only when at least 15 unhappy reviews were read); poor = under 55% 4-5 stars or an average under 3.5 (the stars alone decide poor); fewer than 30 ratings = not_enough_reviews'}
+        headline: {type: string}
+        confidence: {type: string, enum: [high, medium, low]}
+        rating:
+          type: object
+          properties:
+            average: {type: [number, 'null']}
+            count: {type: [integer, 'null']}
+            positive_share: {type: [number, 'null'], description: share of 4-5 star ratings}
+            source: {type: string, enum: [page_summary, reviews_read, none]}
+        reviews_read: {type: integer}
+        reviews_labelled: {type: integer}
+        liked: {type: array, items: {$ref: '#/components/schemas/ReviewTheme'}}
+        complaints: {type: array, items: {$ref: '#/components/schemas/ReviewTheme'}}
+        trust:
+          type: object
+          properties:
+            may_be_inflated: {type: boolean}
+            flags: {type: array, items: {type: object, properties: {kind: {type: string, enum: [same_day_burst, repeated_text, few_verified]}, detail: {type: string}}}}
+        reasons: {type: array, items: {type: string}, description: The code rules behind the verdict, in plain words}
+        policy_version: {type: string}
+        label: {type: string}
+
+    PriceBenchmark:
+      type: object
+      required: [verdict, listing_price, currency, reasons, label]
+      properties:
+        verdict: {type: string, enum: [too_low, below_usual, normal, high, not_enough_data], description: 'too_low = under 40% of the lowest credible genuine price; below_usual = under 70% of the median; high = over 150% of the highest. Needs at least 3 reference prices, else not_enough_data'}
+        headline: {type: string}
+        listing_price: {type: [number, 'null']}
+        currency: {type: string}
+        mrp: {type: [number, 'null'], description: The list price (M.R.P.) the page shows}
+        category: {type: [string, 'null'], description: 'What was compared, e.g. "60W USB-C chargers"'}
+        specs: {type: object, description: 'Specs read from the listing, e.g. {power_watts: 60}', additionalProperties: {type: [number, string]}}
+        genuine_range:
+          type: [object, 'null']
+          properties: {low: {type: number}, median: {type: number}, high: {type: number}}
+        position: {type: [number, 'null'], description: 'This listing''s price as a share of the genuine median (0.17 = 17%)'}
+        answer:
+          type: object
+          description: 'The shopper''s question answered in one sentence: is this product possible at this price? not_possible = under 40% of the cheapest genuine price (or too cheap for the technology claimed); unlikely = below every genuine one found; possible = otherwise; cant_tell = not enough reference prices'
+          required: [verdict, text]
+          properties:
+            verdict: {type: string, enum: [not_possible, unlikely, possible, cant_tell]}
+            subject: {type: [string, 'null'], description: 'e.g. "33W charger"'}
+            text: {type: string}
+        value:
+          type: [object, 'null']
+          description: 'Price against the technology: price per watt (or per 1,000mAh) compared with genuine products that have the same technology (GaN, PD/PPS). null when the size is unknown or fewer than 3 products can be compared'
+          properties:
+            verdict: {type: string, enum: [too_cheap_for_tech, cheap_for_tech, fair, pricey_for_tech], description: 'too_cheap_for_tech = under 40% of the lowest genuine price per unit: the technology cannot be sold that cheap (also makes the price verdict too_low)'}
+            unit: {type: string}
+            per_unit: {type: object, properties: {listing: {type: number}, low: {type: number}, median: {type: number}, high: {type: number}}}
+            features: {type: array, items: {type: string, enum: [gan, pd, multiport]}}
+            compared_with_same_technology: {type: boolean}
+            text: {type: string}
+        comparables:
+          type: array
+          description: The reference prices behind the range, cheapest first
+          items:
+            type: object
+            required: [name, price]
+            properties:
+              name: {type: string}
+              brand: {type: [string, 'null']}
+              price: {type: number}
+              kind: {type: string, enum: [same_model, comparable]}
+              source: {type: [string, 'null']}
+              source_url: {type: [string, 'null']}
+              seen: {type: [string, 'null'], format: date}
+        reasons: {type: array, items: {type: string}}
+        basis: {type: string, enum: [curated_brands, similar_specs], description: 'curated_brands = compared with brands shoppers in the market buy, at the same size; similar_specs = a product with no curated category, compared with similar products found online'}
+        policy_version: {type: string}
+        label: {type: string}
+
+    ClaimResult:
+      type: object
+      required: [claim, result, why, basis]
+      properties:
+        claim: {type: string, description: 'The claim as the listing makes it, e.g. "60W output"'}
+        result: {type: string, enum: [possible, doubtful, not_possible, cant_tell]}
+        why: {type: string}
+        basis: {type: string, enum: [rule, cited_source, none], description: 'rule = a physical limit checked in code; cited_source = sources found online; none = could not be checked'}
+        sources: {type: array, items: {type: object, properties: {title: {type: string}, url: {type: string}}}}
+
+    ClaimsCheck:
+      type: object
+      required: [verdict, headline, claims, reasons, label]
+      properties:
+        verdict: {type: string, enum: [possible, doubtful, not_possible, cant_tell]}
+        headline: {type: string}
+        category: {type: [string, 'null']}
+        claims: {type: array, items: {$ref: '#/components/schemas/ClaimResult'}}
+        reasons: {type: array, items: {type: string}}
+        policy_version: {type: string}
+        label: {type: string}
+        checked_on: {type: string, format: date}
 
     TrustCheck:
       type: object

@@ -19,7 +19,7 @@ RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_
 # The webhook signing key (secret webhook-key); empty = POST /v1/webhooks answers 503 "not configured".
 WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web \
+.PHONY: test-extension agents demo-pages api api-real test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
 	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery
 
@@ -44,7 +44,13 @@ demo-pages:     ## serve the demo shop pages on :8090 (chat test console: http:/
 	cd extension/demo && python3 -m http.server 8090
 
 api:            ## run the API locally on :8080 (MOCK=1 by default)
-	cd api && MOCK=$${MOCK:-1} PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --port 8080
+	cd api && MOCK=$${MOCK:-1} PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --reload-dir . --reload-dir ../engine --port 8080
+
+api-real:       ## the API on :8080 with the real engine, nothing deployed: Gemini on Vertex AI + the live Cloud SQL through cloud-sql-proxy. Needs `gcloud auth application-default login`; costs Gemini credit; writes go to the live data
+	@cloud-sql-proxy --port 5433 $(SQL_INSTANCE) & proxy=$$!; trap "kill $$proxy" EXIT INT TERM; sleep 3; \
+	export GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT) DATABASE_URL="host=127.0.0.1 port=5433 dbname=safeshelf user=safeshelf"; \
+	export PGPASSWORD="$$(gcloud secrets versions access latest --secret safeshelf-db-password --project $(GCP_PROJECT))"; \
+	cd api && MOCK=0 PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --reload-dir . --reload-dir ../engine --port 8080
 
 test:           ## contract tests: every endpoint has a mock and is served
 	cd api && uv run --python 3.12 pytest -q
@@ -63,7 +69,7 @@ load-data:      ## CPSC + JAPAC recalls (OECD GlobalRecalls) + India (CCPA, BIS)
 
 deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for example answers only)
 	rm -rf .build && mkdir -p .build && cp -R api engine contracts .build/ && mkdir -p .build/data && \
-		cp data/bis_mock.json data/authorised_sellers.json data/demo_domains.json data/source_registry_japac.yaml .build/data/ && \
+		cp data/bis_mock.json data/authorised_sellers.json data/demo_domains.json data/regional_brands.json data/physical_limits.json data/source_registry_japac.yaml .build/data/ && \
 		mkdir -p .build/bench/runs && cp bench/results.json .build/bench/ && \
 		(cp bench/runs/*.json .build/bench/runs/ 2>/dev/null || true) && (cp bench/evidence_results.json .build/bench/ 2>/dev/null || true) && \
 		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile

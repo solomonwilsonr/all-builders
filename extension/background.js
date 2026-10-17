@@ -1,5 +1,5 @@
 import { identity, requireAdmin, adminStatus } from "./rbac.js";
-import { runCheck, saveToShelf, askAgent, getEvidence, agentSession, agentStream } from "./check.js";
+import { runCheck, reviewSummary, techCheck, priceCheck, saveToShelf, askAgent, getEvidence, agentSession, agentStream } from "./check.js";
 import { API_BASE, SHELF_SYNC } from "./config.js";
 import { callOp, opsStatus } from "./ops.js";
 import { acceptSession, account, openSignIn, signOut, SIGNIN_ORIGINS } from "./session.js";
@@ -27,6 +27,9 @@ async function rememberLocally(item, meta) {
 chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
   const jobs = {
     "safeshelf:check": async () => { await mustBeOn(); return runCheck(msg.page, Boolean(msg.fresh)); },
+    "safeshelf:reviews": async () => { await mustBeOn(); return reviewSummary(msg.listing); }, // "Is it any good?" widget
+    "safeshelf:tech": async () => { await mustBeOn(); return techCheck(msg.listing); }, // "Is it possible?": the technology first
+    "safeshelf:price": async () => { await mustBeOn(); return priceCheck(msg.listing, msg.claims || null); }, // then the price, if the technology can exist
     "safeshelf:cost-info": async () => ({ mockApi: /\/\/(localhost|127\.0\.0\.1)/.test(API_BASE) }), // TEMP cost guard
     "safeshelf:call": async () => { await mustBeOn(); if (["catalogScan", "bench"].includes(msg.op) || _sender.url === chrome.runtime.getURL("lab.html")) await requireAdmin(); return callOp(msg.op, msg.args || {}); }, // any API operation, only if it is live
     "safeshelf:status": async () => opsStatus(),
