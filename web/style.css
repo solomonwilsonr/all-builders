@@ -234,14 +234,103 @@ button.ext:hover, button.ext.on { background-color: var(--blue-pale); box-shadow
 .pick p { margin: 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; }
 .pick ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
 .pick ul li:has(#remote-left:empty) { display: none; }
-/* a preview of what each choice opens, before choosing: a short recording of the real extension (web/media/, made from
-   the recorded sample answers in web/samples/, so no live checks were spent); the poster is its last frame */
-.pv { position: relative; margin: -8px -8px 6px; border-radius: 10px; overflow: hidden; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); aspect-ratio: 840 / 470; }
-.pv video { display: block; width: 100%; height: 100%; object-fit: cover; }
-.pv-cap { position: absolute; left: 10px; bottom: 10px; display: flex; align-items: center; gap: 6px; max-width: calc(100% - 20px); font-size: 11.5px; padding: 3px 10px; border-radius: 99px; background: rgba(255, 255, 255, .92); color: var(--ink-2); box-shadow: 0 2px 8px rgba(0, 17, 35, .12); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pv-cap i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pv-pulse 1.6s ease-in-out infinite; }
-@keyframes pv-pulse { 50% { opacity: .35; } }
-@media (prefers-reduced-motion: reduce) { .pv-cap i { animation: none; } }
+/* A motion-graphics preview of what each choice opens, in the site theme: a pixel-dither scene (site/assets) behind
+   floating product UI. Sized in em off the card's width (1em = 1/46 of it), so the whole scene scales like a picture.
+   Real browser (9 s loop): the cursor presses the SafeShelf shield, the panel opens, three checks tick, the answer lands.
+   Test pages (10 s loop): four of the seven test pages slide through, each stamped with its known answer. */
+.pv { position: relative; margin: -8px -8px 6px; border-radius: 10px; overflow: hidden; aspect-ratio: 46 / 27; container-type: inline-size; }
+.pv-s { position: absolute; inset: 0; font-size: calc(100cqw / 46); line-height: 1.3; color: var(--ink); background: center / cover no-repeat; image-rendering: pixelated; animation: pv-pan 18s ease-in-out infinite alternate; }
+.pv-real .pv-s { background-image: url(site/assets/sky.png); }
+.pv-test .pv-s { background-image: url(site/assets/field.png); }
+.pv-s > *, .pv-s svg { image-rendering: auto; }
+@keyframes pv-pan { from { background-position: 35% 40%; } to { background-position: 65% 60%; } }
+.pv-win, .pv-card { background: #fff; border-radius: .9em; overflow: hidden; }
+.pv-win { position: absolute; left: 2em; top: 3em; width: 26em; height: 26em; box-shadow: 0 1.4em 3em rgba(0, 17, 35, .25); animation: pv-bob 6s ease-in-out infinite alternate; }
+@keyframes pv-bob { to { transform: translateY(-.4em); } }
+.pv-bar { display: flex; align-items: center; gap: .9em; height: 2.6em; padding: 0 1em; background: var(--soft); border-bottom: 1px solid var(--line); }
+.pv-lights { display: flex; gap: .35em; } .pv-lights i { width: .7em; height: .7em; border-radius: 50%; background: #ff5f57; } .pv-lights i:nth-child(2) { background: #febc2e; } .pv-lights i:nth-child(3) { background: #28c840; }
+.pv-url { flex: 1; max-width: 17em; padding: .2em .9em; border-radius: 99px; background: #fff; font: .95em var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-n { margin-left: auto; font-size: .9em; color: var(--muted); }
+.pv-shop { display: flex; gap: 1.2em; padding: 1.4em; }
+.pv-thumb { flex: none; display: grid; place-items: center; width: 8.5em; height: 8.5em; border-radius: .6em; background: var(--soft); } .pv-thumb svg { width: 5em; height: 5em; }
+.pv-info { display: grid; align-content: start; gap: .45em; min-width: 0; }
+.pv-info b { font: 500 1.25em/1.2 var(--display); letter-spacing: -.02em; }
+.pv-price { font-size: 1.5em; font-weight: 600; }
+.pv-btns { display: flex; gap: .4em; } .pv-btns i { font-style: normal; font-size: .85em; padding: .35em .9em; border-radius: 99px; background: #ffd814; } .pv-btns i + i { background: #ffa41c; }
+.pv-rail { position: absolute; right: .7em; top: 4em; display: grid; gap: .5em; padding: .5em; border-radius: .8em; background: #fff; box-shadow: 0 .4em 1.2em rgba(0, 17, 35, .14); }
+.pv-rail i { position: relative; display: grid; place-items: center; width: 2.3em; height: 2.3em; border-radius: .55em; background: var(--soft); }
+.pv-rail i:not(.pv-shield)::before { content: ""; width: 1em; height: 1em; border-radius: .25em; box-shadow: inset 0 0 0 .14em var(--ink-2); opacity: .7; }
+.pv-shield svg { width: 1.35em; height: 1.35em; }
+.pv-panel { position: absolute; left: 28.6em; top: 4.2em; width: 15.6em; padding: 1em 1.1em 1.2em; border-radius: .9em; border-top: .35em solid var(--red); background: #fff; box-shadow: 0 1.6em 3.6em rgba(0, 17, 35, .3); }
+.pv-brand { display: flex; align-items: center; gap: .4em; font: 600 1.05em var(--display); letter-spacing: -.02em; } .pv-brand svg { width: 1.3em; height: 1.3em; }
+.pv-stage { display: grid; min-height: 9.6em; } .pv-stage > * { grid-area: 1 / 1; }
+.pv-steps { display: flex; flex-direction: column; align-content: start; gap: .65em; margin: .9em 0 0; padding: 0; list-style: none; opacity: 0; }
+.pv-steps::after, .pv-steps::before { content: ""; order: 9; height: .55em; border-radius: 99px; background: linear-gradient(90deg, var(--soft) 25%, var(--blue-pale) 50%, var(--soft) 75%) 0 0 / 200% 100%; animation: pv-shimmer 1.2s linear infinite; }
+.pv-steps::before { margin-top: .5em; } .pv-steps::after { width: 70%; }
+.pv-steps li { display: flex; align-items: center; gap: .55em; font-size: 1em; color: var(--ink-2); }
+.pv-steps li::before { content: ""; flex: none; width: 1.2em; height: 1.2em; border-radius: 50%; background: var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m3 6.2 2 2 4-4.4' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
+.pv-hero { align-self: start; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0 .7em; margin-top: .9em; padding: .9em; border-radius: .7em; background: var(--red-bg); }
+.pv-x { display: grid; place-items: center; width: 2.6em; height: 2.6em; border-radius: .55em; background: #fff; box-shadow: 0 .2em .6em rgba(0, 17, 35, .08); }
+.pv-x svg { width: 1.5em; height: 1.5em; fill: none; stroke: var(--red); stroke-width: 2; stroke-linecap: round; }
+.pv-hero b { font: 600 1.5em/1.1 var(--display); letter-spacing: -.03em; color: var(--red); }
+.pv-hero p { grid-column: 1 / -1; margin: .55em 0 0; font-size: .92em; line-height: 1.4; color: var(--ink-2); }
+.pv-pill { position: absolute; left: 1.2em; bottom: 1.6em; display: flex; align-items: center; gap: .5em; padding: .45em 1em; border-radius: 99px; background: #fff; font-size: 1em; color: var(--ink-2); box-shadow: 0 .5em 1.4em rgba(0, 17, 35, .18); white-space: nowrap; }
+.pv-pill i { width: .6em; height: .6em; border-radius: 50%; background: var(--red); }
+.pv-test .pv-pill { left: 50%; bottom: 1.2em; transform: translateX(-50%); } .pv-test .pv-pill i { background: #3bbf63; }
+.pv-cursor { position: absolute; left: 25.6em; top: 17em; width: 1.4em; height: 1.75em; opacity: 0; filter: drop-shadow(0 .15em .25em rgba(0, 17, 35, .35)); }
+.pv-ripple { position: absolute; left: 25.65em; top: 17.05em; width: 3.2em; height: 3.2em; margin: -1.6em 0 0 -1.6em; border-radius: 50%; box-shadow: 0 0 0 .2em var(--blue); opacity: 0; }
+
+.pv-real .pv-cursor { animation: pv-cursor 9s cubic-bezier(.5, 0, .25, 1) infinite; }
+.pv-real .pv-ripple { animation: pv-ripple 9s ease-out infinite; }
+.pv-real .pv-shield { animation: pv-shield 9s ease infinite; }
+.pv-real .pv-panel { animation: pv-panel 9s cubic-bezier(.2, .9, .25, 1) infinite; }
+.pv-real .pv-steps { animation: pv-steps 9s ease infinite; }
+.pv-real .pv-steps li { animation: pv-step 9s ease infinite backwards; }
+.pv-real .pv-steps li::before { animation: pv-tick 9s ease infinite backwards; }
+.pv-real .pv-steps li:nth-child(2), .pv-real .pv-steps li:nth-child(2)::before { animation-delay: .55s; }
+.pv-real .pv-steps li:nth-child(3), .pv-real .pv-steps li:nth-child(3)::before { animation-delay: 1.1s; }
+.pv-real .pv-hero { animation: pv-hero 9s cubic-bezier(.2, .9, .25, 1) infinite; }
+.pv-real .pv-x { animation: pv-x 9s ease infinite; }
+.pv-real .pv-hero p { animation: pv-fade 9s ease infinite; }
+.pv-real .pv-pill { animation: pv-pill 9s cubic-bezier(.2, .9, .25, 1) infinite; }
+@keyframes pv-cursor { 0% { opacity: 0; left: 16em; top: 24em; } 6% { opacity: 1; left: 16em; top: 24em; } 19% { left: 25.6em; top: 17em; transform: none; } 21% { transform: scale(.8); } 24% { opacity: 1; transform: none; } 32%, 100% { opacity: 0; left: 23em; top: 21em; } }
+@keyframes pv-ripple { 0%, 20% { opacity: 0; transform: scale(.6); } 21% { opacity: .8; transform: scale(.8); } 32%, 100% { opacity: 0; transform: scale(2.2); } }
+@keyframes pv-shield { 0%, 21%, 98%, 100% { box-shadow: none; background: var(--soft); } 24%, 54% { box-shadow: 0 0 0 .2em var(--blue); background: var(--blue-pale); } 39% { box-shadow: 0 0 0 .35em rgba(2, 113, 228, .35); } 60%, 94% { box-shadow: 0 0 0 .2em var(--red); background: var(--red-bg); } }
+@keyframes pv-panel { 0%, 23% { opacity: 0; transform: translate(-2em, .4em) scale(.9); border-top-color: var(--blue); } 30%, 56% { opacity: 1; transform: none; border-top-color: var(--blue); } 60%, 92% { opacity: 1; transform: none; border-top-color: var(--red); } 97%, 100% { opacity: 0; transform: translate(-1em, 0) scale(.96); border-top-color: var(--red); } }
+@keyframes pv-steps { 0%, 55% { opacity: 1; transform: none; } 58%, 100% { opacity: 0; transform: translateY(-.5em); } }
+@keyframes pv-step { 0%, 34% { opacity: .35; } 37%, 100% { opacity: 1; } }
+@keyframes pv-tick { 0%, 34% { transform: scale(0); } 37% { transform: scale(1.25); } 40%, 100% { transform: none; } }
+@keyframes pv-hero { 0%, 57% { opacity: 0; transform: translateY(.8em) scale(.97); } 61%, 100% { opacity: 1; transform: none; } }
+@keyframes pv-x { 0%, 59% { transform: scale(.4) rotate(-25deg); } 63% { transform: scale(1.15); } 66%, 100% { transform: none; } }
+@keyframes pv-fade { 0%, 62% { opacity: 0; } 67%, 100% { opacity: 1; } }
+@keyframes pv-pill { 0%, 64% { opacity: 0; transform: translateY(1em); } 69%, 92% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: translateY(.4em); } }
+
+.pv-deck { position: absolute; left: 50%; top: 2.6em; width: 27em; height: 16.6em; margin-left: -13.5em; }
+.pv-ghost { position: absolute; inset: 0; border-radius: .9em; background: rgba(255, 255, 255, .55); box-shadow: 0 .6em 1.6em rgba(0, 17, 35, .1); }
+.pv-ghost.g1 { transform: translateY(1em) scale(.94); } .pv-ghost.g2 { transform: translateY(2em) scale(.88); background: rgba(255, 255, 255, .35); }
+.pv-card { position: absolute; inset: 0; box-shadow: 0 1.4em 3em rgba(0, 17, 35, .25); }
+.pv-card .pv-shop { padding: 1.2em 1.3em; } .pv-card .pv-thumb { width: 6.4em; height: 6.4em; } .pv-card .pv-thumb svg { width: 4em; height: 4em; } .pv-card .pv-info b { font-size: 1.2em; }
+.pv-ans { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: .1em .7em; margin: 0 1.3em; padding: .8em .9em; border-radius: .7em; background: var(--unknown-bg); }
+.pv-ans.red { background: var(--red-bg); } .pv-ans.amber { background: var(--amber-bg); } .pv-ans.green { background: var(--green-bg); }
+.pv-mark { grid-row: span 2; display: grid; place-items: center; width: 2.4em; height: 2.4em; border-radius: .55em; background: #fff; } .pv-mark svg { width: 1.5em; height: 1.5em; }
+.pv-ans b { font: 600 1.3em/1.1 var(--display); letter-spacing: -.02em; }
+.pv-ans.red b { color: var(--red); } .pv-ans.amber b { color: var(--amber); } .pv-ans.green b { color: var(--green); }
+.pv-ans small { font-size: .9em; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-scan { position: absolute; inset: 0; z-index: 1; border-radius: inherit; opacity: 0; background: linear-gradient(90deg, var(--soft) 25%, var(--blue-pale) 50%, var(--soft) 75%) 0 0 / 200% 100%; }
+.pv-test .pv-card { animation: pv-card 10s cubic-bezier(.3, .8, .3, 1) infinite var(--d, 0s); }
+.pv-test .pv-scan { animation: pv-scan 10s linear infinite var(--d, 0s), pv-shimmer 1.2s linear infinite; }
+.pv-test .pv-ans b, .pv-test .pv-mark { animation: pv-stamp 10s ease infinite var(--d, 0s); }
+.pv-card:nth-of-type(2) { --d: -7.5s; } .pv-card:nth-of-type(3) { --d: -5s; } .pv-card:nth-of-type(4) { --d: -2.5s; }
+.pv-test .pv-pill { animation: pv-float 4s ease-in-out infinite alternate; }
+@keyframes pv-card { 0% { opacity: 0; transform: translateX(5em) rotate(5deg) scale(.92); } 3.5%, 22% { opacity: 1; transform: none; } 25.5%, 100% { opacity: 0; transform: translateX(-5em) rotate(-5deg) scale(.92); } }
+@keyframes pv-scan { 0%, 9% { opacity: 1; } 11%, 100% { opacity: 0; } }
+@keyframes pv-shimmer { to { background-position: -200% 0; } }
+@keyframes pv-stamp { 0%, 10% { opacity: 0; transform: scale(.6); } 12.5% { opacity: 1; transform: scale(1.12); } 14.5%, 100% { opacity: 1; transform: none; } }
+@keyframes pv-float { to { transform: translate(-50%, -.35em); } }
+@media (prefers-reduced-motion: reduce) {
+  .pv *, .pv *::before, .pv *::after, .pv-s { animation: none !important; }
+  .pv-card:not(:nth-of-type(1)) { opacity: 0; }
+}
 .pick .jbtn { justify-self: start; margin-top: 6px; }
 .choose-msg { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--muted); }
 .choose-msg:empty { display: none; }
