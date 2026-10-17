@@ -39,9 +39,8 @@
     #log { flex:1; min-height:0; overflow:auto; padding:24px var(--gut); display:flex; flex-direction:column; gap:16px; }
     .welcome { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; }
     .hello { margin:auto 0; padding:8px 0 32px; }
-    .hello-mark { display:inline-grid; place-items:center; width:76px; height:76px; border-radius:10px; background:url(assets/sky.png) center/cover; image-rendering:pixelated; box-shadow:var(--shadow); }
-    .hello-mark span { display:grid; place-items:center; width:46px; height:46px; border-radius:10px; background:#fff; box-shadow:0 8px 18px rgba(0,17,35,.16); }
-    .hello-mark svg { width:30px; height:30px; }
+    .hello-mark { display:block; width:114px; height:150px; margin:0 auto; border-radius:22px; overflow:hidden; box-shadow:var(--shadow); }
+    .hello-mark img { display:block; width:100%; height:100%; object-fit:cover; }
     .hello .kicker { margin:22px 0 10px; }
     .hello h1 { font-size:clamp(2rem, 1.2rem + 2.8vw, 3.25rem); }
     .hello h1 span { display:block; color:var(--dim); }
@@ -58,8 +57,8 @@
 
     .row { display:flex; gap:12px; align-items:flex-start; }
     .row.user { justify-content:flex-end; }
-    .row .mark { display:grid; place-items:center; width:32px; height:32px; flex:none; margin-top:2px; border-radius:8px; background:var(--blue-pale); }
-    .row .mark svg { width:20px; height:20px; }
+    .row .mark { display:block; width:32px; height:32px; flex:none; margin-top:2px; border-radius:50%; overflow:hidden; background:var(--blue-pale); }
+    .row .mark img { display:block; width:100%; height:100%; object-fit:cover; }
     .msg { max-width:min(80%, 820px); padding:12px 16px; border-radius:10px; overflow-wrap:anywhere; }
     .user .msg { background:var(--blue); color:#fff; border-bottom-right-radius:2px; white-space:pre-wrap; }
     .bot .msg { background:#fff; box-shadow:var(--shadow); border-bottom-left-radius:2px; }
@@ -147,7 +146,7 @@
       .chat-bar { padding:10px 16px; } .about .lbl, .hint, .hello .fine, .hello .kicker { display:none; } #pick { min-width:0; flex:1; } #pick select { width:100%; }
       .status { padding:6px 9px; font-size:0; gap:0; } .status::before { margin:0; }
       #log { padding:16px; } .composer { padding:8px 16px 12px; } .msg { max-width:92%; } .row .mark { display:none; }
-      .hello { padding-bottom:20px; } .hello-mark { width:62px; height:62px; } .hello .lead { font-size:.9375rem; margin-top:12px; }
+      .hello { padding-bottom:20px; } .hello-mark { width:84px; height:110px; border-radius:18px; } .hello .lead { font-size:.9375rem; margin-top:12px; }
       .starter { min-height:0; padding:14px; } .starter b { margin-top:10px; font-size:.9375rem; }
       .tools-btn { width:42px; height:42px; } .attached { margin-left:0; } .send span { display:none; } .send { padding:0 10px; } .langpick { max-width:5.2em; }
     }
@@ -190,7 +189,7 @@
     <div id="log" role="log" aria-live="polite">
       <section class="welcome" id="welcome">
         <div class="hello">
-          <span class="hello-mark" aria-hidden="true"><span><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="hello-mark"><img src="assets/eddy.png" alt="Eddy, the SafeShelf mascot" width="114" height="150"></span>
           <p class="kicker">SafeShelf Chat · 26 JAPAC languages</p>
           <h1 class="display"><span>Hi, I'm SafeShelf</span>Is it safe? Is it real?</h1>
           <p class="lead">Paste a product link, drop a screenshot of a listing, or ask about one of the demo products. Answers come from recalls, buyer reviews and safety registries, with sources.</p>
@@ -292,8 +291,8 @@
   const PATHS = { speaker: "M4 9v6h4l5 4V5L8 9z M16 9a4 4 0 010 6 M19 6a8 8 0 010 12", copy: "M9 9h11v11H9z M5 15H4V4h11v1", refresh: "M20 11a8 8 0 10-2.3 5.7 M20 4v7h-7",
     link: "M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1 M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1", home: "M3 11l9-7 9 7 M5 10v10h14V10 M10 20v-5h4v5",
     shop: "M3 9l2-5h14l2 5z M4 9v11h16V9 M12 12v4 M12 18.5v.01", lang: "M4 5h9 M8.5 3v2 M6 5c1 4 4 7 7 8 M11 5c-1 4-4 7-7 8 M13 21l4-9 4 9 M14.5 18h5" };
-  // The shield logo, same as the website's
-  const logo = () => { const s = document.createElementNS(NS, "svg"); s.setAttribute("viewBox", "0 0 32 32"); s.innerHTML = '<path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'; return s; };
+  // Eddy, the mascot, as the bot's avatar
+  const logo = () => { const im = document.createElement("img"); im.src = "assets/eddy-face.png"; im.alt = ""; return im; };
   const icon = (name) => { const s = document.createElementNS(NS, "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true"); s.setAttribute("class", "i"); const p = document.createElementNS(NS, "path"); p.setAttribute("d", PATHS[name]); s.append(p); return s; };
   const typing = () => node("span", { className: "typing", ariaHidden: "true" }, node("i"), node("i"), node("i"));
 
