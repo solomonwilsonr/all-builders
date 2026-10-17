@@ -18,6 +18,7 @@ RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --projec
 RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 # The webhook signing key (secret webhook-key); empty = POST /v1/webhooks answers 503 "not configured".
 WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
+FIRECRAWL_SECRET ?= $(shell gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
 .PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
@@ -76,8 +77,17 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
 		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 2Gi --timeout 300 \
 		--add-cloudsql-instances $(SQL_INSTANCE) \
-		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest)$(if $(WEBHOOK_SECRET),$(comma)SAFESHELF_WEBHOOK_KEY=webhook-key:latest) \
+		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest)$(if $(WEBHOOK_SECRET),$(comma)SAFESHELF_WEBHOOK_KEY=webhook-key:latest)$(if $(FIRECRAWL_SECRET),$(comma)FIRECRAWL_API_KEY=firecrawl-key:latest) \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL),SAFESHELF_TRACE_TO_CLOUD=$(TRACE_TO_CLOUD)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
+
+firecrawl-secret: ## once: FIRECRAWL_API_KEY from .env into Secret Manager, so the judges' page browser can load full shop pages (then make deploy-api)
+	@key=$$(grep -E '^FIRECRAWL_API_KEY=' .env | head -1 | cut -d= -f2-); test -n "$$key" || { echo "FIRECRAWL_API_KEY is not in .env"; exit 1; }; \
+		if gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) >/dev/null 2>&1; then printf '%s' "$$key" | gcloud secrets versions add firecrawl-key --project $(GCP_PROJECT) --data-file=-; \
+		else printf '%s' "$$key" | gcloud secrets create firecrawl-key --project $(GCP_PROJECT) --data-file=-; fi
+	@sa=$$(gcloud run services describe safeshelf-api --project $(GCP_PROJECT) --region $(REGION) --format 'value(spec.template.spec.serviceAccountName)'); \
+		sa=$${sa:-$$(gcloud projects describe $(GCP_PROJECT) --format 'value(projectNumber)')-compute@developer.gserviceaccount.com}; \
+		gcloud secrets add-iam-policy-binding firecrawl-key --project $(GCP_PROJECT) --member serviceAccount:$$sa \
+			--role roles/secretmanager.secretAccessor >/dev/null && echo "firecrawl-key ready: now run make deploy-api"
 
 schedule-recheck: ## every 30 min: recall sites searched again for one saved first-look model (then run make deploy-api)
 	@gcloud secrets describe recheck-token --project $(GCP_PROJECT) >/dev/null 2>&1 || \

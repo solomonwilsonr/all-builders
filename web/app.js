@@ -6,7 +6,7 @@
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
 import { auth, authFetch, requireSignIn } from "./auth.js";
-import { setAddress, startClock } from "./desk.js?v=20261017g";
+import { setAddress, startClock } from "./desk.js?v=20261017h";
 
 const LIVE_PER_DAY = 10;
 
@@ -274,11 +274,18 @@ function shareWithFrame() {
     token: (fresh) => auth.currentUser.getIdToken(fresh),
     who: () => ({ email: auth.currentUser?.email || "", name: auth.currentUser?.displayName || "", role: document.documentElement.dataset.role || "shopper" }),
     quota: { left: () => quota.left(), take: () => { quota.take(); refreshQuota(); } },
+    // a real product page, read live by the API; one live run per page opened (it may use a real browser)
+    readPage: async (url) => {
+      const res = await authFetch(`${API}/v1/listings/read`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }), signal: AbortSignal.timeout(120000) });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(res.status === 404 ? "The live page reader isn't on the API yet." : typeof body.detail === "string" ? body.detail : `The API answered ${res.status}`);
+      return body;
+    },
     notice: (text) => { const n = document.getElementById("demo-note"); if (n) n.replaceChildren(el("b", { textContent: "Note" }), el("span", { textContent: text })); },
   };
 }
 const frame = () => document.getElementById("ext-frame");
-const loadFrame = (query) => { frame().src = `ext-frame.html?${query}&v=20261017g`; };
+const loadFrame = (query) => { frame().src = `ext-frame.html?${query}&v=20261017h`; };
 
 function showSample(preset, button) {
   document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", String(b === button)); b.setAttribute("aria-selected", String(b === button)); });
@@ -315,17 +322,36 @@ function setUpOmnibox() {
   const form = document.getElementById("omnibox");
   if (!form) return;
   document.getElementById("ext-toggle")?.addEventListener("click", () => frame().contentWindow?.postMessage({ type: "safeshelf:open" }, location.origin));
+  const note = (...kids) => document.getElementById("demo-note").replaceChildren(...kids);
   form.addEventListener("submit", (ev) => {
     ev.preventDefault();
     const raw = document.getElementById("omni-url").value.trim();
     if (!raw) return;
-    const url = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    let url;
+    try { url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`); } catch (_) { url = null; }
+    if (!url || !/\.[a-z]{2,}$/i.test(url.hostname)) {
+      note(el("b", { textContent: "Not a web address" }), el("span", { textContent: "Paste a product link, like https://www.amazon.in/dp/… or https://www.flipkart.com/…/p/…" }));
+      return;
+    }
+    if (!quota.left()) { note(el("b", { textContent: "Used up" }), el("span", { textContent: "Live runs are used up on this browser today. The sample tabs still work." })); return; }
+    quota.take();
+    refreshQuota();
     document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-selected", "false"); });
-    setListing({ url });
-    setAddress(url);
-    document.getElementById("demo-note").replaceChildren(el("b", { textContent: "Your link" }), el("span", { textContent: "Press Check on the page to have SafeShelf read this listing live." }),
+    setListing({ url: url.href });
+    setAddress(url.href);
+    note(el("b", { textContent: "Opening" }), el("span", { textContent: `Reading the real page at ${url.hostname}…` }), el("span", { className: "exp", "data-quota": "", textContent: quotaText() }));
+    loadFrame(`url=${encodeURIComponent(url.href)}`);
+  });
+  // how the real page was read, as the frame reports it
+  addEventListener("message", (e) => {
+    if (e.origin !== location.origin || e.data?.type !== "safeshelf:page-read") return;
+    const d = e.data;
+    const how = d.via === "browser" ? "opened by a real browser" : "read directly";
+    const text = d.read === "full" ? `The real page, ${how}. Press Check on the page's right edge.`
+      : d.read === "partial" ? `The shop showed only part of this page (${how}). Check still works on what it showed.`
+      : d.read === "none" ? "The shop didn't show this page to SafeShelf's server." : `Couldn't open the page: ${d.error}`;
+    note(el("b", { textContent: d.read === "full" ? "Live page" : d.read === "partial" ? "Part of the page" : "Not opened" }), el("span", { textContent: text }),
       el("span", { className: "exp", "data-quota": "", textContent: quotaText() }));
-    loadFrame(`url=${encodeURIComponent(url)}`);
   });
 }
 

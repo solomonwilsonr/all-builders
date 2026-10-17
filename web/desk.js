@@ -57,7 +57,8 @@ export function renderPage(box, { listing = {}, preset = null, index = 0, total 
   const store = storeOf(host);
   box.className = `store store-${store}`;
   const lines = String(listing.page_text || "").split("\n").map((l) => l.trim()).filter(Boolean);
-  const shown = lines.filter((l) => !HIDDEN.test(l));
+  // short detail lines only (Brand, Model, M.R.P.); a real page's full text still goes to the check, just not on screen
+  const shown = lines.filter((l) => !HIDDEN.test(l) && l.length <= 140).slice(0, 10);
   const hidden = lines.filter((l) => HIDDEN.test(l));
 
   const note = preset
@@ -86,12 +87,29 @@ export function renderPage(box, { listing = {}, preset = null, index = 0, total 
       el("p", { className: "s-hidden-label", textContent: "Hidden on the real page (white text on white), but read by AI:" }),
       ...hidden.map((l) => el("p", { className: "s-hidden-text", textContent: l }))) : null);
 
-  if (bare) { box.replaceChildren(head, el("div", { className: "s-main" }, productArt(listing.title), info)); return; }
+  if (bare) {
+    // a real page's own photo and buyer reviews, when the reader got them (the widget reads reviews from article.review)
+    const photo = (listing.image_urls || [])[0];
+    const art = photo ? el("div", { className: "pa pa-photo", id: "gallery" }, el("img", { src: photo, alt: listing.title || "Product photo", referrerPolicy: "no-referrer" })) : productArt(listing.title);
+    const reviews = (listing.reviews || []).filter((r) => r.text).slice(0, 12);
+    box.replaceChildren(head, el("div", { className: "s-main" }, art, info),
+      reviews.length ? el("section", { className: "s-reviews", id: "reviews" }, el("h4", { textContent: `Customer reviews (${reviews.length} shown)` }),
+        ...reviews.map((r) => el("article", { className: "review" },
+          r.rating ? el("span", { className: "stars", textContent: `${"★".repeat(Math.round(r.rating))}${"☆".repeat(5 - Math.round(r.rating))}` }) : null,
+          r.title ? el("strong", { textContent: r.title }) : null, el("p", { textContent: r.text })))) : null);
+    return;
+  }
   box.replaceChildren(note, head, el("div", { className: "s-main" }, productArt(listing.title), info),
     el("p", { className: "s-foot", textContent: preset
       ? "A demo page built from this test case's listing. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional; the recalls and registries checked are real."
       : "Only the link was sent. The API reads the product area and filters out personal details." }));
   box.scrollTop = 0;
+}
+
+// A page that could not be opened: what happened, in plain words, instead of a made-up product.
+export function renderMessage(box, title, text) {
+  box.className = "store store-s";
+  box.replaceChildren(el("div", { className: "s-msg" }, el("h3", { textContent: title }), el("p", { textContent: text })));
 }
 
 export function setAddress(url) {

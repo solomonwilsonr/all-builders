@@ -1,7 +1,7 @@
 // Starts the real SafeShelf extension on one sample listing inside the judges' page:
 // draws the shop page from the sample's listing, loads the extension's background code, then its content scripts
 // in the manifest's order, exactly as Chrome would on a product page.
-import { renderPage } from "../desk.js?v=20261017g";
+import { renderMessage, renderPage } from "../desk.js?v=20261017h";
 
 const params = new URLSearchParams(location.search);
 const box = document.getElementById("page");
@@ -14,7 +14,21 @@ async function listingToShow() {
     if (p) return { listing: p.request.listing, id };
   }
   const url = params.get("url");
-  return url ? { listing: { url }, id: "your-link" } : null;
+  if (!url) return null;
+  // a real page: read live by the API (directly, or through a real browser when the shop holds back)
+  const tell = (m) => parent.postMessage({ type: "safeshelf:page-read", ...m }, location.origin);
+  box.replaceChildren(Object.assign(document.createElement("p"), { className: "s-loading", textContent: "Opening the real page…" }));
+  let page;
+  try { page = await parent.SafeShelfDemo.readPage(url); }
+  catch (err) { tell({ read: "error", error: err.message }); renderMessage(box, "This page couldn't be opened", err.message); return null; }
+  if (page.read === "none" || !page.title) {
+    tell({ read: "none", via: page.via });
+    renderMessage(box, "This shop didn't show its page to SafeShelf", "Shops sometimes hold back pages from servers. Try another product link, or install the extension to check it in your own browser.");
+    return null;
+  }
+  tell({ read: page.read, via: page.via });
+  const { read, via, ...listing } = page;
+  return { listing, id: "your-link" };
 }
 
 const loadScript = (src) => new Promise((resolve, reject) => {
@@ -24,9 +38,7 @@ const loadScript = (src) => new Promise((resolve, reject) => {
 });
 
 const shown = await listingToShow();
-if (!shown) {
-  box.replaceChildren(Object.assign(document.createElement("p"), { className: "s-loading", textContent: "No listing to show." }));
-} else {
+if (shown) {
   globalThis.__safeshelfListing = shown.listing;
   // the widget reads this page; the canonical link and listing id are what it uses on a local demo page
   document.body.dataset.safeshelfListingId = shown.id;
