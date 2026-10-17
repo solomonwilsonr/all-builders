@@ -168,7 +168,7 @@ h3.display { font-size: clamp(1.3rem, 1.1rem + .8vw, 1.75rem); letter-spacing: -
 .thread { display: grid; gap: 10px; }
 
 /* ---------- sources row ---------- */
-.sources { padding: clamp(48px, 6vw, 80px) var(--gut) clamp(32px, 4vw, 56px); text-align: center; }
+.sources { padding: clamp(48px, 6vw, 80px) var(--gut) 0; text-align: center; }
 .sources h2 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem); margin-bottom: clamp(32px, 4vw, 56px); }
 /* logo-wall grid: hairline cells, greyed marks that sharpen on hover */
 .src { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }

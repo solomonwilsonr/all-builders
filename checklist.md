@@ -223,7 +223,7 @@ All of these go live with item 4 (`make deploy-api`); the web page with item 5.
 - [ ] **Check API auth**: during that test the live API answered trust-check and safety calls sent with a fake token ("test-token"); web/README says every call is token-checked · Solomon
 - [x] Download page `web/site/get.html` (17 Oct): mobile-app-style showcase; the live option is the web page (works on any phone), the Chrome extension and WhatsApp are marked coming soon, plus MCP for agents. No download yet: the repo is private, `main` has no `extension/`, and the extension needs `config.generated.js` built from `.env`. Phone screens are labelled illustrations. Every "Get SafeShelf" button opens this page
 - [x] Mascot "Shelly" (17 Oct): shield-shaped guardian on the logo shape; antenna light and chest badge follow the verdict (green, amber, red, grey; blue while checking). Six SVG poses in `docs/mascot/`, kept off the website
-- [x] Home page regulator row (17 Oct): now a logo wall, a heading "Checked against the public records of 10 regulators" over a hairline grid (5 across, 3 on tablet, 2 on phone); grey acronyms with the country below, darkening on hover
+- [x] Home page regulator row (17 Oct): now a logo wall, a heading "Checked against the public records of 10 regulators" over a hairline grid (5 across, 3 on tablet, 2 on phone); grey acronyms with the country below, darkening on hover. Sits right after the hero, before the product tour
 
 ---
 
