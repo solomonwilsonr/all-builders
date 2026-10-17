@@ -7,72 +7,424 @@
   <meta name="description" content="SafeShelf checks a shopping listing for recalls, fake shops, copied photos and safety risks before you buy, with the evidence for every line.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="base.css">
-  <link rel="stylesheet" href="pages.css">
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-  <header class="site-header">
-    <nav class="nav shell" aria-label="Primary navigation">
-      <a class="brand" href="index.html" aria-label="SafeShelf home"><span class="brand-mark">S</span><span>Safe<span>Shelf</span></span></a>
-      <div class="nav-links"><a href="index.html" aria-current="page">Home</a><a href="how.html">How it works</a><a href="agents.html">For agents</a><a href="results.html">Results</a><a href="team.html">Team</a></div>
-      <div class="nav-actions"><a class="login" href="../index.html">Try it live</a><a class="button button-small" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome <span>↗</span></a></div>
-      <button class="menu" type="button" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button>
+<div class="page">
+  <header class="top">
+    <nav class="nav wrap" aria-label="Primary navigation">
+      <a class="logo" href="index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <div class="links" id="links"><a href="index.html" aria-current="page">Product</a><a href="how.html">How it works</a><a href="agents.html">For agents</a><a href="results.html">Results</a><a href="team.html">Team</a></div>
+      <div class="nav-end"><a class="btn btn-ghost btn-sm" href="../index.html">See demo</a><a class="btn btn-ink btn-sm" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
     </nav>
   </header>
 
-  <main id="top">
+  <main>
+    <!-- hero -->
     <section class="hero">
-      <div class="hero-orb orb-one"></div><div class="hero-orb orb-two"></div>
-      <div class="shell hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow"><i></i> Shopping safety for India and JAPAC</p>
-          <h1>Know what you’re buying <em>before</em> you pay.</h1>
-          <p class="hero-text">SafeShelf checks a product listing against official recalls, buyer hazard reports, copied photos and seller signals, then gives you a clear answer with the evidence behind every line.</p>
-          <div class="hero-actions"><a class="button" href="../index.html">Check a listing <span>→</span></a><a class="play" href="how.html"><b>▶</b> See how it works</a></div>
-          <div class="trust-row"><div class="avatars"><i></i><i></i><i></i><i>+</i></div><p><strong>Built for every shopper</strong><br>Plain answers in 26 JAPAC languages, read aloud</p></div>
+      <div class="hero-top wrap">
+        <div>
+          <div class="badges">
+            <span class="laurel"><svg viewBox="0 0 12 26" aria-hidden="true"><path d="M9 2C4 7 3 15 9 24M7 6 4 5M6 11H3M6 16l-3 1M7 20l-2 2"/></svg>8,689 official recalls<svg viewBox="0 0 12 26" aria-hidden="true"><path d="M9 2C4 7 3 15 9 24M7 6 4 5M6 11H3M6 16l-3 1M7 20l-2 2"/></svg></span>
+            <span class="laurel"><svg viewBox="0 0 12 26" aria-hidden="true"><path d="M9 2C4 7 3 15 9 24M7 6 4 5M6 11H3M6 16l-3 1M7 20l-2 2"/></svg>26 JAPAC languages<svg viewBox="0 0 12 26" aria-hidden="true"><path d="M9 2C4 7 3 15 9 24M7 6 4 5M6 11H3M6 16l-3 1M7 20l-2 2"/></svg></span>
+          </div>
+          <h1 class="display">Shop safer with evidence-backed product checks</h1>
         </div>
-
-        <div class="product-scene" aria-label="Example SafeShelf overview">
-          <div class="ring ring-large"></div><div class="ring ring-small"></div>
-          <article class="dashboard">
-            <div class="dash-nav"><a class="dash-brand"><span class="brand-mark">S</span> SafeShelf</a><span>Overview</span><span class="dash-active">Records</span><span>Watchlist</span><i>•••</i></div>
-            <div class="dash-content">
-              <div class="dash-heading"><div><small>WHAT EVERY CHECK USES</small><h2>The evidence behind SafeShelf</h2></div><button type="button" tabindex="-1">+ Check a listing</button></div>
-              <div class="stats"><div><small>Recalls and notices</small><b>8,689</b><span class="blue">US + 7 JAPAC sources</span></div><div><small>Products in catalog</small><b>27,800</b><span class="blue">29,379 real reviews</span></div><div><small>Agent tests passed</small><b>21/22</b><span class="up">on the live API</span></div></div>
-              <div class="dash-lower"><div class="chart-card"><div class="card-title"><b>Recalls by region</b><small>Official records</small></div><div class="chart"><span style="height:86%"></span><span style="height:100%"></span><span style="height:76%"></span><span style="height:23%"></span><span style="height:6%"></span><span style="height:4%"></span><span style="height:4%"></span></div><div class="chart-labels"><span>US</span><span>AU</span><span>KR</span><span>JP</span><span>SEA</span><span>TW</span><span>IN</span></div></div><div class="recent"><div class="card-title"><b>Example result</b><small>Amazon India</small></div><div class="listing-mini"><span class="product-icon">⌁</span><div><b>65W USB-C Charger</b><small>Sold by MegaDealz24</small></div><strong>Careful</strong></div><p class="alert"><i>!</i> Price is 79% below the genuine product.</p></div></div>
-            </div>
-          </article>
-          <div class="floating-card verified"><span class="float-icon">✓</span><div><small>Recall match</small><b>Exact model only</b></div></div>
-          <div class="floating-card score"><span class="score-circle">2</span><div><small>False alarms</small><b>on 40 safe products</b></div></div>
+        <div class="hero-side">
+          <p class="lead">Check any listing for official recalls, buyer hazard reports, copied photos, impossible prices and brand-new shops, with the source behind every line. In Chrome, on WhatsApp, or from your own agent.</p>
+          <div class="btns"><a class="btn btn-blue" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome</a><a class="btn btn-line" href="../index.html">Try it live</a></div>
         </div>
       </div>
-      <div class="hero-bottom shell"><span>Checked against public records from</span><b>CPSC</b><b>ACCC</b><b>KATS Korea</b><b>CAA Japan</b><b>CCPA &amp; BIS</b></div>
+
+      <div class="strip" aria-hidden="true">
+        <div class="tile scene" style="background-image:url(assets/sea.png)">
+          <div class="card" style="left:-30%;right:12%;top:20%">
+            <div class="box-t" style="margin:0"><span>Reports</span><small>•••</small></div>
+            <span class="big-num">9</span> <span class="up">under review</span>
+            <div class="spark"></div>
+            <p class="note-line">USB-C port overheating, reported by buyers.</p>
+          </div>
+        </div>
+        <div class="tile plain">
+          <div class="hex"><img src="assets/burnt-out-sansai-usb-charger-20190728-001.jpg" alt=""></div>
+          <span class="mark-dot"><svg viewBox="0 0 32 32"><path d="m9 16 5 5 9-10" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="chip chip-pink"><small>Below genuine price</small><b>79%</b></span>
+          <span class="chip chip-green"><i>!</i><span><b style="font-size:.85rem">Recalled abroad</b><br>Same model, US</span></span>
+        </div>
+        <div class="tile scene" style="background-image:url(assets/hill.png)">
+          <div class="card" style="left:9%;right:9%;top:12%">
+            <div class="person"><span class="avatar">CX</span><div><b>CX-65 Charger</b><small>MegaDealz24</small></div><span class="when">Checked now</span></div>
+            <div class="trio"><div><small>Photos</small><b class="bad">Copied</b></div><div><small>Price</small><b class="warn">21%</b></div><div><small>Shop age</small><b class="bad">19 days</b></div></div>
+            <div class="insight"><span><svg viewBox="0 0 16 16"><path d="M8 1v3M8 12v3M1 8h3M12 8h3M3 3l2 2M11 11l2 2M3 13l2-2M11 5l2-2"/></svg>Evidence summary</span>Photos match the official listing, but this seller is not on the brand's list.</div>
+          </div>
+        </div>
+        <div class="tile orange">
+          <div class="card" style="left:10%;right:10%;top:12%;padding:12px">
+            <div class="person"><span class="avatar" style="width:26px;height:26px;font-size:.62rem">CX</span><div><b style="font-size:.7rem">CX-65 · Appario</b><small>Verified seller</small></div></div>
+            <div class="trio" style="font-size:.6rem"><div><small>Recall</small><b class="ok">None</b></div><div><small>Price</small><b>₹1,349</b></div><div><small>Mark</small><b class="ok">ISI</b></div></div>
+            <div class="insight" style="font-size:.62rem">The genuine listing, at the genuine price.</div>
+          </div>
+        </div>
+        <div class="tile photo">
+          <img src="assets/2-touchstones.jpg" alt="">
+          <div class="round-btns"><span>▶</span><span>⌁</span><span class="end">✕</span></div>
+        </div>
+      </div>
     </section>
 
-    <section class="proof shell" id="evidence">
-      <div class="proof-copy"><p class="eyebrow">Evidence, not guesswork</p><h2>A safety decision you can <em>understand.</em></h2><p>One product page can hide a lot. SafeShelf connects the signals, says exactly what it found, and says "not enough evidence yet" when it does not know.</p><a class="text-link" href="results.html">See how we measured it <span>→</span></a></div>
-      <div class="proof-cards"><article class="proof-card blue-card"><span class="card-icon">⌁</span><small>Official recalls and notices</small><b>8,689</b><p>from CPSC, ACCC, KATS, CAA, CCPA, BIS and more</p><div class="wave"></div></article><article class="proof-card"><span class="card-icon pale">◫</span><small>False alarms on 40 safe products</small><b>2 of 40</b><p>against 6 for Gemini alone and 11 for keyword rules</p><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i></div></article></div>
+    <!-- tabbed product -->
+    <section class="tour wrap" aria-label="Product tour">
+      <div class="tabs" role="tablist">
+        <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="pane-trust" id="tab-trust">Trust check</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane-safety" id="tab-safety">Safety record</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane-copies" id="tab-copies">Find copies</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane-ask" id="tab-ask">Ask in Hindi</button>
+      </div>
+      <div class="stage">
+        <div class="app">
+          <div class="side" aria-hidden="true">
+            <span class="logo"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</span>
+            <div class="search">Paste a listing link…</div>
+            <span data-side="trust" class="on"><svg class="i" viewBox="0 0 16 16"><path d="m3 8 3 3 7-7"/></svg>Trust check</span>
+            <span data-side="safety"><svg class="i" viewBox="0 0 16 16"><path d="M8 1.5 2.5 4v4c0 3.3 2.3 5.6 5.5 6.5 3.2-.9 5.5-3.2 5.5-6.5V4z"/></svg>Safety record</span>
+            <span data-side="copies"><svg class="i" viewBox="0 0 16 16"><rect x="2" y="4" width="8" height="10" rx="1.5"/><path d="M6 2h7v9"/></svg>Copies</span>
+            <span data-side="ask"><svg class="i" viewBox="0 0 16 16"><path d="M2.5 3h11v8h-6l-3 2.5V11h-2z"/></svg>Ask</span>
+            <span><svg class="i" viewBox="0 0 16 16"><path d="M2 14V7M6 14V3M10 14V9M14 14V5"/></svg>Watchlist</span>
+          </div>
+
+          <div class="pane on" id="pane-trust" role="tabpanel" aria-labelledby="tab-trust">
+            <div class="pane-head"><div><h3>Trust check</h3><p>65W Super Fast Charger, CX-65 · amazon.in · example listing</p></div><span class="pill-btn">+ Check a listing</span></div>
+            <div class="kpis">
+              <div class="kpi">Verdict<div><span class="big-num" style="color:var(--amber)">Careful</span></div></div>
+              <div class="kpi">Price vs genuine<div><span class="big-num">21%</span><span class="dn">−79%</span></div></div>
+              <div class="kpi">Shop age<div><span class="big-num">19 d</span><span class="dn">new</span></div></div>
+              <div class="kpi">Exact recall<div><span class="big-num">None</span><span class="up">checked</span></div></div>
+            </div>
+            <div class="panels">
+              <div class="box"><div class="box-t">Checks <small>5 run</small></div>
+                <div class="rows">
+                  <div class="r"><code>copied_photos</code><span class="tag flag">FLAG</span><small>matches official listing, seller not authorised</small></div>
+                  <div class="r"><code>price</code><span class="tag flag">FLAG</span><small>₹299 against ₹1,399</small></div>
+                  <div class="r"><code>website_age</code><span class="tag flag">FLAG</span><small>registered 19 days ago</small></div>
+                  <div class="r"><code>spec</code><span class="tag ok">OK</span><small>no conflicts</small></div>
+                </div>
+              </div>
+              <div class="box"><div class="box-t">Why this colour <small>set by code</small></div>
+                <div class="rows">
+                  <div class="hbar"><span>Photos</span><i style="--w:92%"></i><b>flag</b></div>
+                  <div class="hbar"><span>Price</span><i style="--w:79%"></i><b>flag</b></div>
+                  <div class="hbar"><span>Shop</span><i style="--w:70%"></i><b>flag</b></div>
+                  <div class="hbar"><span>Spec</span><i style="--w:8%"></i><b>ok</b></div>
+                </div>
+                <p class="note-line">Three listing signals raise amber. The model writes this explanation; rules picked the colour, and every line cites an evidence id.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pane" id="pane-safety" role="tabpanel" aria-labelledby="tab-safety">
+            <div class="pane-head"><div><h3>Safety record</h3><p>Genuine model SS-P-10291 · official records and buyer reports</p></div><span class="pill-btn">Watch this product</span></div>
+            <div class="panels">
+              <div class="box"><div class="box-t">Official records <small>8 regions searched</small></div>
+                <div class="rows">
+                  <div class="r"><code>India · CCPA, BIS</code><span class="tag ok">NONE</span><small>no matching notice</small></div>
+                  <div class="r"><code>United States · CPSC</code><span class="tag ok">NONE</span><small>no recall for this exact model</small></div>
+                  <div class="r"><code>Australia · ACCC</code><span class="tag ok">NONE</span><small>no recall for this exact model</small></div>
+                </div>
+              </div>
+              <div class="box"><div class="box-t">Buyer hazard reports <small>under review</small></div>
+                <span class="big-num">9</span> <span class="dn">heat</span>
+                <div class="spark"></div>
+                <p class="note-line">USB-C port overheating, reported in reviews and photos. Evidence EV-201, EV-207. Under review is not a recall, and SafeShelf says so.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pane" id="pane-copies" role="tabpanel" aria-labelledby="tab-copies">
+            <div class="pane-head"><div><h3>Find copies</h3><p>The same product under other listings and brand names</p></div><span class="pill-btn">Compare sellers</span></div>
+            <div class="rows">
+              <div class="r"><code>CX-65 · Appario Retail · ₹1,349</code><span class="tag ok">EXACT</span><small>verified seller, same model number</small></div>
+              <div class="r"><code>CX-65 · MegaDealz24 · ₹299</code><span class="tag flag">COPY</span><small>photos copied from the official listing</small></div>
+              <div class="r"><code>65W Fast · QuickKart · ₹259</code><span class="tag warn">REBRAND?</span><small>possible rebrand, sent to a person for review, never treated as recalled</small></div>
+              <div class="r"><code>45W Type-C · Clicktech · ₹399</code><span class="tag warn">LOOK-ALIKE</span><small>similar photos only, inherits no safety claim</small></div>
+            </div>
+          </div>
+
+          <div class="pane" id="pane-ask" role="tabpanel" aria-labelledby="tab-ask">
+            <div class="pane-head"><div><h3>Ask about this product</h3><p>English, Hindi and 24 more JAPAC languages, with Listen</p></div><span class="pill-btn">Listen</span></div>
+            <div class="thread">
+              <p class="bubble me" lang="hi">क्या यह चार्जर बच्चे के कमरे के लिए सुरक्षित है?</p>
+              <p class="bubble bot" lang="hi">इस मॉडल के USB-C पोर्ट गरम होने की 9 रिपोर्ट जाँच में हैं। जाँच पूरी होने तक इसे बच्चों की पहुँच से दूर रखें।<small lang="en">Evidence: EV-201, EV-207</small></p>
+              <p class="bubble me">Is the seller authorised?</p>
+              <p class="bubble bot">No. MegaDealz24 is not on the brand's list of sellers, and the shop opened 19 days ago.<small>Evidence: EV-114</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="checks-section" id="checks">
-      <div class="shell"><div class="section-head"><p class="eyebrow">One clear verdict</p><h2>Everything a listing needs<br>to earn your <em>trust.</em></h2><p>We combine official records with signals from the listing itself, and never present a prediction as a fact.</p></div>
-      <div class="checks-grid"><article><span class="check-icon">⌕</span><h3>Find the exact product</h3><p>Matches model numbers and rebranded twins before it looks up a single recall or report.</p><a href="how.html#identity">Product identity <span>→</span></a></article><article><span class="check-icon">✓</span><h3>Check official records</h3><p>Searches regulator recall feeds and keeps "under review" separate from a confirmed recall.</p><a href="how.html#steps">Trusted sources <span>→</span></a></article><article><span class="check-icon">⌁</span><h3>Spot suspicious listings</h3><p>Flags copied photos, impossible prices and brand-new shops in plain language.</p><a href="how.html#steps">Listing signals <span>→</span></a></article><article><span class="check-icon">◌</span><h3>Show the evidence</h3><p>Every statement points to a source, and code, not a model, sets the verdict colour.</p><a href="how.html#steps">See the method <span>→</span></a></article></div></div>
+    <!-- sources -->
+    <section class="sources wrap" aria-labelledby="src-h">
+      <p id="src-h">Checked against the public records of</p>
+      <ul class="src">
+        <li>CPSC <small>US</small></li><li>ACCC <small>AU</small></li><li>KATS <small>KR</small></li><li>CAA <small>JP</small></li><li>CCPA <small>IN</small></li>
+        <li>BIS <small>IN</small></li><li>BSMI <small>TW</small></li><li>CPSO <small>SG</small></li><li>ASEAN <small>SEA</small></li><li>OECD <small>GlobalRecalls</small></li>
+      </ul>
     </section>
 
-    <section class="verdict shell" id="how"><div class="verdict-copy"><p class="eyebrow light">Safety at a glance</p><h2>From product page<br>to a safer choice.</h2><p>Open a supported Amazon or Flipkart listing and press <strong>Check</strong>. SafeShelf reads only the product area, removes personal details, and returns a sourced result in seconds.</p><ol><li><b>01</b><span>Read the product information</span></li><li><b>02</b><span>Match it to the right identity</span></li><li><b>03</b><span>Check records and listing signals</span></li><li><b>04</b><span>Show a verdict with evidence</span></li></ol></div><div class="verdict-ui" aria-label="Example verdict"><div class="browser-bar"><i></i><i></i><i></i><span>amazon.in/dp/B0CX65SFC</span></div><div class="result"><div class="result-top"><span class="result-mark">!</span><div><small>SAFESHELF VERDICT</small><h3>Take a closer look</h3></div><b>Careful</b></div><p>Three signals deserve your attention before you buy.</p><div class="result-rows"><div><span>✓</span><p><b>Official recalls</b><small>No recall for this exact model</small></p><em>Clear</em></div><div><span>!</span><p><b>Price</b><small>79% below the genuine product</small></p><em>Flagged</em></div><div><span>!</span><p><b>Seller history</b><small>Shop registered 19 days ago</small></p><em>Flagged</em></div></div><button type="button" tabindex="-1">View all evidence <span>→</span></button></div></div></section>
+    <!-- the problem -->
+    <section class="problem wrap" aria-labelledby="prob-h">
+      <div class="center">
+        <p class="kicker">The problem</p>
+        <h2 class="display" id="prob-h">Shopping online shouldn't<br>feel this risky</h2>
+        <p class="lead">One product page can hide a recall in another country, a copied photo, an impossible price or a shop that opened last week. SafeShelf checks all of it in one click.</p>
+      </div>
+      <div class="chaos" aria-label="A burnt-out USB charger, surrounded by the problems SafeShelf checks for">
+        <img src="assets/burnt-out-sansai-usb-charger-20190728-001.jpg" alt="">
+        <span class="p p1"><svg viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="m3 13 4-4 4 4 2-2 4 4"/></svg>Copied Photos</span>
+        <span class="p p2"><svg viewBox="0 0 20 20"><path d="M4 16 16 4M6 6h.1M14 14h.1"/></svg>Impossible Prices</span>
+        <span class="p p3"><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Brand-new Shops</span>
+        <span class="p p4"><svg viewBox="0 0 20 20"><path d="M10 2v4M10 14v4M2 10h4M14 10h4"/></svg>Recalled Abroad, Sold Here</span>
+        <span class="p p5"><svg viewBox="0 0 20 20"><path d="M10 3c3 3 4 5.5 4 8a4 4 0 0 1-8 0c0-2.5 1-5 4-8z"/></svg>Overheating Chargers</span>
+        <span class="p p6"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M5 15 15 5"/></svg>No ISI Mark</span>
+        <span class="p p7"><svg viewBox="0 0 20 20"><rect x="3" y="6" width="9" height="11" rx="1.5"/><path d="M8 3h9v11"/></svg>Rebranded Twins</span>
+        <span class="p p8"><svg viewBox="0 0 20 20"><path d="M4 6h12M4 10h8M4 14h10"/></svg>Hidden AI Text</span>
+        <span class="p p9"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>Late Recalls</span>
+      </div>
+      <p class="credit">Photo: <a href="https://commons.wikimedia.org/w/index.php?curid=80842528">“Burnt out Sansai USB charger”</a> by Gary Houston, CC0.</p>
+    </section>
 
-    <section class="agents shell" id="agents"><div><p class="eyebrow">For builders</p><h2>The same evidence<br>for your <em>agent.</em></h2><p>Connect a shopping assistant to SafeShelf through read-only MCP tools, REST, or the A2A agent card. Your agent can check a listing; it can never buy, flag or act for a shopper.</p><a class="button" href="agents.html">Connect an agent <span>→</span></a></div><pre><code><span class="muted-code">// MCP tool at /mcp, read-only</span>
-<span class="blue-code">check_listing</span>({
-  url: <span class="string-code">"amazon.in/dp/B0CX65SFC"</span>
-})
+    <!-- a real record in place of a testimonial -->
+    <section class="statement" aria-label="Why it matters">
+      <p class="st-src"><svg viewBox="0 0 16 16"><path d="M2 3h12v10H2zM5 6h6M5 9h4"/></svg>News record</p>
+      <div>
+        <p class="st-text">On 5 May 2026, a power bank in a seat pocket ignited after IndiGo flight 6E-108 landed at Chandigarh. About 200 passengers were evacuated down all six slides, and at least 6 were hurt. No brand or model was named, which is exactly the gap SafeShelf is built to close.</p>
+        <p class="st-by">The Times of India, 6 May 2026, citing the DGCA<small><a href="https://timesofindia.indiatimes.com/city/chandigarh/the-burning-plane-how-blast-in-power-bank-filled-flight-cabin-with-smoke-6-injured-during-emergency-evacuation/articleshow/130844080.cms" target="_blank" rel="noopener">Read the report</a></small></p>
+      </div>
+      <div class="st-art"><div><b>200</b><span>passengers evacuated</span></div></div>
+    </section>
 
-<span class="muted-code">// → checks, evidence ids, and a verdict set by code</span></code></pre></section>
+    <!-- workflow band -->
+    <section class="band" aria-labelledby="flow-h">
+      <div class="band-head">
+        <div><p class="kicker">The workflow</p><h2 class="display" id="flow-h">From Product Page<br>to a Sourced Verdict</h2></div>
+        <p>One check, about 7 seconds. The first colours arrive in about 3, and every line names its source.</p>
+      </div>
+      <ol class="flow">
+        <li class="step"><span class="n">01</span><svg viewBox="0 0 32 32"><rect x="5" y="6" width="22" height="20" rx="3"/><path d="M5 12h22M10 9h.1M14 9h.1"/></svg><h3>Read the page</h3><p>Only the product area. Names, addresses and phone numbers are filtered out first.</p></li>
+        <li class="step"><span class="n">02</span><svg viewBox="0 0 32 32"><circle cx="14" cy="14" r="8"/><path d="m20 20 7 7"/></svg><h3>Find the product</h3><p>Matched to the exact model in about 27,800 products, with its rebranded twins.</p></li>
+        <li class="step"><span class="n">03</span><svg viewBox="0 0 32 32"><path d="M16 4 6 8v7c0 6 4.2 10.4 10 12 5.8-1.6 10-6 10-12V8z"/></svg><h3>Check the records</h3><p>Recalls and notices from 8 regions, buyer hazard reports and safety marks.</p></li>
+        <li class="step"><span class="n">04</span><svg viewBox="0 0 32 32"><rect x="6" y="7" width="20" height="18" rx="2"/><path d="m6 21 6-6 5 5 3-3 6 6"/></svg><h3>Check the listing</h3><p>Copied photos, an impossible price, a brand-new shop, hidden AI text.</p></li>
+        <li class="step"><span class="n">05</span><svg viewBox="0 0 32 32"><path d="m7 16 6 6 12-13"/></svg><h3>Set the verdict</h3><p>Code sets the colour. Thin evidence is grey, never green.</p></li>
+      </ol>
+    </section>
 
-    <section class="closing"><div class="shell closing-in"><div><p class="eyebrow light">Check before you pay</p><h2>Shop with<br><em>evidence</em> on your side.</h2><p>Free for shoppers. Clear about uncertainty. In Chrome on your computer today, and on WhatsApp for phones soon.</p><div class="hero-actions"><a class="button white" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome <span>→</span></a><a class="play white-play" href="../index.html"><b>▶</b> Try it live</a></div></div><div class="closing-orb" aria-hidden="true"><span class="brand-mark">S</span><i>✓</i><i>⌁</i><i>◌</i></div></div></section>
+    <!-- command centre -->
+    <section class="section" aria-labelledby="cc-h">
+      <div class="split-head">
+        <div><p class="kicker">Everything in one rail</p><h2 class="display" id="cc-h">Everything You Need<br>Before You Pay</h2></div>
+        <p class="lead">One black rail at the edge of Amazon or Flipkart replaces a dozen browser tabs: regulator websites, reverse image search, price history and domain lookups.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-text">
+          <div><h3 class="display">Check any listing in one click.</h3><p>Press Check on Amazon India, Japan, Australia, Singapore, the US or Flipkart. The ring turns amber, red, green, or grey when the evidence is thin, and the verdict comes first.</p></div>
+          <div class="mini" aria-hidden="true"><div class="card"><div class="person"><span class="avatar" style="width:24px;height:24px;font-size:.6rem">!</span><div><b style="font-size:.7rem">Be careful</b><small>3 signals</small></div><span class="tag warn" style="margin-left:auto">AMBER</span></div></div></div>
+        </div>
+        <div class="big" aria-hidden="true">
+          <div class="listing">
+            <div class="l-main">
+              <span class="l-url">amazon.in/dp/B0CX65SFC</span>
+              <p class="l-title">65W Super Fast Charger, CX-65 Original</p>
+              <p style="color:var(--dim)">★★★★☆ 2,148 ratings · Sold by MegaDealz24</p>
+              <p class="l-price"><b>₹299</b><s>₹1,399</s></p>
+              <div class="l-verdict"><b>Be careful</b>Photos copied from the official listing, price far below the genuine product, shop only 19 days old.<small>Evidence for the shopper, not a legal finding</small></div>
+            </div>
+            <div class="rail"><i class="amber"></i>Careful<i></i>Save<i></i>Ask</div>
+          </div>
+        </div>
+      </div>
+      <div class="duo">
+        <article>
+          <div class="duo-art" style="background-image:url(assets/field.png)" aria-hidden="true">
+            <div class="card">
+              <div class="box-t" style="margin-bottom:8px">Every check, with its record <small>5 run</small></div>
+              <div class="rows">
+                <div class="r"><code>copied_photos</code><span class="tag flag">FLAG</span></div>
+                <div class="r"><code>price</code><span class="tag flag">FLAG</span></div>
+                <div class="r"><code>safety</code><span class="tag warn">REVIEW</span></div>
+                <div class="r"><code>spec</code><span class="tag ok">OK</span></div>
+              </div>
+            </div>
+          </div>
+          <h3 class="display">Inspect every piece of evidence</h3>
+          <p>Each check is its own line, with the record behind it. Open one to see exactly what the engine found and where.</p>
+        </article>
+        <article>
+          <div class="duo-art" style="background-image:url(assets/hill.png)" aria-hidden="true">
+            <div class="card thread">
+              <p class="bubble me">Is this safe for a child's room?</p>
+              <p class="bubble bot">9 reports of the USB-C port overheating are under review. Keep it out of children's reach until the review is done.<small>Evidence: EV-201, EV-207</small></p>
+              <p class="bubble me" lang="hi">विक्रेता अधिकृत है?</p>
+            </div>
+          </div>
+          <h3 class="display">Ask about it, in English or Hindi</h3>
+          <p>Follow-up questions about the product you just checked, read aloud if you like. Every answer names its evidence, or says it does not know.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- wide feature -->
+    <section class="wide" aria-labelledby="wide-h">
+      <div class="wide-art" aria-hidden="true">
+        <div class="app">
+          <div class="side">
+            <span class="logo"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</span>
+            <span>Trust check</span><span class="on">Safety record</span><span style="padding-left:24px">Recalls</span><span style="padding-left:24px">Hazard reports</span><span style="padding-left:24px">Safety marks</span><span>Copies</span><span>Owner guidance</span>
+          </div>
+          <div class="pane on">
+            <div class="pane-head"><div><h3>Recalled abroad, same model</h3><p>NEWDERY power bank · checked for a shopper in India</p></div><span class="pill-btn" style="background:var(--soft);color:var(--ink)">Case file</span></div>
+            <div class="record">
+              <div class="box">
+                <div class="box-t">Coverage <small>live sources</small></div>
+                <div class="rows">
+                  <div class="r"><code>India</code><span class="tag ok">NO NOTICE</span><small>no matching notice found</small></div>
+                  <div class="r"><code>United States · CPSC</code><span class="tag flag">RECALL</span><small>fire and burn hazards · 24 Sep 2026 · exact model</small></div>
+                </div>
+                <p class="note-line">Shown as "recalled abroad, same model", never "recalled here".</p>
+              </div>
+              <div class="recall-card">
+                <div class="on"><small>Verdict</small>Potential concern</div>
+                <p>Basis<small>recalled_abroad_same_model</small></p>
+                <p>Match tier<small>exact</small></p>
+                <p>Lead record<small>cpsc:26792</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3 class="display" id="wide-h">A recall in another country is a warning here, labelled honestly.</h3>
+      <p>When the exact model was recalled in the US but nothing has been posted in India yet, SafeShelf tells an Indian shopper exactly that, with the country, the regulator and the date. This case is from our JAPAC test run.</p>
+    </section>
+
+    <!-- a measured result -->
+    <section class="statement grey" aria-label="Measured result">
+      <p class="st-src"><svg viewBox="0 0 16 16"><path d="M2 14V8M6 14V3M10 14V6M14 14V10"/></svg>SafeShelfBench</p>
+      <div>
+        <p class="st-text">“On 40 products that were never recalled, SafeShelf raised 2 false alarms. Gemini alone raised 6, and keyword rules 11. Keyword rules do catch more recalls, and we would rather tell you that here.”</p>
+        <p class="st-by">25 real recalls, 40 never-recalled products<small><a href="results.html">See every number</a></small></p>
+      </div>
+      <div class="st-art" style="background-image:url(assets/sky.png)"><div style="color:var(--ink)"><b>2/40</b><span>false alarms</span></div></div>
+    </section>
+
+    <!-- builders -->
+    <section class="section" aria-labelledby="dev-h">
+      <div class="split-head" style="align-items:end;margin-bottom:0">
+        <div><p class="kicker">For builders</p><h2 class="display" id="dev-h">See SafeShelf<br>Inside Your Agent</h2><p class="lead" style="margin-top:16px">Everything a shopper sees, your agent can ask for. Every tool is read-only: it can check a listing, never buy, report or act.</p></div>
+        <div class="btns" style="justify-self:end"><a class="btn btn-blue" href="agents.html">Connect an agent</a><a class="btn btn-line" href="../api-integration/index.html">API docs</a></div>
+      </div>
+      <div class="tour2">
+        <div class="tour2-art">
+<pre class="code" id="dev-code"></pre>
+        </div>
+        <div class="opts" role="tablist" aria-label="Ways to connect">
+          <button class="opt" type="button" role="tab" aria-selected="true" data-code="mcp"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="20" cy="5" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="19" r="2"/><path d="m6 6 4 4M18 6l-4 4M6 18l4-4M18 18l-4-4"/></svg><b>MCP server</b><span>Ten read-only tools at /mcp: check a listing, find copies, safety marks, safer alternatives, product history and more.</span></button>
+          <button class="opt" type="button" role="tab" aria-selected="false" data-code="rest"><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg><b>REST API</b><span>Stream a live investigation step by step from Cloud Run in Mumbai.</span></button>
+          <button class="opt" type="button" role="tab" aria-selected="false" data-code="a2a"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="7" height="12" rx="2"/><rect x="14" y="6" width="7" height="12" rx="2"/><path d="M10 12h4"/></svg><b>A2A agent card</b><span>Other agents find SafeShelf at /.well-known/agent-card.json and talk to it directly.</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- roles -->
+    <section class="section" style="padding-top:0" aria-labelledby="roles-h">
+      <div class="center"><p class="kicker">For everyone in the chain</p><h2 class="display" id="roles-h">Built for Shoppers and Sellers</h2><p class="lead">Whether you are about to buy one charger or sell five hundred listings, SafeShelf checks against the same records.</p></div>
+      <div class="roles">
+        <article class="role">
+          <div class="role-art" style="background-image:url(assets/sea.png)">
+            <div class="check-list dark"><p>Know what you are buying before you pay.</p><ul>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Check a listing in one click</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>See recalls and hazard reports</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Spot copies and fake shops</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Find a safer genuine product</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Ask and listen in your language</li>
+            </ul></div>
+          </div>
+          <small>For shoppers</small><h3>Shoppers &amp; Families</h3>
+        </article>
+        <article class="role">
+          <div class="role-art" style="background-image:url(assets/field.png)">
+            <div class="check-list light"><p>Scan a whole catalog against the records.</p><ul>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Scan 500 listings in one run</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Flag possible recall matches</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Check safety marks against the registry</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Watch products after sale</li>
+              <li><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5"/><path d="m5.5 8 1.8 1.8L10.8 6"/></svg>Export a case file per finding</li>
+            </ul></div>
+          </div>
+          <small>For businesses</small><h3>Sellers &amp; Marketplaces</h3>
+        </article>
+      </div>
+    </section>
+
+    <!-- regions band -->
+    <section class="regions" aria-labelledby="reg-h">
+      <div class="regions-head"><p class="kicker">Built for JAPAC</p><h2 class="display" id="reg-h">8 Regions. 8,689 Records. One Identity Engine.</h2></div>
+      <div class="marquee" aria-hidden="true"><div class="track">
+        <span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon India</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Flipkart</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon Japan</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon Australia</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon Singapore</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon US</span>
+        <span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon India</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Flipkart</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon Japan</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon Australia</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon Singapore</span><span><svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="11" rx="2"/><path d="M7 5V3h6v2"/></svg>Amazon US</span>
+      </div></div>
+      <div class="marquee rev" aria-hidden="true"><div class="track">
+        <span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>हिन्दी</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>தமிழ்</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>বাংলা</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>日本語</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>한국어</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>ไทย</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>Tiếng Việt</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>Bahasa</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>中文</span>
+        <span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>हिन्दी</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>தமிழ்</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>বাংলা</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>日本語</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>한국어</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>ไทย</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>Tiếng Việt</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>Bahasa</span><span><svg viewBox="0 0 20 20"><path d="M3 5h8M7 3v2M5 5c0 4 3 7 6 8M9 5c-1 4-3 7-6 8M11 17l3-8 3 8M12 14h4"/></svg>中文</span>
+      </div></div>
+    </section>
+
+    <!-- privacy -->
+    <section class="privacy" aria-labelledby="priv-h">
+      <div><h2 class="display" id="priv-h">Private and honest,<br>by default.</h2><p>SafeShelf reads only the product, sends nothing until you press Check, and never lets a model decide the colour on its own.</p></div>
+      <ul class="seals">
+        <li class="seal"><i><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></i><div><b>Personal details filtered</b><small>Names, addresses, pincodes, emails and phone numbers removed before sending.</small></div></li>
+        <li class="seal"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></i><div><b>Nothing sent until you press Check</b><small>The extension waits for you.</small></div></li>
+        <li class="seal"><i><svg viewBox="0 0 24 24"><path d="M4 12s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"/><circle cx="12" cy="12" r="2.5"/></svg></i><div><b>Read-only agent tools</b><small>An agent can look, never buy, report or act.</small></div></li>
+        <li class="seal"><i><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg></i><div><b>Code sets the colour</b><small>Every sentence must cite evidence that exists.</small></div></li>
+      </ul>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section faq" id="faq" aria-labelledby="faq-h">
+      <div><h2 class="display" id="faq-h">FAQs</h2><p class="lead">Questions about privacy, phones, accuracy or plugging in your own agent.</p></div>
+      <div>
+        <details name="faq" open><summary>What is SafeShelf?</summary><p>A product check for online shoppers. It answers two questions about any listing: is it safe (recalls, hazard reports, safety marks) and is it real (copied photos, impossible price, brand-new shop), with the evidence for every line.</p></details>
+        <details name="faq"><summary>Does it see my personal details?</summary><p>No. It reads only the product area of the page and filters out names, addresses, pincodes, emails and phone numbers before anything is sent. Nothing is sent until you press Check.</p></details>
+        <details name="faq"><summary>Does it work on my phone?</summary><p>Not as an extension: Chrome on phones cannot add extensions. A WhatsApp version is built and waiting for its public number: send a product link or a photo, and get text and a voice note back.</p></details>
+        <details name="faq"><summary>What if it is not sure?</summary><p>It says "Not enough evidence yet" in grey, never green. A product it cannot match exactly gets no safety claim, because a look-alike's recall is not this product's recall.</p></details>
+        <details name="faq"><summary>How accurate is it?</summary><p>On 25 real recalls and 40 never-recalled products, it raised 2 false alarms against 6 for Gemini alone and 11 for keyword rules. Keyword rules catch more recalls. On the recalls it was not tuned on, it caught 2 of 9 with no false alarms. <a href="results.html" style="color:var(--blue)">All the numbers</a>.</p></details>
+        <details name="faq"><summary>Is the verdict a legal finding?</summary><p>No. It is evidence for a shopper: official recalls, reports under review, and checks on photos, price and seller, each with its source.</p></details>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" aria-labelledby="cta-h">
+      <h2 class="display" id="cta-h">Check Before You Pay,<br>Every Time</h2>
+      <p class="lead">Recalls, copies and fake shops, checked in one click, in your language, with the evidence on screen.</p>
+      <div class="btns"><a class="btn btn-blue" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome</a><a class="btn btn-line" href="../index.html">Try it live</a></div>
+    </section>
   </main>
 
-  <footer class="footer shell"><a class="brand" href="index.html"><span class="brand-mark">S</span><span>Safe<span>Shelf</span></span></a><div class="foot-links"><a href="how.html">How it works</a><a href="agents.html">For agents</a><a href="results.html">Results</a><a href="team.html">Team</a><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></div><span>© 2026 Team Hashes</span><p class="foot-note">Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</p></footer>
-  <script src="site.js" defer></script>
+  <footer class="foot">
+    <div class="cols">
+      <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="how.html#where">Chrome extension</a></li><li><a href="how.html#where">WhatsApp (soon)</a></li></ul></div>
+      <div><h4>Learn</h4><ul><li><a href="how.html">How it works</a></li><li><a href="results.html">Results</a></li><li><a href="results.html#backtest">SafeShelfBench</a></li><li><a href="#faq">FAQs</a></li></ul></div>
+      <div><h4>Builders</h4><ul><li><a href="agents.html">MCP server</a></li><li><a href="agents.html#rest">REST API</a></li><li><a href="../api-integration/index.html">API docs</a></li></ul></div>
+      <div><h4>Project</h4><ul><li><a href="team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li><li><a href="../index.html">Judges' page</a></li></ul></div>
+      <div><h4>Records from</h4><ul><li>CPSC · ACCC · KATS</li><li>CAA · CCPA · BIS</li><li>BSMI · CPSO · ASEAN</li></ul></div>
+    </div>
+    <div class="foot-bar">
+      <a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <span>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</span>
+      <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
+    </div>
+  </footer>
+</div>
+<script src="site.js" defer></script>
 </body>
 </html>

@@ -7,117 +7,113 @@
   <meta name="description" content="How SafeShelf was measured: the recall backtest, the live agent tests, the red team and the catalog scan, with the numbers that went against us too.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="base.css">
-  <link rel="stylesheet" href="pages.css">
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-  <header class="site-header">
-    <nav class="nav shell" aria-label="Primary navigation">
-      <a class="brand" href="index.html" aria-label="SafeShelf home"><span class="brand-mark">S</span><span>Safe<span>Shelf</span></span></a>
-      <div class="nav-links"><a href="index.html">Home</a><a href="how.html">How it works</a><a href="agents.html">For agents</a><a href="results.html" aria-current="page">Results</a><a href="team.html">Team</a></div>
-      <div class="nav-actions"><a class="login" href="../index.html">Try it live</a><a class="button button-small" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome <span>↗</span></a></div>
-      <button class="menu" type="button" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button>
+<div class="page">
+  <header class="top">
+    <nav class="nav wrap" aria-label="Primary navigation">
+      <a class="logo" href="index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <div class="links" id="links"><a href="index.html">Product</a><a href="how.html">How it works</a><a href="agents.html">For agents</a><a href="results.html" aria-current="page">Results</a><a href="team.html">Team</a></div>
+      <div class="nav-end"><a class="btn btn-ghost btn-sm" href="../index.html">See demo</a><a class="btn btn-ink btn-sm" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
     </nav>
   </header>
 
   <main>
-    <section class="page-head">
-      <div class="hero-orb orb-one"></div>
-      <div class="shell">
-        <p class="eyebrow"><i></i> Results</p>
-        <h1>What we measured, <em>including</em> what went against us.</h1>
-        <p class="lead">Every number on this site comes from our own test runs in the repository. Where a simpler method does better on something, we say so.</p>
-      </div>
+    <section class="inner-hero">
+      <div><p class="kicker">Results</p><h1 class="display">What we measured, including what went against us.</h1></div>
+      <div style="display:grid;gap:22px"><p class="lead">Every number on this site comes from our own test runs in the repository. Where a simpler method does better on something, we say so.</p></div>
     </section>
+    <div class="banner" style="background-image:url(assets/hill.png)" aria-hidden="true"></div>
 
     <section class="section">
-      <div class="shell">
-        <p class="eyebrow">At a glance</p>
-        <h2>Four tests, run on the live system.</h2>
-        <p class="intro">Agent tests ran against the live API on 16 October 2026; the backtest on 13 October.</p>
-        <div class="tiles">
-          <article class="tile"><small>Agent test set</small><b>21/22</b><span>cases pass, and 65 of 66 individual checks</span></article>
-          <article class="tile"><small>Red team</small><b>18/18</b><span>attacks held, including 9 hard negatives</span></article>
-          <article class="tile"><small>Catalog scan, 500 listings</small><b>49/50</b><span>planted problems found, with no wrong findings</span></article>
-          <article class="tile"><small>Investigate, median</small><b>6.6 s</b><span>per live check; chat answers in 7.6 s</span></article>
-        </div>
+      <div class="split-head"><div><p class="kicker">At a glance</p><h2 class="display">Four Tests on<br>the Live System</h2></div>
+      <p class="lead">Agent tests ran against the live API on 16 October 2026; the backtest on 13 October.</p></div>
+      <div class="stats">
+        <div class="stat"><small>Agent test set</small><b>21/22</b><span>cases pass, and 65 of 66 individual checks</span></div>
+        <div class="stat"><small>Red team</small><b>18/18</b><span>attacks held, including 9 hard negatives</span></div>
+        <div class="stat"><small>Catalog scan, 500 listings</small><b>49/50</b><span>planted problems found, with no wrong findings</span></div>
+        <div class="stat"><small>Investigate, median</small><b>6.6 s</b><span>per live check; chat answers in 7.6 s</span></div>
       </div>
     </section>
 
-    <section class="section tint" id="backtest">
-      <div class="shell split">
+    <section class="section" id="backtest" style="padding-top:0">
+      <div class="two">
         <div>
-          <p class="eyebrow">SafeShelfBench</p>
-          <h2>Do buyer reviews warn before a recall?</h2>
-          <p class="intro">25 real US recalls (CPSC) and 40 products that were never recalled. Each method reads only the reviews written before the recall date, and we count how many recalls it would have flagged, and how many safe products it would have wrongly flagged.</p>
+          <p class="kicker">SafeShelfBench</p><h2 class="display">Do Buyer Reviews<br>Warn Before a Recall?</h2>
+          <p class="lead">25 real US recalls (CPSC) and 40 products that were never recalled. Each method reads only the reviews written before the recall date. We count the recalls it would have flagged, and the safe products it would have wrongly flagged.</p>
           <div class="bars" style="margin-top:32px" aria-label="False alarms on 40 never-recalled products">
-            <div class="bar-row"><span>Keyword rules</span><span class="bar"><i style="width:27.5%"></i></span><b>11/40</b></div>
-            <div class="bar-row"><span>Gemini alone</span><span class="bar"><i style="width:15%"></i></span><b>6/40</b></div>
-            <div class="bar-row us"><span>SafeShelf</span><span class="bar"><i style="width:5%"></i></span><b>2/40</b></div>
+            <div class="bar-row"><span>Keyword rules</span><i style="--w:27.5%"></i><b>11/40</b></div>
+            <div class="bar-row"><span>Gemini alone</span><i style="--w:15%"></i><b>6/40</b></div>
+            <div class="bar-row us"><span>SafeShelf</span><i style="--w:5%"></i><b>2/40</b></div>
           </div>
           <p class="caption">False alarms on 40 never-recalled products. Shorter is better.</p>
         </div>
         <div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Method</th><th class="num">Recalls flagged</th><th class="num">Median warning</th><th class="num">False alarms</th></tr></thead>
-              <tbody>
-                <tr><td>Keyword rules</td><td class="num">11/25</td><td class="num">170 weeks</td><td class="num">11/40</td></tr>
-                <tr><td>Gemini alone</td><td class="num">6/25</td><td class="num">104 weeks</td><td class="num">6/40</td></tr>
-                <tr class="us"><td>SafeShelf</td><td class="num">6/25</td><td class="num">93 weeks</td><td class="num">2/40</td></tr>
-                <tr><td>SafeShelf, without pooling copies</td><td class="num">1/25</td><td class="num">67 weeks</td><td class="num">2/40</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="caption">"Median warning" is how long before the official recall the first warning would have appeared. Pooling the reviews of every copy of the same product is what moves SafeShelf from 1 recall to 6.</p>
-          <p class="note"><b>Where we fall short.</b> Keyword rules flag more recalls (11 against our 6) and earlier, at the cost of 11 false alarms. On the half of the recalls we did not tune on, SafeShelf flagged 2 of 9 with no false alarms on 14 safe products. The sample is small, and we publish both numbers.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="data">
-      <div class="shell split">
-        <div>
-          <p class="eyebrow">The records</p>
-          <h2>8,689 official recalls and notices.</h2>
-          <p class="intro">Loaded from the regulators' own feeds and press releases. In India, raids and "don't buy without the ISI mark" notices are kept, but they never mark a product recalled; they only send it to review.</p>
-          <p class="intro" style="margin-top:0">The catalog holds about 27,800 products and 29,379 real reviews, mostly from amazon.com, plus 8,470 Australian energy-registry records.</p>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Region</th><th>Source</th><th class="num">Records</th></tr></thead>
+          <div class="tbl"><table>
+            <thead><tr><th>Method</th><th class="num">Recalls flagged</th><th class="num">Median warning</th><th class="num">False alarms</th></tr></thead>
             <tbody>
-              <tr><td>Australia</td><td>ACCC</td><td class="num">2,962</td></tr>
-              <tr><td>United States</td><td>CPSC</td><td class="num">2,537</td></tr>
-              <tr><td>South Korea</td><td>KATS</td><td class="num">2,242</td></tr>
-              <tr><td>Japan</td><td>CAA</td><td class="num">677</td></tr>
-              <tr><td>ASEAN</td><td>ASEAN product alerts</td><td class="num">161</td></tr>
-              <tr><td>Taiwan</td><td>BSMI</td><td class="num">45</td></tr>
-              <tr><td>India</td><td>CCPA and BIS</td><td class="num">36</td></tr>
-              <tr><td>Singapore</td><td>CPSO</td><td class="num">29</td></tr>
-              <tr class="us"><td>Total</td><td></td><td class="num">8,689</td></tr>
-            </tbody>
-          </table>
+              <tr><td>Keyword rules</td><td class="num">11/25</td><td class="num">170 weeks</td><td class="num">11/40</td></tr>
+              <tr><td>Gemini alone</td><td class="num">6/25</td><td class="num">104 weeks</td><td class="num">6/40</td></tr>
+              <tr class="us"><td>SafeShelf</td><td class="num">6/25</td><td class="num">93 weeks</td><td class="num">2/40</td></tr>
+              <tr><td>SafeShelf, without pooling copies</td><td class="num">1/25</td><td class="num">67 weeks</td><td class="num">2/40</td></tr>
+            </tbody></table></div>
+          <p class="caption">"Median warning" is how long before the official recall the first warning would have appeared. Pooling the reviews of every copy of the same product is what moves SafeShelf from 1 recall to 6.</p>
+          <p class="callout"><b>Where we fall short.</b> Keyword rules flag more recalls (11 against our 6) and earlier, at the cost of 11 false alarms. On the half of the recalls we did not tune on, SafeShelf flagged 2 of 9 with no false alarms on 14 safe products. The sample is small, and we publish both numbers.</p>
         </div>
       </div>
     </section>
 
-    <section class="section tint" id="crossborder">
-      <div class="shell split">
+    <section class="section" id="data" style="padding-top:0">
+      <div class="two">
         <div>
-          <p class="eyebrow">Early work</p>
-          <h2>Recalled in one country, still sold in the next.</h2>
-          <p class="intro">We found 19 products recalled in one country and later in another, mostly the US first and Australia later. The second recall came a median of 22 days after the first, and up to 293 days.</p>
+          <p class="kicker">The records</p><h2 class="display">8,689 Official Recalls<br>and Notices</h2>
+          <p class="lead">Loaded from the regulators' own feeds and press releases. In India, raids and "don't buy without the ISI mark" notices are kept, but they never mark a product recalled; they only send it to review.</p>
+          <p class="lead">The catalog holds about 27,800 products and 29,379 real reviews, mostly from amazon.com, plus 8,470 Australian energy-registry records.</p>
         </div>
-        <p class="note" style="margin-top:0"><b>Not yet checked by a person.</b> These 19 pairs and the 34 recalled products we found possibly still on sale are leads from Firecrawl and Gemini. None has been hand-checked yet, so we do not count them as findings.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Region</th><th>Source</th><th class="num">Records</th></tr></thead>
+          <tbody>
+            <tr><td>Australia</td><td>ACCC</td><td class="num">2,962</td></tr>
+            <tr><td>United States</td><td>CPSC</td><td class="num">2,537</td></tr>
+            <tr><td>South Korea</td><td>KATS</td><td class="num">2,242</td></tr>
+            <tr><td>Japan</td><td>CAA</td><td class="num">677</td></tr>
+            <tr><td>ASEAN</td><td>ASEAN product alerts</td><td class="num">161</td></tr>
+            <tr><td>Taiwan</td><td>BSMI</td><td class="num">45</td></tr>
+            <tr><td>India</td><td>CCPA and BIS</td><td class="num">36</td></tr>
+            <tr><td>Singapore</td><td>CPSO</td><td class="num">29</td></tr>
+            <tr class="us"><td>Total</td><td></td><td class="num">8,689</td></tr>
+          </tbody></table></div>
       </div>
     </section>
 
-    <section class="cta-band"><div class="shell"><h2>Run the numbers yourself.</h2><div class="hero-actions"><a class="button white" href="https://github.com/solomonwilsonr/all-builders/tree/main/bench" target="_blank" rel="noopener">See the bench code <span>→</span></a><a class="play white-play" href="../index.html"><b>▶</b> Try it live</a></div></div></section>
+    <section class="statement grey" id="crossborder" aria-label="Early work">
+      <p class="st-src">Early work</p>
+      <div>
+        <p class="st-text">We found 19 products recalled in one country and later in another, mostly the US first and Australia later. The second recall came a median of 22 days after the first, and up to 293 days.</p>
+        <p class="st-by">Not yet checked by a person<small>These 19 pairs, and the 34 recalled products we found possibly still on sale, are leads from Firecrawl and Gemini. None has been hand-checked yet, so we do not count them as findings.</small></p>
+      </div>
+      <div class="st-art"><div><b>22</b><span>days, median gap</span></div></div>
+    </section>
+    <section class="cta" style="margin-top:clamp(64px,8vw,112px)"><h2 class="display">Run the Numbers Yourself</h2><p class="lead">The bench code, the test sets and every result file are in the repository.</p><div class="btns"><a class="btn btn-blue" href="https://github.com/solomonwilsonr/all-builders/tree/main/bench" target="_blank" rel="noopener">See the bench code</a><a class="btn btn-line" href="../index.html">Try it live</a></div></section>
   </main>
 
-  <footer class="footer shell"><a class="brand" href="index.html"><span class="brand-mark">S</span><span>Safe<span>Shelf</span></span></a><div class="foot-links"><a href="how.html">How it works</a><a href="agents.html">For agents</a><a href="results.html">Results</a><a href="team.html">Team</a><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></div><span>© 2026 Team Hashes</span><p class="foot-note">Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</p></footer>
-  <script src="site.js" defer></script>
+  <footer class="foot">
+    <div class="cols">
+      <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="how.html#where">Chrome extension</a></li><li><a href="how.html#where">WhatsApp (soon)</a></li></ul></div>
+      <div><h4>Learn</h4><ul><li><a href="how.html">How it works</a></li><li><a href="results.html">Results</a></li><li><a href="results.html#backtest">SafeShelfBench</a></li><li><a href="index.html#faq">FAQs</a></li></ul></div>
+      <div><h4>Builders</h4><ul><li><a href="agents.html">MCP server</a></li><li><a href="agents.html#rest">REST API</a></li><li><a href="../api-integration/index.html">API docs</a></li></ul></div>
+      <div><h4>Project</h4><ul><li><a href="team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li><li><a href="../index.html">Judges' page</a></li></ul></div>
+      <div><h4>Records from</h4><ul><li>CPSC · ACCC · KATS</li><li>CAA · CCPA · BIS</li><li>BSMI · CPSO · ASEAN</li></ul></div>
+    </div>
+    <div class="foot-bar">
+      <a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <span>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</span>
+      <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
+    </div>
+  </footer>
+</div>
+<script src="site.js" defer></script>
 </body>
 </html>
