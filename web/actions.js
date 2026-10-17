@@ -190,7 +190,7 @@ const WORKLET = `class Mic extends AudioWorkletProcessor { process(inputs) { con
 registerProcessor("mic", Mic);`;
 const b64 = (buf) => { let s = ""; const bytes = new Uint8Array(buf); for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(s); };
 
-export function setUpAsk() {
+export function setUpAsk(takeQuota = () => true, usedUpText = () => "") {
   const root = document.getElementById("ask");
   if (!root) return;
   const lang = langSelect("Language to talk in");
@@ -250,6 +250,7 @@ export function setUpAsk() {
 
   talk.onclick = async () => {
     if (session) return stop("Stopped. Press Start to talk again.");
+    if (!takeQuota()) { status.textContent = usedUpText() || "No checks left."; return; } // one talk session is one check
     status.textContent = "Starting the microphone and camera…";
     const streams = [];
     try {

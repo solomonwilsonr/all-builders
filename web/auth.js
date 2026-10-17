@@ -1,22 +1,25 @@
-// Sign-in for every SafeShelf web page: Google sign-in through Firebase Auth. Nothing on a page works until the
-// person signs in: the page starts hidden (<html class="auth-locked">) and a sign-in card is shown instead.
-// API calls go through authFetch, which sends the Firebase ID token.
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { API, FIREBASE } from "./firebase-config.js";
-import { rememberAccount, signInCard } from "./signin-card.js?v=20261017u";
+// Sign-in for the judges' demo page and the extension hand-off page. Nothing on the page works until the person
+// signs in: the page starts hidden (<html class="auth-locked">) and the sign-in card is shown instead (Google, email
+// and password, or a guest). The demo has its own sign-in, separate from the website's (firebase-app.js); the
+// extension hand-off uses the website's. API calls go through authFetch, which sends the Firebase ID token, and
+// `quota` counts the AI checks used (quota.js: a guest gets 1, an account 5 a day).
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { firebaseArea } from "./firebase-app.js?v=20261017v";
+import { API } from "./firebase-config.js";
+import { makeQuota } from "./quota.js?v=20261017v";
+import { rememberAccount, signInCard } from "./signin-card.js?v=20261017v";
 
 export { API };
-export const auth = getAuth(initializeApp(FIREBASE));
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
-
-let resolveSignedIn;
-const signedIn = new Promise((resolve) => { resolveSignedIn = resolve; });
-
 const root = document.documentElement;
 // The extension must receive an account explicitly chosen in this visit, not a cached web login.
 const chooseAccount = Boolean(document.querySelector(".handoff"));
+const AREA = chooseAccount ? "site" : "demo";
+const { auth: fbAuth, db } = firebaseArea(AREA);
+export const auth = fbAuth;
+export const quota = makeQuota(db, AREA);
+
+let resolveSignedIn;
+const signedIn = new Promise((resolve) => { resolveSignedIn = resolve; });
 let accountChosen = false;
 const make = (tag, props = {}, ...kids) => {
   const e = document.createElement(tag);
@@ -32,56 +35,39 @@ const make = (tag, props = {}, ...kids) => {
 let gate = null;
 function lock() {
   root.classList.add("auth-locked");
-  if (gate) {
-    gate.hidden = false;
-    return;
-  }
+  gate?.remove(); // rebuilt each time, so "Welcome back" shows the latest account
   const card = signInCard({
-    title: root.dataset.gateTitle,
-    text: root.dataset.gateText || "Checks, chat and the agents are for signed-in people.",
-    onGoogle: async (hint) => {
-      try {
-        const result = await signInWithPopup(auth, providerFor(hint));
-        if (chooseAccount) completeSignIn(result.user);
-      } catch (err) {
-        if (err.code === "auth/popup-blocked") {
-          if (chooseAccount) throw new Error("Allow popups for this page, then choose your Google account again.");
-          return signInWithRedirect(auth, providerFor(hint));
-        }
-        if (!["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(err.code)) throw new Error(signInProblem(err));
-      }
-    },
+    auth,
+    area: AREA,
+    title: root.dataset.gateTitle || "Sign in to the demo",
+    text: root.dataset.gateText || "The demo has its own sign-in, separate from your SafeShelf account on the website.",
+    kicker: chooseAccount ? "Welcome to SafeShelf" : "SafeShelf · judges' demo",
+    allowGuest: !chooseAccount, // the extension needs a real account
+    redirectOnBlock: !chooseAccount,
+    // a new email account gets its name just after the sign-in event, so show it again once the card is done
+    onSignedIn: (user) => { if (chooseAccount) completeSignIn(user); else { rememberAccount(AREA, user); mountAccount(); } },
   });
   gate = make("div", { className: "gate" }, card.el);
   document.body.prepend(gate);
   card.focus();
 }
 
-// Google's account picker, with the remembered account preselected for "Continue as".
-function providerFor(hint) {
-  if (!hint) return provider;
-  const p = new GoogleAuthProvider();
-  p.setCustomParameters({ prompt: "select_account", login_hint: hint });
-  return p;
-}
-
-function signInProblem(err) {
-  if (err.code === "auth/unauthorized-domain") return `This address (${location.hostname}) isn't allowed to sign in yet. In the Firebase console, add it under Authentication → Settings → Authorized domains.`;
-  if (err.code === "auth/network-request-failed") return "No connection. Check your internet and try again.";
-  return `Sign-in didn't work (${err.code || err.message}). Try again.`;
-}
-
 function completeSignIn(user) {
   accountChosen = true;
-  rememberAccount(user);
+  rememberAccount(AREA, user);
   root.classList.remove("auth-locked");
-  if (gate) gate.hidden = true;
+  gate?.remove();
+  gate = null;
   resolveSignedIn(user);
+  if (!chooseAccount) quota.load(user);
   mountAccount();
 }
 
 onAuthStateChanged(auth, (user) => {
-  if (!user || (chooseAccount && !accountChosen)) return lock();
+  if (!user || (chooseAccount && !accountChosen)) {
+    quota.load(null);
+    return lock();
+  }
   completeSignIn(user);
 });
 
@@ -97,16 +83,17 @@ export async function authFetch(url, init = {}) {
   return res.status === 401 || res.status === 403 ? send(true) : res;
 }
 
-// Show the Firebase profile and sign-out action.
+// Show who is signed in (or "Guest") and the way out; a guest's button reads "Sign in" (to get 5 checks a day).
 let account = null;
 function mountAccount() {
-  // The extension handoff needs only Firebase; do not ask the app API for a role on this page.
-  if (document.querySelector(".handoff")) return;
+  if (chooseAccount) return; // the extension hand-off needs only Firebase
   const row = document.querySelector("body > header .brand-row, main .brand-row");
-  if (!row || !auth.currentUser) return;
+  const user = auth.currentUser;
+  if (!row || !user) return;
   account?.remove();
-  const out = make("button", { type: "button", className: "link", textContent: "Sign out" });
+  const out = make("button", { type: "button", className: "link", textContent: user.isAnonymous ? "Sign in" : "Sign out" });
   out.onclick = () => signOut(auth);
-  account = make("span", { className: "account" }, make("span", { className: "who", textContent: [auth.currentUser.displayName, auth.currentUser.email].filter(Boolean).join(" · ") || "Signed in" }), out);
+  const who = user.isAnonymous ? "Guest" : [user.displayName, user.email].filter(Boolean).join(" · ") || "Signed in";
+  account = make("span", { className: "account" }, make("span", { className: "who", textContent: who }), out);
   row.append(account);
 }

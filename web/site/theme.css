@@ -492,3 +492,6 @@ td.ep { font: .82rem var(--mono); white-space: nowrap; }
 .acct-menu a:hover, .acct-menu button:hover { background: var(--soft); color: var(--blue); }
 @media (max-width: 900px) { .nav-end .acct-in { display: inline-flex; } }
 @media (max-width: 640px) { .signed-in .nav-end .btn-ink { display: none; } }
+.acct-face.guest { background: var(--soft); color: var(--ink-2); }
+.acct-left { margin: 0 0 4px; padding: 0 10px 10px; border-bottom: 1px solid var(--line-2); font-size: .8125rem; color: var(--blue); }
+.acct-menu .acct-up { color: var(--blue); font-weight: 500; }

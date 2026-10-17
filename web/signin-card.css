@@ -9,7 +9,7 @@
 }
 
 /* left: Eddy on the sky */
-.ssa-art { position: relative; display: flex; flex-direction: column; padding: 32px 30px 0; min-height: 520px; background: url(site/assets/sky.png) center / cover; image-rendering: pixelated; }
+.ssa-art { position: relative; display: flex; flex-direction: column; padding: 32px 30px 0; min-height: 560px; background: url(site/assets/sky.png) center / cover; image-rendering: pixelated; }
 .ssa-art > * { image-rendering: auto; }
 .ssa-kicker { align-self: flex-start; margin: 0 0 14px; padding: 5px 10px; background: #fff; border-radius: 2px; font-size: .8125rem; color: var(--ssa-blue); font-weight: 500; }
 .ssa-head { margin: 0; font: 500 clamp(1.7rem, 3vw, 2.25rem) / 1.08 var(--ssa-display); letter-spacing: -.035em; color: var(--ssa-ink); max-width: 12ch; }
@@ -31,8 +31,8 @@
 @keyframes ssa-float { 50% { transform: translateY(-6px); } }
 
 /* right: the sign-in options */
-.ssa-main { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 36px 36px 28px; }
-.ssa-brand { display: inline-flex; align-items: center; gap: 9px; font: 500 1.15rem var(--ssa-display); letter-spacing: -.03em; margin-bottom: 18px; }
+.ssa-main { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 30px 36px 24px; }
+.ssa-brand { display: inline-flex; align-items: center; gap: 9px; font: 500 1.15rem var(--ssa-display); letter-spacing: -.03em; margin-bottom: 8px; }
 .ssa-brand svg { width: 26px; height: 26px; }
 .ssa-main h2 { margin: 0; font: 500 1.75rem / 1.1 var(--ssa-display); letter-spacing: -.03em; color: var(--ssa-ink); }
 .ssa-sub { margin: -4px 0 6px; color: var(--ssa-muted); font-size: .9375rem; line-height: 1.5; }
@@ -48,13 +48,28 @@
 .ssa-last span { display: grid; gap: 2px; min-width: 0; }
 .ssa-last b { font-weight: 500; }
 .ssa-last small { color: #b9c8d9; font-size: .8125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ssa-form { display: grid; gap: 10px; }
+.ssa-field[hidden] { display: none; }
+.ssa-field input { width: 100%; min-height: 46px; padding: 0 14px; border: 0; border-radius: 2px; background: #fff; box-shadow: inset 0 0 0 1px var(--ssa-line); font: inherit; font-size: .9375rem; color: var(--ssa-ink); }
+.ssa-field input:hover { box-shadow: inset 0 0 0 1px var(--ssa-ink-2); }
+.ssa-field input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--ssa-blue); }
+.ssa-primary { background: var(--ssa-blue); box-shadow: none; color: #fff; }
+.ssa-primary:hover { background: #0a5fc0; box-shadow: none; color: #fff; }
+.ssa-links { display: flex; justify-content: space-between; gap: 12px; }
+.ssa-link { min-height: 0; padding: 2px 0; border: 0; background: none; box-shadow: none; font: inherit; font-size: .8125rem; color: var(--ssa-blue); cursor: pointer; }
+.ssa-link:hover { background: none; box-shadow: none; color: #0a5fc0; text-decoration: underline; }
+.ssa-link[hidden] { visibility: hidden; display: inline; }
+.ssa-guest { background: var(--ssa-soft); box-shadow: none; }
+.ssa-guest:hover { background: #eceef0; box-shadow: none; }
+.ssa-guest svg { fill: none; stroke: var(--ssa-ink-2); stroke-width: 1.6; stroke-linecap: round; }
+.ssa-error.ok { color: #1d7f3e; }
 .ssa-or { display: flex; align-items: center; gap: 12px; color: var(--ssa-muted); font-size: .8125rem; }
 .ssa-or::before, .ssa-or::after { content: ""; flex: 1; height: 1px; background: var(--ssa-line); }
 .ssa-error { margin: 0; color: #c93a2f; font-size: .875rem; }
 .ssa-error:empty { display: none; }
-.ssa-new { margin: 2px 0 0; font-size: .875rem; color: var(--ssa-muted); text-align: center; }
+.ssa-new { margin: -2px 0 0; font-size: .875rem; color: var(--ssa-muted); text-align: center; }
 .ssa-new b { color: var(--ssa-blue); font-weight: 500; }
-.ssa-fine { margin: auto 0 0; padding-top: 18px; border-top: 1px solid var(--ssa-line); font-size: .75rem; line-height: 1.5; color: var(--ssa-muted); }
+.ssa-fine { margin: auto 0 0; padding-top: 14px; border-top: 1px solid var(--ssa-line); font-size: .75rem; line-height: 1.5; color: var(--ssa-muted); }
 .ssa-close { position: absolute; z-index: 2; top: 14px; right: 14px; width: 36px; height: 36px; min-height: 0; padding: 0; border: 0; border-radius: 2px; background: none; box-shadow: none; display: grid; place-items: center; cursor: pointer; color: var(--ssa-muted); }
 .ssa-close:hover { background: var(--ssa-soft); box-shadow: none; color: var(--ssa-ink); }
 .ssa-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }

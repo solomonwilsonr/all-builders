@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="theme.css?v=20261017d">
+  <link rel="stylesheet" href="theme.css?v=20261017e">
   <style>
     .chat-page { --card:#fff; --link:var(--blue); --green:var(--ok); --green-bg:var(--ok-bg); --unknown:#4a5560; --unknown-bg:#eceff3;
       --shadow:0 14px 32px rgba(0,17,35,.10), 0 0 0 1px rgba(0,17,35,.04);
@@ -125,6 +125,7 @@
     .send:disabled { opacity:.45; cursor:wait; }
     .send svg { width:14px; height:14px; stroke-width:2.2; }
     .hint { font-size:.6875rem; color:var(--dim); margin-top:8px; text-align:center; }
+    .hint b { color:var(--blue); font-weight:500; }
     body.drop .chat { outline:2px dashed var(--blue); outline-offset:-8px; }
 
     /* tools drawer */
@@ -313,7 +314,7 @@
             <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7 M8 7h9v9"/></svg></button>
         </form>
       </div>
-      <div class="hint">Enter to send · paste or drop a screenshot anywhere · the camera button scans a label · ask out loud with the mic and hear the answer</div>
+      <div class="hint">Enter to send · paste or drop a screenshot anywhere · the camera button scans a label · ask out loud with the mic and hear the answer · <b id="checksLeft">Sign in to ask</b></div>
     </div>
   </main>
 
@@ -363,7 +364,7 @@
   </aside>
 
 <script src="site.js"></script>
-<script type="module" src="account.js?v=20261017u"></script>
+<script type="module" src="account.js?v=20261017v"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -657,6 +658,12 @@
     return json;
   }
   const apiPost = (path, body, headers, timeoutMs) => apiSend("POST", path, body, headers, timeoutMs);
+  // Every AI answer is one check (account.js): sign in first; a guest gets 1 on this browser, an account 5 a day.
+  async function spend() {
+    const acct = window.safeshelfAccount;
+    if (!acct) { window.safeshelfSignIn?.(); throw new Error("Sign in first (Google, email or as a guest) to ask SafeShelf."); }
+    if (!(await acct.take())) throw new Error(acct.usedUpText());
+  }
   const apiGet = (path, headers, timeoutMs) => apiSend("GET", path, null, headers, timeoutMs);
   // Errors in words a shopper understands; the raw message stays in the title for developers.
   function friendly(err) {
@@ -765,6 +772,7 @@
     const body = { investigation_id: ctx.investigation_id, market: ctx.market || marketOf(ctx.url), purchase: { url: ctx.url || undefined, what_happened: whatHappened || undefined } };
     for (const k of ["url", "title", "brand", "model"]) if (ctx[k]) body[k] = ctx[k];
     if (ctx.product_id && ctx.product_id !== "unmatched") body.product_id = ctx.product_id;
+    await spend();
     const a = await apiPost("/v1/after-purchase", body, {}, 150000);
     const draft = (d) => {
       const ta = node("textarea", { rows: 9, value: d.body, ariaLabel: `${d.subject} (you can edit it)` });
@@ -815,6 +823,7 @@
         for (const k of ["brand", "model", "title"]) if (ctx[k]) body[k] = ctx[k];
         if (when.value) body.happened_on = when.value;
         if (photo.files[0]) body.photo = await readImage(photo.files[0]);
+        await spend();
         const r = await apiPost("/v1/incidents", body, {}, 120000);
         const s = r.signal || {};
         fill(result, node("div", { className: "todo" }, node("b", { textContent: `Report ${r.report_id || ""} received` }), r.read?.summary || "Thank you."),
@@ -848,6 +857,7 @@
   // A dropped connection (Chrome: "network error", "Failed to fetch") is a TypeError: ask once more with the plain
   // call. The server keeps a finished check for 10 minutes, so the second answer is quick.
   async function call(body, timeoutMs = 150000, onEvent = () => {}) {
+    await spend();
     try { return await callStream(body, timeoutMs, onEvent); }
     catch (err) {
       if (!(err instanceof TypeError)) throw err;
@@ -1102,6 +1112,7 @@
     const started = performance.now();
     try {
       const market = linked?.url ? marketOf(linked.url) : marketOf(null);
+      await spend();
       const a = await apiPost("/v1/camera/ask", { image: photo, question, language: langValue, market }, {}, 150000);
       const seconds = ((performance.now() - started) / 1000).toFixed(1);
       const lb = a.label || {};
@@ -1330,6 +1341,9 @@
   health();
   refreshShelf();
   addEventListener("safeshelf:account", () => { watched.clear(); refreshShelf(); });
+  const showLeft = () => { $("checksLeft").textContent = window.safeshelfAccount ? window.safeshelfAccount.text() : "Sign in to ask"; };
+  addEventListener("safeshelf:account", showLeft);
+  addEventListener("safeshelf:quota", showLeft);
   $("q").focus();
 })();
 </script>
