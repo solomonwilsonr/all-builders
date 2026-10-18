@@ -534,6 +534,61 @@ function applyView(id) {
   }
 }
 
+// --- Switching further down the page: a "Viewing as" pill, shown once the four cards are scrolled past ---
+function switcher(pick, cards) {
+  const face = el("img", { className: "fs-face", alt: "", decoding: "async" });
+  const name = el("b");
+  const btn = el("button", { type: "button", className: "fs-btn", "aria-haspopup": "true", "aria-expanded": "false" },
+    face, el("span", { className: "fs-t" }, el("small", { textContent: "Viewing as" }), name),
+    el("span", { className: "fs-caret", "aria-hidden": "true", textContent: "▾" }));
+  const menu = el("div", { className: "fs-menu", role: "menu", hidden: true },
+    el("p", { className: "fv-tag", textContent: "Switch view" }),
+    ...VIEWS.map((v) => {
+      const item = el("button", { type: "button", className: "fs-item", role: "menuitemradio", "data-view": v.id, "aria-checked": "false" },
+        el("span", { className: `fs-av fs-tint ${v.id}` }, el("img", { src: `site/assets/eddy-${v.id}.png`, alt: "", decoding: "async" })),
+        el("span", { className: "fs-t" }, el("b", { textContent: v.label }), el("small", { textContent: v.ask })));
+      item.onclick = () => { open(false); pick(v.id); };
+      return item;
+    }));
+  // the chip leads the sticky section bar; the menu lives outside it, since the bar scrolls sideways and would clip it
+  btn.hidden = true;
+  document.querySelector(".jump")?.prepend(btn);
+  document.body.append(menu);
+
+  const open = (on) => {
+    menu.hidden = !on;
+    btn.setAttribute("aria-expanded", String(on));
+    if (!on) return;
+    const r = btn.getBoundingClientRect();
+    menu.style.top = `${r.bottom + 8}px`;
+    menu.style.left = `${Math.max(12, Math.min(r.left, innerWidth - menu.offsetWidth - 12))}px`;
+    (menu.querySelector("[aria-checked=true]") || menu.querySelector(".fs-item"))?.focus();
+  };
+  btn.onclick = () => open(menu.hidden);
+  document.addEventListener("click", (e) => { if (!btn.contains(e.target) && !menu.contains(e.target)) open(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !menu.hidden) { open(false); btn.focus(); } });
+  addEventListener("resize", () => open(false));
+
+  // only below the cards: while they are on screen, or before them, the cards are the switch
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([e]) => {
+      const past = !e.isIntersecting && e.boundingClientRect.top < 0;
+      btn.hidden = !past;
+      if (!past) open(false);
+    }).observe(cards);
+  }
+
+  return {
+    sync(id) {
+      const v = VIEWS.find((x) => x.id === id);
+      face.src = `site/assets/eddy-${id}.png`;
+      face.className = `fs-face fs-tint ${id}`;
+      name.textContent = v.label;
+      for (const i of menu.querySelectorAll(".fs-item")) i.setAttribute("aria-checked", String(i.dataset.view === id));
+    },
+  };
+}
+
 // --- The picker ---
 function chosen() {
   const q = new URLSearchParams(location.search).get("for") || location.hash.match(/^#for=([a-z]+)/)?.[1];
@@ -564,6 +619,7 @@ export async function setUpRoles() {
   root.replaceChildren(cards, strip, panel);
 
   let run = 0;
+  const dock = switcher((id) => show(id), cards);
   const show = async (id, { save = true, scroll = false } = {}) => {
     const view = VIEWS.find((x) => x.id === id);
     const mine = ++run;
@@ -578,6 +634,7 @@ export async function setUpRoles() {
       } catch (_) { /* file:// */ }
     }
     applyView(id);
+    dock.sync(id);
     panel.replaceChildren(el("p", { className: "muted", textContent: "Loading…" }));
     const body = await BUILD[id]();
     if (mine !== run) return;
