@@ -103,6 +103,8 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 browser-ext:    ## copy the extension into browser/ext/ for the real-browser container
 	rm -rf browser/ext && mkdir -p browser/ext
 	cp -R extension/. browser/ext/ && rm -rf browser/ext/node_modules browser/ext/demo browser/ext/config.generated.js browser/ext/tests
+	# The cloud Chrome draws without a GPU, where the rail's frosted glass (backdrop-filter) leaves a stray line on the page: default to Solid there
+	perl -0pi -e 's/widgetSurface: \["glass","solid"\]/widgetSurface: ["solid","glass"]/ or die "widgetSurface default not found\n"' browser/ext/content.js
 
 deploy-browser: browser-ext ## the real Chrome for "Try it" on Cloud Run: starts only when a judge presses Start (then make deploy-web)
 	gcloud run deploy safeshelf-browser --source browser --project $(GCP_PROJECT) --region $(REGION) \
