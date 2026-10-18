@@ -1,91 +1,66 @@
-// Eddy, the page guide: an assistant-style walkthrough of every feature on the judges' page. Eddy (the mascot, cut
-// from the brand sheet into site/assets/guide/) flies to each part of the page, "thinks", then types out what it does,
-// in a pose that fits. Steps open the right Try it tab first and can offer a button that does the thing for the person
-// (opens the test pages, fills in a sample listing…). The "Ask Eddy" box answers questions about the page by finding
-// the step they're about and jumping there; this part is plain word matching, not AI. A question that names a product
-// goes to the live check (Paste a listing), which is the real AI and counts against the person's limit.
-// Eddy opens once by himself after sign-in (remembered on this browser; ?notour turns that off) and any time from his
-// button at the bottom right. Steps hidden for the chosen view (roles.js) are skipped. Plain module, no build step;
-// all text is set as text.
+// Eddy's tour of the judges' page: a centred card with one slide per feature. Each slide has Eddy (the mascot, cut from
+// the brand sheet into site/assets/guide/) in a pose that fits, a big title, one line, and a moving picture of the
+// feature with a cursor using it. "Show me on the page" closes the card, opens the right Try it tab and lights up that
+// part of the page. The last slide takes a product name and puts it into Paste a listing for the real live check.
+// Navigation: Back / Next, clickable dots, arrow keys, swipe, Esc. It opens once by itself after sign-in (remembered
+// on this browser; ?notour turns that off) and any time from Eddy's button at the bottom right. Slides for parts the
+// chosen view hides (roles.js) are left out. Plain module, no build step; the pictures are fixed markup.
 
 const KEY = "safeshelf-tour-seen";
 const POSE = (name) => `site/assets/guide/eddy-${name}.webp`;
-const POSES = ["hi", "pointing", "curious", "thinking", "excited", "thumbs", "happy", "wink", "surprised", "flying", "waving"];
 const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
-const wait = (ms) => new Promise((r) => setTimeout(r, calm() ? 0 : ms));
 const $id = (id) => document.getElementById(id);
+const SHIELD = `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const HAND = `<svg class="tg-hand" viewBox="0 0 24 28" aria-hidden="true"><path d="M8.5 13V4.2a1.8 1.8 0 0 1 3.6 0V12l.1-1.6a1.8 1.8 0 0 1 3.5.2l.1 1.6.2-1a1.7 1.7 0 0 1 3.4.3l.1 1.3a1.7 1.7 0 0 1 3.3.5v5.2c0 4.2-2.9 7.5-7 7.5h-1.6c-2.4 0-4.2-1-5.6-3l-4-5.6a1.8 1.8 0 0 1 2.8-2.2z" fill="#fff" stroke="#001123" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const BAR = (url) => `<div class="tm-bar"><span class="tm-lights"><i></i><i></i><i></i></span><span class="tm-url">${url}</span></div>`;
+
+// the shop-page tab shows two choices first (app.js); the test browser is the one to point at
+const toTestPages = () => { if ($id("shop-page")?.dataset.mode === "choose") $id("test-start")?.click(); };
 const openTab = (id) => { const t = $id(`tab-${id}`); if (t && t.getAttribute("aria-selected") !== "true") t.click(); };
 const setField = (form, name, value) => { const f = form?.elements[name]; if (f) { f.value = value; f.dispatchEvent(new Event("input", { bubbles: true })); } };
-// the shop-page panel shows two choices first (app.js), then the test browser or the real one
-const shopMode = () => $id("shop-page")?.dataset.mode;
-const toTestPages = () => { if (shopMode() === "choose") $id("test-start")?.click(); };
-const toChoices = () => { if (shopMode() === "test" && !$id("real-row")?.hidden) $id("mode-back")?.click(); };
 
-// Every feature, in page order. chapter: shown as a topic chip; tab: the Try it tab the step opens; prep: puts the
-// panel in the right state; keys: words a question about it would contain; show: a button that does it for you.
-const STEPS = [
-  { id: "hello", target: ".jhero", pose: "hi", title: "Hi, I'm Eddy!",
-    say: "I'm your safety wingman. SafeShelf answers two questions about any product listing: is it safe, and is it real? I'll walk you through every feature on this page, and I can work it for you. Follow along with Next, pick a topic, or ask me anything below.",
-    keys: ["hello", "hi eddy", "what is safeshelf", "who are you eddy", "start over", "about", "help"] },
-  { id: "facts", target: ".facts", pose: "pointing", title: "Real data behind every answer",
-    say: "These numbers are real: 8,689 official recalls from the US and 7 Asia-Pacific regulators, 29,379 buyer reviews read for fire, burn and shock, and answers in 26 languages. Only 2 false alarms in 40 safe products.",
-    keys: ["data", "recalls", "reviews", "regulator", "source", "numbers", "how many", "countries", "cpsc", "accc", "bis", "india", "japan"] },
-  { id: "views", chapter: "Your view", target: "#for", pose: "curious", title: "Pick who you are",
-    say: "One engine, four people. Choose Shopper, Marketplace, Regulator or Developer and the page keeps only the parts for you, with a one-minute story of the same recalled power bank told your way.",
-    keys: ["view", "who are you", "shopper", "marketplace", "seller", "regulator", "researcher", "persona", "role"] },
-  { id: "answers", chapter: "How it answers", target: "#answers", pose: "thinking", title: "Four answers, never a guess",
-    say: "Every listing gets one of four answers: Don't buy, Be careful, No problems found, or Can't tell yet. Plain code picks the colour from the evidence; Gemini only explains it in your language, so the AI can't change a verdict.",
-    keys: ["answer", "verdict", "colour", "color", "red", "amber", "green", "grey", "gemini", "decide", "rules", "hallucinat"] },
-  { id: "tabs", chapter: "Try it", target: ".trytabs", pose: "pointing", title: "Four ways to try it live",
-    say: "Here's where you use the real product: on a shop page, by pasting a listing, by asking out loud, or on WhatsApp. They all call the same live API on Cloud Run.",
-    keys: ["try", "demo", "ways", "tabs", "live"] },
-  { id: "choose", tab: "shop-page", prep: toChoices, target: "#real-row", pose: "excited", title: "A real browser, or test pages",
-    say: "Start a real Chrome with the SafeShelf extension on the real Amazon or Flipkart (5 minutes, shared), or open seven test shop pages where we already know the right answer, including a safe one that must stay quiet.",
-    keys: ["real browser", "chrome", "test pages", "amazon", "flipkart", "remote"],
-    show: { label: "Open the test pages", run: toTestPages } },
-  { id: "samples", tab: "shop-page", prep: toTestPages, target: "#samples", pose: "pointing", title: "Seven shop pages, one per tab",
-    say: "I've opened the test browser. Each tab is a listing with a known right answer: a recalled power bank, a fake charger at a fifth of the price, a borrowed safety mark, and a safe product. Click any tab to load it.",
-    keys: ["sample", "test page", "fake charger", "power bank", "browser tab"] },
-  { id: "omnibox", tab: "shop-page", prep: toTestPages, target: "#omnibox", pose: "curious", title: "Paste any product link",
-    say: "Got a real link? Paste it in the address bar and press Enter. SafeShelf reads the page and checks it live, which can take up to two minutes.",
-    keys: ["link", "url", "address bar", "paste link", "omnibox"],
-    show: { label: "Put the cursor there", run: () => $id("omni-url")?.focus() } },
-  { id: "check", tab: "shop-page", prep: toTestPages, target: "#ext-toggle", pose: "thumbs", title: "Press the shield to check",
-    say: "This is the Chrome extension's button. Press it on any shop page and the SafeShelf panel opens with the answer, the evidence, and what to do next. You can ask follow-up questions and listen to the answer too.",
-    keys: ["check button", "extension", "shield", "panel", "chrome extension", "press check"] },
-  { id: "own", chapter: "Paste a listing", tab: "check-own", target: "#own", pose: "pointing", title: "Check any listing from any shop",
-    say: "Copy a product's title from any shop; the price, seller and label text make the check sharper. Each live check uses one of your checks: a guest gets 1, an account 5 a day.",
-    keys: ["paste", "listing", "title", "form", "own product", "quota", "limit", "how many checks", "free", "cost"],
-    show: { label: "Fill in a sample for me", run: () => {
-      const f = $id("own");
-      setField(f, "title", "HAIARA W5PRO 10000mAh power bank");
-      setField(f, "price", "2980");
-      setField(f, "currency", "JPY");
-      setField(f, "page_text", "Model W5PRO. Sold on amazon.co.jp.");
-      f?.querySelector("button[type=submit]")?.focus({ preventScroll: true });
-    } } },
-  { id: "agents", tab: "check-own", target: ".own-help", pose: "thinking", title: "Eight agents, one answer",
-    say: "When you press Check, you watch eight agents light up: the page reader, Is it real?, Safety Radar for reviews, the recall checker, safety marks and the twin finder. Then code sets the verdict and Gemini writes it in plain words.",
-    keys: ["agent", "pipeline", "steps", "how it works", "safety radar", "twin", "recall checker", "safety mark", "certificate"] },
-  { id: "ask", chapter: "Ask out loud", tab: "ask-out-loud", target: "#ask-out-loud", pose: "happy", title: "Just ask out loud",
-    say: "For people who'd rather not read small print. Press Start talking, point your camera at the label and ask \"Is this safe?\". Or take one photo and hear the answer read aloud, in 26 languages.",
-    keys: ["voice", "talk", "speak", "camera", "photo", "label", "out loud", "language", "hindi", "accessib", "blind", "elderly", "read aloud"] },
-  { id: "wa", chapter: "WhatsApp", tab: "whatsapp", target: "#whatsapp", pose: "wink", title: "SafeShelf on WhatsApp",
-    say: "Forward a shop link or a photo of the label and get the answer as a text and a voice note, in English, Hindi or 24 other languages. This chat runs on the live API; the real WhatsApp number is coming soon.",
-    keys: ["whatsapp", "chat", "message", "voice note", "forward"] },
-  { id: "accuracy", chapter: "Is it accurate?", target: "#accuracy", pose: "thumbs", title: "Is it accurate?",
-    say: "We tested on 25 real recalls and 40 products that were never recalled. SafeShelf raised 2 false alarms; Gemini alone raised 6, and keyword rules 11.",
-    keys: ["accurate", "accuracy", "false alarm", "benchmark", "results", "compare", "how good", "trust"] },
-  { id: "attack", chapter: "Can it be fooled?", target: "#attack", pose: "surprised", title: "Can it be fooled?",
-    say: "We attacked our own code: fake regulator pages, look-alike model numbers, hidden instructions aimed at AI. Here you can see each attack and what SafeShelf decided.",
-    keys: ["fool", "attack", "red team", "hack", "prompt injection", "hidden", "security", "trick"] },
-  { id: "products", chapter: "Where to use it", target: "#products", pose: "flying", title: "One engine, five ways in",
-    say: "The Chrome extension, this web page, WhatsApp, catalog scans for marketplaces (49 of 50 planted problems found in 500 listings), and an API with 10 read-only MCP tools so AI shopping agents can ask the same questions.",
-    keys: ["where", "products", "api", "mcp", "developer", "agent", "catalog", "scan", "rest", "integrate", "get safeshelf", "download", "install"] },
-  { id: "done", target: "#products .cta", pose: "waving", title: "That's the whole tour!",
-    say: "You've seen everything. Tap me at the bottom right any time to ask a question or jump back to a topic. Want to try a real product now?",
-    keys: ["done", "finish", "thanks", "thank you", "bye"],
-    show: { label: "Check a product live", run: () => go("own") } },
+const SLIDES = [
+  { id: "hello", pose: "hi", title: "Meet Eddy, your safety wingman", text: "Take a quick tour of SafeShelf: it tells you if a product is safe and real before you pay, with the proof.",
+    art: `<div class="tm-hello">
+      <div class="tm-win">${BAR("amazon.co.jp/dp/W5PRO")}
+        <div class="tm-shop"><span class="tm-thumb"></span><span class="tm-lines"><b>HAIARA W5PRO 10000mAh</b><i>¥2,980</i><em>Add to cart</em></span></div>
+        <div class="tm-panel"><span class="tm-brand">${SHIELD}SafeShelf</span><div class="tm-verdict red"><b>Don't buy</b><small>Recalled in Japan for a fire risk</small></div><span class="tm-proof">CAA notice · exact model W5PRO</span></div>
+      </div>
+      <ul class="tm-facts"><li><b>8,689</b>official recalls</li><li><b>29,379</b>buyer reviews</li><li><b>26</b>languages</li></ul>
+    </div>` },
+  { id: "views", pose: "curious", target: "#for", title: "Pick who you are", text: "Shopper, marketplace, regulator or developer: the page keeps only the parts for you, and tells the same story your way.",
+    art: `<div class="tm-views">${[["shopper", "Shopper"], ["marketplace", "Marketplace"], ["regulator", "Regulator"], ["developer", "Developer"]]
+      .map(([v, l]) => `<span class="tm-view${v === "marketplace" ? " pick" : ""}"><img src="site/assets/eddy-${v}.png" alt=""><b>${l}</b></span>`).join("")}</div>${HAND}` },
+  { id: "answers", pose: "thinking", target: "#answers", title: "One clear answer, with proof", text: "Every listing gets one of four answers. Plain code picks the colour from the evidence; Gemini only explains it.",
+    art: `<div class="tm-answers">
+      <div class="tm-checks"><span>Official recalls</span><span>Buyer reviews</span><span>Safety marks</span><span>Is it real?</span></div>
+      <ul class="tm-ans"><li class="red"><b>Don't buy</b>recalled or fake</li><li class="amber"><b>Be careful</b>reports under review</li><li class="green"><b>No problems found</b>in what was checked</li><li class="grey"><b>Can't tell yet</b>never a guess</li></ul>
+    </div>` },
+  { id: "shop", pose: "pointing", tab: "shop-page", prep: toTestPages, target: "#shop-page .win", title: "Check right on the shop page", text: "Open a test shop page, or paste any product link, then press the shield. The answer opens beside the listing.",
+    art: `<div class="tm-browser"><div class="tm-win">${BAR("example-deals-store.test")}<span class="tm-ext">${SHIELD}</span>
+      <div class="tm-shop"><span class="tm-thumb b"></span><span class="tm-lines"><b>Kelvo CX-65 65W charger</b><i>₹299</i><em>Buy now</em></span></div>
+      <div class="tm-panel slide"><span class="tm-brand">${SHIELD}SafeShelf</span><div class="tm-verdict red"><b>Don't buy</b><small>Not real: a fifth of the genuine price</small></div><span class="tm-proof">Photos copied from the official listing</span></div>
+    </div></div>${HAND}` },
+  { id: "paste", pose: "excited", tab: "check-own", target: "#check-own", title: "Paste any listing, watch it think", text: "Copy a title from any shop. Eight agents check it live while you watch, then you get the answer.",
+    art: `<div class="tm-paste">
+      <div class="tm-form"><small>Product title</small><span class="tm-field"><span class="tm-typed">Anker PowerCore 10000 A1263</span></span><span class="tm-go">Check it live</span></div>
+      <ol class="tm-agents"><li>Page reader</li><li>Is it real?</li><li>Safety Radar</li><li>Recall checker</li><li>Safety marks</li><li>Verdict, set by code</li></ol>
+    </div>${HAND}` },
+  { id: "talk", pose: "happy", tab: "ask-out-loud", target: "#ask-out-loud", alt: { tab: "whatsapp", target: "#whatsapp" }, title: "Ask out loud, or on WhatsApp", text: "Point the camera at the label and ask \"Is this safe?\", or forward a link on WhatsApp. Answers come back as a voice note, in 26 languages.",
+    art: `<div class="tm-talk">
+      <div class="tm-phone"><span class="tm-mic"><i></i></span><b>“Is this safe?”</b><small>Listening… हिन्दी · 日本語 · English</small></div>
+      <div class="tm-phone wa"><span class="tm-wahead">SafeShelf</span><span class="tm-msg me">flipkart.com/kelvo-cx65…</span><span class="tm-msg bot"><b>⛔ Don't buy</b>Not the real product.</span><span class="tm-msg bot voice"><i></i>0:12</span></div>
+    </div>` },
+  { id: "proof", pose: "surprised", target: "#accuracy", alt: { target: "#attack" }, title: "Tested, and attacked on purpose", text: "Only 2 false alarms in 40 safe products, against 6 for Gemini alone. We also tried to fool it; see what it decided.",
+    art: `<div class="tm-proof2">
+      <div class="tm-bars"><small>False alarms out of 40</small><div><span>SafeShelf</span><i class="me" style="--w:18%"></i><b>2</b></div><div><span>Gemini alone</span><i style="--w:55%"></i><b>6</b></div><div><span>Keyword rules</span><i style="--w:100%"></i><b>11</b></div></div>
+      <ul class="tm-attacks"><li>Fake regulator page</li><li>Look-alike model number</li><li>Hidden text aimed at AI</li></ul>
+    </div>` },
+  { id: "anywhere", pose: "flying", target: "#products", title: "Use it anywhere", text: "A Chrome extension, this web page, WhatsApp, catalog scans for marketplaces, and an API with 10 MCP tools for AI agents.",
+    art: `<div class="tm-prods">${[["#0271e4", "Chrome extension"], ["#f0a020", "Web page"], ["#1d9b52", "WhatsApp"], ["#7b5cd6", "Catalog scan"], ["#001123", "API · MCP"]]
+      .map(([c, l]) => `<span style="--c:${c}"><i></i>${l}</span>`).join("")}</div>` },
+  { id: "go", pose: "waving", title: "Your turn", text: "Name a product and Eddy will set up a live check, or close this and explore. Eddy is at the bottom right if you need him.",
+    art: `<form class="tm-try" autocomplete="off"><img src="${POSE("thumbs")}" alt=""><label class="sr" for="tg-product">A product to check</label><input id="tg-product" type="text" maxlength="200" placeholder="e.g. Anker PowerCore 10000 A1263"><button type="submit" class="primary">Set up the check</button></form>` },
 ];
 
 const store = {
@@ -93,264 +68,164 @@ const store = {
   set: () => { try { localStorage.setItem(KEY, "1"); } catch (_) { /* private window */ } },
 };
 
-// A step counts if its part of the page is in the chosen view (roles.js hides the rest). Steps in a Try it tab are
-// checked again once the tab is open (shown()), since a closed tab hides everything in it.
-function available(step) {
-  const el = document.querySelector(step.target);
-  if (!el) return false;
-  if (step.tab) {
-    const tab = $id(`tab-${step.tab}`);
-    return !!tab && !tab.hidden && !$id("try")?.hidden && !(el.hidden && el.getAttribute("role") !== "tabpanel"); // #real-row stays hidden until a browser is set up
+// Where a slide points on the page, for the chosen view (roles.js hides the rest): its own part, or its fallback.
+function placeOf(slide) {
+  for (const p of [slide, slide.alt].filter(Boolean)) {
+    if (!p.target) continue;
+    const el = document.querySelector(p.target);
+    if (!el) continue;
+    if (p.tab) { const t = $id(`tab-${p.tab}`); if (t && !t.hidden && !$id("try")?.hidden) return { ...p, prep: slide.prep, el }; continue; }
+    if (!el.closest("[hidden]")) return { ...p, el };
   }
-  return !el.closest("[hidden]") && el.getBoundingClientRect().height > 0;
+  return null;
 }
-const shown = (el) => !!el && !el.closest("[hidden]") && el.getBoundingClientRect().height > 0;
-
-// how far down the sticky bars reach (the top bar, and the section links once they stick)
-const barsBottom = () => Math.max(76, ...[...document.querySelectorAll("body > header.top, .jump")]
-  .map((e) => [getComputedStyle(e), e.getBoundingClientRect()])
-  .filter(([css, r]) => css.position === "sticky" && r.top <= (parseFloat(css.top) || 0) + 1)
-  .map(([, r]) => r.bottom));
-
-// What a question is about: the step whose words it shares most (longer words count more).
-function match(text) {
-  const s = ` ${text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ")} `;
-  let best = null;
-  let score = 0;
-  for (const step of STEPS) {
-    const n = step.keys.reduce((a, k) => a + (s.includes(k) ? k.length + 4 : 0), 0);
-    if (n > score) { score = n; best = step; }
-  }
-  return score >= 7 ? best : null;
-}
-// "Is the Anker A1263 safe?", "boat airdopes 141": sounds like a product, not a question about the page
-const productish = (text) => /\d/.test(text) || /\b(is|are)\b.+\b(safe|real|fake|genuine|recalled)\b/i.test(text);
-const productName = (text) => text.replace(/[?!.]+$/, "").replace(/^(is|are)\s+(the|this|my|a|an|these)?\s*/i, "")
-  .replace(/\s+(safe|real|fake|genuine|recalled)(\s+to\s+buy)?$/i, "").replace(/\s+(it|they)$/i, "").trim();
-
-let go = () => {};
+const wanted = (s) => !s.target || placeOf(s);
 
 export function setUpTour() {
-  for (const p of POSES) { const i = new Image(); i.src = POSE(p); } // so Eddy never blinks out mid-flight
+  for (const p of new Set(SLIDES.map((s) => s.pose))) { const i = new Image(); i.src = POSE(p); }
 
   // Eddy's button, bottom right, with a "Need a hand?" bubble until he has been met
   const launch = document.createElement("button");
   launch.type = "button";
   launch.className = "tg-launch";
-  launch.setAttribute("aria-label", "Ask Eddy, your guide to this page");
+  launch.setAttribute("aria-label", "Take the tour with Eddy");
   launch.innerHTML = `<span class="tg-hint" aria-hidden="true">Hi! Need a hand?</span><img src="${POSE("hi")}" alt="" width="68" height="68">`;
   if (!store.get()) launch.classList.add("fresh");
   document.body.append(launch);
 
-  const shade = document.createElement("div");
-  shade.className = "tg-shade";
-  shade.hidden = true;
-  shade.innerHTML = `<div class="tg-ring"></div>
-    <div class="tg-guide">
+  const wrap = document.createElement("div");
+  wrap.className = "tg-modal";
+  wrap.hidden = true;
+  wrap.innerHTML = `<div class="tg-card" role="dialog" aria-modal="true" aria-labelledby="tg-title" aria-describedby="tg-text">
+      <button type="button" class="tg-x" aria-label="Close the tour">×</button>
       <img class="tg-eddy" alt="" src="${POSE("hi")}">
-      <div class="tg-card" role="dialog" aria-modal="false" aria-labelledby="tg-title">
-        <div class="tg-head"><img src="${POSE("happy")}" alt=""><span class="tg-who"><b>Eddy</b><small><i></i>Your safety wingman</small></span><span class="tg-count"></span><button type="button" class="tg-x" aria-label="Close the guide">×</button></div>
-        <div class="tg-log">
-          <p class="tg-you" hidden></p>
-          <h3 id="tg-title"></h3>
-          <p class="tg-say" aria-hidden="true"></p><p class="sr tg-said" aria-live="polite"></p>
-          <span class="tg-typing" hidden><i></i><i></i><i></i></span>
-          <div class="tg-acts"></div>
-        </div>
-        <form class="tg-ask" autocomplete="off"><label class="sr" for="tg-q">Ask Eddy about this page, or name a product to check</label><input id="tg-q" type="text" maxlength="200" placeholder="Ask about a feature, or name a product…"><button type="submit" aria-label="Ask"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button></form>
-        <div class="tg-foot"><span class="tg-bar" aria-hidden="true"><i></i></span><span class="tg-btns"><button type="button" class="tg-skip">Skip</button><button type="button" class="tg-back">Back</button><button type="button" class="tg-next">Next</button></span></div>
+      <h2 id="tg-title"></h2>
+      <p id="tg-text"></p>
+      <div class="tg-art" aria-hidden="true"><div class="tg-stage"></div></div>
+      <button type="button" class="tg-show">Show me on the page <span aria-hidden="true">→</span></button>
+      <div class="tg-foot">
+        <button type="button" class="tg-back">Back</button>
+        <span class="tg-dots" role="tablist" aria-label="Tour slides"></span>
+        <button type="button" class="tg-next"></button>
       </div>
     </div>`;
-  document.body.append(shade);
+  document.body.append(wrap);
 
-  const q = (sel) => shade.querySelector(sel);
-  const ring = q(".tg-ring");
-  const guide = q(".tg-guide");
-  const eddy = q(".tg-eddy");
-  let steps = [];
+  const q = (sel) => wrap.querySelector(sel);
+  const card = q(".tg-card");
+  const art = q(".tg-art");
+  const stage = q(".tg-stage");
+  let slides = [];
   let at = 0;
-  let target = null;
-  let frame = 0;
-  let talk = 0; // bumps on every new message, so an older one stops typing
   let lastFocus = null;
 
-  const pose = (name) => { const src = POSE(name); if (!eddy.src.endsWith(src)) eddy.src = src; };
+  // the pictures are drawn at 520 × 270 and scaled to fit the card
+  const fit = () => { stage.style.transform = `scale(${Math.min(1, art.clientWidth / 520)})`; art.style.height = `${270 * Math.min(1, art.clientWidth / 520)}px`; };
 
-  function place() {
-    if (shade.hidden || !target) return;
-    const r = target.getBoundingClientRect();
-    const pad = 8;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const bars = barsBottom();
-    const top = Math.min(Math.max(r.top - pad, bars + 6), vh - 48);
-    const bottom = Math.max(Math.min(r.bottom + pad, vh - 8), top + 40);
-    Object.assign(ring.style, { top: `${top}px`, left: `${Math.max(r.left - pad, 6)}px`, width: `${Math.min(r.width + 2 * pad, vw - 12)}px`, height: `${bottom - top}px` });
-    if (vw < 640) { guide.classList.add("docked"); guide.style.left = guide.style.top = ""; return; }
-    guide.classList.remove("docked");
-    const gw = guide.offsetWidth;
-    const gh = guide.offsetHeight;
-    const gap = 20;
-    const eddyRoom = 70; // Eddy stands off the card's left edge
-    // beside the ring if there is room, else tucked into its bottom-right corner, always on screen
-    let x = r.right + gap + eddyRoom;
-    let y = top;
-    if (x + gw > vw - 16) x = r.left - gw - gap;
-    if (x < 16 + eddyRoom) { x = Math.min(r.right, vw) - gw - 24; y = bottom - gh - 24; }
-    x = Math.min(Math.max(x, 16 + eddyRoom), vw - gw - 16);
-    y = Math.min(Math.max(y, bars + 14), vh - gh - 16);
-    guide.style.left = `${x}px`;
-    guide.style.top = `${y}px`;
-  }
-  const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(place); };
-
-  // Eddy thinks for a moment, then types the message word by word (screen readers get it whole, once).
-  async function speak(text, stance, acts = []) {
-    const me = ++talk;
-    const say = q(".tg-say");
-    const typing = q(".tg-typing");
-    const box = q(".tg-acts");
-    say.textContent = "";
-    q(".tg-said").textContent = "";
-    box.replaceChildren();
-    typing.hidden = false;
-    pose("thinking");
-    schedule();
-    await wait(600);
-    if (me !== talk) return;
-    typing.hidden = true;
-    pose(stance);
-    eddy.classList.remove("land"); void eddy.offsetWidth; eddy.classList.add("land");
-    const words = text.split(" ");
-    for (let i = 0; i < words.length && !calm(); i++) {
-      if (me !== talk) return;
-      say.textContent = words.slice(0, i + 1).join(" ");
-      if (i % 4 === 0) schedule();
-      await wait(/[.,:;?]$/.test(words[i]) ? 90 : 26);
-    }
-    if (me !== talk) return;
-    say.textContent = text;
-    q(".tg-said").textContent = text;
-    box.replaceChildren(...acts);
-    schedule();
+  function show(i) {
+    at = Math.max(0, Math.min(i, slides.length - 1));
+    const s = slides[at];
+    const eddy = q(".tg-eddy");
+    eddy.src = POSE(s.pose);
+    q("#tg-title").textContent = s.title;
+    q("#tg-text").textContent = s.text;
+    stage.innerHTML = s.art;
+    stage.dataset.slide = s.id;
+    q(".tg-show").hidden = !s.target;
+    q(".tg-back").textContent = at === 0 ? "Skip" : "Back";
+    q(".tg-next").textContent = at === 0 ? "Take the tour" : at === slides.length - 1 ? "Done" : "Next";
+    q(".tg-dots").replaceChildren(...slides.map((sl, j) => {
+      const d = document.createElement("button");
+      d.type = "button";
+      d.setAttribute("role", "tab");
+      d.setAttribute("aria-label", `${j + 1} of ${slides.length}: ${sl.title}`);
+      d.setAttribute("aria-selected", String(j === at));
+      d.onclick = () => show(j);
+      return d;
+    }));
+    card.classList.remove("in");
+    void card.offsetWidth; // restart the entrance and the picture's motion
+    card.classList.add("in");
+    fit();
+    const form = stage.querySelector(".tm-try");
+    art.setAttribute("aria-hidden", String(!form)); // only the last slide's picture is something to use
+    if (form) form.onsubmit = (e) => { e.preventDefault(); tryProduct(form.elements[0].value.trim()); };
   }
 
-  const chip = (label, onclick, cls = "") => Object.assign(document.createElement("button"), { type: "button", className: `tg-chip ${cls}`.trim(), textContent: label, onclick });
-  const topics = () => steps.filter((s) => s.chapter).map((s) => chip(s.chapter, () => go(s.id)));
-
-  async function show(i, asked = "", dir = 1) {
-    const step = steps[i];
-    if (!step) return close();
-    if (step.tab) openTab(step.tab);
-    step.prep?.();
-    const el = document.querySelector(step.target);
-    if (!shown(el)) { // not on screen in this state (say, no real browser configured): move on in the same direction
-      const n = i + dir;
-      return n >= 0 && n < steps.length ? show(n, asked, dir) : close();
-    }
-    at = i;
-    target = el;
-    q(".tg-count").textContent = `${i + 1} / ${steps.length}`;
-    q(".tg-bar i").style.width = `${((i + 1) / steps.length) * 100}%`;
-    q("#tg-title").textContent = step.title;
-    const you = q(".tg-you");
-    you.hidden = !asked;
-    you.textContent = asked;
-    q(".tg-back").hidden = i === 0;
-    q(".tg-skip").hidden = i === steps.length - 1;
-    q(".tg-next").textContent = i === steps.length - 1 ? "Done" : "Next";
-    // fly there: Eddy takes off, the page brings the part out from under the sticky bars, then he lands and talks
-    const me = ++talk;
-    pose("flying");
-    guide.classList.add("moving");
-    q(".tg-say").textContent = "";
-    q(".tg-acts").replaceChildren();
-    await new Promise((r) => requestAnimationFrame(r));
-    const r = el.getBoundingClientRect();
-    const bars = Math.max(barsBottom(), (document.querySelector(".jump")?.offsetHeight || 0) + 76) + 20;
-    const tall = r.height > window.innerHeight - bars - 40 || window.innerWidth < 640; // phones: above the docked card
-    const y = window.scrollY + r.top - (tall ? bars : Math.max(bars, (window.innerHeight - r.height) / 2));
-    window.scrollTo({ top: Math.max(0, y), behavior: calm() ? "auto" : "smooth" });
-    schedule();
-    await wait(480);
-    if (me !== talk) return;
-    guide.classList.remove("moving");
-    const acts = [];
-    if (step.show) acts.push(chip(step.show.label, () => { step.show.run(); setTimeout(schedule, 400); }, "do"));
-    if (step.id === "hello") acts.push(...topics());
-    speak(step.say, step.pose, acts);
-  }
-
-  go = (id, asked = "") => {
-    if (shade.hidden) open(false);
-    const i = steps.findIndex((s) => s.id === id);
-    if (i >= 0) show(i, asked);
-  };
-
-  function answer(text) {
-    const asked = text.trim();
-    if (!asked) return;
-    const said = `You asked: “${asked}”`;
-    const step = match(asked);
-    if (step && steps.includes(step) && !productish(asked)) return go(step.id, said);
-    const you = q(".tg-you");
-    you.hidden = false;
-    you.textContent = said;
-    if (productish(asked) && steps.some((s) => s.id === "own")) {
-      const name = productName(asked) || asked;
-      q("#tg-title").textContent = "Let's check it for real";
-      return speak(`That sounds like a product. I won't guess, but the live check can tell you: eight agents and Gemini, with the evidence. I'll put "${name}" in the form. Add the price and seller if you have them, then press Check it live.`, "excited",
-        [chip("Put it in the form", async () => {
-          go("own", said);
-          await wait(700);
-          setField($id("own"), "title", name);
-          $id("own")?.querySelector("button[type=submit]")?.focus({ preventScroll: true });
-        }, "do")]);
-    }
-    if (step && steps.includes(step)) return go(step.id, said);
-    q("#tg-title").textContent = "Hmm, I'm not sure about that one";
-    speak("I know this page best. Here's what I can show you:", "curious", topics());
-  }
-
-  function open(fromStart = true) {
-    steps = STEPS.filter(available);
-    if (!steps.length) return;
+  function open() {
+    slides = SLIDES.filter(wanted);
     lastFocus = document.activeElement;
     store.set();
     launch.classList.remove("fresh");
     launch.hidden = true;
-    shade.hidden = false;
+    wrap.hidden = false;
     document.documentElement.classList.add("tg-on");
-    if (fromStart) show(0);
+    show(0);
     q(".tg-next").focus({ preventScroll: true });
   }
 
-  function close() {
-    talk++;
-    shade.hidden = true;
+  function close(refocus = true) {
+    wrap.hidden = true;
     launch.hidden = false;
-    target = null;
     document.documentElement.classList.remove("tg-on");
-    lastFocus?.focus?.({ preventScroll: true });
+    if (refocus) lastFocus?.focus?.({ preventScroll: true });
   }
 
-  launch.addEventListener("click", () => open());
-  q(".tg-x").addEventListener("click", close);
-  q(".tg-skip").addEventListener("click", close);
-  q(".tg-back").addEventListener("click", () => show(at - 1, "", -1));
-  q(".tg-next").addEventListener("click", () => (at < steps.length - 1 ? show(at + 1) : close()));
-  q(".tg-ask").addEventListener("submit", (e) => { e.preventDefault(); const f = q("#tg-q"); answer(f.value); f.value = ""; });
-  document.addEventListener("keydown", (e) => {
-    if (shade.hidden) return;
+  // close the card, open the right tab, and light up that part of the page for a moment
+  function showOnPage(slide) {
+    const p = placeOf(slide);
+    if (!p) return;
+    close(false);
+    if (p.tab) openTab(p.tab);
+    p.prep?.();
+    const el = document.querySelector(p.target);
+    if (!el) return;
+    el.scrollIntoView({ behavior: calm() ? "auto" : "smooth", block: el.offsetHeight > innerHeight * .7 ? "start" : "center" });
+    el.classList.remove("tg-lit"); void el.offsetWidth; el.classList.add("tg-lit");
+    setTimeout(() => el.classList.remove("tg-lit"), 2600);
+  }
+
+  // the last slide: put the product into Paste a listing, ready for the live check (the person presses it)
+  function tryProduct(name) {
+    const form = $id("own");
+    if (!form || $id("tab-check-own")?.hidden) return close();
+    close(false);
+    openTab("check-own");
+    if (name) setField(form, "title", name);
+    form.scrollIntoView({ behavior: calm() ? "auto" : "smooth", block: "center" });
+    form.classList.add("tg-lit");
+    setTimeout(() => form.classList.remove("tg-lit"), 2600);
+    (name ? form.querySelector("button[type=submit]") : form.elements.title)?.focus({ preventScroll: true });
+  }
+
+  launch.addEventListener("click", open);
+  q(".tg-x").addEventListener("click", () => close());
+  q(".tg-back").addEventListener("click", () => (at === 0 ? close() : show(at - 1)));
+  q(".tg-next").addEventListener("click", () => (at < slides.length - 1 ? show(at + 1) : close()));
+  q(".tg-show").addEventListener("click", () => showOnPage(slides[at]));
+  wrap.addEventListener("click", (e) => { if (e.target === wrap) close(); });
+  wrap.addEventListener("keydown", (e) => {
     if (e.key === "Escape") return close();
-    if (e.target.closest?.("input, textarea, select")) return; // typing a question
-    if (e.key === "ArrowRight" && at < steps.length - 1) show(at + 1);
-    else if (e.key === "ArrowLeft" && at > 0) show(at - 1, "", -1);
+    if (e.target.matches?.("input")) return;
+    if (e.key === "ArrowRight" && at < slides.length - 1) show(at + 1);
+    else if (e.key === "ArrowLeft" && at > 0) show(at - 1);
+    else if (e.key === "Tab") { // keep focus inside the card
+      const f = [...card.querySelectorAll("button:not([hidden]), input")].filter((b) => b.offsetParent);
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f.at(-1).focus(); }
+      else if (!e.shiftKey && document.activeElement === f.at(-1)) { e.preventDefault(); f[0].focus(); }
+    }
   });
-  window.addEventListener("scroll", schedule, { passive: true });
-  window.addEventListener("resize", schedule);
+  let x0 = null; // swipe left / right on touch screens
+  card.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  card.addEventListener("touchend", (e) => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    x0 = null;
+    if (Math.abs(dx) > 50) show(at + (dx < 0 ? 1 : -1));
+  });
+  window.addEventListener("resize", () => { if (!wrap.hidden) fit(); });
 
   // first visit on this browser: open by itself once the page has drawn its views
-  if (!store.get() && !new URLSearchParams(location.search).has("notour")) setTimeout(() => open(), 1200);
-  return { open, go };
+  if (!store.get() && !new URLSearchParams(location.search).has("notour")) setTimeout(open, 1200);
+  return { open };
 }

@@ -10,7 +10,7 @@ import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
 import { setUpRoles } from "./roles.js?v=20261018a";
 import { setUpWhatsApp } from "./whatsapp.js?v=20261018c";
-import { setUpTour } from "./tour.js?v=20261018b";
+import { setUpTour } from "./tour.js?v=20261018c";
 
 
 const el = (tag, props = {}, ...kids) => {
