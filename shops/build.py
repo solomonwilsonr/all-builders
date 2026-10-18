@@ -1,4 +1,4 @@
-"""Builds the SafeShelf test shops (shops/public/): three fictional storefronts carrying the seven test products from
+"""Builds the SafeShelf test shops (shops/public/): three fictional storefronts carrying the eight test products from
 the judges' page, as real web pages the SafeShelf extension can check in any Chrome, including the judges' page's
 real cloud browser.
 
@@ -73,6 +73,12 @@ PAGES = {
         "specs": [("Brand", "Zorvana"), ("Model Number", "KT-12"), ("Capacity", "1.2L"), ("Power", "1200W")],
         "delivery": "3〜5日以内に発送", "reviews": [],
     },
+    "janod": {
+        "art": "table", "brand": "Janod", "rating": None,
+        "about": ["Wooden activity table for toddlers: beads, gears, a maze and a bell", "Non-slip feet, water-based paints, FSC-certified wood", "From 1 year old"],
+        "specs": [("Brand", "Janod"), ("Model Number", "J04402"), ("Material", "Wood"), ("Age range", "12 months and up")],
+        "delivery": "Delivery 26–28 Oct", "reviews": [],
+    },
     "clean": {
         "art": "charger", "brand": "SafeVolt", "rating": (4.5, "24 ratings"),
         "about": ["65W USB-C, two ports", "Fixed pins, over-temperature cut-off", "Two-year warranty"],
@@ -113,6 +119,14 @@ def art(kind, view, title, label="", brand=""):
                 '<rect x="70" y="56" width="100" height="16" rx="6" fill="#2b3440"/><rect x="66" y="174" width="108" height="10" rx="4" fill="#c7cfd8"/>'
                 f'<text x="120" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#2b3440" font-family="Helvetica, Arial">{name}</text>')
         side = body
+    elif kind == "table":
+        body = ('<rect x="44" y="70" width="152" height="18" rx="6" fill="#e8c9a0" stroke="#2b3440" stroke-width="3"/>'
+                '<path d="M58 88v86M182 88v86M80 88v70M160 88v70" stroke="#2b3440" stroke-width="6" stroke-linecap="round"/>'
+                '<path d="M70 70V44M100 70V36M130 70V44" stroke="#2b3440" stroke-width="3"/>'
+                '<circle cx="70" cy="52" r="7" fill="#e45b4f"/><circle cx="100" cy="46" r="7" fill="#f2b43c"/><circle cx="130" cy="54" r="7" fill="#3c8fd8"/>'
+                '<circle cx="164" cy="56" r="10" fill="#c7cfd8" stroke="#2b3440" stroke-width="2"/>'
+                f'<text x="120" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#2b3440" font-family="Helvetica, Arial">{name}</text>')
+        side = body
     else:
         body = ('<rect x="58" y="44" width="124" height="124" rx="22" fill="#f4f6f8" stroke="#2b3440" stroke-width="3"/>'
                 '<rect x="94" y="76" width="52" height="12" rx="6" fill="#2b3440"/><rect x="94" y="100" width="52" height="12" rx="6" fill="#2b3440"/>'
@@ -120,7 +134,7 @@ def art(kind, view, title, label="", brand=""):
                 f'<text x="120" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#2b3440" font-family="Helvetica, Arial">{name}</text>')
         side = '<rect x="96" y="44" width="48" height="124" rx="14" fill="#e9edf1" stroke="#2b3440" stroke-width="3"/><path d="M106 168h28" stroke="#2b3440" stroke-width="7" stroke-linecap="round"/>'
     if view == "label":
-        lines = [title.split(",")[0][:30], "Input: 100-240V~ 50/60Hz", label or "Made in China"]
+        lines = [title.split(",")[0][:30], "Ref. J04402 · 12m+" if kind == "table" else "Input: 100-240V~ 50/60Hz", label or "Made in China"]
         text = "".join(f'<text x="34" y="{78 + i * 26}" font-size="{14 if i == 0 else 12}" font-weight="{700 if i == 0 else 400}" fill="#1a1d21" font-family="Helvetica, Arial">{e(t)}</text>' for i, t in enumerate(lines))
         mark = '<rect x="34" y="146" width="44" height="28" fill="none" stroke="#1a1d21" stroke-width="2"/><text x="56" y="165" text-anchor="middle" font-size="12" font-weight="700" font-family="Helvetica, Arial">BIS</text>' if label.startswith("BIS") else ""
         inner = f'<rect x="20" y="40" width="200" height="146" rx="8" fill="#fff" stroke="#c7cfd8" stroke-width="2"/>{text}{mark}'
@@ -155,7 +169,7 @@ def testbar(depth, here=False):
     up = "../" * depth
     how = '<a href="#how-to-test">How to test this page</a>' if here else ""
     return (f'<div class="testbar"><div class="tb-in">{SHIELD}<p><b>SafeShelf test shop</b> <span>A fictional shop for testing the SafeShelf extension. Nothing here is for sale.</span></p>'
-            f'<nav aria-label="Test shop"><a href="{up}index.html">All seven test products</a>{how}</nav></div></div>\n')
+            f'<nav aria-label="Test shop"><a href="{up}index.html">All eight test products</a>{how}</nav></div></div>\n')
 
 
 def shopbar(key, depth):
@@ -240,7 +254,7 @@ def product_page(p, i, presets):
         reviews = f'<section class="reviews" id="reviews" aria-labelledby="rv-h"><h2 id="rv-h">Customer reviews</h2>{items}</section>\n'
     else:
         reviews = f'<section class="reviews" id="reviews" aria-labelledby="rv-h"><h2 id="rv-h">Customer reviews</h2><p class="none">{"まだレビューはありません。" if ja else "No written reviews yet."}</p></section>\n'
-    crumbs = {"kaimono": "家電 › モバイルバッテリー" if p["id"] == "recall_jp" else "家電 › キッチン家電", "haatbox": "Electronics › Mobile accessories › Chargers", "megadealz24": "HOT DEALS › Chargers"}[key]
+    crumbs = {"kaimono": "家電 › モバイルバッテリー" if p["id"] == "recall_jp" else "家電 › キッチン家電", "haatbox": "Toys › Baby & toddler › Activity tables" if p["id"] == "janod" else "Electronics › Mobile accessories › Chargers", "megadealz24": "HOT DEALS › Chargers"}[key]
     return (head(f"{l['title']} | {s['name']}", 1, extra)
             + f'<body class="skin-{key}" data-safeshelf-listing-id="{e(p["id"])}">\n'
             + testbar(1, here=True) + shopbar(key, 1)
@@ -270,8 +284,8 @@ def product_page(p, i, presets):
 def footer(depth):
     up = "../" * depth
     return (f'<footer class="foot"><p>Kaimono Ichiba, Haatbox and MegaDealz24 are fictional shops built to test SafeShelf; nothing here is for sale. '
-            f'Kelvo, SafeVolt, VoltNova and Zorvana are made-up brands. The HAIARA and Anker recalls are real notices from Japan\'s CAA and the US CPSC.</p>'
-            f'<p><a href="{up}index.html">All seven test products</a> · <a href="{JUDGES}" target="_blank" rel="noopener">SafeShelf judges\' page</a></p></footer>\n')
+            f'Kelvo, SafeVolt, VoltNova and Zorvana are made-up brands. The HAIARA, Anker and Janod recalls are real notices from Japan\'s CAA, the US CPSC and Australia\'s ACCC; the Janod listing is a real Amazon.in page.</p>'
+            f'<p><a href="{up}index.html">All eight test products</a> · <a href="{JUDGES}" target="_blank" rel="noopener">SafeShelf judges\' page</a></p></footer>\n')
 
 
 def index_page(presets):
@@ -293,8 +307,8 @@ def index_page(presets):
     return (head("SafeShelf test shops", 0) + '<body class="home">\n' + testbar(0)
             + f"""<header class="hero"><div class="hero-in">
   <p class="kicker">SafeShelf test shops</p>
-  <h1>Seven shop pages where the right answer is known</h1>
-  <p class="lede">Real web pages for the seven test products on the judges' page: a recall in Japan, a US recall sold in India, a fake shop, a borrowed safety mark, melting chargers, a product nobody has data on, and a clean control that must stay quiet.</p>
+  <h1>Eight shop pages where the right answer is known</h1>
+  <p class="lede">Real web pages for the eight test products on the judges' page: a recall in Japan, a US recall sold in India, a fake shop, a borrowed safety mark, melting chargers, a product nobody has data on, a toddler's table recalled abroad and still sold on Amazon.in, and a clean control that must stay quiet.</p>
 </div></header>
 <main class="home-main">
 <section class="howto" id="how-to-test" aria-labelledby="h-how">
@@ -304,7 +318,7 @@ def index_page(presets):
     <li><span class="w-n">2</span><div><h3>In your own Chrome</h3><p><a href="{JUDGES}/site/get.html" target="_blank" rel="noopener">Add the SafeShelf extension</a> and sign in, then open any product below.</p></div></li>
     <li><span class="w-n">3</span><div><h3>Press the shield, read the answer</h3><p>On a product page, press the shield button, <b>Check with SafeShelf</b>, on the right edge. Each page has a short guide saying what a correct answer is, so you can tell at once if SafeShelf got it right.</p></div></li>
   </ol>
-  <p class="howto-note">These checks run live on SafeShelf's API and use one check each. For instant answers with no extension, use the <a href="{JUDGES}/#shop-page" target="_blank" rel="noopener">test pages</a> on the judges' page: the same seven listings.</p>
+  <p class="howto-note">These checks run live on SafeShelf's API and use one check each. For instant answers with no extension, use the <a href="{JUDGES}/#shop-page" target="_blank" rel="noopener">test pages</a> on the judges' page: the same eight listings.</p>
 </section>
 {groups}
 <section class="realshops" aria-labelledby="h-real"><h2 id="h-real">Or try a real shop</h2><p>The extension works on real product pages too:</p>
@@ -327,7 +341,7 @@ def main():
         path.write_text(product_page(p, i, presets))
     (OUT / "404.html").write_text(head("Not found | SafeShelf test shops", 0).replace('href="shop', 'href="/shop').replace('src="shop', 'src="/shop')
                                   + '<body class="home">\n' + testbar(0).replace('href="index.html"', 'href="/"')
-                                  + '<main class="home-main"><section class="howto"><h2>That page isn\'t here</h2><p><a href="/">See all seven test products</a>.</p></section></main></body>\n</html>\n')
+                                  + '<main class="home-main"><section class="howto"><h2>That page isn\'t here</h2><p><a href="/">See all eight test products</a>.</p></section></main></body>\n</html>\n')
     print(f"built {len(presets)} product pages and the home page in {OUT.relative_to(HERE.parent)}/")
 
 

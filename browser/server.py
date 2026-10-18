@@ -31,11 +31,21 @@ PORT = int(os.environ.get("PORT", "8080"))
 FIREBASE_PROJECT = os.environ.get("FIREBASE_PROJECT", "shelf2026-3656b")
 API_BASE = os.environ.get("API_BASE", "https://safeshelf-api-368488022657.asia-south1.run.app").rstrip("/")
 SESSION_SECONDS = int(os.environ.get("SESSION_SECONDS", "300"))
-# The SafeShelf test shops (shops/): the seven test products as real pages. A session starts on their home page, or on
+# The SafeShelf test shops (shops/): the eight test products as real pages. A session starts on their home page, or on
 # one of their product pages; nothing else can be passed in.
 SHOPS_URL = os.environ.get("SHOPS_URL", "https://safeshelf-shops.web.app").rstrip("/")
 START_URL = os.environ.get("START_URL", SHOPS_URL + "/")
 SHOP_PAGE = re.compile(r"/[a-z0-9-]+/[a-z0-9-]+\.html")
+# A real listing every session also opens, in the first tab: the Janod J04402 activity table on Amazon.in, recalled in
+# the US (CPSC 23-210) and Australia (ACCC) and still on sale in India. Fixed here; a viewer can't pass in a page.
+DEMO_URL = os.environ.get("DEMO_URL", "https://www.amazon.in/dp/B091725TC2")
+# Text in the demo page's title. Amazon sends a new profile's first visit to its home page, and often answers a cloud
+# server with its "503 rush hour" page; either way the link is typed in again, twice at most. The real page stays in
+# front; the same listing on the test shops waits in the second tab (its canonical link is the Amazon page, so a check
+# there is the same check).
+DEMO_MARK = os.environ.get("DEMO_MARK", "J04402")
+DEMO_FALLBACK = os.environ.get("DEMO_FALLBACK", SHOPS_URL + "/haatbox/janod-j04402.html")
+HELD_BACK = r"Amazon|Service Unavailable|^503 "  # the window title when Amazon showed something else
 # Pages allowed to put the viewer in a frame and hand it a token (the judges' page, deployed and local)
 EMBEDDERS = [o for o in os.environ.get("EMBEDDERS", "https://shelf2026-3656b.web.app,https://shelf2026-3656b.firebaseapp.com,https://safeshelf.online,https://www.safeshelf.online,http://localhost:8095").split(",") if o]
 DEV_SKIP_AUTH = os.environ.get("DEV_SKIP_AUTH") == "1"  # local testing only; never set on Cloud Run
@@ -46,6 +56,7 @@ log = logging.getLogger("safeshelf-browser")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 busy = False  # one session per container
+chores: set[asyncio.Task] = set()  # background work held here, so it isn't garbage-collected mid-run
 google_request = google_requests.Request()
 
 
@@ -89,13 +100,16 @@ async def port_open(port: int, seconds: float) -> bool:
     return False
 
 
-def start_page(asked: str) -> str:
-    """The page Chrome opens on: a test shop product page if one was asked for, otherwise the start page."""
+def start_pages(asked: str) -> list[str]:
+    """The tabs Chrome opens with: a test shop product page if one was asked for (in front), otherwise the real demo
+    listing in front, its test-shop copy, then the start page."""
     path = asked[len(SHOPS_URL):] if asked.startswith(SHOPS_URL + "/") else ""
-    return SHOPS_URL + path if SHOP_PAGE.fullmatch(path) else START_URL
+    if SHOP_PAGE.fullmatch(path):
+        return [SHOPS_URL + path] + ([DEMO_URL] if DEMO_URL else [])
+    return [u for u in (DEMO_URL, DEMO_URL and DEMO_FALLBACK) if u] + [START_URL]
 
 
-async def start_browser(base: Path, ext: Path, url: str = START_URL) -> list[asyncio.subprocess.Process]:
+async def start_browser(base: Path, ext: Path, urls: list[str] | None = None) -> list[asyncio.subprocess.Process]:
     env = {**os.environ, "DISPLAY": DISPLAY}
     procs = [await asyncio.create_subprocess_exec("Xvfb", DISPLAY, "-screen", "0", "1280x800x24", "-nolisten", "tcp",
                                                   stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)]
@@ -106,7 +120,7 @@ async def start_browser(base: Path, ext: Path, url: str = START_URL) -> list[asy
     procs.append(await asyncio.create_subprocess_exec(
         "chromium", "--no-sandbox", "--test-type", "--disable-dev-shm-usage", "--disable-gpu", "--no-first-run", "--no-default-browser-check",
         "--disable-sync", "--password-store=basic", f"--user-data-dir={base / 'profile'}", f"--load-extension={ext}",
-        f"--disable-extensions-except={ext}", "--window-position=0,0", "--window-size=1280,800", "--lang=en-IN", url,
+        f"--disable-extensions-except={ext}", "--window-position=0,0", "--window-size=1280,800", "--lang=en-IN", *(urls or [START_URL]),
         env=env, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL))
     procs.append(await asyncio.create_subprocess_exec(
         "x11vnc", "-display", DISPLAY, "-rfbport", str(VNC_PORT), "-localhost", "-nopw", "-forever", "-noxdamage", "-quiet",
@@ -114,6 +128,40 @@ async def start_browser(base: Path, ext: Path, url: str = START_URL) -> list[asy
     if not await port_open(VNC_PORT, 45):
         raise RuntimeError("the screen did not start")  # 45 s: a cold instance (14:03 on 18 Oct) missed 20 s
     return procs
+
+
+async def window_named(pattern: str) -> bool:
+    p = await asyncio.create_subprocess_exec("xdotool", "search", "--name", pattern, env={**os.environ, "DISPLAY": DISPLAY},
+                                             stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
+    return await p.wait() == 0
+
+
+async def type_address(url: str) -> None:
+    """Into the front tab's address bar, as a person would (Ctrl+L, the link, Enter). Delete drops Chrome's suggestion."""
+    env = {**os.environ, "DISPLAY": DISPLAY}
+    for args in (["key", "--clearmodifiers", "ctrl+l"], ["type", "--delay", "15", url], ["key", "Delete", "Return"]):
+        p = await asyncio.create_subprocess_exec("xdotool", *args, env=env, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
+        await p.wait()
+        await asyncio.sleep(0.2)
+
+
+async def land_on_demo() -> None:
+    """If Amazon held back the demo listing, ask for it again, twice at most. The real page always stays in front."""
+    for attempt in range(3):
+        for _ in range(40):  # up to 20 s for the page to load
+            await asyncio.sleep(0.5)
+            if await window_named(re.escape(DEMO_MARK)):
+                return
+            if await window_named(HELD_BACK):
+                break
+        else:
+            return  # neither: the judge has moved on, leave the browser alone
+        if attempt == 2:
+            log.info(json.dumps({"event": "demo_held_back"}))  # the copy is in the second tab
+            return
+        await asyncio.sleep(3)  # "try again in a short while"
+        await type_address(DEMO_URL)
+        await asyncio.sleep(3)  # let the old title go
 
 
 async def stop(procs: list, base: Path) -> None:
@@ -151,7 +199,11 @@ async def session(request: web.Request) -> web.StreamResponse:
     log.info(json.dumps({"event": "start", "session": sid, "user": claims.get("sub")}))
     try:
         base.mkdir(parents=True)
-        procs = await start_browser(base, write_extension(base, token, claims), start_page(request.query.get("start", "")))
+        pages = start_pages(request.query.get("start", ""))
+        procs = await start_browser(base, write_extension(base, token, claims), pages)
+        if DEMO_URL and DEMO_MARK and pages[0] == DEMO_URL:
+            chores.add(task := asyncio.create_task(land_on_demo()))
+            task.add_done_callback(chores.discard)
         reader, writer = await asyncio.open_connection("127.0.0.1", VNC_PORT)
 
         async def to_screen():
@@ -183,7 +235,8 @@ async def session(request: web.Request) -> web.StreamResponse:
 
 async def view(_request: web.Request) -> web.Response:
     page = (HERE / "view.html").read_text().replace("__EMBEDDERS__", json.dumps(EMBEDDERS)).replace("__SECONDS__", str(SESSION_SECONDS)) \
-        .replace("__SHOPS__", json.dumps(SHOPS_URL))
+        .replace("__SHOPS__", json.dumps(SHOPS_URL)) \
+        .replace("__DEMO__", json.dumps(DEMO_URL))
     # only the SafeShelf pages may frame the viewer
     return web.Response(text=page, content_type="text/html", headers={"Content-Security-Policy": "frame-ancestors " + " ".join(EMBEDDERS)})
 

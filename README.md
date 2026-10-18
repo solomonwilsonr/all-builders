@@ -31,13 +31,14 @@ Check any product listing before you pay: is it safe, and is it real? Every answ
 
 > Recall databases list what was recalled. Marketplaces list what is for sale. SafeShelf joins the two at the moment of purchase, across brand names and borders, and lets code, not the model, decide the verdict.
 
-**Contents:** [The gap](#the-gap) · [The products](#the-products) · [How to use SafeShelf](#how-to-use-safeshelf) · [Results](#results-measured-including-what-went-against-us) · [Architecture](#architecture-and-decisions) · [Can it be fooled?](#can-it-be-fooled-security-and-red-team) · [Debugging stories](#debugging-stories) · [Who it's for](#who-its-for-and-the-business-model) · [Honest limits](#honest-limits) · [API](#api-rest-mcp-and-a2a) · [Layout and run](#layout)
+**Contents:** [The gap](#the-gap) · [The products](#the-products) · [How to use SafeShelf](#how-to-use-safeshelf) · [Real-world finding](#real-world-finding-recalled-abroad-on-sale-in-india) · [Results](#results-measured-including-what-went-against-us) · [Architecture](#architecture-and-decisions) · [Can it be fooled?](#can-it-be-fooled-security-and-red-team) · [Debugging stories](#debugging-stories) · [Who it's for](#who-its-for-and-the-business-model) · [Honest limits](#honest-limits) · [API](#api-rest-mcp-and-a2a) · [Layout and run](#layout)
 
 ### Quick tour
 | If you want to see… | Go to |
 |---|---|
 | The product working, in 3 minutes | [Quick start](#quick-start-3-minutes) → https://safeshelf.online |
 | How one check works, and why code makes the call | [Architecture and decisions](#architecture-and-decisions) |
+| A real recalled product on sale in India today | [Real-world finding](#real-world-finding-recalled-abroad-on-sale-in-india) |
 | Measured results, including the weak ones | [Results](#results-measured-including-what-went-against-us) · [Honest limits](#honest-limits) |
 | Whether it can be tricked | [Can it be fooled?](#can-it-be-fooled-security-and-red-team) · [SECURITY.md](SECURITY.md) |
 | What broke and how we fixed it | [Debugging stories](#debugging-stories) |
@@ -81,7 +82,7 @@ All products call the same API and get the same answer. None has its own AI logi
 
 **URLs**
 - Judges' page: **https://safeshelf.online** (Firebase Hosting, also at `https://shelf2026-3656b.web.app`). The website is at [`/site/`](https://safeshelf.online/site/).
-- Test shops, the seven test products as real shop pages: **https://shops.safeshelf.online**
+- Test shops, the eight test products as real shop pages: **https://shops.safeshelf.online**
 - API (Cloud Run, Mumbai): `https://safeshelf-api-368488022657.asia-south1.run.app` · docs at `/docs` · MCP at `/mcp` · A2A card at `/.well-known/agent-card.json`
 
 ---
@@ -93,11 +94,11 @@ Everything works in a normal browser at **https://safeshelf.online**, with no in
 ![The judges' page: every SafeShelf product, working, in the order a shopper meets them](docs/screenshots/judges-page.jpg)
 
 ### Quick start (3 minutes)
-1. **https://safeshelf.online** → **Start with a test product**. Pick one of the seven test shop pages; the right answer is known for each, including a safe control that must stay quiet.
+1. **https://safeshelf.online** → **Start with a test product**. Pick one of the eight test shop pages; the right answer is known for each, including a safe control that must stay quiet.
 2. **Paste a listing**: type any product title (and optionally a link and price) and watch the eight agents light up one by one on the live API.
 3. **Ask Eddy**: "Is this charger safe in a child's room?" Open the source under the answer.
 
-### The seven test products
+### The eight test products
 | # | Product | Shop | Expected answer |
 |---|---|---|---|
 | 1 | HAIARA W5PRO power bank, ¥2,980 | amazon.co.jp (test copy) | **Don't buy**: recalled in Japan (CAA), exact model |
@@ -105,8 +106,9 @@ Everything works in a normal browser at **https://safeshelf.online**, with no in
 | 3 | VoltNova VN-65PD charger, ₹999 | demo shop | **Be careful**: safety mark doesn't match the registry |
 | 4 | SafeVolt SV-65 charger, ₹1,599 | demo shop | **No problems found**: the clean control |
 | 5–7 | More recalled, fake and borrowed-mark cases | test shops | Shown on the page |
+| 8 | Janod J04402 toddler activity table, ₹25,502 | amazon.in (a real listing), plus a test copy | **Be careful**: recalled in the US (CPSC) and Australia (ACCC), same model; not confirmed for India ([real-world finding](#real-world-finding-recalled-abroad-on-sale-in-india)) |
 
-Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional, so the demo can show every answer without accusing a real seller. The recalls, reviews and registries behind them are real data.
+Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional, so the demo can show every answer without accusing a real seller. The recalls, reviews and registries behind them are real data. Product 8 is the exception: a real listing, a real recall.
 
 ### 🧩 On a shop page: the extension
 1. On the judges' page press **Start the real browser**: a real Chrome with the SafeShelf extension opens in the cloud (about 15 seconds to start, closes itself after 5 minutes). It opens on a real Amazon.in listing and the test shops; any Amazon or Flipkart link works too.
@@ -131,12 +133,31 @@ Ask in your own words or tap a starter: *Is this safe in a child's room? Is it g
 ### What is real and what is demo
 | Real (live on Google Cloud) | Demo or not yet live |
 |---|---|
-| 8,689 official recalls and notices from 10 regulators, 29,379 buyer reviews, an 8,470-record Australian energy registry | The shop and product names in the seven test pages (fictional) |
+| 8,689 official recalls and notices from 10 regulators, 29,379 buyer reviews, an 8,470-record Australian energy registry | The shop and product names in seven of the eight test pages (fictional) |
 | Gemini on Vertex AI reading reviews, labels and listings; Google Search grounding for products never seen before | WhatsApp number (the bot is built and tested; the number is pending) |
 | The ADK agents, the code verdict, the red-team checks and the source verification | Chrome Web Store listing (the extension runs in the cloud Chrome today) |
-| Live official sources: CPSC, OECD GlobalRecalls and Japan's CAA queried live | Cross-border "still on sale" matches: leads, not yet hand-checked |
+| Live official sources: CPSC, OECD GlobalRecalls and Japan's CAA queried live | Cross-border "still on sale" matches: leads, not yet hand-checked (except the Janod listing) |
 
 ---
+
+## Real-world finding: recalled abroad, on sale in India
+
+While testing on live shop pages, we found a toddler toy recalled in two countries listed for sale on Amazon.in.
+
+| | |
+|---|---|
+| **Product** | Janod Sweet Cocoon Wooden Activity Table, model **J04402** |
+| **Listing** | [amazon.in/dp/B091725TC2](https://www.amazon.in/dp/B091725TC2), ₹25,502, Add to Cart available, seen on 18 Oct 2026 |
+| **US recall** | [CPSC 23-210](https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard), 25 May 2023: a metal bell can detach, posing a choking hazard to young children. Units sold Feb 2020 to Dec 2022 |
+| **Australian recall** | [ACCC](https://www.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table), 13 Oct 2023, 141 days later, under a different company name (Bright Wonders) |
+| **India** | No Indian notice found |
+| **SafeShelf's answer** | **Be careful**: *"Recalled abroad, same model number; not confirmed for India"*, citing CPSC `23210` and ACCC `PS1109781` (recorded run, 18 Oct 2026, [`web/samples/janod.json`](web/samples/janod.json)) |
+
+**Why it shows what SafeShelf is for.** The two recalls name different companies: Juratoys in the US, Bright Wonders in Australia. A name search would miss that they are the same product. The identity engine matches them because Janod is Juratoys' own brand and the model code J04402 is the same in both notices ([`bench/crossborder_review.md`](bench/crossborder_review.md), row 2). The Indian listing carries the same model code, so it is an **exact model** match. That gives an amber answer with both countries named, never "recalled in India".
+
+**What we claim, and what we don't.** The *recalled model* is listed for sale in India. The listing doesn't say when the unit was made or whether it has the corrected bell, so we don't claim that a recalled unit is being sold, and we name no seller. We haven't reported it to a regulator.
+
+**Try it:** test product 8 on the [judges' page](https://safeshelf.online), or open the [Amazon.in listing](https://www.amazon.in/dp/B091725TC2) in the real Chrome on the judges' page and press the shield.
 
 ## Results (measured, including what went against us)
 
@@ -166,7 +187,7 @@ Pooling the reviews of every copy of the same product, which the identity engine
 
 **Where we fall short.** Keyword rules flag more recalls (11 against our 6) and earlier, at the cost of 11 false alarms. On the half of the recalls we did not tune on, SafeShelf flagged **2 of 9**, with no false alarms on 14 safe products. The sample is small, and we publish both numbers.
 
-**Early work: recalled in one country, then another.** We found 19 products recalled in one country and later in another, mostly the US first and Australia later: a median of **22 days** between the two, up to 293 days ([`crossborder_results.json`](bench/crossborder_results.json)). These 19 pairs, and 34 recalled products we found possibly still on sale, are leads from Firecrawl and Gemini that no person has checked yet, so we don't count them as findings.
+**Early work: recalled in one country, then another.** We found 19 products recalled in one country and later in another, mostly the US first and Australia later: a median of **22 days** between the two, up to 293 days ([`crossborder_results.json`](bench/crossborder_results.json)). These 19 pairs, and 34 recalled products we found possibly still on sale, are leads from Firecrawl and Gemini that no person has checked yet, so we don't count them as findings. The one we did check by hand is the [Janod table](#real-world-finding-recalled-abroad-on-sale-in-india).
 
 **What's on file**
 
@@ -275,7 +296,7 @@ The red team found two real holes, which we fixed: lightly reworded reposts, and
 
 ## Honest limits
 - The backtest is small (25 recalls, 40 controls), US-only (CPSC with amazon.com reviews), and held-out recall is 2 of 9.
-- Cross-border "still on sale" matches are unconfirmed leads, not findings.
+- Cross-border "still on sale" matches are unconfirmed leads, not findings, apart from the one hand-checked Janod listing.
 - Most Asia-Pacific sources are loaded copies; only CPSC, OECD GlobalRecalls and Japan's CAA are queried live. India has 36 notices on file.
 - The test shops and products are fictional; the agent test set was written by us.
 - Accessibility is self-tested; no outside testers yet.

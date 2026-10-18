@@ -1,5 +1,5 @@
 {
- "_note": "The sample listings on the judges' page. Each one's recording (samples/<id>.json) is a real run of the live API, made by web/record_samples.py. 'expect' is what a correct answer must show; the page checks every run against it. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; the Anker recall is a real CPSC notice. Each 'shop' is the same listing as a real page on the SafeShelf test shops (shops/, hosted at 'shops_url'), for the real browser and the installed extension.",
+ "_note": "The sample listings on the judges' page. Each one's recording (samples/<id>.json) is a real run of the live API, made by web/record_samples.py. 'expect' is what a correct answer must show; the page checks every run against it. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; the Anker recall is a real CPSC notice, and the Janod table is a real Amazon.in listing (recalled by the CPSC and ACCC). Each 'shop' is the same listing as a real page on the SafeShelf test shops (shops/, hosted at 'shops_url'), for the real browser and the installed extension. 'real', where given, is the live shop page itself: the real browser opens it, and the lineup links to it.",
  "shops_url": "https://safeshelf-shops.web.app",
  "presets": [
   {
@@ -145,6 +145,31 @@
      "currency": "JPY"
     }
    }
+  },
+  {
+   "id": "janod",
+   "name": "Kids' table recalled abroad",
+   "what": "A real Amazon.in listing: a toddler activity table recalled in the US (CPSC) and Australia (ACCC) for a choking hazard, still on sale in India. Same model, so amber with the countries named",
+   "market": "India",
+   "shop": "haatbox/janod-j04402",
+   "expect": {
+    "overall": [
+     "amber"
+    ],
+    "label": "⚠️ Recalled in the US and Australia, same model: not confirmed for India"
+   },
+   "request": {
+    "mode": "investigate",
+    "product_id": "unmatched",
+    "listing": {
+     "url": "https://www.amazon.in/dp/B091725TC2",
+     "title": "Janod - Sweet Cocoon Wooden Activity Table - Multi-play Table for Toddlers - Fine Motor Development - Non-slip Feet - Water-based Paints - FSC Certified - From 1 Year Old, J04402",
+     "price": 25502,
+     "currency": "INR",
+     "seller": "Cart2Globe"
+    }
+   },
+   "real": "https://www.amazon.in/dp/B091725TC2"
   },
   {
    "id": "clean",

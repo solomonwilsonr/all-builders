@@ -332,9 +332,10 @@ async function setUpSamples() {
       main.onclick = openTest;
       const acts = el("div", { className: "lu-acts" },
         Object.assign(el("button", { type: "button", className: "lu-act", textContent: "Test page", title: "Instant: the recorded check, with the extension running in the page" }), { onclick: openTest }),
-        openInReal && shopUrl ? Object.assign(el("button", { type: "button", className: "lu-act", textContent: "Real browser", title: "This product's shop page in a real Chrome with SafeShelf: a live check" }),
-          { onclick: () => openInReal(shopUrl) }) : null,
-        shopUrl ? el("a", { className: "lu-act", href: shopUrl, target: "_blank", rel: "noopener", textContent: "Shop page ↗", title: "Open the test shop page in your own browser (needs the SafeShelf extension)" }) : null);
+        openInReal && (p.real || shopUrl) ? Object.assign(el("button", { type: "button", className: "lu-act", textContent: "Real browser", title: p.real ? "The real Amazon.in page in a real Chrome with SafeShelf: a live check" : "This product's shop page in a real Chrome with SafeShelf: a live check" }),
+          { onclick: () => openInReal(p.real || shopUrl) }) : null,
+        p.real ? el("a", { className: "lu-act", href: p.real, target: "_blank", rel: "noopener", textContent: "Amazon.in ↗", title: "The real listing in your own Chrome (needs the SafeShelf extension)" }) : null,
+        shopUrl && !p.real ? el("a", { className: "lu-act", href: shopUrl, target: "_blank", rel: "noopener", textContent: "Shop page ↗", title: "Open the test shop page in your own browser (needs the SafeShelf extension)" }) : null);
       lineup.append(el("li", {}, el("div", { className: `lu lu-${tone}` }, main, acts)));
     });
     // the same seven as a row inside the real browser's window, so a judge can hop between them without scrolling
@@ -342,7 +343,7 @@ async function setUpSamples() {
     if (rp && openInReal) {
       const exp = document.getElementById("rp-exp");
       presets.forEach((p, i) => {
-        const shopUrl = shops && p.shop ? `${shops}/${p.shop}.html` : null;
+        const shopUrl = p.real || (shops && p.shop ? `${shops}/${p.shop}.html` : null); // the real page where there is one
         if (!shopUrl) return;
         const tone = p.control ? "green" : p.expect.overall[0];
         const label = p.expect.label.replace(/^\P{L}+/u, "");
@@ -449,6 +450,12 @@ function setUpRemote() {
   $("remote-start").onclick = () => start();
   // a product from the lineup: typed into the running Chrome's address bar, or the page a new session starts on
   openInReal = (url) => {
+    // a real listing (preset.real) is the page every session starts on: nothing to type while Chrome starts
+    const startsOnIt = presetsAll.some((p) => p.real === url);
+    if (!timer && startsOnIt) {
+      if (panel.dataset.mode !== "real") start();
+      return;
+    }
     if (timer) {
       $("rframe").contentWindow?.postMessage({ type: "open", url }, origin);
       mac.scrollIntoView({ behavior: "smooth", block: "start" });

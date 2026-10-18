@@ -1,6 +1,6 @@
 # SafeShelf test shops
 
-The seven test products from the judges' page as real web pages, on three fictional storefronts: Kaimono Ichiba (Japan), Haatbox (India) and MegaDealz24 (the fake shop). Each page has a "How to test this page" guide; the home page has the full guide.
+The eight test products from the judges' page as real web pages, on three fictional storefronts: Kaimono Ichiba (Japan), Haatbox (India) and MegaDealz24 (the fake shop). Each page has a "How to test this page" guide; the home page has the full guide.
 
 - `make shops`: build and serve on http://localhost:8091 (the extension runs there too)
 - `make deploy-shops`: build and deploy to https://safeshelf-shops.web.app. Once first: `firebase hosting:sites:create safeshelf-shops --project shelf2026-3656b`

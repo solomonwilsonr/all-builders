@@ -22,7 +22,8 @@
 // protocol header (never in a URL), and the server checks it before starting Chrome.
 import RFB from "/novnc/core/rfb.js";
 const EMBEDDERS = __EMBEDDERS__;
-const SHOPS = __SHOPS__; // the SafeShelf test shops: the only pages the SafeShelf page may open in this browser
+const SHOPS = __SHOPS__; // the SafeShelf test shops: the only pages the SafeShelf page may open in this browser,
+const DEMO = __DEMO__; // and the one real listing every session starts on
 const statusBox = document.getElementById("status");
 let rfb = null, owner = null;
 const tell = (msg) => owner && parent.postMessage(msg, owner);
@@ -40,7 +41,7 @@ addEventListener("message", (e) => {
     rfb.addEventListener("disconnect", (ev) => { show("The browser session has ended", ev.detail?.clean ? "" : "It closed unexpectedly, or all browsers are busy. Try again in a minute."); tell({ type: "safeshelf-browser:ended", clean: !!ev.detail?.clean }); rfb = null; });
   }
   if (e.data?.type === "end") rfb?.disconnect();
-  if (e.data?.type === "open" && rfb && typeof e.data.url === "string" && /^[\x21-\x7e]+$/.test(e.data.url) && e.data.url.startsWith(`${SHOPS}/`)) openPage(e.data.url);
+  if (e.data?.type === "open" && rfb && typeof e.data.url === "string" && /^[\x21-\x7e]+$/.test(e.data.url) && (e.data.url.startsWith(`${SHOPS}/`) || (DEMO && e.data.url === DEMO))) openPage(e.data.url);
 });
 // Another test product, in the running Chrome: typed into its address bar, as a person would (Ctrl+L, the link, Enter).
 // Delete, just before Enter, drops any address Chrome suggests after the typed one.

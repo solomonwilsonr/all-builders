@@ -1,0 +1,2345 @@
+{
+ "recorded_at": "2026-10-18 23:06 IST",
+ "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
+ "events": [
+  {
+   "type": "open",
+   "mode": "investigate",
+   "investigation_id": "SS-I-E5C5AA6C",
+   "_ms": 200
+  },
+  {
+   "type": "start",
+   "agent": "page_reader",
+   "tool": "page",
+   "_ms": 200
+  },
+  {
+   "type": "step",
+   "n": 1,
+   "agent": "page_reader",
+   "tool": "page",
+   "summary": "SafeShelf has not seen this exact product before; checking the page itself",
+   "model": "gemini-embedding-001",
+   "seconds": 9.33,
+   "_ms": 9594
+  },
+  {
+   "type": "start",
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "_ms": 9594
+  },
+  {
+   "type": "start",
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "_ms": 9598
+  },
+  {
+   "type": "start",
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "_ms": 9598
+  },
+  {
+   "type": "start",
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "_ms": 9598
+  },
+  {
+   "type": "start",
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "_ms": 9598
+  },
+  {
+   "type": "start",
+   "agent": "official_sources",
+   "tool": "official_sources",
+   "_ms": 9598
+  },
+  {
+   "type": "start",
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "_ms": 9598
+  },
+  {
+   "type": "step",
+   "n": 2,
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 0.02,
+   "_ms": 16548
+  },
+  {
+   "type": "step",
+   "n": 3,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 2.14,
+   "_ms": 16549
+  },
+  {
+   "type": "step",
+   "n": 4,
+   "agent": "cert_verifier",
+   "tool": "cert_verifier",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 2.26,
+   "_ms": 16582
+  },
+  {
+   "type": "step",
+   "n": 5,
+   "agent": "research_agent",
+   "tool": "research_agent",
+   "summary": "Skipped: nothing to check this with",
+   "model": null,
+   "seconds": 6.75,
+   "_ms": 16582
+  },
+  {
+   "type": "step",
+   "n": 6,
+   "agent": "official_sources",
+   "tool": "official_sources",
+   "summary": "Official sources (partial): 2 notice(s) may concern this product; India no matching notice found, the United States checked cache, Australia checked cache",
+   "model": null,
+   "seconds": 6.81,
+   "_ms": 16583
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": "gemini-embedding-001",
+   "seconds": 6.96,
+   "_ms": 16583
+  },
+  {
+   "type": "step",
+   "n": 8,
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "summary": "Safety: officially recalled; verdict red from 62 reviews (4 choking, 3 mechanical/injury, 1 chemical reports)",
+   "model": "gemini-3-flash-preview, gemini-3.5-flash",
+   "seconds": 6.99,
+   "_ms": 16587
+  },
+  {
+   "type": "start",
+   "agent": "verdict",
+   "tool": "verdict",
+   "_ms": 16587
+  },
+  {
+   "type": "step",
+   "n": 9,
+   "agent": "verdict",
+   "tool": "verdict",
+   "summary": "Code set the verdict: safety amber, is it real unknown, overall amber",
+   "model": null,
+   "seconds": 0.03,
+   "_ms": 16629
+  },
+  {
+   "type": "verdict",
+   "verdict": {
+    "safe": "amber",
+    "real": "unknown",
+    "overall": "amber",
+    "reasons": [
+     {
+      "text": "The safety regulator in Australia recalled this Janod J04402 because of a choking risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+      "evidence_ids": []
+     },
+     {
+      "text": "Where we checked: India: no recall found; the United States: recall found for this model; Australia: recall found for this model; Japan: no recall found; Singapore: no recall found; South Korea: no recall found",
+      "evidence_ids": []
+     },
+     {
+      "text": "4 buyers reported screws fall out and parts loosen (from reviews, not checked by a regulator)",
+      "evidence_ids": [
+       "EV-21FC712F",
+       "EV-DAE694BB",
+       "EV-9404C648",
+       "EV-8E927EA2"
+      ]
+     },
+     {
+      "text": "3 buyers reported screw connection broke leaving a loose sharp-edged spiral tip (from reviews, not checked by a regulator)",
+      "evidence_ids": [
+       "EV-D34252C1",
+       "EV-700DDF09",
+       "EV-50B4E40C"
+      ]
+     },
+     {
+      "text": "1 buyer reported paint peeled off immediately and child put it in mouth (from reviews, not checked by a regulator)",
+      "evidence_ids": [
+       "EV-314761C2"
+      ]
+     }
+    ],
+    "evidence_ids": [
+     "EV-21FC712F",
+     "EV-DAE694BB",
+     "EV-9404C648",
+     "EV-8E927EA2",
+     "EV-D34252C1",
+     "EV-700DDF09",
+     "EV-50B4E40C",
+     "EV-314761C2"
+    ],
+    "outcome": "substantiated_hazard_signal",
+    "basis": "recalled_abroad_same_model",
+    "headline": "Recalled abroad, same model number; not confirmed for India",
+    "safety_concern": {
+     "level": "high",
+     "text": "Recalled abroad, same model number; not confirmed for India"
+    },
+    "evidence_strength": "moderate",
+    "identity_confidence": "exact",
+    "lead_record": {
+     "record_id": "oecd:AU:PS1109781",
+     "authority": "ACCC",
+     "title": "Bright Wonders - Janod Cocoon activity table",
+     "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+     "published": "2023-10-13",
+     "tier": "exact",
+     "scope": "batch_unknown",
+     "local": false,
+     "jurisdiction": "AU"
+    },
+    "coverage": {
+     "countries": [
+      {
+       "country": "IN",
+       "name": "India",
+       "is_market": true,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "india_notices",
+         "authority": "CCPA / BIS",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-09-09"
+        },
+        {
+         "source": "india_bis",
+         "authority": "BIS",
+         "state": "not_supported",
+         "mode": null,
+         "freshness": null
+        },
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": [
+        "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+       ]
+      },
+      {
+       "country": "US",
+       "name": "the United States",
+       "is_market": false,
+       "state": "checked_cache",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "cpsc",
+         "authority": "CPSC",
+         "state": "checked_cache",
+         "mode": "cache",
+         "freshness": "2023-05-25"
+        },
+        {
+         "source": "saferproducts",
+         "authority": "CPSC",
+         "state": "not_supported",
+         "mode": null,
+         "freshness": null
+        },
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "checked_cache",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 2,
+       "notes": []
+      },
+      {
+       "country": "AU",
+       "name": "Australia",
+       "is_market": false,
+       "state": "checked_cache",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "checked_cache",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 1,
+       "notes": []
+      },
+      {
+       "country": "JP",
+       "name": "Japan",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "SG",
+       "name": "Singapore",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": [
+        "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+       ]
+      },
+      {
+       "country": "EU",
+       "name": "the European Union",
+       "is_market": false,
+       "state": "not_supported",
+       "checked_at": null,
+       "sources": [
+        {
+         "source": "eu_safety_gate",
+         "authority": "EU Safety Gate",
+         "state": "not_supported",
+         "mode": null,
+         "freshness": null
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "KR",
+       "name": "South Korea",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "TW",
+       "name": "Taiwan",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "ID",
+       "name": "Indonesia",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "MY",
+       "name": "Malaysia",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "PH",
+       "name": "the Philippines",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "TH",
+       "name": "Thailand",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "VN",
+       "name": "Vietnam",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      }
+     ],
+     "sources": [
+      {
+       "source": "india_notices",
+       "name": "India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)",
+       "authority": "CCPA / BIS",
+       "role": "local",
+       "jurisdiction": "IN",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "checked_at": "2026-10-18T16:48:09.824550+00:00",
+       "freshness": "2026-09-09",
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "searched the stored copy; no notice matched this product"
+      },
+      {
+       "source": "india_bis",
+       "name": "BIS product certification (CRS / ISI licence) verification",
+       "authority": "BIS",
+       "role": "local",
+       "jurisdiction": "IN",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "no automated access exists; a person can check it by hand"
+      },
+      {
+       "source": "cpsc",
+       "name": "U.S. Consumer Product Safety Commission recalls",
+       "authority": "CPSC",
+       "role": "global",
+       "jurisdiction": "US",
+       "state": "checked_cache",
+       "mode": "cache",
+       "checked_at": "2026-10-18T16:48:07.864526+00:00",
+       "freshness": "2023-05-25",
+       "records_returned": 1,
+       "matched": 1,
+       "matched_by_country": {
+        "US": 1
+       },
+       "detail": "1 notice(s) that may concern this product"
+      },
+      {
+       "source": "eu_safety_gate",
+       "name": "EU Safety Gate alerts",
+       "authority": "EU Safety Gate",
+       "role": "global",
+       "jurisdiction": "EU",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "searched only on a deep check (it needs a browser, about 30 s a site)"
+      },
+      {
+       "source": "saferproducts",
+       "name": "SaferProducts.gov incident reports (OData)",
+       "authority": "CPSC",
+       "role": "global",
+       "jurisdiction": "US",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up"
+      },
+      {
+       "source": "manufacturer",
+       "name": "Manufacturer-authorised recall feeds",
+       "authority": "Manufacturer",
+       "role": "global",
+       "jurisdiction": "MULTI",
+       "state": "not_supported",
+       "mode": null,
+       "checked_at": null,
+       "freshness": null,
+       "records_returned": 0,
+       "matched": 0,
+       "matched_by_country": {},
+       "detail": "no automated access exists; a person can check it by hand"
+      },
+      {
+       "source": "stored_notices",
+       "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+       "authority": "SafeShelf store",
+       "role": "global",
+       "jurisdiction": "MULTI",
+       "state": "checked_cache",
+       "mode": "cache",
+       "checked_at": "2026-10-18T17:36:10.813002+00:00",
+       "freshness": "2026-10-13",
+       "records_returned": 5,
+       "matched": 2,
+       "matched_by_country": {
+        "US": 1,
+        "AU": 1
+       },
+       "detail": "2 notice(s) that may concern this product"
+      }
+     ],
+     "summary": "India: no matching notice · the United States: notice found (stored copy) · Australia: notice found (stored copy) · Japan: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+    },
+    "limitations": [
+     "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+    ],
+    "what_would_change": [
+     {
+      "fact": "the serial, lot or date code on the unit",
+      "how": "photo of the label or the box",
+      "cost": 1,
+      "impact": 5,
+      "key": "batch"
+     },
+     {
+      "fact": "the safety-mark registration (e.g. BIS R-number)",
+      "how": "look it up in the BIS Care app",
+      "cost": 2,
+      "impact": 2,
+      "key": "certificate"
+     },
+     {
+      "fact": "sites that need a browser (EU Safety Gate, New Zealand)",
+      "how": "a deep check",
+      "cost": 2,
+      "impact": 2,
+      "key": "deep_sources"
+     },
+     {
+      "fact": "whether the local version is the same model (importer, model suffix)",
+      "how": "a reviewer compares the foreign notice with the local listing",
+      "cost": 4,
+      "impact": 4,
+      "key": "local_version"
+     }
+    ],
+    "review_required": true,
+    "review_reasons": [
+     "Cross-border match: ACCC recall oecd:AU:PS1109781 names this model; a reviewer approves before it is shown as affecting India."
+    ],
+    "policy_version": "2026-10-16.1",
+    "source_mode": "partial",
+    "rules": [
+     "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
+    ],
+    "plain": {
+     "title": "Recalled in Australia",
+     "tone": "amber",
+     "why": "The safety regulator in Australia recalled this Janod J04402 because of a choking risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+     "todo": "Check that the model number on the box or label is exactly J04402. If it is, avoid buying it, or don't charge or use it unattended until the seller confirms it's safe.",
+     "say": "Recalled in Australia, because of a choking risk. Not recalled in India yet. Check the model number before you buy.",
+     "checked": [
+      {
+       "country": "IN",
+       "flag": "🇮🇳",
+       "name": "India",
+       "status": "No recall found (India has no public recall list; we checked government safety orders)",
+       "mark": "ok",
+       "yours": true,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.pib.gov.in/",
+         "label": "CCPA / BIS list"
+        }
+       }
+      },
+      {
+       "country": "US",
+       "flag": "🇺🇸",
+       "name": "the United States",
+       "status": "Recall found for this model",
+       "mark": "warn",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard",
+         "label": "CPSC cpsc:23210"
+        }
+       }
+      },
+      {
+       "country": "AU",
+       "flag": "🇦🇺",
+       "name": "Australia",
+       "status": "Recall found for this model",
+       "mark": "warn",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+         "label": "ACCC oecd:AU:PS1109781"
+        }
+       }
+      },
+      {
+       "country": "JP",
+       "flag": "🇯🇵",
+       "name": "Japan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "SG",
+       "flag": "🇸🇬",
+       "name": "Singapore",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "KR",
+       "flag": "🇰🇷",
+       "name": "South Korea",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "TW",
+       "flag": "🇹🇼",
+       "name": "Taiwan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "ID",
+       "flag": "🇮🇩",
+       "name": "Indonesia",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      }
+     ],
+     "link": {
+      "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+      "label": "See the official recall (ACCC)"
+     },
+     "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+    },
+    "matches": [
+     {
+      "record_id": "cpsc:23210",
+      "authority": "CPSC",
+      "title": "Juratoys Recalls Children's Activity Tables Due to Choking Hazard",
+      "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard",
+      "published": "2023-05-25",
+      "jurisdiction": "US",
+      "tier": "exact",
+      "scope": "in_scope",
+      "local": false,
+      "authenticity": "official_domain",
+      "support": "supported",
+      "models_named": [
+       "J04402",
+       "J04411"
+      ],
+      "batch_limits": []
+     },
+     {
+      "record_id": "oecd:AU:PS1109781",
+      "authority": "ACCC",
+      "title": "Bright Wonders - Janod Cocoon activity table",
+      "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+      "published": "2023-10-13",
+      "jurisdiction": "AU",
+      "tier": "exact",
+      "scope": "batch_unknown",
+      "local": false,
+      "authenticity": "official_domain",
+      "support": "supported",
+      "models_named": [
+       "J04402"
+      ],
+      "batch_limits": [
+       "Batch numbers: 10615, 10799, 10887, 11107\r The batch number can be found on a small, white round sticker with the Janod logo in the middle on the underside of the table",
+       "batch number may also be found near the barcode on the box"
+      ]
+     },
+     {
+      "record_id": "cpsc:21067",
+      "authority": "CPSC",
+      "title": "Juratoys Recalls Toy Trumpets Due to Choking Hazard",
+      "url": "https://www.cpsc.gov/Recalls/2021/Juratoys-Recalls-Toy-Trumpets-Due-to-Choking-Hazard",
+      "published": "2021-01-13",
+      "jurisdiction": "US",
+      "tier": "lookalike",
+      "scope": "not_applicable",
+      "local": false,
+      "authenticity": "official_domain",
+      "support": "supported",
+      "models_named": [
+       "J07632",
+       "J07626"
+      ],
+      "batch_limits": [
+       "batch number is on the packaging and on the backside of the ukulele"
+      ]
+     }
+    ]
+   },
+   "_ms": 16636
+  },
+  {
+   "type": "step",
+   "n": 10,
+   "agent": "verdict_writer",
+   "tool": "gemini",
+   "summary": "Wrote the answer",
+   "model": "gemini-3.5-flash-lite",
+   "seconds": 1.13,
+   "_ms": 17779
+  },
+  {
+   "type": "done",
+   "result": {
+    "session_id": "SS-I-E5C5AA6C",
+    "investigation_id": "SS-I-E5C5AA6C",
+    "mode": "investigate",
+    "product_id": null,
+    "language": "en",
+    "verdict": {
+     "safe": "amber",
+     "real": "unknown",
+     "overall": "amber",
+     "reasons": [
+      {
+       "text": "The safety regulator in Australia recalled this Janod J04402 because of a choking risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+       "evidence_ids": []
+      },
+      {
+       "text": "Where we checked: India: no recall found; the United States: recall found for this model; Australia: recall found for this model; Japan: no recall found; Singapore: no recall found; South Korea: no recall found",
+       "evidence_ids": []
+      },
+      {
+       "text": "4 buyers reported screws fall out and parts loosen (from reviews, not checked by a regulator)",
+       "evidence_ids": [
+        "EV-21FC712F",
+        "EV-DAE694BB",
+        "EV-9404C648",
+        "EV-8E927EA2"
+       ]
+      },
+      {
+       "text": "3 buyers reported screw connection broke leaving a loose sharp-edged spiral tip (from reviews, not checked by a regulator)",
+       "evidence_ids": [
+        "EV-D34252C1",
+        "EV-700DDF09",
+        "EV-50B4E40C"
+       ]
+      },
+      {
+       "text": "1 buyer reported paint peeled off immediately and child put it in mouth (from reviews, not checked by a regulator)",
+       "evidence_ids": [
+        "EV-314761C2"
+       ]
+      }
+     ],
+     "evidence_ids": [
+      "EV-21FC712F",
+      "EV-DAE694BB",
+      "EV-9404C648",
+      "EV-8E927EA2",
+      "EV-D34252C1",
+      "EV-700DDF09",
+      "EV-50B4E40C",
+      "EV-314761C2"
+     ],
+     "outcome": "substantiated_hazard_signal",
+     "basis": "recalled_abroad_same_model",
+     "headline": "Recalled abroad, same model number; not confirmed for India",
+     "safety_concern": {
+      "level": "high",
+      "text": "Recalled abroad, same model number; not confirmed for India"
+     },
+     "evidence_strength": "moderate",
+     "identity_confidence": "exact",
+     "lead_record": {
+      "record_id": "oecd:AU:PS1109781",
+      "authority": "ACCC",
+      "title": "Bright Wonders - Janod Cocoon activity table",
+      "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+      "published": "2023-10-13",
+      "tier": "exact",
+      "scope": "batch_unknown",
+      "local": false,
+      "jurisdiction": "AU"
+     },
+     "coverage": {
+      "countries": [
+       {
+        "country": "IN",
+        "name": "India",
+        "is_market": true,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "india_notices",
+          "authority": "CCPA / BIS",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-09-09"
+         },
+         {
+          "source": "india_bis",
+          "authority": "BIS",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+        ]
+       },
+       {
+        "country": "US",
+        "name": "the United States",
+        "is_market": false,
+        "state": "checked_cache",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "cpsc",
+          "authority": "CPSC",
+          "state": "checked_cache",
+          "mode": "cache",
+          "freshness": "2023-05-25"
+         },
+         {
+          "source": "saferproducts",
+          "authority": "CPSC",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "checked_cache",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 2,
+        "notes": []
+       },
+       {
+        "country": "AU",
+        "name": "Australia",
+        "is_market": false,
+        "state": "checked_cache",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "checked_cache",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 1,
+        "notes": []
+       },
+       {
+        "country": "JP",
+        "name": "Japan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "SG",
+        "name": "Singapore",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+        ]
+       },
+       {
+        "country": "EU",
+        "name": "the European Union",
+        "is_market": false,
+        "state": "not_supported",
+        "checked_at": null,
+        "sources": [
+         {
+          "source": "eu_safety_gate",
+          "authority": "EU Safety Gate",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "ID",
+        "name": "Indonesia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "MY",
+        "name": "Malaysia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "PH",
+        "name": "the Philippines",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TH",
+        "name": "Thailand",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "VN",
+        "name": "Vietnam",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       }
+      ],
+      "sources": [
+       {
+        "source": "india_notices",
+        "name": "India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)",
+        "authority": "CCPA / BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "no_matching_notice_found",
+        "mode": "cache",
+        "checked_at": "2026-10-18T16:48:09.824550+00:00",
+        "freshness": "2026-09-09",
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched the stored copy; no notice matched this product"
+       },
+       {
+        "source": "india_bis",
+        "name": "BIS product certification (CRS / ISI licence) verification",
+        "authority": "BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "cpsc",
+        "name": "U.S. Consumer Product Safety Commission recalls",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "checked_cache",
+        "mode": "cache",
+        "checked_at": "2026-10-18T16:48:07.864526+00:00",
+        "freshness": "2023-05-25",
+        "records_returned": 1,
+        "matched": 1,
+        "matched_by_country": {
+         "US": 1
+        },
+        "detail": "1 notice(s) that may concern this product"
+       },
+       {
+        "source": "eu_safety_gate",
+        "name": "EU Safety Gate alerts",
+        "authority": "EU Safety Gate",
+        "role": "global",
+        "jurisdiction": "EU",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched only on a deep check (it needs a browser, about 30 s a site)"
+       },
+       {
+        "source": "saferproducts",
+        "name": "SaferProducts.gov incident reports (OData)",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up"
+       },
+       {
+        "source": "manufacturer",
+        "name": "Manufacturer-authorised recall feeds",
+        "authority": "Manufacturer",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "stored_notices",
+        "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+        "authority": "SafeShelf store",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "checked_cache",
+        "mode": "cache",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "freshness": "2026-10-13",
+        "records_returned": 5,
+        "matched": 2,
+        "matched_by_country": {
+         "US": 1,
+         "AU": 1
+        },
+        "detail": "2 notice(s) that may concern this product"
+       }
+      ],
+      "summary": "India: no matching notice · the United States: notice found (stored copy) · Australia: notice found (stored copy) · Japan: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+     },
+     "limitations": [
+      "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+     ],
+     "what_would_change": [
+      {
+       "fact": "the serial, lot or date code on the unit",
+       "how": "photo of the label or the box",
+       "cost": 1,
+       "impact": 5,
+       "key": "batch"
+      },
+      {
+       "fact": "the safety-mark registration (e.g. BIS R-number)",
+       "how": "look it up in the BIS Care app",
+       "cost": 2,
+       "impact": 2,
+       "key": "certificate"
+      },
+      {
+       "fact": "sites that need a browser (EU Safety Gate, New Zealand)",
+       "how": "a deep check",
+       "cost": 2,
+       "impact": 2,
+       "key": "deep_sources"
+      },
+      {
+       "fact": "whether the local version is the same model (importer, model suffix)",
+       "how": "a reviewer compares the foreign notice with the local listing",
+       "cost": 4,
+       "impact": 4,
+       "key": "local_version"
+      }
+     ],
+     "review_required": true,
+     "review_reasons": [
+      "Cross-border match: ACCC recall oecd:AU:PS1109781 names this model; a reviewer approves before it is shown as affecting India."
+     ],
+     "policy_version": "2026-10-16.1",
+     "source_mode": "partial",
+     "rules": [
+      "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
+     ],
+     "plain": {
+      "title": "Recalled in Australia",
+      "tone": "amber",
+      "why": "The safety regulator in Australia recalled this Janod J04402 because of a choking risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+      "todo": "Check that the model number on the box or label is exactly J04402. If it is, avoid buying it, or don't charge or use it unattended until the seller confirms it's safe.",
+      "say": "Recalled in Australia, because of a choking risk. Not recalled in India yet. Check the model number before you buy.",
+      "checked": [
+       {
+        "country": "IN",
+        "flag": "🇮🇳",
+        "name": "India",
+        "status": "No recall found (India has no public recall list; we checked government safety orders)",
+        "mark": "ok",
+        "yours": true,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.pib.gov.in/",
+          "label": "CCPA / BIS list"
+         }
+        }
+       },
+       {
+        "country": "US",
+        "flag": "🇺🇸",
+        "name": "the United States",
+        "status": "Recall found for this model",
+        "mark": "warn",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard",
+          "label": "CPSC cpsc:23210"
+         }
+        }
+       },
+       {
+        "country": "AU",
+        "flag": "🇦🇺",
+        "name": "Australia",
+        "status": "Recall found for this model",
+        "mark": "warn",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+          "label": "ACCC oecd:AU:PS1109781"
+         }
+        }
+       },
+       {
+        "country": "JP",
+        "flag": "🇯🇵",
+        "name": "Japan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "SG",
+        "flag": "🇸🇬",
+        "name": "Singapore",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "KR",
+        "flag": "🇰🇷",
+        "name": "South Korea",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "TW",
+        "flag": "🇹🇼",
+        "name": "Taiwan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "ID",
+        "flag": "🇮🇩",
+        "name": "Indonesia",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       }
+      ],
+      "link": {
+       "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+       "label": "See the official recall (ACCC)"
+      },
+      "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+     },
+     "matches": [
+      {
+       "record_id": "cpsc:23210",
+       "authority": "CPSC",
+       "title": "Juratoys Recalls Children's Activity Tables Due to Choking Hazard",
+       "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard",
+       "published": "2023-05-25",
+       "jurisdiction": "US",
+       "tier": "exact",
+       "scope": "in_scope",
+       "local": false,
+       "authenticity": "official_domain",
+       "support": "supported",
+       "models_named": [
+        "J04402",
+        "J04411"
+       ],
+       "batch_limits": []
+      },
+      {
+       "record_id": "oecd:AU:PS1109781",
+       "authority": "ACCC",
+       "title": "Bright Wonders - Janod Cocoon activity table",
+       "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+       "published": "2023-10-13",
+       "jurisdiction": "AU",
+       "tier": "exact",
+       "scope": "batch_unknown",
+       "local": false,
+       "authenticity": "official_domain",
+       "support": "supported",
+       "models_named": [
+        "J04402"
+       ],
+       "batch_limits": [
+        "Batch numbers: 10615, 10799, 10887, 11107\r The batch number can be found on a small, white round sticker with the Janod logo in the middle on the underside of the table",
+        "batch number may also be found near the barcode on the box"
+       ]
+      },
+      {
+       "record_id": "cpsc:21067",
+       "authority": "CPSC",
+       "title": "Juratoys Recalls Toy Trumpets Due to Choking Hazard",
+       "url": "https://www.cpsc.gov/Recalls/2021/Juratoys-Recalls-Toy-Trumpets-Due-to-Choking-Hazard",
+       "published": "2021-01-13",
+       "jurisdiction": "US",
+       "tier": "lookalike",
+       "scope": "not_applicable",
+       "local": false,
+       "authenticity": "official_domain",
+       "support": "supported",
+       "models_named": [
+        "J07632",
+        "J07626"
+       ],
+       "batch_limits": [
+        "batch number is on the packaging and on the backside of the ukulele"
+       ]
+      }
+     ]
+    },
+    "messages": [
+     {
+      "role": "assistant",
+      "text": "This model was recalled in Australia and the United States for a choking risk, though this is not yet confirmed for India. This safety amber finding is an AI finding under review, not a regulator's decision. Additionally, buyers reported loose screws, broken screw connections leaving sharp-edged spiral tips, and peeling paint.",
+      "evidence_ids": [
+       "EV-21FC712F",
+       "EV-DAE694BB",
+       "EV-9404C648",
+       "EV-8E927EA2",
+       "EV-D34252C1",
+       "EV-700DDF09",
+       "EV-50B4E40C",
+       "EV-314761C2"
+      ]
+     }
+    ],
+    "checks": {
+     "page": {
+      "product_id": null,
+      "matched_by": "none",
+      "similar_product_id": null
+     },
+     "is_it_real": {
+      "listing_url": "https://www.amazon.in/dp/B091725TC2",
+      "matched_product_id": null,
+      "matched_by": "none",
+      "checks": {
+       "copied_photos": {
+        "result": "skipped",
+        "reason": "SafeShelf has no genuine product on file to compare with"
+       },
+       "price": {
+        "result": "unknown",
+        "price": 25502,
+        "mrp": null,
+        "reason": "no M.R.P. on the page to compare with"
+       },
+       "website_age": {
+        "result": "skipped",
+        "reason": "large marketplace; the seller, not the website, is what matters"
+       },
+       "spec": {
+        "result": "skipped",
+        "reason": "SafeShelf has no genuine product on file to compare with"
+       },
+       "seller": {
+        "result": "unknown",
+        "seller": "Cart2Globe",
+        "relationship": "third_party",
+        "brand": "Janod",
+        "reason": "Sold by Cart2Globe, not by Janod itself. We can't confirm they're an official Janod seller"
+       }
+      },
+      "hidden_instructions_found": false,
+      "summary": "No warning signs found in these checks.",
+      "good_signs": [
+       "Sold on amazon.in, a big, well-known shop"
+      ],
+      "safety_of_genuine_model": "unknown product",
+      "label": "Evidence for the shopper - not a legal finding",
+      "evidence_ids": [
+       "EV-6CE2B921"
+      ]
+     },
+     "safety_radar": {
+      "listing_url": "https://www.amazon.in/dp/B091725TC2",
+      "brand": "Janod",
+      "model": "J04402",
+      "verdict": "red",
+      "official_status": {
+       "recalled": true,
+       "searched": true,
+       "checked": [
+        "ACCC",
+        "CPSC",
+        "KATS",
+        "CAA",
+        "ASEAN",
+        "BSMI",
+        "CPSO",
+        "BIS",
+        "CCPA"
+       ],
+       "recall_ids": [
+        "oecd:AU:PS1109781",
+        "cpsc:23210"
+       ],
+       "recall_ids_under_review": [],
+       "recalls": [
+        {
+         "recall_id": "oecd:AU:PS1109781",
+         "title": "Bright Wonders - Janod Cocoon activity table",
+         "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+         "notice_date": "2023-10-13"
+        },
+        {
+         "recall_id": "cpsc:23210",
+         "title": "Juratoys Recalls Children's Activity Tables Due to Choking Hazard",
+         "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard",
+         "notice_date": "2023-05-25"
+        }
+       ]
+      },
+      "ai_findings": [
+       {
+        "hazard_type": "choking",
+        "mechanism": "screws fall out and parts loosen",
+        "severity": "high",
+        "independent_reports": 4,
+        "with_photos": 0,
+        "rate_per_1000_reviews": 64.5,
+        "first_seen": "2022-10-08",
+        "trend": "stable",
+        "status": "under_review",
+        "evidence_ids": [
+         "EV-21FC712F",
+         "EV-DAE694BB",
+         "EV-9404C648",
+         "EV-8E927EA2"
+        ],
+        "counterevidence": "none found"
+       },
+       {
+        "hazard_type": "mechanical_injury",
+        "mechanism": "screw connection broke leaving a loose sharp-edged spiral tip",
+        "severity": "high",
+        "independent_reports": 3,
+        "with_photos": 0,
+        "rate_per_1000_reviews": 48.4,
+        "first_seen": "2022-11-14",
+        "trend": "stable",
+        "status": "under_review",
+        "evidence_ids": [
+         "EV-D34252C1",
+         "EV-700DDF09",
+         "EV-50B4E40C"
+        ],
+        "counterevidence": "none found"
+       },
+       {
+        "hazard_type": "chemical",
+        "mechanism": "paint peeled off immediately and child put it in mouth",
+        "severity": "low",
+        "independent_reports": 1,
+        "with_photos": 0,
+        "rate_per_1000_reviews": 16.1,
+        "first_seen": "2022-02-23",
+        "trend": "stable",
+        "status": "under_review",
+        "evidence_ids": [
+         "EV-314761C2"
+        ],
+        "counterevidence": "none found"
+       }
+      ],
+      "reviews_checked": 62,
+      "label": "AI finding from the reviews on this page - not a regulatory determination"
+     },
+     "twin_finder": {
+      "skipped": true
+     },
+     "recall_checker": {
+      "skipped": true
+     },
+     "cert_verifier": {
+      "skipped": true
+     },
+     "official_sources": {
+      "market": "IN",
+      "market_name": "India",
+      "product": {
+       "product_id": null,
+       "brand": "Janod",
+       "model": "J04402",
+       "gtin": null,
+       "batch": null,
+       "category": "",
+       "title": "Janod - Sweet Cocoon Wooden Activity Table - Multi-play Table for Toddlers - Fine Motor Development - Non-slip Feet - Water-based Paints - FSC Certified - From 1 Year Old, J04402",
+       "local_identifiers": {},
+       "key": "janod|J04402|IN",
+       "market": "IN",
+       "identity_source": "listing text (code)",
+       "identity_agent": null
+      },
+      "matches": [
+       {
+        "record_id": "cpsc:23210",
+        "source": "cpsc",
+        "authority": "CPSC",
+        "title": "Juratoys Recalls Children's Activity Tables Due to Choking Hazard",
+        "url": "https://www.cpsc.gov/Recalls/2023/Juratoys-Recalls-Childrens-Activity-Tables-Due-to-Choking-Hazard",
+        "jurisdiction": "US",
+        "record_type": "recall_notice",
+        "published": "2023-05-25",
+        "retrieved_at": "2026-10-18T16:48:07.864526+00:00",
+        "mode": "cache",
+        "language": "en",
+        "hazard": "The activity table contains a silver metal bell which can detach from its metal arch, posing a choking hazard to young children.",
+        "remedy": "Consumers should immediately stop using the recalled activity tables and contact Juratoys for a free repair kit.",
+        "models_named": [
+         "J04402",
+         "J04411"
+        ],
+        "batch_limits": [],
+        "tier": "exact",
+        "scope": "in_scope",
+        "local": false,
+        "reasons": [
+         "the notice names model J04402 and this brand"
+        ],
+        "would_change": [
+         "whether the IN version is the same model and batch (importer, model suffix, local notice)"
+        ],
+        "authenticity": "official_domain",
+        "authenticity_reason": "official link and record ID; read from the stored copy or by browsing",
+        "support": "supported",
+        "retracted": false,
+        "excluded": false,
+        "attribution": "Source: U.S. CPSC recalls API",
+        "also_from": [
+         "stored_notices"
+        ],
+        "original_text": null,
+        "excerpt": "This recall involves two models of Janod Sweet Cocoon Activity Tables for children 12 months and older. The rounded triangle wooden tables measure about 21 inches wide and 18 inches high. The toys on the table are made of wood and metal. The round table measures about 22 inches in diameter. The tables are multicolored with gray, pink, blue and white. The tabletop activities include a grooved track for vehicle play, a bell arch, a bead and wire maze, a shape sorter, gear activity and stacking activity. The model number J04402 or J04411 can be found on a label on the underside of the activity table.",
+        "places": {
+         "market_country": "IN",
+         "source_jurisdiction": "US",
+         "manufacturing_country": null,
+         "recall_affected_country": [
+          "US"
+         ]
+        }
+       },
+       {
+        "record_id": "oecd:AU:PS1109781",
+        "source": "stored_notices",
+        "authority": "ACCC",
+        "title": "Bright Wonders - Janod Cocoon activity table",
+        "url": "https://preprod.productsafety.gov.au/recalls/bright-wonders-janod-cocoon-activity-table",
+        "jurisdiction": "AU",
+        "record_type": "recall_notice",
+        "published": "2023-10-13",
+        "retrieved_at": "2026-10-18T17:36:10.813002+00:00",
+        "mode": "cache",
+        "language": "en",
+        "hazard": "Recalled batches of this product do not comply with the \rmandatory standard for toys for children up to and including 36 months of age\r. A bell may detach from the product while it is in use.\rThere is a risk of choking, suffocation or death to young children if the bell detaches from the table while",
+        "remedy": "Consumers should stop using the activity table immediately and check if they have a product from one of the recalled batches.\r Consumers with recalled products should contact Bright Wonders on 08 7425 1406 or send an email to recall@janod.com.au to request a free replacement bell kit.",
+        "models_named": [
+         "J04402"
+        ],
+        "batch_limits": [
+         "Batch numbers: 10615, 10799, 10887, 11107\r The batch number can be found on a small, white round sticker with the Janod logo in the middle on the underside of the table",
+         "batch number may also be found near the barcode on the box"
+        ],
+        "tier": "exact",
+        "scope": "batch_unknown",
+        "local": false,
+        "reasons": [
+         "the notice names model J04402 and this brand",
+         "the notice covers only some units (Batch numbers: 10615, 10799, 10887, 11107\r The batch number can be found on a small, white round sticker with the Janod )"
+        ],
+        "would_change": [
+         "the serial, lot or date code on the shopper's unit",
+         "whether the IN version is the same model and batch (importer, model suffix, local notice)"
+        ],
+        "authenticity": "official_domain",
+        "authenticity_reason": "official link and record ID; read from the stored copy or by browsing",
+        "support": "supported",
+        "retracted": false,
+        "excluded": false,
+        "attribution": "Stored copy of the ACCC notice",
+        "also_from": [],
+        "original_text": null,
+        "excerpt": "Bright Wonders - Janod Cocoon activity table Bright Wonders - Janod Cocoon activity table Wooden activity play table SKU: J04402 Batch numbers: 10615, 10799, 10887, 11107 The batch number can be found on a small, white round sticker with the Janod logo in the middle on the underside of the table. The batch number may also be found near the barcode on the box.",
+        "places": {
+         "market_country": "IN",
+         "source_jurisdiction": "AU",
+         "manufacturing_country": null,
+         "recall_affected_country": [
+          "AU"
+         ]
+        }
+       },
+       {
+        "record_id": "cpsc:21067",
+        "source": "stored_notices",
+        "authority": "CPSC",
+        "title": "Juratoys Recalls Toy Trumpets Due to Choking Hazard",
+        "url": "https://www.cpsc.gov/Recalls/2021/Juratoys-Recalls-Toy-Trumpets-Due-to-Choking-Hazard",
+        "jurisdiction": "US",
+        "record_type": "recall_notice",
+        "published": "2021-01-13",
+        "retrieved_at": "2026-10-18T17:36:10.813002+00:00",
+        "mode": "cache",
+        "language": "en",
+        "hazard": "The small plastic pieces inside the toy trumpets can come loose and can be ingested by children, posing a choking hazard.",
+        "remedy": "Consumers should immediately take the recalled toy away from children, stop using the Confetti Trumpet or the trumpet in the Confetti Music Live Set, dispose of the trumpet and contact Juratoys US for a refund.",
+        "models_named": [
+         "J07632",
+         "J07626"
+        ],
+        "batch_limits": [
+         "batch number is on the packaging and on the backside of the ukulele"
+        ],
+        "tier": "lookalike",
+        "scope": "not_applicable",
+        "local": false,
+        "reasons": [
+         "the notice names J07632, J07626, not J04402"
+        ],
+        "would_change": [],
+        "authenticity": "official_domain",
+        "authenticity_reason": "official link and record ID; read from the stored copy or by browsing",
+        "support": "supported",
+        "retracted": false,
+        "excluded": false,
+        "attribution": "Stored copy of the CPSC notice",
+        "also_from": [],
+        "original_text": null,
+        "excerpt": "Juratoys Recalls Toy Trumpets Due to Choking Hazard This recall involves Janod Confetti Trumpets with batch/SKU number J07632. They were either sold separately or as part of a set. The trumpet is made from wood and is red and white with colored dots on the tube. The batch/SKU number is on the bell of the trumpet. The trumpet is also sold in the Janod Confetti Music \"Live\" Musical Set with batch/SKU number J07626. The batch number is on the packaging and on the backside of the ukulele. The set contained a ukulele, trumpet tambourine, clapper, and harmonica. Only the trumpet in the sets is recalled. Janod Toy Confetti Trumpets",
+        "places": {
+         "market_country": "IN",
+         "source_jurisdiction": "US",
+         "manufacturing_country": null,
+         "recall_affected_country": [
+          "US"
+         ]
+        }
+       }
+      ],
+      "contradictions": [],
+      "source_rows": [
+       {
+        "source": "india_notices",
+        "name": "India CCPA recall orders, safety notices and BIS raids (Press Information Bureau releases)",
+        "authority": "CCPA / BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "no_matching_notice_found",
+        "mode": "cache",
+        "checked_at": "2026-10-18T16:48:09.824550+00:00",
+        "freshness": "2026-09-09",
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched the stored copy; no notice matched this product"
+       },
+       {
+        "source": "india_bis",
+        "name": "BIS product certification (CRS / ISI licence) verification",
+        "authority": "BIS",
+        "role": "local",
+        "jurisdiction": "IN",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "cpsc",
+        "name": "U.S. Consumer Product Safety Commission recalls",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "checked_cache",
+        "mode": "cache",
+        "checked_at": "2026-10-18T16:48:07.864526+00:00",
+        "freshness": "2023-05-25",
+        "records_returned": 1,
+        "matched": 1,
+        "matched_by_country": {
+         "US": 1
+        },
+        "detail": "1 notice(s) that may concern this product"
+       },
+       {
+        "source": "eu_safety_gate",
+        "name": "EU Safety Gate alerts",
+        "authority": "EU Safety Gate",
+        "role": "global",
+        "jurisdiction": "EU",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "searched only on a deep check (it needs a browser, about 30 s a site)"
+       },
+       {
+        "source": "saferproducts",
+        "name": "SaferProducts.gov incident reports (OData)",
+        "authority": "CPSC",
+        "role": "global",
+        "jurisdiction": "US",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up"
+       },
+       {
+        "source": "manufacturer",
+        "name": "Manufacturer-authorised recall feeds",
+        "authority": "Manufacturer",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "not_supported",
+        "mode": null,
+        "checked_at": null,
+        "freshness": null,
+        "records_returned": 0,
+        "matched": 0,
+        "matched_by_country": {},
+        "detail": "no automated access exists; a person can check it by hand"
+       },
+       {
+        "source": "stored_notices",
+        "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+        "authority": "SafeShelf store",
+        "role": "global",
+        "jurisdiction": "MULTI",
+        "state": "checked_cache",
+        "mode": "cache",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "freshness": "2026-10-13",
+        "records_returned": 5,
+        "matched": 2,
+        "matched_by_country": {
+         "US": 1,
+         "AU": 1
+        },
+        "detail": "2 notice(s) that may concern this product"
+       }
+      ],
+      "country_rows": [
+       {
+        "country": "IN",
+        "name": "India",
+        "is_market": true,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "india_notices",
+          "authority": "CCPA / BIS",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-09-09"
+         },
+         {
+          "source": "india_bis",
+          "authority": "BIS",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+        ]
+       },
+       {
+        "country": "US",
+        "name": "the United States",
+        "is_market": false,
+        "state": "checked_cache",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "cpsc",
+          "authority": "CPSC",
+          "state": "checked_cache",
+          "mode": "cache",
+          "freshness": "2023-05-25"
+         },
+         {
+          "source": "saferproducts",
+          "authority": "CPSC",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         },
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "checked_cache",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 2,
+        "notes": []
+       },
+       {
+        "country": "AU",
+        "name": "Australia",
+        "is_market": false,
+        "state": "checked_cache",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "checked_cache",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 1,
+        "notes": []
+       },
+       {
+        "country": "JP",
+        "name": "Japan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "SG",
+        "name": "Singapore",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": [
+         "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+        ]
+       },
+       {
+        "country": "EU",
+        "name": "the European Union",
+        "is_market": false,
+        "state": "not_supported",
+        "checked_at": null,
+        "sources": [
+         {
+          "source": "eu_safety_gate",
+          "authority": "EU Safety Gate",
+          "state": "not_supported",
+          "mode": null,
+          "freshness": null
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "ID",
+        "name": "Indonesia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "MY",
+        "name": "Malaysia",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "PH",
+        "name": "the Philippines",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TH",
+        "name": "Thailand",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "VN",
+        "name": "Vietnam",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T17:36:10.813002+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       }
+      ],
+      "source_mode": "partial",
+      "depth": "quick",
+      "critiques": [],
+      "query_keys": [
+       "51bab6ab7283571c12c7761e"
+      ],
+      "query": {
+       "brand": "Janod",
+       "model": "J04402",
+       "gtin": null,
+       "market": "IN",
+       "depth": "quick",
+       "as_of": null
+      }
+     },
+     "research_agent": {
+      "skipped": true
+     }
+    },
+    "steps": [
+     {
+      "n": 1,
+      "agent": "page_reader",
+      "tool": "page",
+      "summary": "SafeShelf has not seen this exact product before; checking the page itself",
+      "model": "gemini-embedding-001",
+      "seconds": 9.33
+     },
+     {
+      "n": 2,
+      "agent": "twin_finder",
+      "tool": "twin_finder",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 0.02
+     },
+     {
+      "n": 3,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 2.14
+     },
+     {
+      "n": 4,
+      "agent": "cert_verifier",
+      "tool": "cert_verifier",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 2.26
+     },
+     {
+      "n": 5,
+      "agent": "research_agent",
+      "tool": "research_agent",
+      "summary": "Skipped: nothing to check this with",
+      "model": null,
+      "seconds": 6.75
+     },
+     {
+      "n": 6,
+      "agent": "official_sources",
+      "tool": "official_sources",
+      "summary": "Official sources (partial): 2 notice(s) may concern this product; India no matching notice found, the United States checked cache, Australia checked cache",
+      "model": null,
+      "seconds": 6.81
+     },
+     {
+      "n": 7,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": "gemini-embedding-001",
+      "seconds": 6.96
+     },
+     {
+      "n": 8,
+      "agent": "safety_radar",
+      "tool": "safety_radar",
+      "summary": "Safety: officially recalled; verdict red from 62 reviews (4 choking, 3 mechanical/injury, 1 chemical reports)",
+      "model": "gemini-3-flash-preview, gemini-3.5-flash",
+      "seconds": 6.99
+     },
+     {
+      "n": 9,
+      "agent": "verdict",
+      "tool": "verdict",
+      "summary": "Code set the verdict: safety amber, is it real unknown, overall amber",
+      "model": null,
+      "seconds": 0.03
+     },
+     {
+      "n": 10,
+      "agent": "verdict_writer",
+      "tool": "gemini",
+      "summary": "Wrote the answer",
+      "model": "gemini-3.5-flash-lite",
+      "seconds": 1.13
+     }
+    ],
+    "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
+    "checked_at": 1792344976.8325756
+   },
+   "_ms": 17883
+  }
+ ]
+}
