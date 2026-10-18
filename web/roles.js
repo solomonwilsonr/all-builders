@@ -4,6 +4,7 @@
 // also calls the live API. The chosen view is kept in the address (?for=marketplace, or #for=…) and on this browser.
 // Plain module, no build step. Text is always set as text, never as HTML.
 import { API, el } from "./actions.js?v=20261017v";
+import { authFetch, quota } from "./auth.js?v=20261018u";
 
 const STORY = "recall_jp"; // the sample every view tells
 const KEY = "safeshelf-view";
@@ -32,8 +33,10 @@ const getJSON = (path) => fetch(path).then((r) => { if (!r.ok) throw new Error(p
 let presets = [];
 let story = null; // { preset, result }
 const samples = new Map();
+let stopLeft = null; // the developer view's "checks left" line, redrawn when the quota changes
+const recorded = (id) => getJSON(`samples/${id}.json`);
 async function sample(id) {
-  if (!samples.has(id)) samples.set(id, getJSON(`samples/${id}.json`).then(resultOf));
+  if (!samples.has(id)) samples.set(id, recorded(id).then(resultOf));
   return samples.get(id);
 }
 
@@ -198,26 +201,122 @@ const BUILD = {
     const l = story.preset.request.listing;
     const curl = `curl -N -X POST \\\n  ${API}/v1/agent/sessions/stream \\\n  -H 'content-type: application/json' \\\n  -H "authorization: Bearer $FIREBASE_ID_TOKEN" \\\n  -d '${JSON.stringify({ mode: "investigate", product_id: "unmatched", listing: l })}'`;
     const mcp = JSON.stringify({ mcpServers: { safeshelf: { url: `${API}/mcp`, headers: { "x-api-key": "YOUR_KEY" } } } }, null, 2);
-    const v = story.result.verdict;
-    const answer = JSON.stringify({ overall: v.overall, safe: v.safe, real: v.real, outcome: v.outcome, headline: v.headline,
-      lead_record: { authority: v.lead_record.authority, record_id: v.lead_record.record_id, url: v.lead_record.url } }, null, 2);
-    const out = el("pre", { className: "fv-code", textContent: answer });
-    const state = el("span", { className: "fv-live", textContent: "Stored answer for this listing" });
-    const run = el("button", { type: "button", className: "primary small", textContent: "Run it live: fetch the agent card" });
-    run.onclick = async () => {
-      run.disabled = true;
+    const brief = (v) => JSON.stringify({ overall: v.overall, safe: v.safe, real: v.real, outcome: v.outcome, headline: v.headline,
+      lead_record: v.lead_record ? { authority: v.lead_record.authority, record_id: v.lead_record.record_id, url: v.lead_record.url } : null }, null, 2);
+    const out = el("pre", { className: "fv-code fv-stream", textContent: "# Pick Instant or Live above: the answer streams in here." });
+    const state = el("span", { className: "fv-live", "aria-live": "polite", textContent: "Nothing running" });
+    // One line per server-sent event, as an agent would read the stream
+    const line = (ms, e) => {
+      const t = `+${(ms / 1000).toFixed(1)}s`.padEnd(7);
+      if (e.type === "open") return `${t} open     case ${e.investigation_id}`;
+      if (e.type === "start") return `${t} start    ${e.agent}`;
+      if (e.type === "step") return `${t} step ${String(e.n).padEnd(3)} ${e.agent}: ${e.summary}${e.model && e.model !== "None" ? ` (${e.model})` : ""}`;
+      if (e.type === "verdict") return `${t} verdict  ${e.verdict?.overall} (set by code)`;
+      return `${t} ${e.type}`;
+    };
+    const head = (how) => `# POST /v1/agent/sessions/stream · ${how}\n`;
+    const write = (text) => { out.textContent += `${text}\n`; out.scrollTop = out.scrollHeight; };
+    const finish = (result, ms) => write(`${line(ms, { type: "done" })}\n\n# the answer (result.verdict)\n${brief(result.verdict)}`);
+    let busy = false;
+    const buttons = [];
+    const lock = (on) => { busy = on; buttons.forEach((b) => { b.disabled = on || (b.dataset.live && !quota.left()); }); };
+
+    // Instant: the events this API really sent for this listing, replayed at their real timing. No sign-in.
+    const replay = el("button", { type: "button", className: "primary small", textContent: "Replay the stream" });
+    replay.onclick = async () => {
+      if (busy) return;
+      lock(true);
+      state.textContent = "Loading the recorded run…";
+      try {
+        const rec = await recorded(STORY);
+        out.textContent = head(`recorded ${String(rec.recorded_at || "").slice(0, 10)}`);
+        state.textContent = "Replaying the recorded run…";
+        const t0 = performance.now();
+        for (const e of rec.events) {
+          const wait = (e._ms || 0) - (performance.now() - t0);
+          if (wait > 0) await new Promise((ok) => setTimeout(ok, wait));
+          if (e.type === "done") finish(e.result, e._ms || 0); else write(line(e._ms || 0, e));
+        }
+        state.textContent = "Recorded run, replayed at its real timing";
+      } catch (_) { state.textContent = "The recorded run couldn't be loaded."; }
+      lock(false);
+    };
+
+    // Live: the same request as the curl, sent to Cloud Run now. One check.
+    const runLive = el("button", { type: "button", className: "primary small", "data-live": "1", textContent: "Run it live" });
+    const left = el("small", { className: "fv-live" });
+    const showLeft = () => { left.textContent = `Uses 1 check. ${quota.text()}.`; if (!busy) runLive.disabled = !quota.left(); };
+    stopLeft?.();
+    stopLeft = quota.onChange(showLeft);
+    showLeft();
+    runLive.onclick = async () => {
+      if (busy) return;
+      if (!quota.left()) { state.textContent = quota.usedUpText(); return; }
+      lock(true);
+      quota.take().catch(() => {});
+      out.textContent = head("live from Cloud Run");
+      state.textContent = "Calling Cloud Run…";
+      const t0 = performance.now();
+      const ms = () => performance.now() - t0;
+      try {
+        const res = await authFetch(`${API}/v1/agent/sessions/stream`, { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode: "investigate", product_id: "unmatched", listing: l }), signal: AbortSignal.timeout(170000) });
+        if (!res.ok) {
+          const detail = (await res.json().catch(() => ({}))).detail;
+          throw new Error(typeof detail === "string" ? detail : `the API answered ${res.status}`);
+        }
+        state.textContent = "Streaming from Cloud Run…";
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let result = null;
+        while (!result) {
+          const { value, done } = await reader.read();
+          if (done) throw new Error("the connection closed before the answer");
+          buffer += decoder.decode(value, { stream: true });
+          let cut;
+          while (!result && (cut = buffer.indexOf("\n\n")) >= 0) {
+            const data = buffer.slice(0, cut).split("\n").filter((x) => x.startsWith("data:")).map((x) => x.slice(5)).join("\n");
+            buffer = buffer.slice(cut + 2);
+            if (!data) continue;
+            const e = JSON.parse(data);
+            if (e.type === "error") throw new Error(e.detail || "the agents could not finish");
+            if (e.type === "done") result = e.result; else write(line(ms(), e));
+          }
+        }
+        reader.cancel().catch(() => {});
+        finish(result, ms());
+        state.textContent = `Live from Cloud Run · ${(ms() / 1000).toFixed(1)} s · case ${result.investigation_id}`;
+      } catch (err) {
+        const why = err.name === "TimeoutError" ? "no answer within about 3 minutes" : err.message;
+        write(`\n# stopped: ${why}`);
+        state.textContent = `Couldn't finish live: ${why}. Instant still works.`;
+      }
+      lock(false);
+      showLeft();
+    };
+    buttons.push(replay, runLive);
+
+    // The agent card: public, no sign-in, no check used
+    const card = el("button", { type: "button", className: "link", textContent: "Or fetch the agent card (A2A, no sign-in)" });
+    card.onclick = async () => {
+      if (busy) return;
+      lock(true);
       state.textContent = "Calling Cloud Run…";
       const t0 = performance.now();
       try {
         const res = await fetch(`${API}/.well-known/agent-card.json`, { signal: AbortSignal.timeout(20000) });
         if (!res.ok) throw new Error(`The API answered ${res.status}`);
-        const card = await res.json();
-        out.textContent = JSON.stringify({ name: card.name, version: card.version, url: card.supportedInterfaces?.[0]?.url,
-          skills: (card.skills || []).map((s) => s.name) }, null, 2);
+        const c = await res.json();
+        out.textContent = `# GET /.well-known/agent-card.json\n${JSON.stringify({ name: c.name, version: c.version, url: c.supportedInterfaces?.[0]?.url,
+          skills: (c.skills || []).map((x) => x.name) }, null, 2)}`;
         state.textContent = `Live from Cloud Run · ${Math.round(performance.now() - t0)} ms`;
       } catch (err) { state.textContent = `Couldn't reach the API: ${err.message}`; }
-      run.disabled = false;
+      lock(false);
     };
+
+    const choice = (tag, kind, title, text, ...rest) => el("div", { className: `fv-run ${kind}` },
+      el("span", { className: "pick-tag", textContent: tag }), el("b", { textContent: title }), el("p", { className: "muted", textContent: text }), ...rest);
     return [
       el("ol", { className: "fv-steps" },
         step(1, "Ask over REST", el("p", { className: "muted", textContent: "The same listing. The investigation streams each step as server-sent events." }),
@@ -226,7 +325,11 @@ const BUILD = {
           el("pre", { className: "fv-code", textContent: mcp }), copyBtn("Copy", mcp),
           el("p", { className: "fv-tools" }, ...["check_listing", "identify_product", "product_safety", "find_copies", "safety_marks", "safer_alternatives",
             "owner_guidance", "product_history", "case_file", "investigation_trace"].map((t) => el("code", { textContent: t })))),
-        step(3, "What comes back", el("div", { className: "fv-btns" }, run, state), out)),
+        step(3, "Watch it answer",
+          el("div", { className: "fv-runs" },
+            choice("Instant", "test", "Recorded stream", "The events this API sent for this listing, at their real timing. No sign-in.", replay),
+            choice("Live", "real", "Cloud Run, now", "The same request as the curl, sent from your browser.", el("div", { className: "fv-btns" }, runLive, left))),
+          state, out, card)),
       next(go("site/agents.html", "For developers", false), go(`${API}/docs`, "API docs"), go("https://github.com/solomonwilsonr/all-builders", "Source on GitHub")),
     ];
   },

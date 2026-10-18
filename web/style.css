@@ -690,6 +690,13 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
 .fv-tools { display: flex; flex-wrap: wrap; gap: 6px; }
 .fv-tools code { padding: 2px 8px; border-radius: 4px; background: var(--soft); font: 12px var(--mono); }
 .fv-live { font-size: 13px; color: var(--muted); }
+.fv-runs { display: grid; gap: 8px; }
+.fv-run { display: grid; gap: 6px; padding: 12px 14px; border-radius: 10px; background: var(--soft); }
+.fv-run.real { background: #fff; box-shadow: 0 0 0 2px var(--blue); }
+.fv-run.test .pick-tag { background: var(--mint); color: var(--mint-ink); }
+.fv-run b { color: var(--ink); } .fv-run p { font-size: 13px; } .fv-run > button { justify-self: start; }
+.fv-stream { min-height: 120px; }
+.fv-body > button.link { justify-self: start; font-size: 13px; }
 .fv-next { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; padding: 16px 20px; border-radius: 12px; background: var(--soft); }
 .fv-next > span { margin-right: 6px; font: 500 12px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--dim); }
 .fv-next .jbtn { min-height: 42px; padding: 0 18px; font-size: 14px; }
