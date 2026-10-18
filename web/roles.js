@@ -1,20 +1,12 @@
-// "Who are you?": one check, shown four ways. The same product (the HAIARA W5PRO power bank, recalled in Japan) runs
-// through every view, so a judge sees one engine serving a shopper, a marketplace analyst, a regulator and a developer.
-// Everything here is drawn from what the API really returned (samples/*.json, data/catalog.json); the developer view
-// also calls the live API. The chosen view is kept in the address (?for=marketplace, or #for=…) and on this browser.
-// Plain module, no build step. Text is always set as text, never as HTML.
+// The judges' page, steps 5 and 6: the marketplace queue and the regulator's evidence pack (For marketplaces and
+// regulators) and the developer's API playground (For developers and AI agents). One product, the HAIARA W5PRO power
+// bank recalled in Japan, runs through them. Everything is drawn from what the API really returned (samples/*.json,
+// data/catalog.json); the developer view also calls the live API. ?for=marketplace (or regulator, developer) scrolls
+// to that part. Plain module, no build step. Text is always set as text, never as HTML.
 import { API, el } from "./actions.js?v=20261017v";
 import { authFetch, quota } from "./auth.js?v=20261018u";
 
 const STORY = "recall_jp"; // the sample every view tells
-const KEY = "safeshelf-view";
-// Eddy, the mascot, in each person's pose (site/assets/eddy-<view>.webp)
-const VIEWS = [
-  { id: "shopper", label: "Shopper", who: "Rahul, about to buy a power bank", ask: "Is it safe to buy?" },
-  { id: "marketplace", label: "Marketplace or seller", who: "Anjali, trust and safety at a marketplace", ask: "Which listings need action first?" },
-  { id: "regulator", label: "Regulator or researcher", who: "A product-safety officer at the ACCC or BIS", ask: "What is the evidence, and where is it from?" },
-  { id: "developer", label: "Developer or AI agent", who: "A shopping app or a Gemini buying agent", ask: "Can my agent ask the same thing?" },
-];
 const TONE = { red: "red", amber: "amber", green: "green", unknown: "grey" };
 const WORD = { red: "Don't buy", amber: "Be careful", green: "No problems found", unknown: "Can't tell yet" };
 const RANK = { red: 0, amber: 1, unknown: 2, green: 3 };
@@ -65,30 +57,6 @@ const go = (href, text, line = true) => el("a", { className: `jbtn${line ? " lin
 const recordLink = (r) => el("a", { href: r.url, target: "_blank", rel: "noopener", textContent: `Read the official ${r.authority} notice` });
 
 // Open the demo browser on the story's tab (test pages, not the real browser, so it opens at once)
-function openStory() {
-  document.getElementById("tab-shop-page")?.click();
-  const panel = document.getElementById("shop-page");
-  if (panel?.dataset.mode === "choose") document.getElementById("test-start")?.click();
-  const pickTab = (tries = 0) => {
-    const tab = [...document.querySelectorAll("#samples button")].find((b) => b.title.startsWith(story.preset.what) || b.textContent.includes(story.preset.name));
-    if (tab) tab.click();
-    else if (tries < 20) setTimeout(() => pickTab(tries + 1), 150); // the tabs are still loading
-  };
-  pickTab();
-  document.querySelector(".mac")?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-const openTab = (id) => () => { document.getElementById(`tab-${id}`)?.click(); document.getElementById("try")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
-
-// The answer the shopper sees, in brief
-function answerCard(v) {
-  const r = v.lead_record;
-  return el("div", { className: `fv-answer ${TONE[v.overall]}` },
-    el("b", { textContent: `${WORD[v.overall]}: ${v.headline.split(":")[0]}` }),
-    el("p", { textContent: v.reasons[0]?.text || v.headline }),
-    el("p", { className: "muted", textContent: "What to do: don't buy it. If you already have one, stop using it and ask the seller for a refund." }),
-    r ? recordLink(r) : null);
-}
-
 // Country by country: what was found, and from which official sources
 const covTable = (countries) => el("div", { className: "table-wrap" }, el("table", { className: "fv-queue fv-cov" },
   el("thead", {}, el("tr", {}, ...["Country", "Result", "Sources"].map((h) => el("th", { textContent: h })))),
@@ -99,20 +67,6 @@ const covTable = (countries) => el("div", { className: "table-wrap" }, el("table
 
 // --- The four views ---
 const BUILD = {
-  shopper() {
-    const v = story.result.verdict;
-    return [
-      el("ol", { className: "fv-steps" },
-        step(1, "Open the listing", el("p", { textContent: "Rahul is about to buy this power bank. With the SafeShelf extension, a Check button sits on the page's right edge." }),
-          el("button", { type: "button", className: "primary small", textContent: "Open it in the demo browser", onclick: openStory })),
-        step(2, "Read one plain answer", answerCard(v)),
-        step(3, "Already bought one?", el("p", { textContent: "Save it to My Shelf for recall alerts, get a refund request and complaint drafts, or ask by voice in 26 languages." }),
-          el("div", { className: "fv-btns" }, go("site/chat.html", "Ask Eddy about it"),
-            el("button", { type: "button", className: "small", textContent: "Ask out loud", onclick: openTab("ask-out-loud") })))),
-      next(go("site/get.html", "Get SafeShelf", false), go("#check-own", "Check your own listing"), go("site/chat.html", "Open the chat")),
-    ];
-  },
-
   async marketplace() {
     let catalog = null;
     try { catalog = await getJSON("data/catalog.json"); } catch (_) { /* the stats card says so */ }
@@ -469,195 +423,24 @@ const BUILD = {
   },
 };
 
-// --- The rest of the page follows the view: each person sees only their sections, ways to try it and products ---
-const SAY = {
-  shopper: {
-    "cta-h": "Check before you pay, wherever you shop.", "cta-p": "The Chrome extension and the WhatsApp number are coming soon. The web page works today, on a phone too.",
-    "cta-btns": [["site/get.html", "Get SafeShelf"], ["site/chat.html", "Open the chat"]] },
-  marketplace: { try: "Paste a seller's listing and watch every check run live.", "prod-h": "What marketplaces use", "prod-p": "Scan the whole catalog, or check each listing as it goes live.",
-    "cta-h": "Scan your catalog with SafeShelf", "cta-p": "Send a product list; get back the listings that need action, each with its evidence.",
-    "cta-btns": [["site/get.html", "Talk to us"], ["site/agents.html", "Connect over the API"]], "hero-2": ["#check-own", "Check a listing"] },
-  regulator: { try: "Paste any listing and watch the investigation run, step by step.", "hero-2": ["#accuracy", "See the proof"] },
-  developer: { "prod-h": "What you build on", "prod-p": "The same engine, as read-only tools for your agent.",
-    "cta-h": "Build on the evidence", "cta-p": "Read-only tools, sourced answers, and a verdict set by code.",
-    "cta-btns": [["site/agents.html", "For developers"], [`${API}/docs`, "API docs"]], "hero-1": ["#for", "See the developer view"], "hero-2": ["#accuracy", "See the proof"] },
-};
-const SHARED = { // the proof sections each person still sees
-  shopper: [],
-  marketplace: [["#accuracy", "how accurate it is"]],
-  regulator: [["#accuracy", "how accurate it is"], ["#attack", "whether it can be fooled"]],
-  developer: [["#accuracy", "how accurate it is"], ["#attack", "whether it can be fooled"]],
-};
-function applyView(id) {
-  for (const e of document.querySelectorAll("[data-for]")) e.hidden = !e.dataset.for.split(" ").includes(id);
-  const visible = (sel) => [...document.querySelectorAll(sel)].filter((e) => !e.hidden);
-  const lastOn = (items) => items.forEach((e, i) => e.classList.toggle("last-on", i === items.length - 1));
-
-  // the jump menu keeps only the sections this person sees
-  const blocks = visible("main > section.block");
-  const jump = document.querySelector(".jump");
-  const links = [...jump.querySelectorAll("a")];
-  links.forEach((a) => { a.hidden = !blocks.some((b) => `#${b.id}` === a.getAttribute("href")); });
-  const shown = links.filter((a) => !a.hidden);
-  jump.style.setProperty("--n", shown.length);
-  lastOn(shown);
-
-  // ways to try it: if the open one is gone, open the first one left; one way alone needs no tab row
-  const tabs = [...document.querySelectorAll(".trytabs [role=tab]")];
-  const tabsOn = tabs.filter((t) => !t.hidden);
-  const row = document.querySelector(".trytabs");
-  row.style.setProperty("--n", tabsOn.length || 1);
-  row.classList.toggle("solo", tabsOn.length < 2);
-  lastOn(tabsOn);
-  if (tabsOn.length && !tabsOn.some((t) => t.getAttribute("aria-selected") === "true")) {
-    const keep = location.hash;
-    tabsOn[0].click();
-    try { history.replaceState(null, "", location.pathname + location.search + keep); } catch (_) { /* file:// */ }
-  }
-
-  const prods = document.querySelector(".prods");
-  prods?.style.setProperty("--n", Math.max(3, visible(".prod-card").length)); // one or two cards keep their usual width
-
-  // words for this person
-  for (const e of document.querySelectorAll("[data-say]")) {
-    if (!("was" in e.dataset)) e.dataset.was = e.dataset.say === "cta-btns" ? e.innerHTML : e.textContent;
-    const say = SAY[id]?.[e.dataset.say];
-    if (e.dataset.say === "cta-btns") {
-      if (say) e.replaceChildren(...say.map(([href, text], i) => el("a", { className: `jbtn${i ? " line" : ""}`, href, textContent: text })));
-    } else if (e.dataset.say.startsWith("hero-")) {
-      if (!("wasHref" in e.dataset)) e.dataset.wasHref = e.getAttribute("href");
-      const [href, text] = say || [e.dataset.wasHref, e.dataset.was];
-      e.href = href;
-      e.textContent = text;
-    } else e.textContent = say || e.dataset.was;
-  }
-}
-
-// --- Switching from anywhere: a "Viewing as" pill in the jump bar, hidden only while the four cards are on screen ---
-function switcher(pick, cards) {
-  const face = el("img", { className: "fs-face", alt: "", decoding: "async" });
-  const name = el("b");
-  const btn = el("button", { type: "button", className: "fs-btn", "aria-haspopup": "true", "aria-expanded": "false" },
-    face, el("span", { className: "fs-t" }, el("small", { textContent: "Viewing as" }), name),
-    el("span", { className: "fs-caret", "aria-hidden": "true", textContent: "▾" }));
-  const menu = el("div", { className: "fs-menu", role: "menu", hidden: true },
-    el("p", { className: "fv-tag", textContent: "Switch view" }),
-    ...VIEWS.map((v) => {
-      const item = el("button", { type: "button", className: "fs-item", role: "menuitemradio", "data-view": v.id, "aria-checked": "false" },
-        el("span", { className: `fs-av fs-tint ${v.id}` }, el("img", { src: `site/assets/eddy-${v.id}.webp`, alt: "", decoding: "async" })),
-        el("span", { className: "fs-t" }, el("b", { textContent: v.label }), el("small", { textContent: v.ask })));
-      item.onclick = () => { open(false); pick(v.id); };
-      return item;
-    }));
-  // the chip leads the sticky section bar; the menu lives outside it, since the bar scrolls sideways and would clip it
-  btn.hidden = true;
-  document.querySelector(".jump")?.prepend(btn);
-  document.body.append(menu);
-
-  const open = (on) => {
-    menu.hidden = !on;
-    btn.setAttribute("aria-expanded", String(on));
-    if (!on) return;
-    const r = btn.getBoundingClientRect();
-    menu.style.top = `${r.bottom + 8}px`;
-    menu.style.left = `${Math.max(12, Math.min(r.left, innerWidth - menu.offsetWidth - 12))}px`;
-    (menu.querySelector("[aria-checked=true]") || menu.querySelector(".fs-item"))?.focus();
-  };
-  btn.onclick = () => open(menu.hidden);
-  document.addEventListener("click", (e) => { if (!btn.contains(e.target) && !menu.contains(e.target)) open(false); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !menu.hidden) { open(false); btn.focus(); } });
-  addEventListener("resize", () => open(false));
-
-  // everywhere except while the four cards are on screen (they are the switch then)
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(([e]) => {
-      btn.hidden = e.isIntersecting;
-      if (e.isIntersecting) open(false);
-    }).observe(cards);
-  } else btn.hidden = false;
-
-  return {
-    sync(id) {
-      const v = VIEWS.find((x) => x.id === id);
-      face.src = `site/assets/eddy-${id}.webp`;
-      face.className = `fs-face fs-tint ${id}`;
-      name.textContent = v.label;
-      for (const i of menu.querySelectorAll(".fs-item")) i.setAttribute("aria-checked", String(i.dataset.view === id));
-    },
-  };
-}
-
-// --- The picker ---
-function chosen() {
-  const q = new URLSearchParams(location.search).get("for") || location.hash.match(/^#for=([a-z]+)/)?.[1];
-  let saved = null;
-  try { saved = localStorage.getItem(KEY); } catch (_) { /* private mode */ }
-  return [q, saved].find((id) => VIEWS.some((v) => v.id === id)) || "shopper";
-}
+// --- Mount each view in its own part of the page ---
+const PLACES = { marketplace: "marketplace", regulator: "regulator", developer: "developers" };
 
 export async function setUpRoles() {
-  const root = document.getElementById("for-views");
-  if (!root) return;
+  const roots = Object.fromEntries(Object.keys(PLACES).map((id) => [id, document.getElementById(`view-${id}`)]));
+  if (!Object.values(roots).some(Boolean)) return;
   try {
     presets = (await getJSON("samples/presets.json")).presets;
     const preset = presets.find((p) => p.id === STORY);
     story = { preset, result: await sample(STORY) };
-  } catch (_) { root.replaceChildren(el("p", { className: "error", textContent: "The demo views could not be loaded." })); return; }
-
-  const l = story.preset.request.listing;
-  const v = story.result.verdict;
-  const strip = el("div", { className: "fv-story" },
-    el("span", { className: "fv-tag", textContent: "Same product in every view" }),
-    el("b", { textContent: story.preset.name }),
-    el("span", { textContent: `${story.preset.market} · ${money(l.price, l.currency)}` }),
-    el("span", { className: `fv-chip ${TONE[v.overall]}`, textContent: `${WORD[v.overall]} · ${v.lead_record.authority} notice, ${v.lead_record.published}` }));
-
-  const cards = el("div", { className: "fv-picks", role: "group", "aria-label": "Choose your view" });
-  const panel = el("div", { className: "fv-panel", id: "for-panel", "aria-live": "polite" });
-  root.replaceChildren(cards, strip, panel);
-
-  let run = 0;
-  const dock = switcher((id) => show(id), cards);
-  const show = async (id, { save = true, scroll = false } = {}) => {
-    const view = VIEWS.find((x) => x.id === id);
-    const mine = ++run;
-    cards.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === id)));
-    if (save) {
-      try { localStorage.setItem(KEY, id); } catch (_) { /* private mode */ }
-      try {
-        const u = new URL(location.href);
-        u.searchParams.set("for", id);
-        if (/^#for=/.test(u.hash)) u.hash = "";
-        history.replaceState(null, "", u);
-      } catch (_) { /* file:// */ }
-    }
-    applyView(id);
-    dock.sync(id);
-    panel.replaceChildren(el("p", { className: "muted", textContent: "Loading…" }));
-    const body = await BUILD[id]();
-    if (mine !== run) return;
-    const link = new URL(location.href);
-    link.searchParams.set("for", id);
-    link.hash = "for";
-    panel.replaceChildren(
-      el("div", { className: "fv-head" },
-        el("div", {}, el("span", { className: "fv-tag", textContent: view.who }), el("h3", { textContent: view.ask })),
-        copyBtn("Copy a link to this view", link.href)),
-      ...body,
-      ...(SHARED[id].length ? [el("p", { className: "fv-shared" }, "Below: ", ...SHARED[id].flatMap(([href, text], i) =>
-        [i ? " and " : null, el("a", { href, textContent: text })]), ".")] : []));
-    if (scroll) panel.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  for (const view of VIEWS) {
-    const b = el("button", { type: "button", className: "fv-pick", "data-view": view.id, "aria-pressed": "false" },
-      el("span", { className: `fv-art ${view.id}` }, el("img", { src: `site/assets/eddy-${view.id}.webp`, alt: "", decoding: "async" })),
-      el("span", { className: "fv-check", "aria-hidden": "true", textContent: "✓" }),
-      el("span", { className: "fv-t" }, el("b", { textContent: view.label }), el("small", { textContent: view.ask })));
-    b.onclick = () => show(view.id, { scroll: matchMedia("(max-width: 640px)").matches });
-    cards.append(b);
+  } catch (_) {
+    for (const r of Object.values(roots)) r?.replaceChildren(el("p", { className: "error", textContent: "This part of the demo could not be loaded." }));
+    return;
   }
-  const first = chosen();
-  await show(first, { save: false });
-  if (/[?&]for=|#for=/.test(location.search + location.hash)) document.getElementById("for")?.scrollIntoView({ block: "start" });
+  await Promise.all(Object.entries(roots).map(async ([id, root]) => {
+    if (!root) return;
+    try { root.replaceChildren(...await BUILD[id]()); } catch (_) { root.replaceChildren(el("p", { className: "error", textContent: "This part of the demo could not be loaded." })); }
+  }));
+  const asked = new URLSearchParams(location.search).get("for") || location.hash.match(/^#for=([a-z]+)/)?.[1];
+  if (PLACES[asked]) document.getElementById(asked === "developer" ? "developers" : asked)?.scrollIntoView({ block: "start" });
 }

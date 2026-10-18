@@ -1,4 +1,4 @@
-// Eddy's tour of the judges' page: a centred card with one slide per feature. Each slide has Eddy (the mascot, cut from
+// Eddy's tour of the judges' page: a centred card with one slide per step of the page, in the page's order. Each slide has Eddy (the mascot, cut from
 // the brand sheet into site/assets/guide/) in a pose that fits, a big title, one line, and a moving picture of the
 // feature with a cursor using it. "Show me on the page" closes the card, opens the right Try it tab and lights up that
 // part of the page. The last slide takes a product name and puts it into Paste a listing for the real live check.
@@ -29,27 +29,31 @@ const SLIDES = [
       </div>
       <ul class="tm-facts"><li><b>8,689</b>official recalls</li><li><b>29,379</b>buyer reviews</li><li><b>26</b>languages</li></ul>
     </div>` },
-  { id: "views", pose: "curious", target: "#for", title: "Pick who you are", text: "Shopper, marketplace, regulator or developer: the page keeps only the parts for you, and tells the same story your way.",
-    art: `<div class="tm-views">${[["shopper", "Shopper"], ["marketplace", "Marketplace"], ["regulator", "Regulator"], ["developer", "Developer"]]
-      .map(([v, l]) => `<span class="tm-view${v === "marketplace" ? " pick" : ""}"><img src="site/assets/eddy-${v}.webp" alt=""><b>${l}</b></span>`).join("")}</div>${HAND}` },
   { id: "shop", pose: "pointing", tab: "shop-page", prep: toTestPages, target: "#shop-page .win", title: "Check right on the shop page", text: "Open a test shop page, or paste any product link, then press the shield. The answer opens beside the listing.",
     art: `<div class="tm-browser"><div class="tm-win">${BAR("example-deals-store.test")}<span class="tm-ext">${SHIELD}</span>
       <div class="tm-shop"><span class="tm-thumb b"></span><span class="tm-lines"><b>Kelvo CX-65 65W charger</b><i>₹299</i><em>Buy now</em></span></div>
       <div class="tm-panel slide"><span class="tm-brand">${SHIELD}SafeShelf</span><div class="tm-verdict red"><b>Don't buy</b><small>Not real: a fifth of the genuine price</small></div><span class="tm-proof">Photos copied from the official listing</span></div>
     </div></div>${HAND}` },
-  { id: "chat", pose: "happy", tab: "chat", target: "#chat .chatwin", title: "Or just ask Eddy", text: "The real chat: pick a product or paste any link or screenshot, then ask in your own words. It remembers the conversation and shows its sources.",
-    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}Eddy · SafeShelf</span><span class="tm-msg me">Is this charger safe in a child's room?</span><span class="tm-msg bot"><b class="amber">Be careful</b>Buyers report it overheating.</span><span class="tm-msg bot">Sources: 3 buyer reviews · BIS registry</span></div></div>` },
   { id: "paste", pose: "excited", tab: "check-own", target: "#check-own", title: "Paste any listing, watch it think", text: "Copy a title from any shop. Eight agents check it live while you watch, then you get the answer.",
     art: `<div class="tm-paste">
       <div class="tm-form"><small>Product title</small><span class="tm-field"><span class="tm-typed">Anker PowerCore 10000 A1263</span></span><span class="tm-go">Check it live</span></div>
       <ol class="tm-agents"><li>Page reader</li><li>Is it real?</li><li>Safety Radar</li><li>Recall checker</li><li>Safety marks</li><li>Verdict, set by code</li></ol>
     </div>${HAND}` },
-  { id: "talk", pose: "happy", tab: "ask-out-loud", target: "#ask-out-loud", alt: { tab: "whatsapp", target: "#whatsapp" }, title: "Ask out loud, or on WhatsApp", text: "Point the camera at the label and ask \"Is this safe?\", or forward a link on WhatsApp. Answers come back as a voice note, in 26 languages.",
+  { id: "chat", pose: "happy", tab: "chat", target: "#chat .chatwin", title: "Or just ask Eddy", text: "The real chat: pick a product or paste any link or screenshot, then ask in your own words. It remembers the conversation and shows its sources.",
+    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}Eddy · SafeShelf</span><span class="tm-msg me">Is this charger safe in a child's room?</span><span class="tm-msg bot"><b class="amber">Be careful</b>Buyers report it overheating.</span><span class="tm-msg bot">Sources: 3 buyer reviews · BIS registry</span></div></div>` },
+  { id: "talk", pose: "happy", tab: "ask-out-loud", target: "#ask-out-loud", alt: { tab: "whatsapp", target: "#whatsapp" }, title: "Reach everyone", text: "Point the camera at the label and ask out loud, forward a link on WhatsApp, or share it from the Android app. Answers come back by voice, in 26 languages.",
     art: `<div class="tm-talk">
       <div class="tm-phone"><span class="tm-mic"><i></i></span><b>“Is this safe?”</b><small>Listening… हिन्दी · 日本語 · English</small></div>
       <div class="tm-phone wa"><span class="tm-wahead">SafeShelf</span><span class="tm-msg me">flipkart.com/kelvo-cx65…</span><span class="tm-msg bot"><b>⛔ Don't buy</b>Not the real product.</span><span class="tm-msg bot voice"><i></i>0:12</span></div>
     </div>` },
-  { id: "answers", pose: "thinking", tab: "answers", target: "#answers", title: "One clear answer, with proof", text: "Every listing gets one of four answers. Plain code picks the colour from the evidence; Gemini only explains it.",
+  { id: "after", pose: "thumbs", target: "#after", title: "After you buy, it keeps watching", text: "Saved products are rechecked for new recalls. Eddy also keeps return and warranty dates, answers from the manual and shares the list with family.",
+    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}My Shelf</span><span class="tm-msg bot"><b>Recalled since you bought it</b>NEWDERY power bank, saved 9 Oct.</span><span class="tm-msg bot"><b class="amber">Return window: 3 days left</b>Kelvo CX-65 charger</span><span class="tm-msg bot">Manual, p. 14: don't charge it overnight.</span></div></div>` },
+  { id: "wrong", pose: "surprised", target: "#wrong", title: "If something goes wrong", text: "Safe steps first, never \"test it\". Then a drafted refund or complaint, a hazard report a person reviews, and where to dispose of it safely.",
+    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}Eddy · SafeShelf</span><span class="tm-msg me">My power bank is hot and swelling</span><span class="tm-msg bot"><b>Unplug it if safe, move it to a hard surface</b>Fire or smoke: call 112.</span><span class="tm-msg bot">Refund request drafted · case attached</span></div></div>` },
+  { id: "anywhere", pose: "flying", target: "#business", alt: { target: "#developers" }, title: "Marketplaces, regulators and AI agents", text: "The same engine scans whole catalogs, hands regulators an evidence pack, searches every recall notice, and answers AI agents over 10 MCP tools.",
+    art: `<div class="tm-prods">${[["#0271e4", "Chrome extension"], ["#f0a020", "Web page"], ["#1d9b52", "WhatsApp"], ["#7b5cd6", "Catalog scan"], ["#001123", "API · MCP"]]
+      .map(([c, l]) => `<span style="--c:${c}"><i></i>${l}</span>`).join("")}</div>` },
+  { id: "answers", pose: "thinking", tab: "answers", target: "#answers", title: "Why trust it", text: "Gemini reads reviews and labels, searches, talks and translates. Plain code makes the final call from the evidence, so it cannot invent a recall.",
     art: `<div class="tm-answers">
       <div class="tm-checks"><span>Official recalls</span><span>Buyer reviews</span><span>Safety marks</span><span>Is it real?</span></div>
       <ul class="tm-ans"><li class="red"><b>Don't buy</b>recalled or fake</li><li class="amber"><b>Be careful</b>reports under review</li><li class="green"><b>No problems found</b>in what was checked</li><li class="grey"><b>Can't tell yet</b>never a guess</li></ul>
@@ -59,9 +63,6 @@ const SLIDES = [
       <div class="tm-bars"><small>False alarms out of 40</small><div><span>SafeShelf</span><i class="me" style="--w:18%"></i><b>2</b></div><div><span>Gemini alone</span><i style="--w:55%"></i><b>6</b></div><div><span>Keyword rules</span><i style="--w:100%"></i><b>11</b></div></div>
       <ul class="tm-attacks"><li>Fake regulator page</li><li>Look-alike model number</li><li>Hidden text aimed at AI</li></ul>
     </div>` },
-  { id: "anywhere", pose: "flying", target: "#products", title: "Use it anywhere", text: "Shoppers use the Chrome extension, this web page or WhatsApp. Marketplaces scan whole catalogs, and AI agents ask over 10 MCP tools.",
-    art: `<div class="tm-prods">${[["#0271e4", "Chrome extension"], ["#f0a020", "Web page"], ["#1d9b52", "WhatsApp"], ["#7b5cd6", "Catalog scan"], ["#001123", "API · MCP"]]
-      .map(([c, l]) => `<span style="--c:${c}"><i></i>${l}</span>`).join("")}</div>` },
   { id: "go", pose: "waving", title: "Your turn", text: "Name a product and Eddy will set up a live check, or close this and explore. Eddy is at the bottom right if you need him.",
     art: `<form class="tm-try" autocomplete="off"><img src="${POSE("thumbs")}" alt=""><label class="sr" for="tg-product">A product to check</label><input id="tg-product" type="text" maxlength="200" placeholder="e.g. Anker PowerCore 10000 A1263"><button type="submit" class="primary">Set up the check</button></form>` },
 ];
