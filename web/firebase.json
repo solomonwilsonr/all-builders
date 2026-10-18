@@ -10,7 +10,8 @@
       "record_samples.py",
       "**/.*",
       "**/__pycache__/**",
-      "firestore.rules"
+      "firestore.rules",
+      "downloads/**"
     ],
     "headers": [
       {

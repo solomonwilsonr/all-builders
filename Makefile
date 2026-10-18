@@ -36,6 +36,14 @@ web: web-ext     ## the judges' page on :8095 (calls the live API)
 web-samples:    ## re-record the judges' page samples from the live API (after deploy-api)
 	API_URL=$(API_URL) python3 web/record_samples.py
 
+APK_BUCKET ?= gs://safeshelf-downloads-0381
+
+deploy-apk:     ## the Android APK to a public Cloud Storage bucket (Firebase's free plan refuses executables)
+	gcloud storage buckets describe $(APK_BUCKET) --project $(GCP_PROJECT) >/dev/null 2>&1 || \
+		gcloud storage buckets create $(APK_BUCKET) --project $(GCP_PROJECT) --location $(REGION) --uniform-bucket-level-access
+	gcloud storage cp web/downloads/*.apk $(APK_BUCKET)/ --content-type=application/vnd.android.package-archive
+	gcloud storage buckets add-iam-policy-binding $(APK_BUCKET) --member=allUsers --role=roles/storage.objectViewer --project $(GCP_PROJECT)
+
 deploy-web: web-ext ## the judges' page to Firebase Hosting, with the latest bench results
 	cp bench/results.json web/data/bench.json && cp bench/agent_eval_results.json web/data/agent_eval.json && \
 		cp bench/catalog_results.json web/data/catalog.json
