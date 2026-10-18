@@ -197,34 +197,38 @@ const BUILD = {
     ];
   },
 
-  // The agent console: the same request an agent sends, replayed (Instant) or run on Cloud Run (Live)
+  // An API playground: request on the left, response on the right, one Send button. REST runs here (a recorded
+  // real response, or live on Cloud Run); A2A fetches the real agent card; MCP needs a key, so it gives the config.
   async developer() {
     const rec = await recorded(STORY).catch(() => null);
     const base = story.preset.request.listing;
     const caseId = rec?.events.find((e) => e.type === "open")?.investigation_id || "SS-I-…";
-    const recSteps = rec ? rec.events.filter((e) => e.type === "step").length : 10;
-    const recMs = rec?.events.find((e) => e.type === "done")?._ms;
     const TOOLS = [
       ["check_listing", "listing", "Is it real? Copied photos, impossible price, brand-new website, conflicting specs, hidden AI instructions."],
       ["identify_product", "listing", "Which product is this listing? Returns a SafeShelf product_id for the other tools."],
       ["product_safety", "product", "Official recall status, hazard reports found in reviews and photos, safety-mark checks."],
-      ["find_copies", "product", "The same product under other listings or brands: exact model, rebrand, variant or look-alike, with reasons."],
+      ["find_copies", "product", "The same product under other listings or brands, with reasons."],
       ["safety_marks", "product", "Safety and energy marks the listing claims, checked against official registries."],
       ["safer_alternatives", "product", "Similar products with no recall and no hazard reports, with the reason for each."],
       ["owner_guidance", "product", "For someone who already owns it: stop or take care, recall remedy, return, report."],
       ["product_history", "product", "Everything that ever changed about this product, and its recalls."],
-      ["case_file", "product", "Findings with evidence IDs and quotes, and the code rule behind the verdict. Never sent anywhere."],
+      ["case_file", "product", "Findings with evidence IDs and quotes, and the code rule behind the verdict."],
       ["investigation_trace", "trace", "Every step of an investigation: tool, model, time, tokens, estimated cost."],
     ];
-    const PROTO = { rest: "REST · server-sent events", mcp: "MCP · tools/call", a2a: "A2A · message/send" };
-    let proto = "rest";
+    const TABS = {
+      rest: { label: "REST API", note: "Runs here", method: "POST", path: "/v1/agent/sessions/stream" },
+      mcp: { label: "MCP", note: "For AI assistants", method: "POST", path: "/mcp" },
+      a2a: { label: "A2A", note: "Agent to agent", method: "GET", path: "/.well-known/agent-card.json" },
+    };
+    let tab = "rest";
+    let mode = "instant";
     let tool = "check_listing";
+    let busy = false;
 
-    // --- The request form (left) ---
-    const input = (name, value, attrs = {}) => el("input", { name, value: value ?? "", autocomplete: "off", spellcheck: false, ...attrs });
-    const f = { title: input("title", base.title), url: input("url", base.url, { inputMode: "url" }),
-      price: input("price", base.price, { inputMode: "decimal" }), currency: input("currency", base.currency, { maxLength: 3 }) };
-    const field = (label, ...kids) => el("label", { className: "dv-field" }, el("span", { textContent: label }), ...kids);
+    // --- Request: the listing (REST), a tool (MCP) or nothing to fill in (A2A) ---
+    const input = (value, attrs = {}) => el("input", { value: value ?? "", autocomplete: "off", spellcheck: false, ...attrs });
+    const f = { title: input(base.title), url: input(base.url, { inputMode: "url" }), price: input(base.price, { inputMode: "decimal" }), currency: input(base.currency, { maxLength: 3 }) };
+    const field = (label, i, cls = "") => el("label", { className: `pg-field ${cls}` }, el("span", { textContent: label }), i);
     const edited = () => ["title", "url", "currency"].some((k) => f[k].value.trim() !== String(base[k] ?? "")) || Number(f.price.value) !== Number(base.price);
     const listing = () => {
       if (!edited()) return base;
@@ -233,118 +237,116 @@ const BUILD = {
       if (f.price.value.trim() && !Number.isNaN(Number(f.price.value))) out.price = Number(f.price.value);
       return out;
     };
-    const short = () => { const { title, url, price, currency } = listing(); return { url, title, price, currency }; };
-    const snippet = () => {
-      if (proto === "rest") return `curl -N -X POST ${API}/v1/agent/sessions/stream \\\n  -H 'content-type: application/json' \\\n  -H "authorization: Bearer $FIREBASE_ID_TOKEN" \\\n  -d '${JSON.stringify({ mode: "investigate", product_id: "unmatched", listing: listing() })}'`;
-      if (proto === "mcp") {
-        const kind = TOOLS.find((t) => t[0] === tool)[1];
-        const args = kind === "listing" ? short() : kind === "trace" ? { investigation_id: caseId } : { product_id: "<product_id from identify_product>" };
-        return `POST ${API}/mcp\nx-api-key: YOUR_KEY\n\n${JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: tool, arguments: args } }, null, 2)}`;
-      }
-      return `GET  ${API}/.well-known/agent-card.json\nPOST ${API}/a2a/\nx-api-key: YOUR_KEY\n\n${JSON.stringify({ jsonrpc: "2.0", id: 1, method: "message/send", params: { message: { role: "user", messageId: "1",
-        parts: [{ kind: "text", text: `Is this safe to buy? ${listing().url || listing().title || ""}` }] } } }, null, 2)}`;
-    };
-    const code = el("pre", { className: "dv-code" });
-    const toolNote = el("p", { className: "dv-note" });
-    const select = el("select", { className: "dv-select", "aria-label": "How your agent asks" },
-      ...Object.entries(PROTO).map(([value, textContent]) => el("option", { value, textContent })));
-    const toolBtns = [];
-    const feats = [];
-    const draw = () => {
-      code.textContent = snippet();
-      select.value = proto;
-      const t = TOOLS.find((x) => x[0] === tool);
-      toolNote.textContent = proto === "mcp" ? `${t[0]}: ${t[2]}` : proto === "rest" ? "The full investigation, every agent step streamed back as it happens." : "Another agent hands SafeShelf the listing in plain words and gets the answer back.";
-      toolBtns.forEach((b) => b.setAttribute("aria-current", String(proto === "mcp" && b.dataset.tool === tool)));
-      feats.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.proto === proto)));
-    };
-    const pick = (p, t) => { proto = p; if (t) tool = t; draw(); };
-    select.onchange = () => pick(select.value);
-    Object.values(f).forEach((i) => { i.oninput = draw; });
+    const toolSel = el("select", { className: "pg-select", "aria-label": "MCP tool" }, ...TOOLS.map(([n]) => el("option", { value: n, textContent: n })));
+    const toolNote = el("p", { className: "pg-hint" });
+    const restForm = el("div", { className: "pg-form" },
+      el("p", { className: "pg-label", textContent: "Body · the listing to check" }),
+      field("Product title", f.title),
+      el("div", { className: "pg-grid" }, field("Link", f.url, "wide"), field("Price", f.price), field("Currency", f.currency)),
+      el("button", { type: "button", className: "link", textContent: "Reset to the sample listing", onclick: () => { Object.entries(f).forEach(([k, i]) => { i.value = base[k] ?? ""; }); draw(); } }));
+    const mcpForm = el("div", { className: "pg-form" }, el("p", { className: "pg-label", textContent: "Tool to call" }), toolSel, toolNote,
+      el("p", { className: "pg-hint", textContent: "All 10 tools are read-only: an agent can check a listing, never buy, report or act for the shopper." }));
+    const a2aForm = el("div", { className: "pg-form" }, el("p", { className: "pg-label", textContent: "No body needed" }),
+      el("p", { className: "pg-hint", textContent: "Another agent first reads SafeShelf's agent card to learn what it can do, then sends it a listing in plain words over message/send." }));
 
-    // --- The investigation panel (right) ---
-    const ORDER = ["page_reader", "is_it_real", "safety_radar", "twin_finder", "recall_checker", "cert_verifier", "research_agent", "official_sources", "verdict", "verdict_writer"];
-    const rows = new Map(ORDER.map((id) => {
-      const fill = el("span", { className: "dv-fill" });
-      const time = el("small", { textContent: "–" });
-      const row = el("div", { className: "dv-agent" }, el("span", { className: "dv-an", textContent: AGENT[id] }), el("span", { className: "dv-track" }, fill), time);
-      return [id, { row, fill, time }];
-    }));
-    const word = el("b", { className: "dv-word", textContent: "Waiting" });
-    const head = el("p", { className: "dv-headline", textContent: "Press Instant or Run live to watch the agents work." });
-    const meta = el("p", { className: "dv-meta" });
-    const verdictBox = el("div", { className: "dv-verdict grey" }, el("span", { className: "dv-label", textContent: "Answer" }), word, head, meta);
-    const log = el("pre", { className: "dv-log" });
-    const logBox = el("details", { className: "dv-logbox" }, el("summary", { textContent: "Raw event stream" }), log);
-    let n = 0;
-    const reset = (how) => {
-      n = 0;
-      for (const r of rows.values()) { r.row.className = "dv-agent"; r.fill.style.width = "0"; r.time.textContent = "–"; }
-      verdictBox.className = "dv-verdict grey"; word.textContent = "Checking…"; head.textContent = how; meta.textContent = "";
-      log.textContent = `# ${PROTO.rest} · ${how}\n`;
+    const snippet = () => {
+      if (tab === "rest") return `curl -N -X POST ${API}/v1/agent/sessions/stream \\\n  -H 'content-type: application/json' \\\n  -H "authorization: Bearer $FIREBASE_ID_TOKEN" \\\n  -d '${JSON.stringify({ mode: "investigate", product_id: "unmatched", listing: listing() })}'`;
+      if (tab === "mcp") {
+        const kind = TOOLS.find((t) => t[0] === tool)[1];
+        const { url, title, price, currency } = listing();
+        const args = kind === "listing" ? { url, title, price, currency } : kind === "trace" ? { investigation_id: caseId } : { product_id: "<from identify_product>" };
+        return `// 1. Add SafeShelf to your MCP client\n${JSON.stringify({ mcpServers: { safeshelf: { url: `${API}/mcp`, headers: { "x-api-key": "YOUR_KEY" } } } }, null, 2)}\n\n// 2. Your agent then calls\n${JSON.stringify({ method: "tools/call", params: { name: tool, arguments: args } }, null, 2)}`;
+      }
+      return `curl ${API}/.well-known/agent-card.json\n\n# then, from your agent (x-api-key: YOUR_KEY)\ncurl -X POST ${API}/a2a/ -H 'content-type: application/json' \\\n  -d '${JSON.stringify({ jsonrpc: "2.0", id: 1, method: "message/send", params: { message: { role: "user", messageId: "1", parts: [{ kind: "text", text: `Is this safe to buy? ${listing().url || ""}` }] } } })}'`;
+    };
+    const code = el("pre", { className: "pg-code" });
+    const copy = copyBtn("Copy", snippet);
+    copy.className = "pg-copy";
+    const codeBox = el("details", { className: "pg-codebox" }, el("summary", {}, el("span", { textContent: "See it as code" }), copy), code);
+
+    const method = el("span", { className: "pg-method" });
+    const path = el("span", { className: "pg-path" });
+    const urlBar = el("div", { className: "pg-url" }, method, path);
+
+    // --- Send: Instant or Live on REST, Fetch on A2A, Copy on MCP ---
+    const seg = el("div", { className: "pg-seg", role: "radiogroup", "aria-label": "How to run it" });
+    const segBtn = (m, title, sub) => {
+      const b = el("button", { type: "button", role: "radio", "data-mode": m }, el("b", { textContent: title }), el("small", { textContent: sub }));
+      b.onclick = () => { if (!busy) { mode = m; draw(); } };
+      seg.append(b);
+    };
+    segBtn("instant", "Instant", "Recorded real response");
+    segBtn("live", "Live", "Cloud Run, now");
+    const send = el("button", { type: "button", className: "primary pg-send" });
+    const sendHint = el("p", { className: "pg-hint" });
+    stopLeft?.();
+    stopLeft = quota.onChange(() => draw());
+
+    // --- Response ---
+    const status = el("div", { className: "pg-status" });
+    const verdictBox = el("div", { className: "pg-verdict", hidden: true });
+    const timeline = el("ol", { className: "pg-timeline" });
+    const raw = el("pre", { className: "pg-raw" });
+    const rawBox = el("details", { className: "pg-rawbox", hidden: true }, el("summary", { textContent: "Raw response" }), raw);
+    const empty = el("div", { className: "pg-empty" });
+    const setStatus = (kind, text, sub = "") => { status.className = `pg-status is-${kind}`; status.replaceChildren(el("i"), el("b", { textContent: text }), sub ? el("span", { textContent: sub }) : ""); };
+    const clearResponse = () => {
+      verdictBox.hidden = true; timeline.replaceChildren(); raw.textContent = ""; rawBox.hidden = true; rawBox.open = false;
+      const goRest = el("button", { type: "button", className: "small", textContent: "Try it on the REST tab", onclick: () => pickTab("rest") });
+      if (tab === "rest") { setStatus("idle", "No request sent yet"); empty.replaceChildren(el("b", { textContent: "Press Send to see the answer" }), el("p", { textContent: "Every agent step shows up here as it streams in, then the verdict." })); }
+      if (tab === "mcp") { setStatus("idle", "Runs inside your agent"); empty.replaceChildren(el("b", { textContent: "MCP needs your API key" }), el("p", { textContent: "Your MCP client (Claude, Gemini or any other) calls the tools with your key, so it can't run from this page. The REST tab runs the same check here." }), goRest); }
+      if (tab === "a2a") { setStatus("idle", "No request sent yet"); empty.replaceChildren(el("b", { textContent: "Press Send to fetch the agent card" }), el("p", { textContent: "A real call to Cloud Run. Public, no sign-in, no check used." })); }
+      empty.hidden = false;
+    };
+    const rows = new Map();
+    const row = (agent) => {
+      if (!rows.has(agent)) {
+        const li = el("li", { className: "is-run" }, el("i"), el("div", {}, el("b", { textContent: AGENT[agent] || agent }), el("span", { textContent: "Working…" })), el("small"));
+        rows.set(agent, li);
+        timeline.append(li);
+      }
+      return rows.get(agent);
     };
     const handle = (e, ms) => {
-      const t = `+${(ms / 1000).toFixed(1)}s`.padEnd(7);
-      log.textContent += `${t} ${JSON.stringify(e).slice(0, 220)}\n`;
-      log.scrollTop = log.scrollHeight;
-      const r = rows.get(e.agent);
-      if (e.type === "start" && r) r.row.className = "dv-agent is-run";
-      if (e.type === "step") {
-        n += 1;
-        meta.textContent = `${n} of about ${recSteps} steps · ${(ms / 1000).toFixed(1)} s`;
-        if (!r) return;
+      raw.textContent += `data: ${JSON.stringify(e)}\n\n`;
+      if (e.type === "open") setStatus("run", "200 OK · streaming", `case ${e.investigation_id}`);
+      if (e.type === "start" && e.agent) row(e.agent);
+      if (e.type === "step" && e.agent) {
+        const li = row(e.agent);
         const skipped = /^Skipped/.test(e.summary || "");
-        const s = Number(e.seconds) || 0;
-        r.row.className = `dv-agent ${skipped ? "is-skip" : "is-done"}`;
-        r.row.title = e.summary || "";
-        r.fill.style.width = skipped ? "100%" : `${Math.max(6, Math.min(100, (s / 5) * 100))}%`;
-        r.time.textContent = skipped ? "skipped" : `${s.toFixed(1)} s`;
+        li.className = skipped ? "is-skip" : "is-done";
+        li.querySelector("span").textContent = skipped ? "Not needed for this listing" : e.summary;
+        li.querySelector("small").textContent = skipped ? "" : `${(Number(e.seconds) || 0).toFixed(1)} s`;
       }
-      if (e.type === "verdict" && e.verdict) { verdictBox.className = `dv-verdict ${TONE[e.verdict.overall]}`; word.textContent = WORD[e.verdict.overall]; }
+      status.querySelector("span")?.replaceChildren(`${(ms / 1000).toFixed(1)} s`);
     };
     const finish = (result, ms, how) => {
       const v = result.verdict;
-      log.textContent += `+${(ms / 1000).toFixed(1)}s`.padEnd(7) + ` done\n\n# result.verdict\n${JSON.stringify({ overall: v.overall, safe: v.safe, real: v.real, outcome: v.outcome, headline: v.headline,
-        lead_record: v.lead_record ? { authority: v.lead_record.authority, record_id: v.lead_record.record_id } : null }, null, 2)}\n`;
-      verdictBox.className = `dv-verdict ${TONE[v.overall]}`;
-      word.textContent = WORD[v.overall];
-      head.textContent = v.headline;
-      meta.textContent = `${how} · ${n} steps · ${(ms / 1000).toFixed(1)} s · case ${result.investigation_id}`;
-      if (v.lead_record?.url) meta.append(" · ", recordLink(v.lead_record));
+      raw.textContent += `data: {"type":"done", ...}\n`;
+      setStatus("ok", "200 OK · done", `${how} · ${(ms / 1000).toFixed(1)} s`);
+      verdictBox.className = `pg-verdict ${TONE[v.overall]}`;
+      verdictBox.replaceChildren(el("span", { textContent: "result.verdict" }), el("b", { textContent: WORD[v.overall] }), el("p", { textContent: v.headline }),
+        el("div", { className: "pg-kv" }, ...[["overall", v.overall], ["safe", v.safe], ["real", v.real], ["outcome", v.outcome]].map(([k, x]) => el("code", { textContent: `${k}: ${x}` }))),
+        v.lead_record?.url ? recordLink(v.lead_record) : "");
+      verdictBox.hidden = false;
     };
+    const start = (how) => { rows.clear(); clearResponse(); empty.hidden = true; rawBox.hidden = false; setStatus("run", "Sending…", how); };
 
-    // --- Instant, Live, and the agent card ---
-    const status = el("span", { className: "dv-status", textContent: "Checking the API…" });
-    const replay = el("button", { type: "button", className: "small", textContent: "Instant replay" });
-    const runLive = el("button", { type: "button", className: "primary small", textContent: "Run live" });
-    const left = el("small", { className: "dv-quota" });
-    let busy = false;
-    const lock = (on) => { busy = on; replay.disabled = on || !rec; runLive.disabled = on || !quota.left(); };
-    const showLeft = () => { left.textContent = `Run live uses 1 check. ${quota.text()}.`; if (!busy) runLive.disabled = !quota.left(); };
-    stopLeft?.();
-    stopLeft = quota.onChange(showLeft);
-    showLeft();
-    replay.onclick = async () => {
-      if (busy || !rec) return;
-      lock(true);
+    const runInstant = async () => {
       Object.entries(f).forEach(([k, i]) => { i.value = base[k] ?? ""; });
       draw();
-      const how = `Recorded run, ${String(rec.recorded_at || "").slice(0, 10)}`;
-      reset(how);
+      start("Recorded response");
       const t0 = performance.now();
       for (const e of rec.events) {
         const wait = (e._ms || 0) - (performance.now() - t0);
         if (wait > 0) await new Promise((ok) => setTimeout(ok, wait));
-        if (e.type === "done") finish(e.result, e._ms || 0, "Instant replay at real timing"); else handle(e, e._ms || 0);
+        if (e.type === "done") finish(e.result, e._ms || 0, `recorded ${String(rec.recorded_at || "").slice(0, 10)}`); else handle(e, e._ms || 0);
       }
-      lock(false);
     };
-    runLive.onclick = async () => {
-      if (busy) return;
-      if (!quota.left()) { head.textContent = quota.usedUpText(); return; }
-      lock(true);
+    const runLive = async () => {
+      if (!quota.left()) { setStatus("err", "No checks left", quota.usedUpText()); return; }
       quota.take().catch(() => {});
-      reset("Live from Cloud Run");
+      start("Live on Cloud Run");
       const t0 = performance.now();
       const ms = () => performance.now() - t0;
       try {
@@ -373,101 +375,98 @@ const BUILD = {
           }
         }
         reader.cancel().catch(() => {});
-        finish(result, ms(), "Live from Cloud Run");
+        finish(result, ms(), "live on Cloud Run");
       } catch (err) {
-        const why = err.name === "TimeoutError" ? "no answer within about 3 minutes" : err.message;
-        verdictBox.className = "dv-verdict grey"; word.textContent = "Didn't finish";
-        head.textContent = `Couldn't finish live: ${why}. Instant replay still works.`;
-        log.textContent += `\n# stopped: ${why}\n`;
+        setStatus("err", "Didn't finish", err.name === "TimeoutError" ? "No answer within about 3 minutes. Instant still works." : `${err.message}. Instant still works.`);
       }
-      lock(false);
-      showLeft();
     };
-    lock(false);
-    const card = el("button", { type: "button", className: "dv-sync", textContent: "Fetch the agent card (A2A, no sign-in)" }, el("span", { "aria-hidden": "true", textContent: "→" }));
-    const getCard = async (quiet) => {
+    const runCard = async () => {
+      start("GET agent card");
       const t0 = performance.now();
       try {
-        const res = await fetch(`${API}/.well-known/agent-card.json`, { signal: AbortSignal.timeout(quiet ? 8000 : 20000) });
+        const res = await fetch(`${API}/.well-known/agent-card.json`, { signal: AbortSignal.timeout(20000) });
         if (!res.ok) throw new Error(`the API answered ${res.status}`);
         const c = await res.json();
-        status.className = "dv-status on";
-        status.textContent = `API live · ${Math.round(performance.now() - t0)} ms`;
-        if (!quiet) {
-          log.textContent = `# GET /.well-known/agent-card.json\n${JSON.stringify({ name: c.name, version: c.version, url: c.supportedInterfaces?.[0]?.url, skills: (c.skills || []).map((x) => x.name) }, null, 2)}\n`;
-          logBox.open = true;
-        }
-      } catch (err) {
-        status.className = "dv-status";
-        status.textContent = "API not reachable";
-        if (!quiet) { log.textContent = `# couldn't reach the API: ${err.message}\n`; logBox.open = true; }
-      }
+        setStatus("ok", `${res.status} OK`, `live on Cloud Run · ${Math.round(performance.now() - t0)} ms`);
+        verdictBox.className = "pg-verdict card";
+        verdictBox.replaceChildren(el("span", { textContent: "Agent card" }), el("b", { textContent: c.name || "SafeShelf" }), el("p", { textContent: c.description || "" }),
+          el("div", { className: "pg-kv" }, ...(c.skills || []).map((s) => el("code", { textContent: s.name }))));
+        verdictBox.hidden = false;
+        raw.textContent = JSON.stringify(c, null, 2);
+      } catch (err) { setStatus("err", "Couldn't reach the API", err.message); }
     };
-    card.onclick = () => getCard(false);
-    getCard(true);
+    send.onclick = async () => {
+      if (busy) return;
+      if (tab === "mcp") { try { await navigator.clipboard.writeText(snippet()); send.textContent = "Copied"; } catch (_) { send.textContent = "Couldn't copy"; } setTimeout(draw, 1600); return; }
+      busy = true;
+      draw();
+      try { await (tab === "a2a" ? runCard() : mode === "live" ? runLive() : runInstant()); } finally { busy = false; draw(); }
+    };
 
-    // --- The page around the console ---
-    const mark = (text) => el("span", { className: "dv-tag", textContent: text });
-    const feat = (p, title, text) => {
-      const b = el("button", { type: "button", className: "dv-feat", "data-proto": p, "aria-pressed": "false" },
-        el("b", {}, el("i", { "aria-hidden": "true" }), title), el("span", { textContent: text }));
-      b.onclick = () => pick(p);
-      feats.push(b);
+    // --- Tabs, and redrawing everything that follows the choices ---
+    const tabRow = el("div", { className: "pg-tabs", role: "tablist", "aria-label": "How your agent connects" });
+    const tabBtns = Object.entries(TABS).map(([id, t]) => {
+      const b = el("button", { type: "button", role: "tab", "data-tab": id }, el("b", { textContent: t.label }), el("small", { textContent: t.note }));
+      b.onclick = () => pickTab(id);
+      tabRow.append(b);
       return b;
+    });
+    const formSlot = el("div");
+    const pickTab = (id) => { if (busy) return; tab = id; clearResponse(); draw(); };
+    const draw = () => {
+      tabBtns.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === tab)));
+      method.textContent = TABS[tab].method;
+      method.dataset.m = TABS[tab].method;
+      path.textContent = `${API.replace(/^https?:\/\//, "")}${tab === "mcp" ? "/mcp · tools/call" : TABS[tab].path}`;
+      formSlot.replaceChildren(tab === "rest" ? restForm : tab === "mcp" ? mcpForm : a2aForm);
+      toolSel.value = tool;
+      toolNote.textContent = TOOLS.find((t) => t[0] === tool)[2];
+      code.textContent = snippet();
+      seg.hidden = tab !== "rest";
+      seg.querySelectorAll("button").forEach((b) => { b.setAttribute("aria-checked", String(b.dataset.mode === mode)); b.disabled = busy || (b.dataset.mode === "instant" && !rec); });
+      Object.values(f).forEach((i) => { i.disabled = busy; });
+      tabBtns.forEach((b) => { b.disabled = busy && b.dataset.tab !== tab; });
+      send.disabled = busy || (tab === "rest" && mode === "live" && !quota.left());
+      send.textContent = busy ? "Running…" : tab === "mcp" ? "Copy MCP setup" : tab === "a2a" ? "Send" : mode === "live" ? "Send live" : "Send";
+      sendHint.textContent = tab === "mcp" ? "Paste it into your MCP client's settings." : tab === "a2a" ? "Fetches the real agent card from Cloud Run."
+        : mode === "live" ? `Runs all the agents on Cloud Run now (about 10 to 40 s). Uses 1 check · ${quota.text()}.`
+        : "Replays a real response this API sent for the sample listing, at its real speed. No sign-in.";
     };
-    const stat = (big, text) => el("div", { className: "dv-stat" }, el("b", { textContent: big }), el("span", { textContent: text }));
-    const toolList = el("nav", { className: "dv-tools", "aria-label": "MCP tools" }, el("span", { textContent: "MCP tools" }),
-      ...TOOLS.map(([name]) => {
-        const b = el("button", { type: "button", "data-tool": name, textContent: name });
-        b.onclick = () => pick("mcp", name);
-        toolBtns.push(b);
-        return b;
-      }));
-    const copy = copyBtn("Copy", snippet);
-    copy.className = "dv-copy";
-    const win = el("div", { className: "dv-win" },
-      el("div", { className: "dv-bar" },
-        el("span", { className: "dv-app" }, el("img", { src: "site/assets/eddy-face.png", alt: "" }), "SafeShelf Agent Console"),
-        el("span", { className: "dv-barr" }, status, select)),
-      el("div", { className: "dv-main" },
-        el("div", { className: "dv-form" },
-          el("h4", { textContent: "Check a listing" }),
-          el("p", { className: "dv-sub", textContent: "The request your agent sends. Change it and the code follows." }),
-          el("div", { className: "dv-row" }, field("Title", f.title)),
-          el("div", { className: "dv-row two" }, field("Link", f.url), el("div", { className: "dv-row two" }, field("Price", f.price), field("Currency", f.currency))),
-          el("div", { className: "dv-codebox" }, el("div", { className: "dv-codehead" }, el("span", { textContent: "Request" }), copy), code),
-          toolNote,
-          el("div", { className: "dv-actions" }, left, el("span", { className: "dv-btns" }, replay, runLive))),
-        el("div", { className: "dv-right" },
-          el("div", { className: "dv-panel" },
-            el("span", { className: "dv-ptitle", textContent: "Investigation" }),
-            el("p", { className: "dv-sub", textContent: "Ten agents, one listing. Code sets the colour; Gemini only writes the words." }),
-            verdictBox,
-            el("div", { className: "dv-agents" }, ...[...rows.values()].map((r) => r.row)),
-            logBox),
-          card)));
+    toolSel.onchange = () => { tool = toolSel.value; draw(); };
+    Object.values(f).forEach((i) => { i.oninput = () => { if (mode === "instant" && edited()) mode = "live"; draw(); }; });
+
+    // a quiet ping, so the title bar shows whether the API is up
+    const ping = el("span", { className: "pg-ping", textContent: "Checking the API…" });
+    (async () => {
+      const t0 = performance.now();
+      try {
+        const r = await fetch(`${API}/.well-known/agent-card.json`, { signal: AbortSignal.timeout(8000) });
+        if (!r.ok) throw new Error();
+        ping.className = "pg-ping on"; ping.textContent = `API up · ${Math.round(performance.now() - t0)} ms`;
+      } catch (_) { ping.textContent = "API not reachable"; }
+    })();
+
+    clearResponse();
     draw();
     return [
-      el("div", { className: "dv" },
-        el("div", { className: "dv-feats" },
-          feat("rest", "Ask over REST", "POST a listing. Each agent step streams back as a server-sent event."),
-          feat("mcp", "Plug in MCP", "Ten read-only tools for any MCP client, from identify to case file."),
-          feat("a2a", "Talk over A2A", "Another agent hands SafeShelf a listing and gets the answer back.")),
-        el("div", { className: "dv-intro" }, mark("For developers"), el("h3", { textContent: "One engine, three ways in" })),
-        el("div", { className: "dv-stage" }, win),
-        el("aside", { className: "dv-side" },
-          stat("10", "read-only tools over MCP"),
-          stat(String((story.result.verdict.coverage?.countries || []).length || "–"), "countries' official sources checked"),
-          stat(recMs ? `${(recMs / 1000).toFixed(1)} s` : "–", "for the recorded check, end to end"),
-          toolList),
-        el("div", { className: "dv-safe" },
-          el("div", {}, mark("Read-only by design"), el("h3", { textContent: "It can look. It can never act." })),
-          el("p", { textContent: "No tool can buy, report or contact anyone for the shopper. Every answer cites the official notice or the review it came from." }),
-          el("div", { className: "dv-seals" }, el("span", { textContent: "Code sets the verdict" }), el("span", { textContent: "Evidence on every answer" })))),
+      el("ol", { className: "steps3", "aria-label": "How to use it" },
+        el("li", {}, el("b", { textContent: "1" }), "Pick how your agent connects"),
+        el("li", {}, el("b", { textContent: "2" }), "Press ", el("em", { textContent: "Send" })),
+        el("li", {}, el("b", { textContent: "3" }), "Watch each agent answer on the right")),
+      el("div", { className: "pg-stage" },
+        el("div", { className: "pg-win" },
+          el("div", { className: "pg-bar" }, el("span", { className: "lights", "aria-hidden": "true" }, el("i"), el("i"), el("i")),
+            el("b", { textContent: "SafeShelf API playground" }), ping),
+          tabRow,
+          el("div", { className: "pg-main" },
+            el("section", { className: "pg-req", "aria-label": "Request" },
+              el("h4", { textContent: "Request" }), urlBar, formSlot,
+              el("div", { className: "pg-actions" }, seg, send), sendHint, codeBox),
+            el("section", { className: "pg-res", "aria-label": "Response", "aria-live": "polite" },
+              el("h4", { textContent: "Response" }), status, empty, verdictBox, timeline, rawBox)))),
       next(go("site/agents.html", "For developers", false), go(`${API}/docs`, "API docs"), go("https://github.com/solomonwilsonr/all-builders", "Source on GitHub")),
     ];
   },
-
 };
 
 // --- The rest of the page follows the view: each person sees only their sections, ways to try it and products ---
