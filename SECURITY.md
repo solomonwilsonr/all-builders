@@ -2,7 +2,7 @@
 
 SafeShelf reads untrusted pages (shop listings, reviews, seller sites) and tells shoppers whether a product is recalled or fake. The main risk is not a stolen password: it is a false answer. A fake shop, a forged regulator page or a planted instruction could make SafeShelf call a product recalled, or call it safe. Most of the controls below exist to stop that.
 
-To report a problem, open a GitHub issue without the details and ask for a contact, or email the team leader listed in [`docs/plan.md`](docs/plan.md).
+To report a problem, open a [GitHub issue](https://github.com/solomonwilsonr/all-builders/issues) without the details and ask for a contact.
 
 ## Threat model
 
