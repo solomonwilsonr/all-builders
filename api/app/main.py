@@ -7,6 +7,7 @@ The X-SafeShelf-Source response header says which one answered (real or mock).
 Other AI agents use the same answers as MCP tools at /mcp (app/mcp_server.py) and talk to the SafeShelf agent
 over A2A at /a2a/ (engine/agents/a2a.py, real engine only).
 """
+import asyncio
 import copy
 import json
 import logging
@@ -40,7 +41,8 @@ DAILY_CAP = int(os.environ.get("SAFESHELF_DAILY_CAP", "3000"))
 UNMETERED = {"listRecalls", "getRecall", "getSourcesHealth", "getInvestigation", "getInvestigationSources",
              "getRadarCandidates", "getCrossBorderCandidates", "getBenchRuns", "getBenchEvidence", "listWatchlists",
              "deleteWatchlist", "getReviewQueue", "getCase", "getDeveloperUsage", "getTimeline",
-             "getIncidentSignals", "getRedteamRounds"}
+             "getIncidentSignals", "getRedteamRounds",
+             "addHouseholdItem", "listHouseholdItems", "deleteHouseholdItem"}
 
 log = logging.getLogger("safeshelf.api")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -219,6 +221,28 @@ if REAL_HANDLERS:  # the A2A agent runs the real engine; with MOCK=1 there is no
         check_key(request)
         rate_limit(request)
         return await agent_handler.stream_agent_session(request)
+
+    from engine.agents import links
+
+    @app.post("/v1/listings/read", include_in_schema=False)
+    async def read_listing(request: Request) -> dict[str, Any]:
+        """A live product page, read from its link the way the chat reads a pasted link (engine/agents/links.py:
+        public http(s) pages only, every redirect checked), then through a real browser (Firecrawl) when the shop showed
+        the server too little. For the browser on the judges' page, which runs the extension on what the shop shows.
+        read: "full", "partial" or "none"; via: "direct" or "browser"."""
+        check_key(request)
+        rate_limit(request)
+        try:
+            body = await request.json()
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Send {\"url\": \"https://...\"}") from None
+        url = str((body or {}).get("url") or "").strip()[:500]
+        if not url:
+            raise HTTPException(status_code=400, detail="Send the product link as url")
+        try:
+            return await asyncio.to_thread(links.read_live, url)
+        except links.BlockedLink as err:
+            raise HTTPException(status_code=400, detail=str(err)) from None
 
     from engine import live
 

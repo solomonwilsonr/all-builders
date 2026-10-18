@@ -1,0 +1,29 @@
+{
+ "item_id": "HI-3A9F0C21",
+ "name": "Kelvo 65W USB-C charger",
+ "brand": "Kelvo",
+ "model": "CX-65",
+ "category": "charger",
+ "product_id": "SS-P-10291",
+ "bought_from": "amazon.in",
+ "order_ref": "408-1234567-7654321",
+ "bought_on": "2026-09-30",
+ "price": 1499.0,
+ "currency": "INR",
+ "return_by": "2026-10-10",
+ "warranty_until": "2027-09-30",
+ "receipt_sha256": null,
+ "notes": null,
+ "service": [],
+ "created_at": "2026-10-01T09:12:00+00:00",
+ "status": {
+  "return": {
+   "until": "2026-10-10",
+   "days_left": -8
+  },
+  "warranty": {
+   "until": "2027-09-30",
+   "days_left": 347
+  }
+ }
+}

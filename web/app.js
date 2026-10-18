@@ -1,14 +1,17 @@
-// SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same API as the extension, signed in
-// with Google (auth.js); nothing runs until the person signs in.
-// Samples replay a saved run of the live API at real speed; "Run it live" streams a new one
-// (POST /v1/agent/sessions/stream, server-sent events), capped per browser so the demo's Gemini budget lasts.
+// SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same API as the extension, with the
+// demo's own sign-in (auth.js: Google, email or guest); nothing runs until the person signs in.
+// "Try a sample" runs the real SafeShelf extension on each sample listing (web/ext/, make web-ext); "Check your own
+// listing" streams a live run (POST /v1/agent/sessions/stream, server-sent events). Every AI check counts against the
+// person's limit (quota.js: a guest gets 1, an account 5 a day) so the demo's Gemini budget lasts.
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
-import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js";
-import { authFetch, requireSignIn } from "./auth.js";
+import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js?v=20261017v";
+import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018u";
+import { setAddress, startClock } from "./desk.js?v=20261017j";
+import { BROWSER_URL } from "./browser-config.js?v=20261017n";
+import { setUpRoles } from "./roles.js?v=20261018h";
+import { setUpWhatsApp } from "./whatsapp.js?v=20261018c";
+import { setUpTour } from "./tour.js?v=20261018preview";
 
-const LIVE_PER_DAY = 10;
-const LONG_WAIT_MS = 3000; // in a replay, a wait longer than this is shortened to SHORT_WAIT_MS (and the page says so)
-const SHORT_WAIT_MS = 1000;
 
 const el = (tag, props = {}, ...kids) => {
   const e = document.createElement(tag);
@@ -19,7 +22,6 @@ const el = (tag, props = {}, ...kids) => {
   e.append(...kids.filter((k) => k !== null && k !== undefined && k !== false));
   return e;
 };
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // --- The agents of the Investigate pipeline, in the order a judge reads them ---
 const AGENTS = [
@@ -51,17 +53,8 @@ function levelOf(agent, summary = "") {
 }
 const readable = (s = "") => s.replace(/not_enough_evidence/g, "not enough evidence");
 
-// --- Live runs left on this browser (the API also limits every caller and the whole day) ---
-const quota = {
-  key: "safeshelf-live-runs",
-  today: () => new Date().toISOString().slice(0, 10),
-  used() {
-    try { const v = JSON.parse(localStorage.getItem(this.key) || "{}"); return v.day === this.today() ? v.used : 0; } catch (_) { return 0; }
-  },
-  take() { try { localStorage.setItem(this.key, JSON.stringify({ day: this.today(), used: this.used() + 1 })); } catch (_) { /* private mode: no cap kept */ } },
-  left() { return Math.max(0, LIVE_PER_DAY - this.used()); },
-};
-const quotaText = () => (quota.left() ? `${quota.left()} live run${quota.left() === 1 ? "" : "s"} left today on this browser` : "Live runs used up on this browser today");
+// --- Checks left for this person (quota.js, counted in Firestore: a guest gets 1, an account 5 a day) ---
+const quotaText = () => quota.text();
 const refreshQuota = () => document.querySelectorAll("[data-quota]").forEach((q) => { q.textContent = quotaText(); });
 
 // --- One run on screen: the agents light up as events arrive, then the verdict ---
@@ -228,22 +221,6 @@ function traceLink(id) {
   return a;
 }
 
-// --- A saved run, replayed at the speed it really happened ---
-async function replay(view, rec) {
-  const events = rec.events;
-  let last = 0;
-  for (const e of events) {
-    const gap = e._ms - last;
-    await wait(gap > LONG_WAIT_MS ? SHORT_WAIT_MS : gap);
-    last = e._ms;
-    if (!view.alive()) return;
-    view.clock(e._ms);
-    if (e.type === "done") return e.result;
-    view.event(e);
-  }
-  throw new Error("the saved run has no answer");
-}
-
 // --- A live run: the API's own event stream ---
 async function live(view, request) {
   const started = performance.now();
@@ -282,57 +259,177 @@ async function live(view, request) {
   }
 }
 
-function liveButton(onRun) {
-  const btn = el("button", { type: "button", className: "primary" });
-  const note = el("span", { className: "quota", "data-quota": "" });
-  const draw = () => {
-    btn.disabled = !quota.left();
-    btn.textContent = quota.left() ? "Run it live with Gemini" : "Live runs used up today";
-    note.textContent = quotaText();
+// --- Try a sample: the real SafeShelf extension (web/ext/, copied from extension/) on each sample listing ---
+// The frame borrows this page's Google sign-in, its API and its daily limit through SafeShelfDemo, so the widget
+// never shows its own sign-in. The sample's description and expected answer stay out here, never in what is checked.
+function shareWithFrame() {
+  window.SafeShelfDemo = {
+    api: API,
+    token: (fresh) => auth.currentUser.getIdToken(fresh),
+    who: () => ({ email: auth.currentUser?.email || "", name: auth.currentUser?.displayName || "", role: document.documentElement.dataset.role || "shopper" }),
+    quota: { left: () => quota.left(), take: () => { quota.take().catch(() => {}); } },
+    // a real product page, read live by the API; one live run per page opened (it may use a real browser)
+    readPage: async (url) => {
+      const res = await authFetch(`${API}/v1/listings/read`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }), signal: AbortSignal.timeout(120000) });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(res.status === 404 ? "The live page reader isn't on the API yet." : typeof body.detail === "string" ? body.detail : `The API answered ${res.status}`);
+      return body;
+    },
+    notice: (text) => { const n = document.getElementById("demo-note"); if (n) n.replaceChildren(el("b", { textContent: "Note" }), el("span", { textContent: text })); },
   };
-  draw();
-  btn.onclick = () => { if (!quota.left()) return; quota.take(); refreshQuota(); onRun(); };
-  return el("div", { className: "actions" }, btn, note);
+}
+const frame = () => document.getElementById("ext-frame");
+const loadFrame = (query) => { frame().src = `ext-frame.html?${query}&v=20261017j`; };
+
+function showSample(preset, button) {
+  document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", String(b === button)); b.setAttribute("aria-selected", String(b === button)); });
+  setAddress(preset.request.listing.url);
+  setListing(preset.request.listing);
+  const note = document.getElementById("demo-note");
+  note.replaceChildren(el("b", { textContent: `Sample ${presetsAll.indexOf(preset) + 1} of ${presetsAll.length}` }), el("span", { textContent: preset.what }),
+    el("span", { className: "exp", textContent: `Expected: ${preset.expect.label}` }), el("span", { className: "exp", "data-quota": "", textContent: quotaText() }));
+  loadFrame(`sample=${encodeURIComponent(preset.id)}`);
 }
 
-// --- Try a sample ---
-async function showSample(preset, button) {
-  document.querySelectorAll(".samples button").forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
-  const box = document.getElementById("run");
-  const sub = `${preset.what} · ${preset.market}`;
-  let rec;
-  try {
-    rec = await (await fetch(`samples/${preset.id}.json`)).json();
-    setListing(preset.request.listing);
-  } catch (_) { box.replaceChildren(el("p", { className: "error", textContent: "This sample's saved run could not be loaded." })); return; }
-  const runLive = () => {
-    const view = runView(box, { title: preset.name, sub, expect: preset.expect, pill: el("span", { className: "pill live", textContent: "Live now · Gemini on Vertex AI" }) });
-    live(view, preset.request).then((r) => view.finish(r, again())).catch((err) => view.fail(err.message));
-  };
-  const again = () => el("div", {}, el("p", { className: "muted", textContent: "Run it again for a fresh answer. The API reuses an answer for the same listing for 10 minutes, and says so." }), liveButton(runLive));
-  const view = runView(box, { title: preset.name, sub, expect: preset.expect,
-    pill: el("span", { className: "pill", textContent: `Saved run of the live API · ${rec.recorded_at} · waits over ${LONG_WAIT_MS / 1000} s shortened` }) });
-  try {
-    const result = await replay(view, rec);
-    if (result) view.finish(result, el("div", {}, el("p", { className: "muted",
-      textContent: `That run took ${(rec.events.at(-1)._ms / 1000).toFixed(1)} s on the live API. Now make Gemini do it again:` }), liveButton(runLive)));
-  } catch (err) { view.fail(err.message); }
-}
-
+let presetsAll = [];
 async function setUpSamples() {
+  shareWithFrame();
   const { presets } = await (await fetch("samples/presets.json")).json();
+  presetsAll = presets;
   const list = document.getElementById("samples");
-  for (const p of presets) {
-    const b = el("button", { type: "button", className: "card" },
-      p.control ? el("span", { className: "control", textContent: "Control: should stay quiet" }) : null,
+  presets.forEach((p, i) => {
+    // each sample is a tab of the browser window, with the extension running on its page
+    const b = el("button", { type: "button", role: "tab", title: `${p.what} · Expected: ${p.expect.label}` },
+      el("span", { className: "fav", "aria-hidden": "true", textContent: p.control ? "✓" : String(i + 1) }),
       el("span", { className: "name", textContent: p.name }),
-      el("span", { className: "what", textContent: p.what }),
-      el("span", { className: "exp", textContent: `Expected: ${p.expect.label}` }));
+      el("span", { className: "x", "aria-hidden": "true", textContent: "×" }));
     b.setAttribute("aria-pressed", "false");
+    b.setAttribute("aria-selected", "false");
     b.onclick = () => showSample(p, b);
-    list.append(el("li", {}, b));
+    list.append(el("li", { role: "presentation" }, b));
+  });
+  // the same seven as a lineup above the browser: name, shop, the answer it must get; a tap opens its tab
+  const lineup = document.getElementById("lineup");
+  if (lineup) {
+    const tabs = [...list.querySelectorAll("button")];
+    presets.forEach((p, i) => {
+      const tone = p.control ? "green" : p.expect.overall[0];
+      const card = el("button", { type: "button", className: `lu lu-${tone}`, title: p.what },
+        el("span", { className: "lu-n", "aria-hidden": "true", textContent: p.control ? "✓" : String(i + 1) }),
+        el("b", { textContent: p.name }),
+        el("small", { textContent: p.market }),
+        el("span", { className: "lu-exp", textContent: p.expect.label.replace(/^\P{L}+/u, "") }));
+      card.onclick = () => {
+        const panel = document.getElementById("shop-page");
+        if (panel.dataset.mode === "choose") document.getElementById("test-start")?.click();
+        tabs[i].click();
+        document.querySelector(".mac")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      lineup.append(el("li", {}, card));
+    });
+    // keep the lineup in step with whichever tab is open
+    new MutationObserver(() => tabs.forEach((t, i) => lineup.children[i].firstChild.setAttribute("aria-pressed", t.getAttribute("aria-selected"))))
+      .observe(list, { subtree: true, attributes: true, attributeFilter: ["aria-selected"] });
   }
   list.querySelector("button")?.click();
+}
+
+// The address bar loads any product link the same way; the toolbar shield opens the extension, like Chrome's toolbar button
+function setUpOmnibox() {
+  const form = document.getElementById("omnibox");
+  if (!form) return;
+  document.getElementById("ext-toggle")?.addEventListener("click", () => frame().contentWindow?.postMessage({ type: "safeshelf:open" }, location.origin));
+  const note = (...kids) => document.getElementById("demo-note").replaceChildren(...kids);
+  form.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const raw = document.getElementById("omni-url").value.trim();
+    if (!raw) return;
+    let url;
+    try { url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`); } catch (_) { url = null; }
+    if (!url || !/\.[a-z]{2,}$/i.test(url.hostname)) {
+      note(el("b", { textContent: "Not a web address" }), el("span", { textContent: "Paste a product link, like https://www.amazon.in/dp/… or https://www.flipkart.com/…/p/…" }));
+      return;
+    }
+    if (!quota.left()) { note(el("b", { textContent: "Used up" }), el("span", { textContent: `${quota.usedUpText()} The sample tabs still work.` })); return; }
+    quota.take().catch(() => {});
+    document.querySelectorAll(".samples button").forEach((b) => { b.setAttribute("aria-pressed", "false"); b.setAttribute("aria-selected", "false"); });
+    setListing({ url: url.href });
+    setAddress(url.href);
+    note(el("b", { textContent: "Opening" }), el("span", { textContent: `Reading the real page at ${url.hostname}…` }), el("span", { className: "exp", "data-quota": "", textContent: quotaText() }));
+    loadFrame(`url=${encodeURIComponent(url.href)}`);
+  });
+  // how the real page was read, as the frame reports it
+  addEventListener("message", (e) => {
+    if (e.origin !== location.origin || e.data?.type !== "safeshelf:page-read") return;
+    const d = e.data;
+    const how = d.via === "browser" ? "opened by a real browser" : "read directly";
+    const text = d.read === "full" ? `The real page, ${how}. Press Check on the page's right edge.`
+      : d.read === "partial" ? `The shop showed only part of this page (${how}). Check still works on what it showed.`
+      : d.read === "none" ? "The shop didn't show this page to SafeShelf's server." : `Couldn't open the page: ${d.error}`;
+    note(el("b", { textContent: d.read === "full" ? "Live page" : d.read === "partial" ? "Part of the page" : "Not opened" }), el("span", { textContent: text }),
+      el("span", { className: "exp", "data-quota": "", textContent: quotaText() }));
+  });
+}
+
+// --- A real Chrome in the cloud (browser/, Cloud Run): it starts only when a judge presses Start, for 5 minutes ---
+function setUpRemote() {
+  const local = new URLSearchParams(location.search).get("browser");
+  const base = local && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(local) ? local : BROWSER_URL;
+  if (!base) return; // not deployed yet: the row stays hidden
+  const origin = new URL(base).origin;
+  const $ = (id) => document.getElementById(id);
+  const mac = document.querySelector(".mac");
+  // each 5-minute session is one check
+  const left = () => { $("remote-left").textContent = `Uses 1 check. ${quota.text()}.`; $("remote-start").disabled = !quota.left(); };
+  quota.onChange(left);
+  // two choices first: the real browser, or the instant test pages
+  const panel = $("shop-page");
+  const mode = (m) => { panel.dataset.mode = m; $("mode-name").textContent = m === "real" ? "Real browser" : "Test pages"; };
+  $("real-row").hidden = false;
+  mode("choose");
+  left();
+  $("test-start").onclick = () => { $("choose-msg").textContent = ""; mode("test"); mac.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  let timer = null;
+  const end = (text) => {
+    clearInterval(timer); timer = null;
+    $("rframe").src = "about:blank";
+    $("rwin").hidden = true;
+    mac.classList.remove("remote");
+    $("choose-msg").textContent = text || "";
+    if (panel.dataset.mode === "real") mode("choose");
+    left();
+  };
+  $("remote-start").onclick = () => {
+    if (!quota.left()) { $("choose-msg").textContent = quota.usedUpText(); return; }
+    quota.take().catch(() => {});
+    $("choose-msg").textContent = "";
+    mode("real");
+    mac.classList.add("remote");
+    $("rwin").hidden = false;
+    $("rstate").textContent = "Starting…";
+    $("rtime").textContent = "";
+    $("rframe").src = `${base}/view`;
+    mac.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  $("remote-end").onclick = () => { $("rframe").contentWindow?.postMessage({ type: "end" }, origin); end("Session ended."); };
+  $("mode-back").onclick = () => { if (panel.dataset.mode === "real") $("remote-end").click(); else mode("choose"); };
+  addEventListener("message", async (e) => {
+    if (e.origin !== origin) return;
+    if (e.data?.type === "safeshelf-browser:loaded") {
+      try { $("rframe").contentWindow.postMessage({ type: "start", token: await auth.currentUser.getIdToken() }, origin); }
+      catch (_) { end("Sign in again, then start a new session."); }
+    }
+    if (e.data?.type === "safeshelf-browser:ready") {
+      $("rstate").textContent = "Live";
+      let leftS = Number(e.data.seconds) || 300;
+      const draw = () => { $("rtime").textContent = `${Math.floor(leftS / 60)}:${String(leftS % 60).padStart(2, "0")} left`; };
+      draw();
+      timer = setInterval(() => { leftS -= 1; if (leftS <= 0) { end("The 5 minutes are up. Start another session if you have one left."); return; } draw(); }, 1000);
+    }
+    if (e.data?.type === "safeshelf-browser:ended") {
+      end(e.data.clean ? "Session ended." : "The browser couldn't start or closed early. All browsers may be busy; try again in a minute.");
+    }
+  });
 }
 
 // --- Check your own listing ---
@@ -341,14 +438,13 @@ function setUpOwn() {
   const box = document.getElementById("own-run");
   form.addEventListener("submit", (ev) => {
     ev.preventDefault();
-    if (!quota.left()) { box.hidden = false; box.replaceChildren(el("p", { className: "error", textContent: "Live runs are used up on this browser today. The samples still replay real runs." })); return; }
+    if (!quota.left()) { box.hidden = false; box.replaceChildren(el("p", { className: "error", textContent: quota.usedUpText() })); return; }
     const f = new FormData(form);
     const listing = {};
     for (const k of ["title", "url", "seller", "page_text", "currency"]) if (String(f.get(k) || "").trim()) listing[k] = String(f.get(k)).trim();
     if (String(f.get("price") || "").trim()) listing.price = Number(f.get("price"));
     setListing(listing);
-    quota.take();
-    refreshQuota();
+    quota.take().catch(() => {});
     const view = runView(box, { title: listing.title, sub: listing.url || "No link given",
       pill: el("span", { className: "pill live", textContent: "Live now · Gemini on Vertex AI" }) });
     box.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -386,26 +482,25 @@ async function setUpVs() {
   const reviews = bench.per_recall.reduce((s, r) => s + r.reviews_before_recall, 0);
 
   box.replaceChildren(
-    el("h2", { className: "vs-head", textContent: "Could the reviews have warned buyers before the recall?" }),
+    el("h3", { className: "vs-head", textContent: "Could the reviews have warned buyers before the recall?" }),
     el("p", { className: "muted", textContent: `Backtest on 25 real CPSC recalls of products sold on Amazon, using the ${reviews.toLocaleString("en-IN")} reviews written before each recall, plus 40 products from the same brands that were never recalled. Each method read the same reviews.` }),
     el("div", { className: "headline card" }, el("b", { textContent: "Same early catches as Gemini alone, with a third of the false alarms." }),
       el("br"), `SafeShelf flagged ${t.safeshelf.recalls_flagged} recalls early, like Gemini alone, but cried wolf on ${t.safeshelf.false_alarms} safe products instead of ${t.gemini_alone.false_alarms}. Keyword rules catch more but raise false alarms on more than a quarter of safe products.`),
     el("div", { className: "vs-grid" },
       el("div", { className: "vs-card card" }, el("h3", { textContent: "Recalls flagged before the recall" }), el("p", { className: "muted", textContent: "Higher is better" }), bars(caught, 25, false)),
       el("div", { className: "vs-card card" }, el("h3", { textContent: "False alarms on products never recalled" }), el("p", { className: "muted", textContent: "Lower is better" }), bars(alarms, 40, true))),
-    el("div", { className: "vs-grid" },
+    el("div", { className: "vs-grid vs-notes" },
       el("div", { className: "vs-card card" }, el("h3", { textContent: "Why it's quieter: reviews pooled across copies" }),
         el("p", { textContent: `SafeShelf groups the same hardware sold under different brand names and reads all their reviews together. Without that pooling it caught ${t.safeshelf_no_pooling.recalls_flagged}; with it, ${t.safeshelf.recalls_flagged}. Gemini still reads every review; code decides when the reports add up to an alarm (at least ${bench.safeshelf_params.k} independent reports).` })),
       el("div", { className: "vs-card card" }, el("h3", { textContent: "Held-out half, never used for tuning" }),
         el("p", { textContent: `SafeShelf's alarm settings were tuned on half the recalls. On the other half it flagged ${test.recalls_flagged} recalls early with ${test.false_alarms} false alarms (${Math.round(100 * test.false_alarm_rate)}%).` }))),
-    el("div", { className: "table-wrap card", style: "padding:14px 18px" },
-      el("table", { className: "vs-table" },
-        el("caption", { className: "muted", style: "text-align:left;padding-bottom:6px", textContent: "All methods, as a table" }),
+    el("details", { className: "card" }, el("summary", { textContent: "All methods, as a table" }),
+      el("div", { className: "table-wrap" }, el("table", { className: "vs-table" },
         el("thead", {}, el("tr", {}, ...["Method", "Recalls flagged early", "False alarms", "Median warning"].map((h, i) => el("th", { className: i ? "n" : "", textContent: h })))),
         el("tbody", {}, ...[...methods, ["SafeShelf without pooling", t.safeshelf_no_pooling]].map(([name, m]) => el("tr", {},
           el("td", { textContent: name }), el("td", { className: "n", textContent: m.recalls_flagged }),
           el("td", { className: "n", textContent: `${m.false_alarms} (${Math.round(100 * m.false_alarm_rate)}%)` }),
-          el("td", { className: "n", textContent: `${Math.round(m.median_lead_weeks)} weeks before` })))))),
+          el("td", { className: "n", textContent: `${Math.round(m.median_lead_weeks)} weeks before` }))))))),
     el("details", { className: "card" }, el("summary", { textContent: "Every recall in the backtest" }),
       el("div", { className: "table-wrap" }, el("table", { className: "vs-table" },
         el("thead", {}, el("tr", {}, ...["Recall", "Date", "Reviews before", "Keyword rules", "Gemini alone", "SafeShelf"].map((h, i) => el("th", { className: i > 1 ? "n" : "", textContent: h })))),
@@ -433,7 +528,11 @@ function setUpTabs() {
       const on = t === tab;
       t.setAttribute("aria-selected", String(on));
       t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      const panel = document.getElementById(t.getAttribute("aria-controls"));
+      panel.hidden = !on;
+      // the chat is a whole page: it loads the first time its tab opens
+      const frame = on && panel.querySelector("iframe[data-src]");
+      if (frame && !frame.dataset.loaded) { frame.dataset.loaded = "1"; frame.src = frame.dataset.src; }
     }
     try { history.replaceState(null, "", `#${tab.id.replace("tab-", "")}`); } catch (_) { /* file:// */ }
   };
@@ -444,15 +543,52 @@ function setUpTabs() {
       if (next) { pick(next); next.focus(); }
     };
   });
-  const start = tabs.find((t) => t.id === `tab-${location.hash.slice(1)}`);
-  if (start) pick(start);
+  // a link to a panel (#check-own, #ask-out-loud…) opens its tab, then scrolls to the tab row
+  // Chat, Paste a listing, Ask out loud and WhatsApp open on a preview card first, like the shop-page choices; its
+  // button (or Back) swaps between the preview and the real thing
+  const view = (panel, v) => { panel.dataset.view = v; };
+  document.querySelectorAll(".trypanel[data-view]").forEach((panel) => {
+    panel.querySelector("[data-start]").onclick = () => { view(panel, "live"); panel.querySelector(".live").scrollIntoView({ behavior: "smooth", block: "nearest" }); };
+    panel.querySelector("[data-preview]").onclick = () => view(panel, "intro");
+  });
+  const follow = () => {
+    const tab = tabs.find((t) => t.id === `tab-${location.hash.slice(1)}`);
+    if (!tab) return;
+    pick(tab);
+    const panel = document.getElementById(tab.getAttribute("aria-controls"));
+    if (panel.dataset.view) view(panel, "live"); // a link straight to a tool skips its preview
+    tab.closest("[role=tablist]").scrollIntoView({ block: "start" });
+  };
+  addEventListener("hashchange", follow);
+  follow();
+}
+
+// --- The site's top bar: the phone menu, and the bar's border once the page scrolls ---
+function setUpTopBar() {
+  const top = document.querySelector("body > header.top");
+  const menu = top?.querySelector(".menu");
+  if (!top) return;
+  menu?.addEventListener("click", () => menu.setAttribute("aria-expanded", String(top.classList.toggle("open"))));
+  top.querySelectorAll(".links a").forEach((a) => a.addEventListener("click", () => { top.classList.remove("open"); menu?.setAttribute("aria-expanded", "false"); }));
+  const onScroll = () => top.classList.toggle("scrolled", scrollY > 8);
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 }
 
 await requireSignIn();
+startClock();
+setUpTopBar();
+setUpRemote();
 setUpTabs();
+setUpRoles();
+setUpOmnibox();
 setUpOwn();
 refreshQuota();
+quota.onChange(refreshQuota);
 setUpSamples();
 setUpVs();
-setUpAsk();
-setUpRedteam(() => { if (!quota.left()) return false; quota.take(); refreshQuota(); return true; });
+const takeQuota = () => { if (!quota.left()) return false; quota.take().catch(() => {}); return true; };
+setUpAsk(takeQuota, () => quota.usedUpText());
+setUpWhatsApp(takeQuota, () => quota.usedUpText());
+setUpRedteam(takeQuota);
+setUpTour();

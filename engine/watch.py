@@ -106,7 +106,8 @@ def recheck(limit: int = 50) -> dict:
 def notifications(tenant_id: str, owner_ref: str | None, limit: int = 20) -> list[dict]:
     rows = store.conn().execute(
         """SELECT n.id, n.kind, n.body, n.created_at FROM notification_events n
-           JOIN watchlists w ON w.id = n.watchlist_id
-           WHERE n.tenant_id = %s AND w.owner_ref = %s ORDER BY n.created_at DESC LIMIT %s""",
-        (tenant_id, owner_ref or "", limit)).fetchall()
+           LEFT JOIN watchlists w ON w.id = n.watchlist_id
+           WHERE n.tenant_id = %s AND (w.owner_ref = %s OR n.owner_ref = %s)  -- recall alerts and household reminders
+           ORDER BY n.created_at DESC LIMIT %s""",
+        (tenant_id, owner_ref or "", owner_ref or "", limit)).fetchall()
     return [{**r, "created_at": r["created_at"].isoformat()} for r in rows]

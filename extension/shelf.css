@@ -5,6 +5,7 @@
 .shelf-overview-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:4px 0 18px}
 .shelf-overview-heading h2{margin:0;font-size:16px;font-weight:550;letter-spacing:-.2px;color:var(--ink)}
 .shelf-overview-heading>span{font-size:12px;color:var(--ink-2)}
+.shelf-web{margin-left:12px;color:var(--accent,#4c8dff);text-decoration:none;font-weight:550}.shelf-web:hover{text-decoration:underline}
 .shelf-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .shelf-stat{--signal:var(--link,#2f5fb3);display:grid;grid-template-rows:auto auto 78px auto;align-content:space-between;gap:12px;min-width:0;min-height:242px;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--ink);box-shadow:0 3px 8px #00000008}
 .stat-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--ink-2);font-size:12px;font-weight:450;line-height:1.5}

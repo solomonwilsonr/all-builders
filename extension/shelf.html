@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Shelf - SafeShelf</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="settings.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Geist:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="settings.css">
 <link rel="stylesheet" href="shelf.css">
 <link rel="stylesheet" href="appearance.css">
 <script src="appearance.js"></script>
@@ -14,7 +14,7 @@
 </head>
 <body>
   <aside class="sidebar"><a class="brand" href="settings.html"><span class="brand-mark" aria-hidden="true">↗</span>SafeShelf</a><nav aria-label="Extension"><a class="selected" href="shelf.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V9M10 13h4"/></svg>My Shelf</a><a href="lab.html" data-admin-only><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6.5L4.8 18.2A1.8 1.8 0 0 0 6.4 21h11.2a1.8 1.8 0 0 0 1.6-2.8L14 9.5V3M7.4 15h9.2"/></svg>Judges' Lab</a><a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Settings</a></nav><div class="sidebar-footer"><section class="sidebar-account" aria-label="Signed-in account" hidden><span class="sidebar-avatar" aria-hidden="true"></span><div class="sidebar-identity"><strong class="sidebar-name"></strong><span class="sidebar-email"></span></div></section><p class="sidebar-note">Your settings and saved products stay in this browser.</p></div></aside><div class="app"><header class="page-top"><h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V9M10 13h4"/></svg>My Shelf</h1><p>Products you saved while shopping. Open one to run a fresh safety check.</p></header><main><section class="shelf-content">
-    <div class="shelf-overview-heading"><h2>Your shelf at a glance</h2><span>Saved on this device</span></div>
+    <div class="shelf-overview-heading"><h2>Your shelf at a glance</h2><span><span id="shelf-where">Saved on this device</span><a id="shelf-web" class="shelf-web" target="_blank" rel="noopener" hidden>Open on the website ↗</a></span></div>
     <section class="shelf-stats" aria-label="Shelf statistics">
       <article class="shelf-stat stat-collection"><div class="stat-top"><span>Saved products</span><span class="stat-signal" aria-hidden="true"></span></div><strong id="stat-total">0</strong><div id="status-distribution" class="status-distribution" aria-label="Saved verdict distribution"></div><span class="stat-detail">Your collection, by saved verdict</span></article>
       <article class="shelf-stat stat-attention"><div class="stat-top"><span>Needs a closer look</span><span class="stat-signal" aria-hidden="true"></span></div><strong id="stat-attention">0</strong><div class="stat-gauge"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="gauge-track" cx="60" cy="60" r="48"/><circle id="attention-ring" class="gauge-value" cx="60" cy="60" r="48" pathLength="100"/></svg><span aria-hidden="true">!</span></div><span class="stat-detail">Under review or needs attention</span></article>
@@ -26,7 +26,7 @@
     <div id="empty" class="empty" hidden><h3>A little space for safer choices.</h3><p>Save a product from an Amazon or other supported shopping page.<br>Your products and their safety findings will appear here.</p></div>
     <p id="no-matches" class="empty" hidden>No products match your search.</p>
     <ul id="list" aria-label="Saved products"></ul>
-    <p class="shelf-storage-note">Stored on this device. Product images come from the original listing.</p>
+    <p class="shelf-storage-note"><span id="shelf-storage">Stored on this device. Sign in from the SafeShelf menu to see your shelf on the website too.</span> Product images come from the original listing.</p>
   </section><div class="page-foot"><span>A little clarity goes a long way.</span><span>SafeShelf, your safety companion</span></div></main></div>
   <script src="shelf.js"></script>
 </body>

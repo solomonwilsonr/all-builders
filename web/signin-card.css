@@ -1,0 +1,94 @@
+/* The sign-in card (signin-card.js), in the site theme: white card, near-square controls, Schibsted Grotesk
+   headings, Eddy on the pixel sky. Self-contained so it looks the same on the website and the judges' page. */
+.ssa {
+  --ssa-blue: #0271e4; --ssa-ink: #001123; --ssa-ink-2: #26323f; --ssa-muted: #5d6874; --ssa-line: #e4e7eb; --ssa-soft: #f5f6f7;
+  --ssa-display: "Schibsted Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: relative; width: min(880px, 100%); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 30px 70px rgba(0, 17, 35, .22);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ssa-ink); text-align: left; image-rendering: auto;
+}
+
+/* left: Eddy on the sky */
+.ssa-art { position: relative; display: flex; flex-direction: column; padding: 32px 30px 0; min-height: 560px; background: url(site/assets/sky.png) center / cover; image-rendering: pixelated; }
+.ssa-art > * { image-rendering: auto; }
+.ssa-kicker { align-self: flex-start; margin: 0 0 14px; padding: 5px 10px; background: #fff; border-radius: 2px; font-size: .8125rem; color: var(--ssa-blue); font-weight: 500; }
+.ssa-head { margin: 0; font: 500 clamp(1.7rem, 3vw, 2.25rem) / 1.08 var(--ssa-display); letter-spacing: -.035em; color: var(--ssa-ink); max-width: 12ch; }
+.ssa-stage { position: relative; flex: 1; min-height: 300px; }
+.ssa-eddy { position: absolute; right: 0; bottom: 0; width: 176px; height: auto; filter: drop-shadow(0 14px 18px rgba(0, 17, 35, .18)); image-rendering: auto; }
+.ssa-bubble { position: absolute; right: 168px; bottom: 74px; margin: 0; padding: 9px 13px; background: #fff; border-radius: 4px; font-size: .8125rem; color: var(--ssa-ink-2); box-shadow: 0 8px 20px rgba(0, 17, 35, .1); white-space: nowrap; }
+.ssa-bubble::after { content: ""; position: absolute; right: -5px; top: calc(50% - 6px); width: 12px; height: 12px; background: #fff; transform: rotate(45deg); }
+.ssa-pill { position: absolute; display: flex; align-items: center; gap: 9px; padding: 9px 12px 9px 9px; background: #fff; border-radius: 4px; box-shadow: 0 10px 24px rgba(0, 17, 35, .12); font-size: .75rem; animation: ssa-float 6s ease-in-out infinite; }
+.ssa-pill i { width: 26px; height: 26px; border-radius: 3px; display: grid; place-items: center; font-style: normal; font-weight: 700; }
+.ssa-pill span { display: grid; gap: 1px; }
+.ssa-pill b { font-weight: 600; color: var(--ssa-ink); }
+.ssa-pill small { color: var(--ssa-muted); font-size: .6875rem; }
+.ssa-red { left: 0; top: 18px; }
+.ssa-red i { background: #fdebe9; color: #c93a2f; }
+.ssa-amber { right: 0; top: 40px; animation-delay: -2s; }
+.ssa-amber i { background: #fff2dc; color: #b86e00; }
+.ssa-green { left: 16px; top: 98px; animation-delay: -4s; }
+.ssa-green i { background: #e4f7e6; color: #1d7f3e; }
+@keyframes ssa-float { 50% { transform: translateY(-6px); } }
+
+/* right: the sign-in options */
+.ssa-main { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 30px 36px 24px; }
+.ssa-brand { display: inline-flex; align-items: center; gap: 9px; font: 500 1.15rem var(--ssa-display); letter-spacing: -.03em; margin-bottom: 8px; }
+.ssa-brand svg { width: 26px; height: 26px; }
+.ssa-main h2 { margin: 0; font: 500 1.75rem / 1.1 var(--ssa-display); letter-spacing: -.03em; color: var(--ssa-ink); }
+.ssa-sub { margin: -4px 0 6px; color: var(--ssa-muted); font-size: .9375rem; line-height: 1.5; }
+.ssa-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 48px; padding: 0 16px; border: 0; border-radius: 2px; background: #fff; box-shadow: inset 0 0 0 1px var(--ssa-line); font: 500 .9375rem/1.2 inherit; font-family: inherit; color: var(--ssa-ink); cursor: pointer; transition: box-shadow .15s ease, background .15s ease; }
+.ssa-btn:hover { box-shadow: inset 0 0 0 1px var(--ssa-ink-2); background: #fff; color: var(--ssa-ink); }
+.ssa-btn:focus-visible { outline: 2px solid var(--ssa-blue); outline-offset: 2px; }
+.ssa-btn:disabled { opacity: .6; cursor: progress; }
+.ssa-btn svg { width: 20px; height: 20px; flex: none; }
+.ssa-last { justify-content: flex-start; min-height: 60px; background: var(--ssa-ink); box-shadow: none; color: #fff; text-align: left; }
+.ssa-last:hover { background: #0d2238; box-shadow: none; color: #fff; }
+.ssa-last img, .ssa-last i { width: 34px; height: 34px; border-radius: 50%; flex: none; object-fit: cover; }
+.ssa-last i { display: grid; place-items: center; background: #e8f2fd; color: var(--ssa-blue); font: 600 1rem var(--ssa-display); font-style: normal; }
+.ssa-last span { display: grid; gap: 2px; min-width: 0; }
+.ssa-last b { font-weight: 500; }
+.ssa-last small { color: #b9c8d9; font-size: .8125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ssa-form { display: grid; gap: 10px; }
+.ssa-field[hidden] { display: none; }
+.ssa-field input { width: 100%; min-height: 46px; padding: 0 14px; border: 0; border-radius: 2px; background: #fff; box-shadow: inset 0 0 0 1px var(--ssa-line); font: inherit; font-size: .9375rem; color: var(--ssa-ink); }
+.ssa-field input:hover { box-shadow: inset 0 0 0 1px var(--ssa-ink-2); }
+.ssa-field input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--ssa-blue); }
+.ssa-primary { background: var(--ssa-blue); box-shadow: none; color: #fff; }
+.ssa-primary:hover { background: #0a5fc0; box-shadow: none; color: #fff; }
+.ssa-links { display: flex; justify-content: space-between; gap: 12px; }
+.ssa-link { min-height: 0; padding: 2px 0; border: 0; background: none; box-shadow: none; font: inherit; font-size: .8125rem; color: var(--ssa-blue); cursor: pointer; }
+.ssa-link:hover { background: none; box-shadow: none; color: #0a5fc0; text-decoration: underline; }
+.ssa-link[hidden] { visibility: hidden; display: inline; }
+.ssa-guest { background: var(--ssa-soft); box-shadow: none; }
+.ssa-guest:hover { background: #eceef0; box-shadow: none; }
+.ssa-guest svg { fill: none; stroke: var(--ssa-ink-2); stroke-width: 1.6; stroke-linecap: round; }
+.ssa-error.ok { color: #1d7f3e; }
+.ssa-or { display: flex; align-items: center; gap: 12px; color: var(--ssa-muted); font-size: .8125rem; }
+.ssa-or::before, .ssa-or::after { content: ""; flex: 1; height: 1px; background: var(--ssa-line); }
+.ssa-error { margin: 0; color: #c93a2f; font-size: .875rem; }
+.ssa-error:empty { display: none; }
+.ssa-new { margin: -2px 0 0; font-size: .875rem; color: var(--ssa-muted); text-align: center; }
+.ssa-new b { color: var(--ssa-blue); font-weight: 500; }
+.ssa-fine { margin: auto 0 0; padding-top: 14px; border-top: 1px solid var(--ssa-line); font-size: .75rem; line-height: 1.5; color: var(--ssa-muted); }
+.ssa-close { position: absolute; z-index: 2; top: 14px; right: 14px; width: 36px; height: 36px; min-height: 0; padding: 0; border: 0; border-radius: 2px; background: none; box-shadow: none; display: grid; place-items: center; cursor: pointer; color: var(--ssa-muted); }
+.ssa-close:hover { background: var(--ssa-soft); box-shadow: none; color: var(--ssa-ink); }
+.ssa-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+/* the website shows the card over the page */
+.ssa-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px 16px; background: rgba(0, 17, 35, .45); overflow-y: auto; animation: ssa-in .18s ease-out; }
+.ssa-modal[hidden] { display: none; }
+@keyframes ssa-in { from { opacity: 0; } }
+
+/* phone: Eddy becomes a short sky banner above the options */
+@media (max-width: 720px) {
+  .ssa { grid-template-columns: minmax(0, 1fr); }
+  .ssa-art { min-height: 0; padding: 22px 20px 0; flex-direction: row; align-items: flex-end; gap: 12px; }
+  .ssa-kicker, .ssa-pill, .ssa-bubble { display: none; }
+  .ssa-head { flex: 1; padding-bottom: 20px; font-size: 1.45rem; }
+  .ssa-stage { flex: none; width: 104px; min-height: 0; height: 118px; }
+  .ssa-eddy { width: 104px; filter: none; }
+  .ssa-main { padding: 26px 20px 22px; }
+  .ssa-brand { margin-bottom: 6px; }
+  .ssa-close { top: 10px; right: 10px; background: rgba(255, 255, 255, .85); }
+}
+@media (prefers-reduced-motion: reduce) { .ssa-pill, .ssa-modal { animation: none; } }

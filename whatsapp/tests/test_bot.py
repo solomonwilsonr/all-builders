@@ -164,3 +164,54 @@ def test_a_recall_abroad_is_not_called_a_local_recall():
     assert "Checked: India: no matching notice" in text
     hindi = reply({"brand": "NEWDERY", "model": "ZHX-PB22"}, safety, "hi")
     assert "दूसरे देश में रिकॉल" in hindi
+
+
+def test_questions_voice_notes_manuals_and_buttons_go_to_the_chat():
+    assert bot.parse({"type": "text", "text": {"body": "my charger gets hot"}}) == \
+        {"kind": "chat", "text": "my charger gets hot"}
+    assert bot.parse({"type": "text", "text": {"body": "which is safer, https://a.in/x or https://b.in/y"}})["kind"] == "chat"
+    assert bot.parse({"type": "audio", "audio": {"id": "A1"}}) == {"kind": "voice", "media_id": "A1"}
+    assert bot.parse({"type": "document", "document": {"id": "D1", "mime_type": "application/pdf",
+                                                        "caption": "what is E4?"}})["kind"] == "manual"
+    assert bot.parse({"type": "interactive", "interactive": {"button_reply": {"id": "q0", "title": "Too hot"}}}) == \
+        {"kind": "chat", "text": "Too hot"}
+    assert bot.parse({"type": "text", "text": {"body": "Hello!"}})["kind"] == "help"
+
+
+def test_chat_reply_buttons_and_drafts():
+    answer = {"messages": [{"text": "**Stop using it.** What did you notice?"}],
+              "quick_replies": {"question": "What did you notice?", "options": ["Too hot to hold", "Burning smell"]},
+              "assist": {"write_support_request": {"subject": "Warranty request", "body": "Hello, ..."}}}
+    text, drafts = bot.chat_reply(answer)
+    assert text.startswith("*Stop using it.*") and drafts == ["📋 Warranty request\n\nHello, ..."]
+    b = bot.buttons(text, answer["quick_replies"])
+    assert [x["reply"]["title"] for x in b["action"]["buttons"]] == ["Too hot to hold", "Burning smell"]
+    long = {"options": ["A very long option that won't fit", "B"]}
+    assert bot.buttons("q", long) is None
+    assert "Reply with: A very long option" in bot.chat_reply({"messages": [{"text": "q"}], "quick_replies": long})[0]
+
+
+def test_a_question_is_answered_by_the_chat_as_this_sender(monkeypatch):
+    import asyncio
+
+    import app
+    sent, asked = [], {}
+
+    async def fake_post(api, path, body):
+        asked.update(path=path, body=body, owner=api.headers.get("x-owner-ref"))
+        return {"messages": [{"text": "Stop using it."}], "language": "en",
+                "quick_replies": {"options": ["Yes", "No"]}}
+
+    async def fake_send(kind):
+        async def send(to, payload, *rest):
+            sent.append((kind, payload))
+        return send
+    monkeypatch.setattr(app, "post", fake_post)
+    monkeypatch.setattr(app, "send_text", asyncio.run(fake_send("text")))
+    monkeypatch.setattr(app, "send_interactive", asyncio.run(fake_send("buttons")))
+    monkeypatch.setattr(app, "send_voice", asyncio.run(fake_send("voice")))
+    app._product["919800000001"] = "SS-P-10291"
+    asyncio.run(app.chat_turn("919800000001", {"kind": "chat", "text": "my charger gets hot"}, "en", "WA-t"))
+    assert asked["path"] == "/v1/agent/sessions" and asked["body"]["mode"] == "chat"
+    assert asked["body"]["product_id"] == "SS-P-10291" and asked["owner"] == "wa:919800000001"
+    assert asked["body"]["session_id"].startswith("WA-") and [k for k, _ in sent] == ["buttons", "voice"]

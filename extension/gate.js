@@ -12,14 +12,15 @@
     cover.className = "signin-cover";
     cover.innerHTML = `<style>
       .signin-cover { position:fixed; inset:0; z-index:2147483647; display:grid; place-items:center; padding:16px; visibility:visible;
-        background:var(--ground, var(--soft, #f1f3f6)); font:16px/1.55 var(--font, system-ui, sans-serif); color:var(--ink, #13233a); }
-      .signin-cover section { max-width:420px; width:100%; padding:28px 24px; border-radius:24px; background:var(--surface, var(--card, #fdfcfa)); box-shadow:0 6px 24px rgba(19,35,58,.10); }
-      .signin-cover h1 { font-size:22px; margin:0 0 8px; color:var(--ink, #13233a); }
-      .signin-cover p { margin:0 0 18px; color:var(--ink-2, var(--muted, #5a6a7c)); }
+        background:url(assets/sky.png) center / cover; image-rendering:pixelated; font:16px/1.55 var(--font, "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif); color:var(--ink, #001123); }
+      .signin-cover section { image-rendering:auto; max-width:420px; width:100%; padding:30px 28px; border-radius:14px; background:var(--surface, var(--card, #fff)); box-shadow:0 30px 60px rgba(0,17,35,.2); }
+      .signin-cover section::before { content:""; display:block; width:30px; height:30px; margin-bottom:16px; background:var(--shield) center / contain no-repeat; }
+      .signin-cover h1 { font-size:24px; font-weight:600; letter-spacing:-.03em; margin:0 0 8px; color:var(--ink, #001123); }
+      .signin-cover p { margin:0 0 18px; color:var(--ink-2, var(--muted, #5d6874)); }
       .signin-cover .signin-status { margin:14px 0 0; font-size:14px; }
       .signin-cover .signin-status:empty { display:none; }
-      .signin-cover button { font:inherit; font-weight:600; padding:12px 20px; border:0; border-radius:14px; background:var(--primary, #13233a); color:var(--on-primary, #fff); cursor:pointer; }
-      .signin-cover button:focus-visible { outline:3px solid var(--focus, #2f5fb3); outline-offset:2px; }
+      .signin-cover button { font:inherit; font-weight:500; padding:12px 22px; border:0; border-radius:4px; background:var(--action, var(--primary, #0271e4)); color:var(--on-action, var(--on-primary, #fff)); cursor:pointer; }
+      .signin-cover button:focus-visible { outline:2px solid var(--action, #0271e4); outline-offset:2px; }
     </style><section role="dialog" aria-modal="true" aria-labelledby="signin-cover-title">
       <h1 id="signin-cover-title">Sign in to use SafeShelf</h1>
       <p>Checks, chat, My Shelf and the Lab are for signed-in people. Use your Google account: SafeShelf sees your name, email and profile photo, nothing else.</p>

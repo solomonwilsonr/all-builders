@@ -7,6 +7,8 @@ Amazon pages give title, brand, model number, price, M.R.P., photos and the revi
 its meta tags and visible text say.
 """
 import ipaddress
+import json
+import os
 import re
 import socket
 from datetime import datetime
@@ -136,6 +138,22 @@ def amazon_reviews(html: str) -> list[dict]:
     return out
 
 
+def _ld_product(html: str) -> dict:
+    """The schema.org Product a shop publishes in its page (Flipkart and most shops do): name, price, photos, reviews."""
+    for block in re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html, re.IGNORECASE | re.DOTALL):
+        try:
+            data = json.loads(block.strip())
+        except ValueError:
+            continue
+        for item in [*(data if isinstance(data, list) else [data]), *((data.get("@graph") or []) if isinstance(data, dict) else [])]:
+            if isinstance(item, dict) and "Product" in ([item.get("@type")] if isinstance(item.get("@type"), str) else item.get("@type") or []):
+                return item
+    return {}
+
+
+NOT_FOUND = re.compile(r"page not found|404|sorry! we couldn.t find that page|looking for something\?", re.IGNORECASE)
+
+
 def listing_from_html(url: str, html: str) -> dict:
     """What a shop page says about itself."""
     page_title = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
@@ -159,6 +177,32 @@ def listing_from_html(url: str, html: str) -> dict:
                region.CURRENCY.get(region.of(url) or ""),
                "image_urls": images, "reviews": amazon_reviews(html),
                "page_text": "\n".join(d for d in details if d) + "\n" + visible[:3000]}
+    # schema.org data fills what the shop-specific patterns missed
+    ld = _ld_product(html)
+    offer = ld.get("offers") or {}
+    offer = (offer[0] if isinstance(offer, list) and offer else offer) if isinstance(offer, (list, dict)) else {}
+    if ld:
+        listing["title"] = listing.get("title") if listing.get("title") and not NOT_FOUND.search(listing["title"]) else (str(ld.get("name") or "")[:300] or listing.get("title"))
+        if not listing.get("price"):
+            listing["price"] = _number(str(offer.get("price") or offer.get("lowPrice") or ""))
+        if offer.get("priceCurrency"):
+            listing["currency"] = offer["priceCurrency"]
+        if not listing.get("brand") and ld.get("brand"):
+            listing["brand"] = (ld["brand"].get("name") if isinstance(ld["brand"], dict) else str(ld["brand"])) or None
+        photos = ld.get("image")
+        photos = [photos] if isinstance(photos, str) else [p if isinstance(p, str) else (p or {}).get("url") for p in (photos or [])]
+        if photos and not listing.get("image_urls"):
+            listing["image_urls"] = [p for p in photos if p and p.startswith("https:")][:6]
+        if not listing.get("reviews"):
+            listing["reviews"] = [{"title": str(r.get("name") or "")[:200], "text": str(r.get("reviewBody") or "")[:1500],
+                                   "rating": _number(str((r.get("reviewRating") or {}).get("ratingValue") or ""))}
+                                  for r in (ld.get("review") or [])[:20] if isinstance(r, dict) and r.get("reviewBody")]
+        seller = (offer.get("seller") or {}) if isinstance(offer.get("seller"), dict) else {}
+        if seller.get("name"):
+            listing["seller"] = str(seller["name"])[:120]
+    # a shop's "page not found" is not a product
+    if listing.get("title") and NOT_FOUND.search(listing["title"]) and not ld:
+        return {"url": url}
     return {k: v for k, v in listing.items() if v not in (None, "", [])}
 
 
@@ -184,4 +228,44 @@ def read(url: str) -> dict:
     # Big shops show servers less than they show shoppers (seen 15 Oct: Amazon gave Cloud Run the title but no price
     # or reviews). Then the answer says so instead of reading "0 reviews" as a finding.
     full = bool(listing.get("price")) or bool(listing.get("reviews"))
-    return {**listing, "read": "full" if full else "partial"}
+    return {**listing, "read": "full" if full else "partial" if listing.get("title") else "none"}
+
+
+# --- A page read for the judges' page browser: directly first, then through a real browser when the shop held back ---
+FIRECRAWL_SCRAPE = os.environ.get("FIRECRAWL_BASE_URL", "https://api.firecrawl.dev/v2") + "/scrape"
+
+
+def rendered_html(url: str) -> str | None:
+    """The page as a real browser renders it (Firecrawl, 1 credit), or None without FIRECRAWL_API_KEY or on failure.
+    Only public addresses are sent, as for a direct read."""
+    key = os.environ.get("FIRECRAWL_API_KEY")
+    if not key:
+        return None
+    check_public(url)
+    try:
+        response = httpx.post(FIRECRAWL_SCRAPE, json={"url": url, "formats": ["rawHtml"], "onlyMainContent": False},
+                              headers={"Authorization": f"Bearer {key}"}, timeout=90)
+        data = (response.json() or {}).get("data") or {}
+    except (httpx.HTTPError, ValueError):
+        return None
+    return data.get("rawHtml") or data.get("html") or None
+
+
+def _richness(listing: dict) -> int:
+    return sum([bool(listing.get("title")), 2 * bool(listing.get("price")), 2 * bool(listing.get("reviews")), bool(listing.get("image_urls"))])
+
+
+def read_live(url: str) -> dict:
+    """read(), and when the shop showed the server too little (no price, no reviews), the same page rendered by a
+    real browser; the richer of the two. via says which one: "direct" or "browser"."""
+    first = read(url)
+    if first.get("read") == "full":
+        return {**first, "via": "direct"}
+    html = rendered_html(clean(url))
+    if not html:
+        return {**first, "via": "direct"}
+    second = listing_from_html(clean(url), html)
+    if _richness(second) <= _richness(first):
+        return {**first, "via": "direct"}
+    full = bool(second.get("price")) or bool(second.get("reviews"))
+    return {**second, "read": "full" if full else "partial" if second.get("title") else "none", "via": "browser"}

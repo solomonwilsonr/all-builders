@@ -7,6 +7,44 @@ service cloud.firestore {
       allow get: if request.auth != null && request.auth.uid == uid;
       allow list, create, update, delete: if false;
     }
+
+    // AI checks used (web/quota.js), one document per person and area: usage/{uid}_site, usage/{uid}_demo.
+    // A guest (anonymous sign-in) may write once, ever: {day: 0, used: 1}. A Google or email account gets 5 a day:
+    // the count goes up by exactly one, or starts again at 1 on a new UTC day. Nobody can lower or delete it.
+    match /usage/{id} {
+      function mine() {
+        return request.auth != null && (id == request.auth.uid + '_site' || id == request.auth.uid + '_demo');
+      }
+      function guest() { return request.auth.token.firebase.sign_in_provider == 'anonymous'; }
+      function today() { return math.floor(request.time.toMillis() / 86400000); }
+      function shape() {
+        return request.resource.data.keys().hasOnly(['day', 'used'])
+          && request.resource.data.day is int && request.resource.data.used is int;
+      }
+      allow get: if mine();
+      allow create: if mine() && shape() && request.resource.data.used == 1
+        && request.resource.data.day == (guest() ? 0 : today());
+      allow update: if mine() && shape() && !guest() && request.resource.data.day == today()
+        && request.resource.data.used == (resource.data.day == today() ? resource.data.used + 1 : 1)
+        && request.resource.data.used <= 5;
+      allow list, delete: if false;
+    }
+
+    // My Shelf, synced by the extension (extension/shelf-sync.js) and shown on the website (web/site/shelf.html).
+    // Each person reads and changes only their own; an item holds only these short text fields.
+    match /users/{uid}/shelf/{item} {
+      function owner() { return request.auth != null && request.auth.uid == uid; }
+      function text(k, n) { return request.resource.data[k] == null || (request.resource.data[k] is string && request.resource.data[k].size() <= n); }
+      function shape() {
+        return request.resource.data.keys().hasOnly(['key', 'url', 'title', 'host', 'image_url', 'level', 'product_id', 'saved_at'])
+          && request.resource.data.key is string && request.resource.data.key.size() <= 2000
+          && text('url', 2000) && text('title', 2000) && text('host', 255) && text('image_url', 2000)
+          && text('level', 16) && text('product_id', 255) && text('saved_at', 40);
+      }
+      allow read, delete: if owner();
+      allow create, update: if owner() && shape();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

@@ -83,13 +83,13 @@
     const host = document.createElement("div");
     const root = host.attachShadow({ mode: "open" });
     const red = guard.level === "red";
-    const css = `:host{all:initial} .bg{position:fixed;inset:0;background:rgba(19,35,58,.45);z-index:2147483647;display:grid;place-items:center;font:16px/1.5 system-ui,sans-serif}
-      .d{background:#fdfcfa;color:#13233a;max-width:440px;margin:16px;border-radius:20px;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
-      h2{margin:0 0 6px;font-size:22px;color:${red ? "#b3261e" : "#8a5a00"}} p{margin:6px 0} .k{font-size:12px;color:#5a6a7c}
-      .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px} button{font:inherit;font-weight:700;padding:11px 16px;border-radius:12px;border:1px solid #e3e7ec;background:#fff;color:#13233a;cursor:pointer}
-      button.stop{background:#13233a;color:#fff;border-color:#13233a}
-      button.ghost{font-weight:600;border-color:transparent;background:transparent;color:#5a6a7c;padding:11px 10px}
-      button:focus-visible{outline:3px solid #2f5fb3;outline-offset:2px}`;
+    const css = `:host{all:initial} .bg{position:fixed;inset:0;background:rgba(0,17,35,.45);z-index:2147483647;display:grid;place-items:center;font:16px/1.5 "Helvetica Neue",Helvetica,Arial,system-ui,sans-serif}
+      .d{background:#fff;color:#001123;max-width:440px;margin:16px;border-radius:14px;border-top:4px solid ${red ? "#c93a2f" : "#f0a020"};padding:22px;box-shadow:0 24px 60px rgba(0,17,35,.3)}
+      h2{margin:0 0 6px;font-size:22px;font-weight:600;letter-spacing:-.02em;color:${red ? "#c93a2f" : "#a35f00"}} p{margin:6px 0} .k{font-size:12px;color:#5d6874}
+      .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px} button{font:inherit;font-weight:500;padding:11px 16px;border-radius:4px;border:1.5px solid #e4e7eb;background:#fff;color:#001123;cursor:pointer}
+      button.stop{background:#0271e4;color:#fff;border-color:#0271e4}
+      button.ghost{font-weight:500;border-color:transparent;background:transparent;color:#5d6874;padding:11px 10px}
+      button:focus-visible{outline:2px solid #0271e4;outline-offset:2px}`;
     const stop = Object.assign(document.createElement("button"), { className: "stop", textContent: red ? "Don't buy it" : "Go back and check" });
     // On a red (recalled) verdict, "Buy anyway" is a plain text link, not a button of equal weight to "Don't buy it".
     const buy = Object.assign(document.createElement("button"), { className: red ? "ghost" : "", textContent: "Buy anyway" });
@@ -174,13 +174,13 @@
   };
 
   const STYLE = `
-    .codebadge { display:inline-block; margin-left:4px; font-size:10px; font-weight:700; padding:0 6px; border-radius:6px; background:#f1f3f6; color:#5a6a7c; text-decoration:none; white-space:nowrap; }
-    a.codebadge:hover { color:#2f5fb3; }
+    .codebadge { display:inline-block; margin-left:4px; font-size:10px; font-weight:600; padding:0 6px; border-radius:4px; background:#e8f2fd; color:#0271e4; text-decoration:none; white-space:nowrap; }
+    a.codebadge:hover { background:#0271e4; color:#fff; }
     .aftercare { margin:10px 0; }
-    .after { display:grid; gap:8px; padding:10px 12px; border-radius:14px; background:#f1f3f6; margin-top:8px; }
+    .after { display:grid; gap:8px; padding:12px 14px; border-radius:10px; background:#f5f6f7; margin-top:8px; }
     .after ol { margin:0; padding-left:18px; display:grid; gap:4px; }
-    .draftbox { display:grid; gap:4px; background:#fff; border-radius:10px; padding:8px 10px; }
-    .draft { width:100%; box-sizing:border-box; font:12px/1.4 ui-monospace, Menlo, monospace; padding:8px; border:1px solid #e3e7ec; border-radius:8px; }
+    .draftbox { display:grid; gap:4px; background:#fff; border-radius:8px; border:1px solid #e4e7eb; padding:8px 10px; }
+    .draft { width:100%; box-sizing:border-box; font:12px/1.4 ui-monospace, Menlo, monospace; padding:8px; border:1px solid #e4e7eb; border-radius:4px; }
     .voicetoggle { font-size:13px; display:inline-flex; align-items:center; gap:4px; }`;
 
   globalThis.SafeShelfAftercare = { speakPlain, autoSpeak, voiceToggle, guardBuy, unguard, afterPanel, badge, buyTarget, STYLE };

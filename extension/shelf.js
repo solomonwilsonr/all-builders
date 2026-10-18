@@ -70,8 +70,8 @@ function render() {
     remove.setAttribute('aria-label',`Remove ${item.title || 'product'} from My Shelf`);
     remove.addEventListener('click',async()=>{
       remove.disabled=true;
-      try { const {shelf=[]}=await chrome.storage.local.get('shelf');await chrome.storage.local.set({shelf:shelf.filter(entry=>entry.id!==item.id)});await load(); }
-      catch {remove.disabled=false;remove.textContent='Retry removal';}
+      const res=await chrome.runtime.sendMessage({type:'safeshelf:shelf-remove',id:item.id}).catch(()=>null);
+      if(!res?.ok){remove.disabled=false;remove.textContent='Retry removal';} // on success the storage change redraws the list
     });
     const date = new Date(item.saved_at);
     const saved = Number.isNaN(date.getTime()) ? 'Saved on this device' : `Saved ${date.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
@@ -83,3 +83,15 @@ search.addEventListener('input',render);
 filter.addEventListener('change',render);
 chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local' && changes.shelf)load();});
 load();
+// Signed in, the shelf is also kept in the account and shown on the website; bring in changes made there.
+async function sync(){
+  const res=await chrome.runtime.sendMessage({type:'safeshelf:shelf-sync'}).catch(()=>null);
+  const s=res?.ok?res.result:null;
+  if(!s?.signedIn)return;
+  const web=document.getElementById('shelf-web');
+  web.href=s.website;web.hidden=false;
+  document.getElementById('shelf-where').textContent=s.synced?'Saved to your account':'Saved on this device (account sync failed, retrying later)';
+  document.getElementById('shelf-storage').textContent=s.synced?'Saved to your SafeShelf account, so it also shows on the website.':'Saved on this device; it goes to your account once the connection is back.';
+}
+sync();
+addEventListener('focus',sync); // coming back from the website tab

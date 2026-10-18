@@ -18,18 +18,25 @@ RESEARCH_URL ?= $(shell gcloud run services describe safeshelf-research --projec
 RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 # The webhook signing key (secret webhook-key); empty = POST /v1/webhooks answers 503 "not configured".
 WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
+FIRECRAWL_SECRET ?= $(shell gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api api-real test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web \
+.PHONY: test-extension agents demo-pages api api-real test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
 	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery
 
-web:            ## the judges' page on :8095 (calls the live API)
+web-ext:        ## copy the extension into web/ext/ for "Try a sample" (signed in through the judges' page, no extension sign-in)
+	rm -rf web/ext && mkdir -p web/ext
+	cp extension/manifest.json extension/background.js extension/check.js extension/ops.js extension/panels.js \
+		extension/investigate.js extension/aftercare.js extension/content.js web/ext/
+	cp web/ext-shim/*.js web/ext/
+
+web: web-ext     ## the judges' page on :8095 (calls the live API)
 	cd web && python3 -m http.server 8095
 
 web-samples:    ## re-record the judges' page samples from the live API (after deploy-api)
 	API_URL=$(API_URL) python3 web/record_samples.py
 
-deploy-web:     ## the judges' page to Firebase Hosting, with the latest bench results
+deploy-web: web-ext ## the judges' page to Firebase Hosting, with the latest bench results
 	cp bench/results.json web/data/bench.json && cp bench/agent_eval_results.json web/data/agent_eval.json && \
 		cp bench/catalog_results.json web/data/catalog.json
 	cd web && firebase deploy --only hosting --project $(FIREBASE_PROJECT)
@@ -40,7 +47,7 @@ test-extension:  ## extension tests (plain Node, no Chrome, no network, no credi
 agents:         ## Shelf Chat agent service on :8081 (needs GOOGLE_API_KEY in .env or agents/.env)
 	cd agents && uv run --python 3.12 uvicorn server:app --reload --port 8081
 
-demo-pages:     ## serve the demo shop pages on :8090 (chat test console: http://localhost:8090/chat.html)
+demo-pages:     ## serve the demo shop pages on :8090 (the chat is now on the site: make web, then /site/chat.html)
 	cd extension/demo && python3 -m http.server 8090
 
 api:            ## run the API locally on :8080 (MOCK=1 by default)
@@ -76,8 +83,30 @@ deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for
 	gcloud run deploy safeshelf-api --source .build --project $(GCP_PROJECT) --region $(REGION) \
 		--allow-unauthenticated --min-instances 1 --max-instances 3 --memory 2Gi --timeout 300 \
 		--add-cloudsql-instances $(SQL_INSTANCE) \
-		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest)$(if $(WEBHOOK_SECRET),$(comma)SAFESHELF_WEBHOOK_KEY=webhook-key:latest) \
+		--set-secrets DB_PASSWORD=safeshelf-db-password:latest$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_TOKEN=research-token:latest)$(if $(RECHECK_SECRET),$(comma)SAFESHELF_RECHECK_TOKEN=recheck-token:latest)$(if $(WEBHOOK_SECRET),$(comma)SAFESHELF_WEBHOOK_KEY=webhook-key:latest)$(if $(FIRECRAWL_SECRET),$(comma)FIRECRAWL_API_KEY=firecrawl-key:latest) \
 		--set-env-vars MOCK=$(DEPLOY_MOCK),CLOUD_SQL_INSTANCE=$(SQL_INSTANCE),GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT),SAFESHELF_PUBLIC_URL=$(API_URL),SAFESHELF_TRACE_TO_CLOUD=$(TRACE_TO_CLOUD)$(if $(RESEARCH_URL),$(comma)SAFESHELF_RESEARCH_URL=$(RESEARCH_URL))
+
+browser-ext:    ## copy the extension into browser/ext/ for the real-browser container
+	rm -rf browser/ext && mkdir -p browser/ext
+	cp -R extension/. browser/ext/ && rm -rf browser/ext/node_modules browser/ext/demo browser/ext/config.generated.js browser/ext/tests
+
+deploy-browser: browser-ext ## the real Chrome for "Try it" on Cloud Run: starts only when a judge presses Start (then make deploy-web)
+	gcloud run deploy safeshelf-browser --source browser --project $(GCP_PROJECT) --region $(REGION) \
+		--allow-unauthenticated --concurrency 1 --min-instances 0 --max-instances 5 --cpu 2 --memory 4Gi \
+		--timeout 900 --execution-environment gen2 \
+		--set-env-vars API_BASE=$(API_URL),FIREBASE_PROJECT=$(FIREBASE_PROJECT),SESSION_SECONDS=300
+	@url=$$(gcloud run services describe safeshelf-browser --project $(GCP_PROJECT) --region $(REGION) --format 'value(status.url)'); \
+		printf '// Written by make deploy-browser: the real-browser service for "Try it".\nexport const BROWSER_URL = "%s";\n' "$$url" > web/browser-config.js; \
+		echo "safeshelf-browser: $$url (written to web/browser-config.js; now run make deploy-web)"
+
+firecrawl-secret: ## once: FIRECRAWL_API_KEY from .env into Secret Manager, so the judges' page browser can load full shop pages (then make deploy-api)
+	@key=$$(grep -E '^FIRECRAWL_API_KEY=' .env | head -1 | cut -d= -f2-); test -n "$$key" || { echo "FIRECRAWL_API_KEY is not in .env"; exit 1; }; \
+		if gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) >/dev/null 2>&1; then printf '%s' "$$key" | gcloud secrets versions add firecrawl-key --project $(GCP_PROJECT) --data-file=-; \
+		else printf '%s' "$$key" | gcloud secrets create firecrawl-key --project $(GCP_PROJECT) --data-file=-; fi
+	@sa=$$(gcloud run services describe safeshelf-api --project $(GCP_PROJECT) --region $(REGION) --format 'value(spec.template.spec.serviceAccountName)'); \
+		sa=$${sa:-$$(gcloud projects describe $(GCP_PROJECT) --format 'value(projectNumber)')-compute@developer.gserviceaccount.com}; \
+		gcloud secrets add-iam-policy-binding firecrawl-key --project $(GCP_PROJECT) --member serviceAccount:$$sa \
+			--role roles/secretmanager.secretAccessor >/dev/null && echo "firecrawl-key ready: now run make deploy-api"
 
 schedule-recheck: ## every 30 min: recall sites searched again for one saved first-look model (then run make deploy-api)
 	@gcloud secrets describe recheck-token --project $(GCP_PROJECT) >/dev/null 2>&1 || \
@@ -121,6 +150,8 @@ bench:          ## M2 backtest: reviews from the bucket (once), Gemini labels (c
 
 eval-agents:    ## agent test set (JAPAC cases with known answers) against API_URL; writes bench/agent_eval_results.json
 	API_URL=$(API_URL) engine/.venv/bin/python bench/agent_eval.py
+eval-owner-help: ## owner-help test set (right tool, safe wording) against API_URL; writes bench/owner_help_eval_results.json
+	API_URL=$(API_URL) engine/.venv/bin/python bench/owner_help_eval.py
 
 warm:           ## before a demo or recording: run every demo check once so the first click answers in seconds
 	@for body in \

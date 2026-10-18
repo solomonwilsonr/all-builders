@@ -13,7 +13,7 @@ PORT_PATTERNS = {
 # Tokens that look like model numbers but aren't.
 NOT_MODELS = re.compile(
     r"^(USB\d?|USBC|PD\d*|QC\d(\.\d)?|GAN\d?|IPHONE\d*|GALAXY|S\d{1,2}|TYPEC|CE|UL\d*|ETL|FCC|BIS|HDMI\d?|"
-    r"\d+(\.\d+)?(W|MAH|V|A|MM|CM|M|IN|INCH|FT|PCS|PACK|K|GB|TB|HZ|ML|L|LTR|LITRE|LITER|G|GM|GMS|KG|OZ|LB|LBS)?)$"
+    r"\d+(\.\d+)?(W|MAH|V|A|MM|CM|M|IN|INCH|FT|PCS|PACK|K|GB|TB|HZ|MP|MONTHS?|YEARS?|YRS?|DAYS?|HOURS?|HRS?|WEEKS?|ML|L|LTR|LITRE|LITER|G|GM|GMS|KG|OZ|LB|LBS)?)$"
 )
 MODEL_TOKEN = re.compile(
     r"\b[A-Za-z]{1,6}-?\d{2,6}[A-Za-z0-9-]{0,10}\b"  # A1366, CX-65, VN-65PD, RS76CG8003S9HL

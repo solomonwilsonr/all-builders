@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SafeShelf for agents: MCP, REST and A2A</title>
+  <meta name="description" content="Connect your agent to SafeShelf: ten read-only MCP tools, a streaming REST API and an A2A agent card.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css?v=20261018b">
+  <link rel="stylesheet" href="pages.css?v=20261018b">
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <nav class="nav wrap" aria-label="Primary navigation">
+      <a class="logo" href="index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <div class="links" id="links"><a href="index.html">Product</a><a href="chat.html">Chat</a><a href="how.html">How it works</a><a href="agents.html" aria-current="page">For agents</a><a href="results.html">Results</a><a href="team.html">Team</a></div>
+      <div class="nav-end"><a class="btn btn-ghost btn-sm" href="../index.html">See demo</a><a class="btn btn-ink btn-sm" href="get.html">Get SafeShelf</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="h-hero inner" aria-labelledby="hero-h">
+      <div class="h-hero-grid">
+        <div>
+          <span class="backed"><i>S</i>For builders</span>
+          <h1 class="display" id="hero-h">The same evidence, <span>for your agent.</span></h1>
+          <p class="lead">Everything SafeShelf shows a shopper, your agent can ask for: over MCP, over REST, or agent to agent with A2A. Every tool is read-only. An agent can check a listing; it can never buy, report or act for a shopper.</p>
+          <div class="btns"><a class="btn btn-blue" href="#mcp">Connect over MCP</a><a class="btn btn-line" href="../api-integration/index.html">API docs</a></div>
+          
+        </div>
+        <div class="h-eddy" aria-hidden="true"><img src="assets/guide/eddy-excited.webp" alt=""></div>
+      </div>
+    </section>
+
+    <section class="h-stage short" aria-label="Connecting an agent">
+      <div class="tty" style="border-radius:14px 14px 0 0">
+        <div class="tty-top"><i></i><i></i><i></i>
+          <div class="tty-tabs" role="tablist" aria-label="Ways to connect">
+            <button class="opt" type="button" role="tab" aria-selected="true" data-code="mcp">MCP</button>
+            <button class="opt" type="button" role="tab" aria-selected="false" data-code="rest">REST</button>
+            <button class="opt" type="button" role="tab" aria-selected="false" data-code="a2a">A2A</button>
+          </div>
+        </div>
+        <p class="tty-prompt"><span>&gt;</span> is amazon.in/dp/B0CX65SFC safe to buy?</p>
+<pre class="code" id="dev-code"></pre>
+      </div>
+    </section>
+
+    <section class="h-sec" id="mcp" aria-labelledby="mcp-h">
+      <div class="h-head"><h2 class="display" id="mcp-h"><span class="mark" aria-hidden="true"></span>Ten read-only tools at /mcp.</h2><p class="lead">Point any MCP client at the server and send your key in the <code>x-api-key</code> header. Answers carry evidence ids your agent can show the shopper.</p></div>
+      <div class="tg"><article><code>check_listing<span>READ-ONLY</span></code><p>"Is it real?": copied photos, an impossible price, a brand-new website, conflicting specs, hidden AI instructions.</p></article><article><code>identify_product<span>READ-ONLY</span></code><p>Which product is this listing? Returns a SafeShelf product_id for the other tools. Give a url or a title.</p></article><article><code>product_safety<span>READ-ONLY</span></code><p>Official recall status, hazard reports found in reviews and photos, and safety-mark checks.</p></article><article><code>find_copies<span>READ-ONLY</span></code><p>The same product in other listings or brands: exact model, possible rebrand, variant or look-alike, with reasons.</p></article><article><code>safety_marks<span>READ-ONLY</span></code><p>Safety and energy marks the listing claims, checked against the official registries.</p></article><article><code>safer_alternatives<span>READ-ONLY</span></code><p>Similar products with no recall and no hazard reports, with the reason for each.</p></article><article><code>owner_guidance<span>READ-ONLY</span></code><p>For someone who already owns it: stop or take care, the recall remedy, return, or report.</p></article><article><code>product_history<span>READ-ONLY</span></code><p>Everything that ever changed about the product, and its recalls.</p></article><article><code>case_file<span>READ-ONLY</span></code><p>Findings with evidence ids and quotes, and the code rule behind the verdict.</p></article><article><code>investigation_trace<span>READ-ONLY</span></code><p>Every step of an investigation: tool, model, time, tokens and estimated cost.</p></article></div>
+    </section>
+
+    <section class="h-sec" id="rest" aria-labelledby="rest-h">
+      <div class="h-head"><h2 class="display" id="rest-h"><span class="mark" aria-hidden="true"></span>Or call the API directly.</h2><p class="lead">The API runs on Cloud Run in Mumbai (asia-south1). The live investigation streams its steps as server-sent events, so your agent can show progress as it arrives.</p></div>
+      <div class="bento two">
+        <article class="cell flat">
+          <div class="cell-h"><div><b>Endpoints</b><small>REST and A2A</small></div><a href="../api-integration/index.html" aria-label="API docs">+</a></div>
+          <div class="cell-b"><div class="tbl"><table>
+            <thead><tr><th>Endpoint</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td class="ep"><span class="method">POST</span>/v1/agent/sessions/stream</td><td>Live investigation, streamed step by step</td></tr>
+              <tr><td class="ep"><span class="method">POST</span>/v1/agent/sessions</td><td>Chat about a product, one answer</td></tr>
+              <tr><td class="ep"><span class="method">GET</span>/.well-known/agent-card.json</td><td>A2A agent card</td></tr>
+              <tr><td class="ep"><span class="method">GET</span>/health</td><td>Is the API up</td></tr>
+            </tbody></table></div>
+            <p class="caption">Request fields and every response shape are in the <a href="../api-integration/index.html" style="color:var(--blue)">API docs</a>.</p></div>
+        </article>
+        <article class="cell flat">
+          <div class="code-head"><span>Check a listing</span><button class="copy-btn" type="button" data-copy-from="curl">Copy</button></div>
+<pre class="code" id="curl">curl -N -X POST \
+  https://safeshelf-api-368488022657.asia-south1.run.app/v1/agent/sessions/stream \
+  -H 'content-type: application/json' \
+  -H "authorization: Bearer $FIREBASE_ID_TOKEN" \
+  -d '{"mode": "investigate", "product_id": "unmatched",
+       "listing": {"title": "65W Super Fast Charger CX-65",
+                   "url": "amazon.in/dp/B0CX65SFC",
+                   "price": 299, "currency": "INR"}}'</pre>
+          <div class="code-head" style="margin-top:20px"><span>MCP client config</span><button class="copy-btn" type="button" data-copy-from="mcpcfg">Copy</button></div>
+<pre class="code" id="mcpcfg">{
+  "mcpServers": {
+    "safeshelf": {
+      "url": "https://safeshelf-api-368488022657.asia-south1.run.app/mcp",
+      "headers": { "x-api-key": "YOUR_KEY" }
+    }
+  }
+}</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="h-cta" aria-labelledby="cta-h">
+      <h2 class="display" id="cta-h">Build on the evidence. <span>Never on a guess.</span></h2>
+      <p>Read-only tools, sourced answers, and a verdict set by code.</p>
+      <div class="btns"><a class="btn btn-white" href="../api-integration/index.html">Read the API docs</a><a class="btn btn-ink" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">View the source</a></div>
+      <img class="fly" src="assets/guide/eddy-flying.webp" alt="" aria-hidden="true">
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="cols home-cols">
+      <div class="brand-col"><a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a><p>Evidence-backed product checks for shoppers in India, Japan, Australia, Singapore and beyond.</p></div>
+      <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="chat.html">Chat</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="get.html">Get SafeShelf</a></li><li><a href="how.html#where">WhatsApp (soon)</a></li></ul></div>
+      <div><h4>Learn</h4><ul><li><a href="how.html">How it works</a></li><li><a href="results.html">Results</a></li><li><a href="results.html#backtest">SafeShelfBench</a></li><li><a href="index.html#faq">FAQs</a></li></ul></div>
+      <div><h4>Builders</h4><ul><li><a href="agents.html">MCP server</a></li><li><a href="agents.html#rest">REST API</a></li><li><a href="../api-integration/index.html">API docs</a></li></ul></div>
+      <div><h4>Project</h4><ul><li><a href="team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li><li><a href="../index.html">Judges' page</a></li></ul></div>
+    </div>
+    <div class="foot-bar">
+      <span>Records from CPSC · ACCC · KATS · CAA · CCPA · BIS · BSMI · CPSO · ASEAN · OECD</span>
+      <span>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</span>
+      <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
+    </div>
+  </footer>
+</div>
+<script src="site.js?v=20261018b" defer></script>
+<script type="module" src="account.js?v=20261018u"></script>
+</body>
+</html>

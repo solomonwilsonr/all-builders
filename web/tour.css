@@ -1,0 +1,215 @@
+/* Eddy's tour (tour.js): a centred card over the dimmed page, one slide per feature, in the site theme: grotesk
+   titles, blue / mint / ink, near-square buttons. Each slide's picture is drawn at 520 × 270 and scaled to fit. */
+
+/* Eddy's button, bottom right; a "Need a hand?" bubble until he has been met */
+.tg-launch { position: fixed; right: 18px; bottom: 18px; z-index: 40; display: flex; align-items: flex-end; gap: 6px; min-height: 0; padding: 0; background: none; box-shadow: none; }
+.tg-launch:hover { box-shadow: none; }
+.tg-launch img { width: 68px; height: 68px; border-radius: 50%; object-fit: cover; object-position: center 20%; background: linear-gradient(180deg, #e8f2fd, #cfe3fb); box-shadow: 0 0 0 3px #fff, 0 10px 24px rgba(0, 17, 35, .22); transition: transform .2s ease; }
+.tg-launch:hover img { transform: translateY(-3px) rotate(-4deg); }
+.tg-hint { display: none; margin-bottom: 26px; padding: 9px 14px; border-radius: 14px 14px 2px 14px; background: #fff; box-shadow: 0 10px 24px rgba(0, 17, 35, .14), 0 0 0 1px var(--line); font: 500 14px var(--display); color: var(--ink); white-space: nowrap; }
+.tg-launch.fresh .tg-hint, .tg-launch:hover .tg-hint { display: block; animation: tg-pop .3s ease both; }
+.tg-launch.fresh img { animation: tg-wave 2.4s ease-in-out infinite; }
+@keyframes tg-wave { 0%, 60%, 100% { transform: none; } 70% { transform: rotate(-8deg); } 80% { transform: rotate(6deg); } 90% { transform: rotate(-4deg); } }
+@keyframes tg-pop { from { opacity: 0; transform: translateY(6px) scale(.96); } }
+
+/* "Show me on the page": the part lights up for a moment */
+.tg-lit { animation: tg-lit 2.6s ease; border-radius: 12px; }
+@keyframes tg-lit { 0%, 70% { box-shadow: 0 0 0 3px var(--blue), 0 0 0 10px rgba(2, 113, 228, .18); } 100% { box-shadow: 0 0 0 3px transparent; } }
+
+/* the card */
+.tg-modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; overflow-y: auto; background: rgba(0, 17, 35, .46); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); animation: tg-fade .2s ease; }
+@keyframes tg-fade { from { opacity: 0; } }
+.tg-on body { overflow: hidden; }
+.tg-card { position: relative; width: min(600px, 100%); min-width: 0; padding: 22px 32px 20px; border-radius: 16px; background: #fff; box-shadow: 0 30px 80px rgba(0, 17, 35, .35); text-align: center; }
+.tg-card button.tg-x { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; min-height: 0; padding: 0; border-radius: 2px; background: none; box-shadow: none; font-size: 24px; line-height: 1; color: var(--ink-2); }
+.tg-card button.tg-x:hover { background: var(--soft); color: var(--ink); }
+.tg-eddy { display: block; width: 64px; height: 64px; margin: 0 auto 6px; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(0, 17, 35, .18)); }
+.tg-card.in .tg-eddy { animation: tg-hop .5s ease both, tg-bob 3s ease-in-out .5s infinite; }
+@keyframes tg-hop { from { transform: translateY(10px) scale(.85); opacity: 0; } 60% { transform: translateY(-4px) scale(1.04); } }
+@keyframes tg-bob { 50% { transform: translateY(-4px); } }
+.tg-card h2 { margin: 0 auto; max-width: 460px; font-size: clamp(1.55rem, 1.1rem + 1.6vw, 2.15rem); line-height: 1.12; letter-spacing: -.035em; text-wrap: balance; }
+.tg-card > p { margin: 10px auto 18px; max-width: 440px; color: var(--muted); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
+.tg-card.in > h2, .tg-card.in > p { animation: tg-up .35s ease both; }
+.tg-card.in > p { animation-delay: .05s; }
+@keyframes tg-up { from { opacity: 0; transform: translateY(6px); } }
+
+.tg-art { position: relative; overflow: hidden; border-radius: 14px; background: radial-gradient(circle, #d6dbe1 1px, transparent 1.4px) 0 0 / 16px 16px, var(--soft); box-shadow: inset 0 0 0 1px var(--line-2); text-align: left; }
+.tg-stage { position: absolute; left: 0; top: 0; width: 520px; height: 270px; transform-origin: 0 0; }
+.tg-card.in .tg-stage { animation: tg-up .4s ease .08s both; }
+.tg-card button.tg-show { min-height: 0; margin-top: 12px; padding: 4px 6px; background: none; box-shadow: none; color: var(--blue); font-size: 14px; }
+.tg-card button.tg-show:hover { text-decoration: underline; text-underline-offset: 3px; }
+.tg-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-top: 14px; }
+.tg-foot button.tg-back { justify-self: start; min-height: 44px; padding: 0 14px; background: none; box-shadow: none; color: var(--ink-2); font-size: 15px; }
+.tg-foot button.tg-back:hover { background: var(--soft); color: var(--ink); }
+.tg-foot button.tg-next { justify-self: end; min-height: 46px; padding: 0 22px; background: var(--ink); color: #fff; box-shadow: none; font-size: 15px; }
+.tg-foot button.tg-next:hover { background: var(--blue); color: #fff; }
+.tg-dots { display: flex; gap: 2px; }
+.tg-dots button { width: 20px; height: 24px; min-height: 0; padding: 0; background: none; box-shadow: none; display: grid; place-items: center; }
+.tg-dots button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: width .2s ease, background-color .2s ease; }
+.tg-dots button:hover::before { background: var(--dim); }
+.tg-dots button[aria-selected="true"]::before { width: 18px; border-radius: 4px; background: var(--ink); }
+
+/* ---------- the pictures (520 × 270) ---------- */
+.tg-stage .tg-hand { position: absolute; width: 26px; z-index: 5; filter: drop-shadow(0 3px 4px rgba(0, 17, 35, .3)); opacity: 0; }
+.tm-win { position: relative; overflow: hidden; border-radius: 10px; background: #fff; box-shadow: 0 14px 30px rgba(0, 17, 35, .12), 0 0 0 1px var(--line); }
+.tm-bar { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 12px; background: #f1f3f5; border-bottom: 1px solid var(--line-2); }
+.tm-lights { display: flex; gap: 5px; } .tm-lights i { width: 8px; height: 8px; border-radius: 50%; background: #d3d8de; }
+.tm-url { flex: 0 1 220px; padding: 3px 10px; border-radius: 99px; background: #fff; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tm-shop { display: flex; gap: 14px; padding: 18px; width: 56%; }
+.tm-thumb { flex: none; width: 74px; height: 74px; border-radius: 8px; background: linear-gradient(135deg, #eef0f3, #dfe4ea); position: relative; }
+.tm-thumb::after { content: ""; position: absolute; left: 26px; top: 10px; width: 22px; height: 54px; border-radius: 5px; background: #fff; box-shadow: 0 0 0 2px var(--ink-2); }
+.tm-thumb.b::after { left: 18px; top: 16px; width: 38px; height: 38px; border-radius: 8px; }
+.tm-lines { display: grid; align-content: start; gap: 6px; font-size: 12px; }
+.tm-lines b { font: 500 13px/1.25 var(--display); color: var(--ink); }
+.tm-lines i { font-style: normal; font: 500 15px var(--display); color: var(--ink); }
+.tm-lines em { width: fit-content; padding: 4px 10px; border-radius: 99px; background: #ffd814; font-style: normal; font-size: 11px; color: var(--ink); }
+.tm-panel { position: absolute; top: 32px; right: 0; bottom: 0; width: 44%; display: grid; align-content: start; gap: 8px; padding: 12px; background: #fff; border-left: 1px solid var(--line); }
+.tm-brand { display: flex; align-items: center; gap: 6px; font: 500 12px var(--display); color: var(--ink); }
+.tm-brand svg { width: 16px; height: 16px; }
+.tm-verdict { padding: 8px 10px; border-left: 4px solid; border-radius: 6px; }
+.tm-verdict b { display: block; font: 500 15px var(--display); }
+.tm-verdict small { display: block; font-size: 11px; color: var(--ink-2); line-height: 1.35; }
+.tm-verdict.red { border-color: var(--red); background: var(--red-bg); } .tm-verdict.red b { color: var(--red); }
+.tm-proof { width: fit-content; padding: 4px 9px; border-radius: 99px; background: var(--blue-pale); font-size: 10.5px; color: var(--blue-2); }
+
+/* hello: a listing with its answer, and the numbers */
+.tm-hello .tm-win { position: absolute; left: 26px; top: 20px; width: 468px; height: 190px; }
+.tm-facts { position: absolute; left: 26px; right: 26px; bottom: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tm-facts li { padding: 7px 12px; border-radius: 8px; background: #fff; box-shadow: 0 6px 14px rgba(0, 17, 35, .08), 0 0 0 1px var(--line-2); font-size: 11px; color: var(--muted); }
+.tm-facts b { margin-right: 6px; font: 500 16px var(--display); color: var(--ink); }
+.tg-card.in [data-slide="hello"] .tm-verdict { animation: tg-up .4s ease .5s both; }
+.tg-card.in [data-slide="hello"] .tm-facts li { animation: tg-up .35s ease both; }
+.tg-card.in [data-slide="hello"] .tm-facts li:nth-child(1) { animation-delay: .8s; } .tg-card.in [data-slide="hello"] .tm-facts li:nth-child(2) { animation-delay: .95s; } .tg-card.in [data-slide="hello"] .tm-facts li:nth-child(3) { animation-delay: 1.1s; }
+
+/* views: four people, Marketplace gets picked */
+.tm-views { position: absolute; left: 24px; right: 24px; top: 34px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.tm-view { display: grid; justify-items: center; gap: 6px; padding: 10px 6px 12px; border-radius: 10px; background: #fff; box-shadow: 0 8px 18px rgba(0, 17, 35, .08), 0 0 0 1px var(--line); }
+.tm-view img { width: 92px; height: 120px; object-fit: contain; mix-blend-mode: multiply; }
+.tm-view b { font: 500 13px var(--display); color: var(--ink-2); }
+.tg-card.in .tm-view.pick { animation: tm-pick .3s ease 1.5s both; }
+@keyframes tm-pick { to { box-shadow: 0 0 0 2px var(--blue), 0 12px 24px rgba(2, 113, 228, .25); transform: translateY(-4px); } }
+.tg-card.in [data-slide="views"] .tg-hand { animation: tm-hand-views 1.8s ease .2s both; }
+@keyframes tm-hand-views { from { opacity: 0; left: 440px; top: 250px; } 25% { opacity: 1; } 75% { left: 200px; top: 110px; transform: none; } 85% { transform: scale(.85); } to { opacity: 1; left: 200px; top: 110px; transform: none; } }
+
+/* answers: four checks tick, then the four answers */
+.tm-checks { position: absolute; left: 24px; right: 24px; top: 26px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.tm-checks span { padding: 6px 12px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px var(--line); font-size: 12px; color: var(--ink-2); }
+.tm-checks span::before { content: "✓"; margin-right: 6px; color: var(--green); font-weight: 600; }
+.tm-ans { position: absolute; left: 34px; right: 34px; top: 90px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tm-ans li { padding: 10px 14px; border-left: 4px solid; border-radius: 8px; font-size: 11.5px; color: var(--ink-2); box-shadow: 0 6px 14px rgba(0, 17, 35, .06); }
+.tm-ans b { display: block; font: 500 16px var(--display); letter-spacing: -.02em; }
+.tm-ans .red { border-color: var(--red); background: var(--red-bg); } .tm-ans .red b { color: var(--red); }
+.tm-ans .amber { border-color: #f0a020; background: var(--amber-bg); } .tm-ans .amber b { color: var(--amber); }
+.tm-ans .green { border-color: #3bbf63; background: var(--green-bg); } .tm-ans .green b { color: var(--green); }
+.tm-ans .grey { border-color: #9aa3ad; background: var(--unknown-bg); } .tm-ans .grey b { color: var(--unknown); }
+.tg-card.in .tm-checks span, .tg-card.in .tm-ans li { animation: tg-up .3s ease both; }
+.tg-card.in .tm-checks span:nth-child(2) { animation-delay: .15s; } .tg-card.in .tm-checks span:nth-child(3) { animation-delay: .3s; } .tg-card.in .tm-checks span:nth-child(4) { animation-delay: .45s; }
+.tg-card.in .tm-ans li:nth-child(1) { animation-delay: .75s; } .tg-card.in .tm-ans li:nth-child(2) { animation-delay: .9s; } .tg-card.in .tm-ans li:nth-child(3) { animation-delay: 1.05s; } .tg-card.in .tm-ans li:nth-child(4) { animation-delay: 1.2s; }
+
+/* shop page: the shield gets pressed, the panel slides in */
+.tm-browser .tm-win { position: absolute; left: 26px; top: 20px; width: 468px; height: 230px; }
+.tm-ext { position: absolute; top: 6px; right: 10px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.tm-ext svg { width: 15px; height: 15px; }
+.tg-card.in .tm-ext { animation: tm-press .3s ease 1.45s both; }
+@keyframes tm-press { 50% { transform: scale(.85); box-shadow: 0 0 0 4px rgba(2, 113, 228, .25); } }
+.tm-panel.slide { transform: translateX(105%); }
+.tg-card.in .tm-panel.slide { animation: tm-slide .45s cubic-bezier(.2, .8, .2, 1) 1.6s both; }
+@keyframes tm-slide { to { transform: none; } }
+.tg-card.in [data-slide="shop"] .tg-hand { animation: tm-hand-shop 1.8s ease .2s both; }
+@keyframes tm-hand-shop { from { opacity: 0; left: 300px; top: 220px; } 25% { opacity: 1; } 75% { left: 474px; top: 36px; transform: none; } 85% { transform: scale(.85); } 92% { opacity: 1; } to { opacity: 0; left: 474px; top: 36px; } }
+
+/* paste: the title types itself, Check is pressed, the agents light up */
+.tm-form { position: absolute; left: 24px; top: 30px; width: 250px; display: grid; gap: 8px; padding: 16px; border-radius: 10px; background: #fff; box-shadow: 0 10px 22px rgba(0, 17, 35, .08), 0 0 0 1px var(--line); }
+.tm-form small { font-size: 11px; color: var(--muted); }
+.tm-field { display: block; height: 34px; padding: 0 10px; border-radius: 2px; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); font-size: 12px; line-height: 34px; color: var(--ink); white-space: nowrap; overflow: hidden; }
+.tm-typed { display: inline-block; max-width: 27ch; overflow: hidden; white-space: nowrap; vertical-align: top; border-right: 1.5px solid var(--blue); }
+.tg-card.in .tm-typed { animation: tm-type 1.2s steps(26) .3s both; }
+@keyframes tm-type { from { width: 0; } to { width: 27ch; } }
+.tm-go { width: fit-content; margin-top: 6px; padding: 9px 16px; border-radius: 2px; background: var(--blue); color: #fff; font-size: 12px; }
+.tg-card.in .tm-go { animation: tm-press .3s ease 1.75s both; }
+.tm-agents { position: absolute; left: 298px; top: 30px; width: 196px; display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; counter-reset: a; }
+.tm-agents li { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: #fff; box-shadow: 0 0 0 1px var(--line-2); font-size: 12px; color: var(--dim); }
+.tm-agents li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.tg-card.in .tm-agents li { animation: tm-agent .3s ease both; }
+@keyframes tm-agent { to { color: var(--ink); box-shadow: 0 0 0 1px var(--line), 0 4px 10px rgba(0, 17, 35, .06); } }
+.tg-card.in .tm-agents li::before { animation: tm-light .3s ease both; animation-delay: inherit; }
+@keyframes tm-light { to { background: #3bbf63; box-shadow: 0 0 0 3px rgba(59, 191, 99, .2); } }
+.tg-card.in .tm-agents li:nth-child(1) { animation-delay: 2.1s; } .tg-card.in .tm-agents li:nth-child(2) { animation-delay: 2.35s; } .tg-card.in .tm-agents li:nth-child(3) { animation-delay: 2.6s; }
+.tg-card.in .tm-agents li:nth-child(4) { animation-delay: 2.85s; } .tg-card.in .tm-agents li:nth-child(5) { animation-delay: 3.1s; } .tg-card.in .tm-agents li:nth-child(6) { animation-delay: 3.35s; }
+.tg-card.in [data-slide="paste"] .tg-hand { animation: tm-hand-paste 1.6s ease .5s both; }
+@keyframes tm-hand-paste { from { opacity: 0; left: 260px; top: 240px; } 25% { opacity: 1; } 75% { left: 92px; top: 150px; transform: none; } 85% { transform: scale(.85); } 95% { opacity: 1; } to { opacity: 0; left: 92px; top: 150px; } }
+
+/* talk: the voice screen and WhatsApp */
+.tm-talk { position: absolute; inset: 18px 40px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.tm-phone { position: relative; display: grid; align-content: center; justify-items: center; gap: 10px; padding: 14px; border-radius: 22px 22px 0 0; background: #fff; box-shadow: 0 14px 30px rgba(0, 17, 35, .12), 0 0 0 1px var(--line); text-align: center; }
+.tm-phone b { font: 500 16px var(--display); color: var(--ink); }
+.tm-phone small { font-size: 11px; color: var(--muted); }
+.tm-mic { position: relative; display: grid; place-items: center; width: 70px; height: 70px; border-radius: 50%; background: var(--blue); }
+.tm-mic::before, .tm-mic::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 0 rgba(2, 113, 228, .35); animation: tm-ring 1.8s ease-out infinite; }
+.tm-mic::after { animation-delay: .9s; }
+@keyframes tm-ring { to { box-shadow: 0 0 0 22px rgba(2, 113, 228, 0); } }
+.tm-mic i { width: 16px; height: 26px; border-radius: 8px; background: #fff; }
+.tm-phone.wa { align-content: start; justify-items: stretch; gap: 7px; padding: 0 0 12px; overflow: hidden; background: #efe7dd; text-align: left; }
+.tm-wahead { padding: 10px 14px; background: #075e54; color: #fff; font: 500 13px var(--display); }
+.tm-msg { max-width: 82%; margin: 0 10px; padding: 6px 9px; border-radius: 8px; background: #fff; font-size: 11px; color: var(--ink-2); box-shadow: 0 1px 1px rgba(0, 0, 0, .08); }
+.tm-msg.me { justify-self: end; background: #d9fdd3; }
+.tm-msg b { display: block; color: var(--red); font: 500 13px var(--display); }
+.tm-msg.voice { display: flex; align-items: center; gap: 8px; width: 140px; }
+.tm-msg.voice i { flex: 1; height: 10px; background: repeating-linear-gradient(90deg, #7a8a99 0 2px, transparent 2px 4px); border-radius: 2px; }
+.tg-card.in .tm-msg { animation: tg-up .3s ease both; }
+.tg-card.in .tm-msg:nth-child(2) { animation-delay: .4s; } .tg-card.in .tm-msg:nth-child(3) { animation-delay: 1s; } .tg-card.in .tm-msg:nth-child(4) { animation-delay: 1.5s; }
+
+/* proof: false alarms, and attacks struck out */
+.tm-bars { position: absolute; left: 26px; top: 66px; width: 250px; display: grid; gap: 10px; padding: 16px; border-radius: 10px; background: #fff; box-shadow: 0 10px 22px rgba(0, 17, 35, .08), 0 0 0 1px var(--line); font-size: 12px; color: var(--ink-2); }
+.tm-bars small { font-size: 11px; color: var(--muted); }
+.tm-bars div { display: grid; grid-template-columns: 84px 1fr 20px; align-items: center; gap: 8px; }
+.tm-bars i { height: 12px; width: var(--w); border-radius: 2px; background: var(--bar-other); }
+.tm-bars i.me { background: var(--blue); }
+.tm-bars b { font: 500 14px var(--display); color: var(--ink); text-align: right; }
+.tg-card.in .tm-bars i { animation: tm-grow .8s ease .3s both; }
+@keyframes tm-grow { from { width: 0; } }
+.tm-attacks { position: absolute; left: 300px; top: 78px; width: 196px; display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tm-attacks li { padding: 9px 12px; border-radius: 8px; background: #fff; box-shadow: 0 0 0 1px var(--line); font-size: 12px; color: var(--ink-2); text-decoration: line-through; text-decoration-color: transparent; }
+.tm-attacks li::before { content: "⚠ "; color: var(--amber); }
+.tg-card.in .tm-attacks li { animation: tm-strike .4s ease both; }
+.tg-card.in .tm-attacks li:nth-child(1) { animation-delay: 1s; } .tg-card.in .tm-attacks li:nth-child(2) { animation-delay: 1.3s; } .tg-card.in .tm-attacks li:nth-child(3) { animation-delay: 1.6s; }
+@keyframes tm-strike { to { text-decoration-color: var(--red); color: var(--muted); background: var(--soft); } }
+
+/* anywhere: five ways in */
+.tm-prods { position: absolute; left: 20px; right: 20px; top: 60px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.tm-prods span { display: grid; justify-items: center; gap: 10px; padding: 18px 6px; border-radius: 10px; background: #fff; box-shadow: 0 10px 22px rgba(0, 17, 35, .08), 0 0 0 1px var(--line); font: 500 12px/1.25 var(--display); color: var(--ink-2); text-align: center; }
+.tm-prods i { width: 46px; height: 46px; border-radius: 12px; background: var(--c); box-shadow: 0 8px 16px rgba(0, 17, 35, .15); }
+.tg-card.in .tm-prods span { animation: tg-up .35s ease both; }
+.tg-card.in .tm-prods span:nth-child(2) { animation-delay: .1s; } .tg-card.in .tm-prods span:nth-child(3) { animation-delay: .2s; } .tg-card.in .tm-prods span:nth-child(4) { animation-delay: .3s; } .tg-card.in .tm-prods span:nth-child(5) { animation-delay: .4s; }
+
+/* your turn: name a product */
+.tm-try { position: absolute; left: 40px; right: 40px; top: 30px; display: grid; justify-items: center; gap: 12px; }
+.tm-try img { width: 110px; height: 120px; object-fit: contain; }
+.tm-try input { width: 100%; height: 44px; padding: 0 14px; border: 0; border-radius: 2px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line), 0 6px 14px rgba(0, 17, 35, .06); font-size: 15px; }
+.tm-try input:focus { outline: none; box-shadow: inset 0 0 0 1.5px var(--blue); }
+.tm-try button { min-height: 40px; }
+
+@media (max-width: 520px) {
+  .tg-card { padding: 18px 18px 14px; }
+  .tg-eddy { width: 54px; height: 54px; }
+  .tg-card > p { font-size: 14px; margin-bottom: 14px; }
+  .tg-foot { gap: 6px; }
+  .tg-foot button.tg-next { padding: 0 14px; }
+  .tg-foot button.tg-back { padding: 0 8px; }
+  .tg-dots button { width: 13px; }
+  .tg-dots button::before { width: 6px; height: 6px; }
+  .tg-dots button[aria-selected="true"]::before { width: 12px; }
+  .tg-launch img { width: 58px; height: 58px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tg-modal, .tg-card.in *, .tg-launch.fresh img, .tg-lit { animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+}
+@media print { .tg-launch, .tg-modal { display: none !important; } }
+
+/* chat: one phone, the site's chat */
+.tm-talk.solo { grid-template-columns: minmax(0, 300px); justify-content: center; }
+.tm-phone.chat { background: var(--soft); }
+.tm-phone.chat .tm-wahead { display: flex; align-items: center; gap: 8px; background: #fff; color: var(--ink); border-bottom: 1px solid var(--line); }
+.tm-phone.chat .tm-wahead svg { width: 18px; height: 18px; }
+.tm-phone.chat .tm-msg.me { background: var(--blue); color: #fff; }
+.tm-msg b.amber { color: var(--amber); }

@@ -1,0 +1,31 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'org.safeshelf.android'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'org.safeshelf.android'
+        minSdk 26
+        targetSdk 36
+        versionCode 2
+        versionName '0.2.0'
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    sourceSets.main.assets.srcDir layout.buildDirectory.dir('generated/webAssets')
+}
+
+// Package the real web client at build time; never copy credentials, logs or deployment files.
+tasks.register('bundleWeb', Sync) {
+    from('../../web') {
+        include 'site/chat.html', 'site/theme.css', 'site/site.js', 'site/account.js', 'site/assets/**'
+        include 'firebase-app.js', 'firebase-config.js', 'quota.js', 'signin-card.js', 'signin-card.css'
+    }
+    into layout.buildDirectory.dir('generated/webAssets/web')
+    doLast {
+        def chat = new File(destinationDir, 'site/chat.html')
+        chat.text = chat.text.replace('</head>', '<link rel="stylesheet" href="android-theme.css"></head>')
+        def signin = new File(destinationDir, 'signin-card.js')
+        signin.text = signin.text.replace('right.append(googleBtn,', 'googleBtn.hidden = true; right.append(googleBtn,')
+    }
+}
+tasks.named('preBuild').configure { dependsOn 'bundleWeb' }

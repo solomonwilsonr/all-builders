@@ -1,8 +1,9 @@
 import { identity, requireAdmin, adminStatus } from "./rbac.js";
 import { runCheck, reviewSummary, techCheck, priceCheck, saveToShelf, askAgent, getEvidence, agentSession, agentStream } from "./check.js";
-import { API_BASE, SHELF_SYNC } from "./config.js";
+import { API_BASE, SHELF_SYNC, SIGNIN_URL } from "./config.js";
 import { callOp, opsStatus } from "./ops.js";
 import { acceptSession, account, openSignIn, signOut, SIGNIN_ORIGINS } from "./session.js";
+import { pushItem, removeFromShelf, shelfChange, syncShelf } from "./shelf-sync.js";
 
 // The toolbar icon opens popup.html (My Shelf, on/off). The badge shows OFF while SafeShelf is turned off.
 const isEnabled = async () => (await chrome.storage.local.get("enabled")).enabled !== false;
@@ -16,12 +17,15 @@ chrome.storage.onChanged.addListener((changes) => { if (changes.enabled) syncBad
 
 const mustBeOn = async () => { if (!(await isEnabled())) throw new Error("SafeShelf is turned off"); };
 
-// Local copy of the shelf so it can be viewed before the live API and login exist (this browser only).
+// My Shelf in this browser, and in the signed-in account so the website shows it too (shelf-sync.js).
 async function rememberLocally(item, meta) {
-  const { shelf = [] } = await chrome.storage.local.get("shelf");
   const id = `${item.product_id || "unmatched"}|${meta.url}`;
-  const entry = { id, product_id: item.product_id, title: meta.title || meta.url, url: meta.url, image_url: /^https?:\/\//i.test(meta.image_url || "") ? meta.image_url : null, host: meta.host, level: meta.level || null, saved_at: item.added_at || new Date().toISOString(), next_check: item.next_check || null, synced: !!item.synced };
-  await chrome.storage.local.set({ shelf: [entry, ...shelf.filter((i) => i.id !== id)].slice(0, 200) });
+  await shelfChange(async () => {
+    const { shelf = [] } = await chrome.storage.local.get("shelf");
+    const entry = { id, product_id: item.product_id, title: meta.title || meta.url, url: meta.url, image_url: /^https?:\/\//i.test(meta.image_url || "") ? meta.image_url : null, host: meta.host, level: meta.level || null, saved_at: item.added_at || new Date().toISOString(), next_check: item.next_check || null, synced: !!item.synced };
+    await chrome.storage.local.set({ shelf: [entry, ...shelf.filter((i) => i.id !== id)].slice(0, 200) });
+  });
+  pushItem(id); // not awaited: saving here doesn't wait for the account
 }
 
 chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
@@ -62,18 +66,19 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
       await rememberLocally(item, msg.meta || {});
       return item;
     },
-    "safeshelf:unsave": async () => { // the bookmark on a product page, clicked again: My Shelf is in this browser, so removing it here is enough
-      const { shelf = [] } = await chrome.storage.local.get("shelf");
-      const left = shelf.filter((i) => i.url !== msg.url);
-      await chrome.storage.local.set({ shelf: left });
-      return shelf.length - left.length;
-    },
+    "safeshelf:unsave": async () => removeFromShelf((i) => i.url !== msg.url), // the bookmark on a product page, clicked again
+    "safeshelf:shelf-remove": async () => removeFromShelf((i) => i.id !== msg.id), // Remove on the My Shelf page
+    "safeshelf:shelf-sync": async () => ({ ...(await syncShelf()), website: new URL("site/shelf.html", SIGNIN_URL).href }),
     "safeshelf:shelf-image": async () => { // adds a photo to a saved product that has none; never replaces one
       if (!/^https?:\/\//i.test(msg.image_url || "")) return false;
-      const { shelf = [] } = await chrome.storage.local.get("shelf");
-      if (!shelf.some((i) => i.url === msg.url && !i.image_url)) return false;
-      await chrome.storage.local.set({ shelf: shelf.map((i) => (i.url === msg.url && !i.image_url ? { ...i, image_url: msg.image_url } : i)) });
-      return true;
+      const ids = await shelfChange(async () => {
+        const { shelf = [] } = await chrome.storage.local.get("shelf");
+        const hit = shelf.filter((i) => i.url === msg.url && !i.image_url).map((i) => i.id);
+        if (hit.length) await chrome.storage.local.set({ shelf: shelf.map((i) => (hit.includes(i.id) ? { ...i, image_url: msg.image_url } : i)) });
+        return hit;
+      });
+      ids.forEach((id) => pushItem(id));
+      return ids.length > 0;
     },
     "safeshelf:open-shelf": async () => chrome.tabs.create({ url: chrome.runtime.getURL("shelf.html") }),
     "safeshelf:account": async () => account(), // null: nobody is signed in
@@ -94,6 +99,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, reply) => {
   acceptSession(msg)
     .then((who) => {
       reply({ ok: true, role: who.role });
+      syncShelf(); // bring this browser's shelf into the account, and the account's into this browser
       if (sender.tab?.id) setTimeout(() => chrome.tabs.remove(sender.tab.id).catch(() => {}), 2500); // the page says it closes by itself
     })
     .catch((err) => reply({ ok: false, error: err.message }));

@@ -1,0 +1,12 @@
+# A real Chrome (Chromium) with the SafeShelf extension, streamed with noVNC. See server.py.
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      chromium xvfb x11vnc novnc python3 python3-aiohttp python3-google-auth python3-requests \
+      fonts-noto-core fonts-noto-cjk fonts-noto-color-emoji ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/safeshelf
+COPY ext ./ext
+COPY remote ./remote
+COPY server.py view.html ./
+ENV PORT=8080 PYTHONUNBUFFERED=1
+CMD ["python3", "/opt/safeshelf/server.py"]

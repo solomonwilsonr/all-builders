@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kasauti — Check before you buy</title>
+<meta name="description" content="Kasauti checks any shopping listing for recalls, hazard reports, copied photos and fake shops, in Chrome or from your own agent over MCP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles-v2.css">
+</head>
+<body>
+
+<header class="nav nav-light">
+  <div class="wrap nav-in">
+    <a class="logo" href="#top" aria-label="Kasauti, top of page">
+      <span class="logo-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 5.5v5.3c0 4.4 2.9 7.6 7 8.7 4.1-1.1 7-4.3 7-8.7V5.5L12 3Z"/><path d="m8.6 11.6 2.2 2.2 4-4.4"/></svg></span>
+      <span>Kasauti</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#checks">Checks</a>
+      <a href="#access">Product</a>
+      <a href="#agents">Agents</a>
+      <a href="#how">How it works</a>
+      <a href="../api-integration/index.html">Docs</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-line-nav" href="../api-integration/index.html">Log in</a>
+      <a class="btn btn-indigo" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero hero-light">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <h1>Shop Safer<br>with Kasauti <span class="hero-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 5.5v5.3c0 4.4 2.9 7.6 7 8.7 4.1-1.1 7-4.3 7-8.7V5.5L12 3Z"/><path d="m8.6 11.6 2.2 2.2 4-4.4"/></svg></span> Checks</h1>
+      <p class="lede">With Kasauti, you catch recalls, fake shops and copied listings before you pay — every flag checked and sourced, never a guess.</p>
+      <div class="btns">
+        <a class="btn btn-indigo lg" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome <span aria-hidden="true">→</span></a>
+        <a class="btn btn-line lg" href="#how">View Demo</a>
+      </div>
+
+      <div class="hero-shot">
+        <div class="shot-window">
+          <div class="shot-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="shot-tab"><i></i><i></i></span>
+            <span class="shot-url"><i>🔒</i> app.kasauti.io</span>
+            <span class="shot-icons">⤴ ＋ ⧉</span>
+          </div>
+          <div class="shot-body">
+            <aside class="shot-side">
+              <p class="side-brand"><span class="logo-badge sm"><svg viewBox="0 0 24 24"><path d="M12 3 5 5.5v5.3c0 4.4 2.9 7.6 7 8.7 4.1-1.1 7-4.3 7-8.7V5.5L12 3Z"/></svg></span>Kasauti</p>
+              <nav class="side-nav">
+                <a class="on">▦ Dashboard</a>
+                <a>✉ Inbox</a>
+                <a>🧾 Listings</a>
+                <a>👤 Sellers</a>
+                <a>⇄ Integrations</a>
+              </nav>
+              <p class="side-label">JOB MANAGER</p>
+              <nav class="side-nav"><a>🎫 Tickets</a></nav>
+            </aside>
+            <main class="shot-main">
+              <h4>Dashboard</h4>
+              <p class="shot-sub">Insights</p>
+              <div class="shot-grid">
+                <div class="shot-tile"><span>Checked today</span><b>1,220</b></div>
+                <div class="shot-tile"><span>Flagged</span><b>32</b></div>
+                <div class="shot-tile"><span>Under review</span><b>391</b></div>
+                <div class="shot-tile"><span>Recalls matched</span><b>123</b></div>
+                <div class="shot-tile"><span>Verified safe</span><b>3,761</b></div>
+                <div class="shot-tile"><span>Avg check time</span><b>2.4s</b></div>
+              </div>
+              <div class="shot-chart">
+                <div class="shot-chart-head"><span>Checks</span><span>Sellers</span><span>Flags</span></div>
+                <p class="shot-chart-stat">22.5K checks <b>+11%</b></p>
+                <svg viewBox="0 0 300 70" class="spark" preserveAspectRatio="none">
+                  <polyline points="0,55 30,48 60,50 90,35 120,40 150,22 180,30 210,18 240,24 270,10 300,16" fill="none" stroke="#4f46e5" stroke-width="2.5"/>
+                  <polyline points="0,55 30,48 60,50 90,35 120,40 150,22 180,30 210,18 240,24 270,10 300,16 300,70 0,70" fill="url(#g1)" stroke="none"/>
+                  <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4f46e5" stop-opacity=".18"/><stop offset="100%" stop-color="#4f46e5" stop-opacity="0"/></linearGradient></defs>
+                </svg>
+              </div>
+            </main>
+            <aside class="shot-right">
+              <p class="list-label">Recent checks</p>
+              <div class="shot-row"><span class="avatar a1"></span><div><b>CX-65 Charger</b><small>289 listings scanned</small></div><span class="tag flag">Careful</span></div>
+              <div class="shot-row"><span class="avatar a2"></span><div><b>USB-C Cable 2m</b><small>187 listings scanned</small></div><span class="tag ok">Safe</span></div>
+              <div class="shot-row"><span class="avatar a3"></span><div><b>Power Bank 10K</b><small>171 listings scanned</small></div><span class="tag warn">Review</span></div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="shot-float float-top">
+          <div class="float-head"><span class="dot-y"></span>May 26, 2025<i>⋯</i></div>
+          <p class="float-title">Evidence checklist <b>3/4</b></p>
+          <div class="float-bars"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+          <div class="float-foot"><span>💬 3</span><span>📝 6</span><span class="avatars"><i class="a1"></i><i class="a2"></i><i class="a3"></i></span></div>
+        </div>
+
+        <div class="shot-float float-bottom">
+          <div class="float-skel"><span></span><span></span><span></span></div>
+          <p class="float-title">Recall Watch</p>
+          <div class="float-bars"><span class="on"></span><span></span></div>
+          <div class="float-tags"><span class="tag-chip blue">Official Recall</span><span class="tag-chip orange">Hazard Report</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST / SOURCES ===== -->
+  <section class="sources wrap">
+    <p class="eyebrow">Checked against</p>
+    <ul class="logo-row">
+      <li>CPSC <span>United States</span></li>
+      <li>OECD GlobalRecalls <span>AU · JP · KR · SG · TW</span></li>
+      <li>CCPA &amp; BIS <span>India</span></li>
+      <li>CAA <span>Japan, live</span></li>
+      <li>27,000+ <span>catalog listings</span></li>
+    </ul>
+  </section>
+
+  <!-- ===== STAT COMPARISON ===== -->
+  <section class="stat-band">
+    <div class="wrap">
+      <p class="eyebrow light">SAFESHELFBENCH</p>
+      <h2>6x fewer false alarms<br>than keyword rules.</h2>
+      <p class="sub">Benchmarked against keyword-based flagging on the same 40 never-recalled products, 10K+ listings deep.</p>
+      <div class="compare-card">
+        <div class="compare-row">
+          <div class="compare-head"><span>Never-recalled products</span><b>40 REQUESTS · ONE PASS</b></div>
+          <div class="bar"><span class="bar-k">Kasauti</span><div class="bar-track"><div class="bar-fill" style="--v:5%"></div></div><b>2 false alarms</b></div>
+          <div class="bar"><span class="bar-k dim">Keyword rules</span><div class="bar-track"><div class="bar-fill dim" style="--v:27.5%"></div></div><b class="dim">11 false alarms</b></div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b>2</b><span>false alarms on 40 never-recalled products</span></div>
+        <div class="stat"><b>25</b><span>real recalls caught in the test set</span></div>
+        <div class="stat"><b>26</b><span>languages the verdict speaks back in</span></div>
+      </div>
+      <a class="btn btn-solid" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">▸ Add to Chrome — free</a>
+    </div>
+  </section>
+
+  <!-- ===== FEATURE TABS ===== -->
+  <section class="checks wrap" id="checks">
+    <p class="eyebrow">Features</p>
+    <h2>Built for every kind of check.</h2>
+    <p class="sub">Whatever the listing is hiding, we handle the evidence part.</p>
+
+    <div class="tabs" role="tablist" aria-label="Checks">
+      <button class="tab on" role="tab" aria-selected="true" data-tab="photos">Copied Photos</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="price">Price Anomaly</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="seller">Seller Age</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="recalls">Official Recalls</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="hazard">Hazard Reports</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="agents">Agents · MCP</button>
+    </div>
+
+    <div class="tab-panel" data-panel>
+      <div class="tab-copy">
+        <h3 data-field="title">Spot photos lifted from the real listing</h3>
+        <p data-field="body">Reverse-image and perceptual-hash matching catches photos copied from the brand's official page, a near-identical competitor, or a listing that was flagged before.</p>
+        <ul class="check-list" data-field="list">
+          <li>Perceptual hash against 27,000+ catalog listings</li>
+          <li>Flags near-duplicates, not just exact copies</li>
+          <li>Shown with the original photo, side by side</li>
+        </ul>
+      </div>
+      <div class="tab-window">
+        <div class="win-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>copied_photos.check</span></div>
+        <pre class="win-body"><code data-field="code">{
+  "check": "copied_photos",
+  "result": "FLAG",
+  "match": "official listing, 97% similarity",
+  "seller_authorised": false,
+  "evidence": ["EV-114"]
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TWO WAYS TO ACCESS ===== -->
+  <section class="access wrap" id="access">
+    <p class="eyebrow">Product</p>
+    <h2>Two ways to check a listing.</h2>
+    <p class="sub">One for shoppers in the browser. One for agents that shop on their behalf.</p>
+    <div class="access-grid">
+      <article class="access-card">
+        <div class="access-shot">
+          <div class="win-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>amazon.in/dp/B0CX65SFC</span></div>
+          <div class="access-body">
+            <p class="ring-row"><span class="ring amber"><svg viewBox="0 0 52 52"><circle class="tr" cx="26" cy="26" r="22"/><circle class="ar" cx="26" cy="26" r="22"/></svg></span>Careful</p>
+            <p class="ring-row"><span class="ring"><svg viewBox="0 0 52 52"><circle class="tr" cx="26" cy="26" r="22"/></svg></span>Save</p>
+            <p class="ring-row"><span class="ring"><svg viewBox="0 0 52 52"><circle class="tr" cx="26" cy="26" r="22"/></svg></span>Ask</p>
+          </div>
+        </div>
+        <h3>Chrome extension</h3>
+        <p>A black rail waits at the edge of Amazon and Flipkart. Press Check and the ring turns amber, red, green, or grey when the evidence is thin — with a spoken verdict in 26 languages.</p>
+        <a class="link-cta" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Add to Chrome →</a>
+      </article>
+      <article class="access-card" id="agents">
+        <div class="access-shot code-shot">
+          <div class="win-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>POST /mcp</span></div>
+          <pre class="win-body"><code><span class="c">// read-only MCP tools, no write access</span>
+<span class="fn">trust_check</span>(url)
+<span class="fn">find_copies</span>(product_id)
+<span class="fn">safety_record</span>(product_id)
+<span class="fn">safer_alternatives</span>(product_id)</code></pre>
+        </div>
+        <h3>Agent &amp; REST API</h3>
+        <p>The same answers, served as ten read-only MCP tools at <code>/mcp</code> and as REST endpoints like <code>POST /v1/listings/trust-check</code>. An agent can check a listing — it can never buy, flag, or act on a shopper's behalf.</p>
+        <a class="link-cta" href="../api-integration/index.html">Connect your agent →</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="how" id="how">
+    <div class="wrap">
+      <p class="eyebrow light">Entry point</p>
+      <h2>How Kasauti checks a listing.</h2>
+      <p class="sub">From the page you're looking at, to a verdict with sources. None of it is your problem.</p>
+      <div class="how-grid">
+        <div class="how-card">
+          <p class="how-k">01 // Page</p>
+          <pre><code>GET  listing.html
+→ strip names, addresses,
+  phone numbers, emails
+→ keep only product fields</code></pre>
+        </div>
+        <div class="how-card">
+          <p class="how-k">02 // Engine</p>
+          <pre><code>POST /v1/listings/trust-check
+{
+  "title": "...", "price": 299,
+  "seller": "MegaDealz24"
+}</code></pre>
+        </div>
+        <div class="how-card">
+          <p class="how-k">03 // Records</p>
+          <pre><code>match → 27,000+ catalog
+check → recalls, hazards,
+        photos, price, shop age</code></pre>
+        </div>
+        <div class="how-card">
+          <p class="how-k">04 // Verdict</p>
+          <pre><code>colour: <span class="c">set by code, not the model</span>
+text:   Gemini, must cite
+        evidence that exists</code></pre>
+        </div>
+      </div>
+      <div class="how-flow">
+        <span>YOUR BROWSER<br><i>Chrome · WhatsApp</i></span>
+        <span class="arrow">—— read-only ——&gt;</span>
+        <span class="hi">KASAUTI CLOUD<br><i>Cloud Run · Vertex AI</i></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CLOSING CTA ===== -->
+  <section class="closing">
+    <div class="wrap closing-in">
+      <div class="closing-left">
+        <span class="badge">FOR SHOPPERS, SELLERS AND AGENTS</span>
+        <h2>Check before<br>you pay.</h2>
+        <p class="sub">Add the extension to Chrome, or point your agent at <code>/mcp</code>. Free, and it stays free for shoppers.</p>
+        <div class="btns">
+          <a class="btn btn-solid lg" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">▸ Add to Chrome</a>
+          <a class="btn btn-outline lg" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">View the source</a>
+        </div>
+        <p class="fine"><i class="dot"></i>Free · <i class="dot"></i>No sign-up · <i class="dot"></i>Works on Amazon &amp; Flipkart</p>
+      </div>
+      <blockquote class="quote">
+        <p>“DataDome kept breaking our scraper every two weeks. With Kasauti's evidence model, every flag still has a source — nothing is ever just a guess.”</p>
+        <footer>Internal review · AI Builder Cup 2026</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div class="foot-brand">
+        <span class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8"/><path d="M9 22.5 22.5 9"/></svg>KASAUTI</span>
+        <p>Safety checks for shoppers, sellers and agents.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#checks">Checks</a>
+        <a href="#access">Chrome extension</a>
+        <a href="#agents">Agent &amp; MCP API</a>
+      </div>
+      <div class="foot-col">
+        <h4>Resources</h4>
+        <a href="../api-integration/index.html">API docs</a>
+        <a href="#how">How it works</a>
+        <a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">Source on GitHub</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="#top">Not a legal finding</a>
+        <a href="#top">Privacy</a>
+      </div>
+    </div>
+    <div class="wrap foot-bottom">
+      <p>© 2026 Team Hashes · Seshu and Solomon · AI Builder Cup 2026</p>
+      <p>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</p>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  var data = {
+    photos: {
+      tab: "Copied Photos",
+      title: "Spot photos lifted from the real listing",
+      body: "Reverse-image and perceptual-hash matching catches photos copied from the brand's official page, a near-identical competitor, or a listing that was flagged before.",
+      list: ["Perceptual hash against 27,000+ catalog listings","Flags near-duplicates, not just exact copies","Shown with the original photo, side by side"],
+      code: '{\n  "check": "copied_photos",\n  "result": "FLAG",\n  "match": "official listing, 97% similarity",\n  "seller_authorised": false,\n  "evidence": ["EV-114"]\n}'
+    },
+    price: {
+      tab: "Price Anomaly",
+      title: "Catch a discount too good to be real",
+      body: "Prices are compared against the brand's own range and recent marketplace history. A 79% discount on a fast charger isn't excitement — it's a signal.",
+      list: ["Compared against brand MSRP, not just other listings","Flags discounts outside the normal range for the category","Shown alongside the seller and shop age, not alone"],
+      code: '{\n  "check": "price",\n  "result": "FLAG",\n  "listed": 299,\n  "genuine_range": [1199, 1499],\n  "evidence": ["EV-120"]\n}'
+    },
+    seller: {
+      tab: "Seller Age",
+      title: "Know how long the shop has existed",
+      body: "A shop registered 19 days ago selling a product at 79% off is a different risk than an authorised reseller open for three years. Age alone isn't a verdict, but it's never hidden.",
+      list: ["Shop registration and authorisation status","Cross-checked against the brand's reseller list","Combined with photos and price, not read alone"],
+      code: '{\n  "check": "website_age",\n  "result": "FLAG",\n  "age_days": 19,\n  "authorised_reseller": false,\n  "evidence": ["EV-131"]\n}'
+    },
+    recalls: {
+      tab: "Official Recalls",
+      title: "Match the exact product, not the category",
+      body: "CPSC, OECD GlobalRecalls, CCPA & BIS and Japan's CAA are checked against the exact model — a look-alike's recall is never shown as this product's recall.",
+      list: ["Live feeds: CPSC (US), CAA (Japan)","OECD GlobalRecalls: AU, JP, KR, SG, TW","CCPA & BIS coverage for India"],
+      code: '{\n  "check": "official_recalls",\n  "result": "OK",\n  "exact_model_match": true,\n  "open_recalls": 0\n}'
+    },
+    hazard: {
+      tab: "Hazard Reports",
+      title: "Surface reports still under review",
+      body: "Not every risk has become a recall yet. Open hazard reports on the same model are shown as 'under review' — never dressed up as a confirmed recall.",
+      list: ["Never confused with a confirmed recall","Shown with count and review status","Feeds the spoken verdict in the shopper's language"],
+      code: '{\n  "check": "safety",\n  "result": "REVIEW",\n  "open_hazard_reports": 9,\n  "evidence": ["EV-201", "EV-207"]\n}'
+    },
+    agents: {
+      tab: "Agents · MCP",
+      title: "The same evidence, for agents too",
+      body: "Ten read-only tools at /mcp and REST endpoints give an agent the same checks a shopper sees — never the ability to buy, flag, or act.",
+      list: ["Every MCP tool is read-only, by design","Same evidence model: no claim without a source","REST endpoints for anything that isn't MCP yet"],
+      code: 'POST /v1/listings/trust-check\n{\n  "url": "amazon.in/dp/B0CX65SFC"\n}\n\n→ 200 OK, same evidence as the extension'
+    }
+  };
+  var tabs = document.querySelectorAll('[data-tab]');
+  var panel = document.querySelector('[data-panel]');
+  if (!panel) return;
+  function render(key){
+    var d = data[key];
+    panel.querySelector('[data-field="title"]').textContent = d.title;
+    panel.querySelector('[data-field="body"]').textContent = d.body;
+    panel.querySelector('[data-field="list"]').innerHTML = d.list.map(function(i){return '<li>'+i+'</li>';}).join('');
+    panel.querySelector('[data-field="code"]').textContent = d.code;
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(o){ o.classList.remove('on'); o.setAttribute('aria-selected','false'); });
+      t.classList.add('on'); t.setAttribute('aria-selected','true');
+      render(t.dataset.tab);
+    });
+  });
+})();
+</script>
+</body>
+</html>

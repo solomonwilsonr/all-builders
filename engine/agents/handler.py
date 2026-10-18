@@ -21,7 +21,7 @@ import threading
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
 
-from engine import passport, region, trace
+from engine import passport, region, tenancy, trace
 from engine.agents import concierge, copilot, discovery, pipeline, research, runtime, shopper
 
 log = logging.getLogger(__name__)
@@ -73,8 +73,16 @@ def _prepare(body: dict, headers) -> tuple[str, str]:
     return mode, investigation_id
 
 
+def _owner(body: dict, request: Request) -> dict:
+    """The chat's household tools act for whoever the X-Owner-Ref header names (kept only as a hash). Set here, from
+    the request, so a message or a body field can never pick someone else's household."""
+    caller = getattr(request.state, "caller", None)
+    return {**body, "_owner": tenancy.owner_hash(request.headers.get("x-owner-ref")),
+            "_tenant": getattr(caller, "tenant_id", None) or tenancy.PUBLIC}
+
+
 async def start_agent_session(request: Request, params: dict) -> dict:
-    body = await request.json()
+    body = _owner(await request.json(), request)
     mode, investigation_id = _prepare(body, request.headers)
     runtime.start(investigation_id)
     result = await MODES[mode](body)
@@ -90,7 +98,7 @@ async def stream_agent_session(request: Request) -> StreamingResponse:
     """POST /v1/agent/sessions/stream: the same agents, with each step sent as it happens (server-sent events).
     Events: open, start (a check began), step (one finished), verdict (the colours, before the explanation is
     written), done (the full answer, same JSON as POST /v1/agent/sessions), error. Comment lines keep it alive."""
-    body = await request.json()
+    body = _owner(await request.json(), request)
     mode, investigation_id = _prepare(body, request.headers)
     loop = asyncio.get_running_loop()
     queue: asyncio.Queue = asyncio.Queue()

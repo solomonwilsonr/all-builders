@@ -11,3 +11,9 @@ skills-lock.json
 .codegraph/
 .build-research/
 extension/config.generated.js
+
+# copied from extension/ by `make web-ext`
+web/ext/
+# copied from extension/ by `make browser-ext`
+browser/ext/
+browser/__pycache__/

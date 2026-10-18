@@ -9,6 +9,10 @@ real?" in English or Hindi, as a text and a voice note. See [MODULES.md](../MODU
   trust-check + alternatives; photo -> Gemini reads the label -> identify + safety + alternatives. Voice note:
   Gemini TTS (`gemini-2.5-flash-tts`) -> OGG/Opus with ffmpeg. Each message is one investigation in the API trace
   (`WA-...`).
+- Questions (typed, a voice note, a tapped reply button) and PDF manuals go to Shelf Chat (`mode: chat`) as this
+  sender (`X-Owner-Ref: wa:<number>`, hashed by the API), so the household list, warranty dates, "my charger gets
+  hot", compatibility checks and the manual work on WhatsApp too; the API remembers the conversation. The chat's
+  tappable answers become reply buttons (up to 3); support requests and incident reports arrive as their own message.
 
 ```bash
 cd whatsapp && uv run --python 3.12 pytest -q                     # tests, no network
