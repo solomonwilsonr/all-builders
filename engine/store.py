@@ -162,8 +162,10 @@ def add_evidence(source_type: str, source_ref: str, content: dict) -> str:
     if existing:
         return existing["id"]
     evidence_id = short_id("EV-", digest)
+    # The id comes from the content hash, so two requests saving the same content at once write the same row.
     conn().execute(
-        "INSERT INTO evidence (id, source_type, source_ref, content, hash) VALUES (%s, %s, %s, %s, %s)",
+        "INSERT INTO evidence (id, source_type, source_ref, content, hash) VALUES (%s, %s, %s, %s, %s) "
+        "ON CONFLICT (id) DO NOTHING",
         (evidence_id, source_type, source_ref, body, digest))
     return evidence_id
 
