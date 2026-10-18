@@ -10,7 +10,7 @@ import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
 import { setUpRoles } from "./roles.js?v=20261018h";
 import { setUpWhatsApp } from "./whatsapp.js?v=20261018c";
-import { setUpTour } from "./tour.js?v=20261018d";
+import { setUpTour } from "./tour.js?v=20261018preview";
 
 
 const el = (tag, props = {}, ...kids) => {
@@ -544,10 +544,19 @@ function setUpTabs() {
     };
   });
   // a link to a panel (#check-own, #ask-out-loud…) opens its tab, then scrolls to the tab row
+  // Chat, Paste a listing, Ask out loud and WhatsApp open on a preview card first, like the shop-page choices; its
+  // button (or Back) swaps between the preview and the real thing
+  const view = (panel, v) => { panel.dataset.view = v; };
+  document.querySelectorAll(".trypanel[data-view]").forEach((panel) => {
+    panel.querySelector("[data-start]").onclick = () => { view(panel, "live"); panel.querySelector(".live").scrollIntoView({ behavior: "smooth", block: "nearest" }); };
+    panel.querySelector("[data-preview]").onclick = () => view(panel, "intro");
+  });
   const follow = () => {
     const tab = tabs.find((t) => t.id === `tab-${location.hash.slice(1)}`);
     if (!tab) return;
     pick(tab);
+    const panel = document.getElementById(tab.getAttribute("aria-controls"));
+    if (panel.dataset.view) view(panel, "live"); // a link straight to a tool skips its preview
     tab.closest("[role=tablist]").scrollIntoView({ block: "start" });
   };
   addEventListener("hashchange", follow);

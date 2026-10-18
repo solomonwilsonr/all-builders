@@ -16,7 +16,8 @@ const BAR = (url) => `<div class="tm-bar"><span class="tm-lights"><i></i><i></i>
 
 // the shop-page tab shows two choices first (app.js); the test browser is the one to point at
 const toTestPages = () => { if ($id("shop-page")?.dataset.mode === "choose") $id("test-start")?.click(); };
-const openTab = (id) => { const t = $id(`tab-${id}`); if (t && t.getAttribute("aria-selected") !== "true") t.click(); };
+// the tour shows the real tool, not its preview card (app.js)
+const openTab = (id) => { const t = $id(`tab-${id}`); if (t && t.getAttribute("aria-selected") !== "true") t.click(); const p = $id(id); if (p?.dataset.view) p.dataset.view = "live"; };
 const setField = (form, name, value) => { const f = form?.elements[name]; if (f) { f.value = value; f.dispatchEvent(new Event("input", { bubbles: true })); } };
 
 const SLIDES = [

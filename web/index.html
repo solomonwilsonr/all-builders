@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261018lineup">
+<link rel="stylesheet" href="style.css?v=20261018preview">
 <link rel="stylesheet" href="whatsapp.css?v=20261018c">
 <link rel="stylesheet" href="tour.css?v=20261018d">
-<script type="module" src="app.js?v=20261018lineup"></script>
+<script type="module" src="app.js?v=20261018preview"></script>
 </head>
 <body>
 <a class="skip" href="#for">Skip to the demo</a>
@@ -184,7 +184,32 @@
       </div>
     </div>
 
-    <div class="trypanel" role="tabpanel" id="chat" aria-labelledby="tab-chat" hidden>
+    <div class="trypanel" role="tabpanel" id="chat" aria-labelledby="tab-chat" data-view="intro" hidden>
+      <div class="intro">
+        <article class="pick pick-wide">
+          <div class="pv pv-chat" aria-hidden="true"><div class="pv-s">
+            <div class="pv-cw">
+              <div class="pv-bar"><span class="pv-lights"><i></i><i></i><i></i></span><span class="pv-who"><img src="site/assets/guide/eddy-hi.webp" alt=""><b>Eddy</b><small>SafeShelf chat</small></span></div>
+              <div class="pv-msgs">
+                <p class="pv-me">Is this HAIARA power bank safe?</p>
+                <p class="pv-dots"><i></i><i></i><i></i></p>
+                <div class="pv-bot"><span class="pv-mark"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Don't buy</b><small>Recalled in Japan for a fire risk, exact model W5PRO.</small><span class="pv-src">CAA notice ↗</span></div>
+                <span class="pv-chips"><i>Safer option?</i><i>Read it aloud</i></span>
+              </div>
+            </div>
+            <span class="pv-pill"><i></i>Sources under every answer</span>
+          </div></div>
+          <div class="pick-body">
+            <span class="pick-tag">Live API</span>
+            <h3>Chat with Eddy</h3>
+            <p>The same chat shoppers use on the website. Ask in your own words, paste a link or drop a screenshot.</p>
+            <ul><li>Remembers the conversation</li><li>Sources under every answer</li><li>Sign in once inside the chat</li></ul>
+            <button class="jbtn" type="button" data-start>Open the chat</button>
+          </div>
+        </article>
+      </div>
+      <div class="live">
+        <div class="modebar"><button class="back" type="button" data-preview>← Back to the preview</button><b>Chat with Eddy</b></div>
       <div class="chat-head">
         <p class="panel-lede">The real SafeShelf chat on the live API, the same one shoppers use on the website. It remembers the conversation and shows its sources under every answer.</p>
         <a class="jbtn line" href="site/chat.html" target="_blank" rel="noopener">Open full screen ↗</a>
@@ -199,9 +224,39 @@
         <div class="rbar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><b>SafeShelf Chat</b><span class="rstate">Live API</span><span class="rtime">Sign in once inside the chat to ask</span></div>
         <iframe class="chatframe" id="chatframe" title="SafeShelf chat with Eddy" data-src="site/chat.html?embed=1" src="about:blank" allow="microphone; camera; clipboard-write"></iframe>
       </div>
+      </div>
     </div>
 
-    <div class="trypanel" role="tabpanel" id="check-own" aria-labelledby="tab-check-own" hidden>
+    <div class="trypanel" role="tabpanel" id="check-own" aria-labelledby="tab-check-own" data-view="intro" hidden>
+      <div class="intro">
+        <article class="pick pick-wide">
+          <div class="pv pv-paste" aria-hidden="true"><div class="pv-s">
+            <div class="pv-form">
+              <b class="pv-h">Copy a listing from any shop</b>
+              <span class="pv-lab">Product title</span>
+              <span class="pv-field"><span class="pv-type">Anker PowerCore 10000 A1263</span></span>
+              <span class="pv-lab">Price</span>
+              <span class="pv-field short">₹1,799</span>
+              <span class="pv-go">Check it live</span>
+            </div>
+            <div class="pv-agents">
+              <span class="pv-brand"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Eight agents</span>
+              <ul><li><b>Page reader</b><i></i></li><li><b>Official recalls</b><i></i></li><li><b>Buyer reviews</b><i></i></li><li><b>Safety marks</b><i></i></li><li><b>Fake-shop signs</b><i></i></li></ul>
+              <div class="pv-ans green"><span class="pv-mark"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>No problems found</b><small>In what was checked</small></div>
+            </div>
+            <span class="pv-pill"><i></i>Watch it check, live</span>
+          </div></div>
+          <div class="pick-body">
+            <span class="pick-tag">Live</span>
+            <h3>Paste a listing</h3>
+            <p>Copy a listing from any shop and watch eight agents check it, one by one, on the live API.</p>
+            <ul><li>Only the title is required</li><li>Each agent lights up as it works</li><li>Uses 1 check; a real link can take up to two minutes</li></ul>
+            <button class="jbtn" type="button" data-start>Paste a listing</button>
+          </div>
+        </article>
+      </div>
+      <div class="live">
+        <div class="modebar"><button class="back" type="button" data-preview>← Back to the preview</button><b>Paste a listing</b></div>
       <div class="own-wrap">
         <form class="own card" id="own">
           <h3>Copy a listing from any shop</h3>
@@ -226,16 +281,66 @@
         </aside>
       </div>
       <div class="run card" id="own-run" aria-live="polite" hidden></div>
+      </div>
     </div>
 
-    <div class="trypanel" role="tabpanel" id="ask-out-loud" aria-labelledby="tab-ask-out-loud" hidden>
+    <div class="trypanel" role="tabpanel" id="ask-out-loud" aria-labelledby="tab-ask-out-loud" data-view="intro" hidden>
+      <div class="intro">
+        <article class="pick pick-wide">
+          <div class="pv pv-voice" aria-hidden="true"><div class="pv-s">
+            <div class="pv-phone">
+              <span class="pv-cam"><span class="pv-label"><b>VoltNova</b><small>VN-65PD · 65W</small><em>IS 13252</em></span><span class="pv-frame"></span></span>
+              <p class="pv-said">“क्या यह सुरक्षित है?”</p>
+              <span class="pv-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="pv-micb"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
+            </div>
+            <div class="pv-reply"><span class="pv-spk"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg></span><b>सावधान रहें</b><small>Be careful: the safety mark doesn't match the registry</small></div>
+            <span class="pv-pill"><i></i>Answers out loud, in 26 languages</span>
+          </div></div>
+          <div class="pick-body">
+            <span class="pick-tag">Voice</span>
+            <h3>Ask out loud</h3>
+            <p>Made for people who would rather not read small print. Talk to it with the camera on, or ask with a photo of the label.</p>
+            <ul><li>Gemini Live answers by voice, in your language</li><li>Point the camera at the label</li><li>No microphone? A photo works, read aloud</li></ul>
+            <button class="jbtn" type="button" data-start>Start asking</button>
+          </div>
+        </article>
+      </div>
+      <div class="live">
+        <div class="modebar"><button class="back" type="button" data-preview>← Back to the preview</button><b>Ask out loud</b></div>
       <p class="panel-lede">Made for people who would rather not read small print: older shoppers, people who read little, and people who can't see the screen.</p>
       <div id="ask"></div>
+      </div>
     </div>
 
-    <div class="trypanel" role="tabpanel" id="whatsapp" aria-labelledby="tab-whatsapp" hidden>
+    <div class="trypanel" role="tabpanel" id="whatsapp" aria-labelledby="tab-whatsapp" data-view="intro" hidden>
+      <div class="intro">
+        <article class="pick pick-wide">
+          <div class="pv pv-wa" aria-hidden="true"><div class="pv-s">
+            <div class="pv-wphone">
+              <div class="pv-whead"><span class="pv-wav"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>SafeShelf</b><small>online</small></div>
+              <div class="pv-wbody">
+                <p class="pv-wout">flipkart.com/kelvo-cx65-charger…<small>10:42 ✓✓</small></p>
+                <p class="pv-wi"><b>Don't buy: not real</b>A fifth of the genuine price, on a 20-day-old shop.<small>10:42</small></p>
+                <p class="pv-wi pv-vn"><span class="pv-play"></span><span class="pv-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><small>0:14</small></p>
+              </div>
+            </div>
+            <span class="pv-pill"><i></i>A text and a voice note back</span>
+          </div></div>
+          <div class="pick-body">
+            <span class="pick-tag">Coming soon</span>
+            <h3>On WhatsApp</h3>
+            <p>Forward a shop link or a label photo and get a text and a voice note back. The chat here runs on the live API.</p>
+            <ul><li>A link or a photo of the label</li><li>The answer as text and a voice note</li><li>English, Hindi and 24 more</li></ul>
+            <button class="jbtn" type="button" data-start>Try the WhatsApp chat</button>
+          </div>
+        </article>
+      </div>
+      <div class="live">
+        <div class="modebar"><button class="back" type="button" data-preview>← Back to the preview</button><b>On WhatsApp</b></div>
       <p class="panel-lede">How the SafeShelf WhatsApp number works: forward a shop link or a photo of the label, and get the answer as a text and a voice note, in English, Hindi or 24 other languages. This chat runs on the live API. The WhatsApp number is coming soon.</p>
       <div id="wa"><p class="muted">Loading the chat…</p></div>
+      </div>
     </div>
   </section>
 
