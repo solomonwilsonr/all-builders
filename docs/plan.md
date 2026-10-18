@@ -9,14 +9,14 @@ This file is the single brief: what SafeShelf is, how it is built (high and low 
 |---|---|
 | [SAFESHELF.md](SAFESHELF.md) | Full product vision and design (v1.1): 19 modules, data model, API, agents, evaluation |
 | [MODULES.md](MODULES.md) | The 19 build modules (M0–M17), steps, dependencies, "done when" |
-| [PARALLEL_PLAN.md](PARALLEL_PLAN.md) | Day-by-day split for Person A (Brain) and Person B (Face) |
-| [PROGRESS.md](PROGRESS.md) | Build log up to 13 Oct: cloud, engine, data, backtest |
-| [HANDOFF_PERSON_A.md](HANDOFF_PERSON_A.md) | What the extension needed from the API on 14 Oct |
-| [BACKTEST.md](BACKTEST.md), [bench/README.md](bench/README.md) | Backtest method and results |
-| [HACKATHON.md](HACKATHON.md) | Rules, judging, submission, deck template |
+| PARALLEL_PLAN.md | Day-by-day split for Person A (Brain) and Person B (Face) |
+| PROGRESS.md | Build log up to 13 Oct: cloud, engine, data, backtest |
+| HANDOFF_PERSON_A.md | What the extension needed from the API on 14 Oct |
+| [BACKTEST.md](BACKTEST.md), [bench/README.md](../bench/README.md) | Backtest method and results |
+| HACKATHON.md | Rules, judging, submission, deck template |
 | [TOOLS.md](TOOLS.md) | Google tools, data sources, open-source tools, Firecrawl budget |
-| [contracts/openapi.yaml](contracts/openapi.yaml) | The API contract every component builds against |
-| [IMPACT.md](IMPACT.md) | Social impact and awareness plan: "still on sale" report, child safety, Hindi recall alerts, partners (after core setup) |
+| [contracts/openapi.yaml](../contracts/openapi.yaml) | The API contract every component builds against |
+| IMPACT.md | Social impact and awareness plan: "still on sale" report, child safety, Hindi recall alerts, partners (after core setup) |
 
 ---
 
@@ -703,22 +703,22 @@ Protect in this order if time runs short (from SAFESHELF.md §25): (1) backtest 
 - [ ] Hand-check the M16 candidates; write the evidence pack — 2 h
 - [ ] Final `make bench`; update README table — 1 h
 - [ ] Accessibility pass: Lighthouse ≥ 95, axe, keyboard walkthrough; Hindi summary — 2 h
-- [ ] **"Still on sale" number** ([IMPACT.md](IMPACT.md) Step 1): count recalled products whose exact copies are still listed under other brand names. Exact model counts as recalled; a possible rebrand is reported separately as "under review"; hand-check 20 rows. Output one sentence for the deck and video: "We found X recalled products still sold under other names" — 2 h
-- [ ] **Hindi WhatsApp voice note** ([IMPACT.md](IMPACT.md) Step 3): connect the bot to a Meta test number; record a product photo of a recalled heater going in and the Hindi voice note coming back ("This heater was recalled because it can catch fire") — 1.5 h
+- [ ] **"Still on sale" number** (IMPACT.md Step 1): count recalled products whose exact copies are still listed under other brand names. Exact model counts as recalled; a possible rebrand is reported separately as "under review"; hand-check 20 rows. Output one sentence for the deck and video: "We found X recalled products still sold under other names" — 2 h
+- [ ] **Hindi WhatsApp voice note** (IMPACT.md Step 3): connect the bot to a Meta test number; record a product photo of a recalled heater going in and the Hindi voice note coming back ("This heater was recalled because it can catch fire") — 1.5 h
 - [ ] Optional if ahead: scripted Investigate on the demo page
 - [ ] `make warm`; end-to-end rehearsal of the hero flow; **freeze**
 
 ### Day 6 — Sat 17 Oct
 - [ ] Report the confirmed real-world finding to the regulator (CPSC/ACCC form)
 - [ ] Record the 3-minute video along the Lab path (opening: backtest + real-world finding + "still on sale" number; closing: the Hindi WhatsApp voice note)
-- [ ] Deck from the template; slide 12 uses measured numbers only (backtest + "still on sale" number); limitations stated; one closing slide "Future: SafeSwap" ([IMPACT.md](IMPACT.md) §9), 30 min max
+- [ ] Deck from the template; slide 12 uses measured numbers only (backtest + "still on sale" number); limitations stated; one closing slide "Future: SafeSwap" (IMPACT.md §9), 30 min max
 - [ ] Regenerate the PDF; README with architecture diagram and one-command checks; make the repo public
 - [ ] **Submit**
 
 Sun 18 Oct is a spare day for fixes only.
 
 ### After submission: impact and awareness
-Steps 1 and 3 of [IMPACT.md](IMPACT.md) are pulled into Day 5 above. Once the core setup is complete, work through the rest (child safety, ISI marks, partners, SafeSwap shop), ideally starting before the Top 50 shortlist on 7 Nov.
+Steps 1 and 3 of IMPACT.md are pulled into Day 5 above. Once the core setup is complete, work through the rest (child safety, ISI marks, partners, SafeSwap shop), ideally starting before the Top 50 shortlist on 7 Nov.
 
 ### Hero demo script (what the video must show)
 1. Backtest headline and twin-pooling chart, then the "still on sale" number: "We found X recalled products still sold under other names."

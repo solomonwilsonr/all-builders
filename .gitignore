@@ -17,3 +17,6 @@ web/ext/
 # copied from extension/ by `make browser-ext`
 browser/ext/
 browser/__pycache__/
+
+# Android Studio local settings
+android/.idea/

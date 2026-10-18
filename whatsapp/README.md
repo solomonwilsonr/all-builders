@@ -1,7 +1,7 @@
 # whatsapp/ (Person A)
 
 M12 WhatsApp bot. Forward a product link or a photo of the product or its label; the bot answers "Is it safe? Is it
-real?" in English or Hindi, as a text and a voice note. See [MODULES.md](../MODULES.md#m12-whatsapp-bot).
+real?" in English or Hindi, as a text and a voice note. See [MODULES.md](../docs/MODULES.md#m12-whatsapp-bot).
 
 - `bot.py`: the words. Parses the message, picks the reply from the API's verdict (code, not the model), Hindi
   templates, shop-page reading. No network code, fully unit-tested.

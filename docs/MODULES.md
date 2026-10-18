@@ -1,6 +1,6 @@
 # SafeShelf modules: how we split the work
 
-SafeShelf is split into **19 modules** (M0–M17, with M14 in two halves). Each one can be built by one person on their own and joined later. The day-by-day schedule is in [`PARALLEL_PLAN.md`](PARALLEL_PLAN.md); the full technical design is in [`SAFESHELF.md`](SAFESHELF.md).
+SafeShelf is split into **19 modules** (M0–M17, with M14 in two halves). Each one can be built by one person on their own and joined later. The day-by-day schedule is in `PARALLEL_PLAN.md`; the full technical design is in [`SAFESHELF.md`](SAFESHELF.md).
 
 **How we work separately:** in M0 we agree the exact shape of every API answer (`contracts/openapi.yaml` + example JSON in `contracts/mock/`). The Brain makes the engine return that shape; the Face builds against the mock until the real engine is ready.
 
@@ -132,7 +132,7 @@ Get all the data into our database and storage.
 - [ ] Build the ~500-product test catalog for Catalog Scan, with recalled copies mixed in (1 h)
 
 **Needs first:** M0.
-**Prerequisites:** Firecrawl API key (credits expire 21 Oct); Colab or cloud VM (review files are 9–31 GB); Cloud SQL connection; scripts in [`feasibility/`](feasibility/) as a starting point.
+**Prerequisites:** Firecrawl API key (credits expire 21 Oct); Colab or cloud VM (review files are 9–31 GB); Cloud SQL connection; scripts in `feasibility/` as a starting point.
 **Gives to others:** filled database and photos for M2, M3, M4, M5, M14a, M16.
 **Done when:** the demo products, their reviews, recalls and registry records are queryable in Cloud SQL.
 **Minimum version:** Cell Phones only, demo products only.
@@ -474,7 +474,7 @@ Find **copies of officially recalled products still on sale today**, check them,
 
 **Track A + B · ⏱ before submission ≈ 6 h (mostly the judge web page) · Day 5 to Day 6 (16–17 Oct) · the rest after submission**
 
-From the eighth scan in [COMPETITOR_ENTRIES.md](COMPETITOR_ENTRIES.md). Nobody works on product safety, recalls or fake shops, so we copy how the strong entries **present** their work, not their ideas. What the strong entries share: a live link with no login, one clear user, one memorable Gemini moment, measured results.
+From the eighth scan in COMPETITOR_ENTRIES.md. Nobody works on product safety, recalls or fake shops, so we copy how the strong entries **present** their work, not their ideas. What the strong entries share: a live link with no login, one clear user, one memorable Gemini moment, measured results.
 
 **Before submission: the judge web page (Day 5–6)**
 - [ ] **Judge quick path, no login** (seen in Scam Shield, ParcelProof, OrgFlow): the page opens on 3 ready examples (a recalled product, a fake shop, a safe product), one click each (2 h)

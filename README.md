@@ -1,33 +1,42 @@
-# Team Hashes: AI Builder Cup 2026
+# SafeShelf Global · Team Hashes · AI Builder Cup 2026
 
-**Core project: SafeShelf Global** (theme: Retail & Commerce)
+**Theme:** Retail & Commerce
 
-> SafeShelf checks any product listing and answers two questions: **Is it safe?** (hazards spotted in buyer reviews and photos before an official recall, plus recall and certification checks) and **Is it real?** (copied photos, an impossible price, a brand-new website). All of this runs on one product-identity engine that recognises the same product under different brand names. A SafeShelf agent (Google ADK) can also investigate for the shopper: it clicks through photos, reviews and seller details, checks official registries, answers questions in a chat, suggests a safer genuine alternative and watches products after purchase. It is accessible to every shopper: it works with screen readers and the keyboard, and it can read the answer aloud, in plain language and in 26 JAPAC languages (Hindi, Tamil, Bengali, Japanese, Korean, Chinese, Thai, Vietnamese, Bahasa and more).
+SafeShelf checks any product listing and answers two questions: **Is it safe?** (hazards spotted in buyer reviews and photos before an official recall, plus recall and certification checks) and **Is it real?** (copied photos, an impossible price, a brand-new website). All of this runs on one product-identity engine that recognises the same product under different brand names. A SafeShelf agent (Google ADK) can also investigate for the shopper: it clicks through photos, reviews and seller details, checks official registries, answers questions in a chat, suggests a safer genuine alternative and watches products after purchase. It works with screen readers and the keyboard, and it can read the answer aloud in plain language in 26 JAPAC languages.
 
-Deadline: **Oct 18, 2026, 11:59 PM IST** (we aim for Oct 17).
-
-## Files
-| File | What it is |
+## Try it
+| | Link |
 |---|---|
-| [`SAFESHELF.md`](SAFESHELF.md) | Full product and technical design, hackathon scope, demo, evaluation, build plan |
-| [`SafeShelf_Global.pdf`](SafeShelf_Global.pdf) | The same document as a PDF |
-| [`PROGRESS.md`](PROGRESS.md) | Everything done so far, the feasibility test results and next steps |
-| [`PARALLEL_PLAN.md`](PARALLEL_PLAN.md) | Day-by-day plan for Person A (Brain) and Person B (Face), with time estimates and join points |
-| [`MODULES.md`](MODULES.md) | The 19 build modules: steps, dependencies, prerequisites, done-when checks |
-| [`feasibility/`](feasibility/) | Scripts for the feasibility test (CPSC recalls vs Amazon reviews) |
-| [`BACKTEST.md`](BACKTEST.md) | Plan for the make-or-break backtest (do reviews warn before recalls?) |
-| [`TOOLS.md`](TOOLS.md) | Google tools, data sources and open-source tools we plan to use |
-| [`HACKATHON.md`](HACKATHON.md) | Rules, judging criteria, submission requirements, deck template, submission estimate |
-| [`IMPACT.md`](IMPACT.md) | Social impact and awareness plan, to pick up once the core setup is complete |
-| [`COMPETITOR_ENTRIES.md`](COMPETITOR_ENTRIES.md) | Public cup entries (~125, five scans) and the top-10 ranking with links |
-| `Submission Template _ AI Builder Cup.pptx` | Official deck template |
+| Judges' page (web app) | https://shelf2026-3656b.web.app |
+| Android app and Chrome extension downloads | https://shelf2026-3656b.web.app/site/get.html |
+| Test shops (the seven test products as real web pages) | https://safeshelf-shops.web.app |
+| API (Cloud Run) | https://safeshelf-api-368488022657.asia-south1.run.app |
 
-## Next step
-Make-or-break backtest (about 2 hours). Do hazard reviews and photos appear at least 2 weeks before past CPSC recalls? Does pooling evidence across rebranded twins make the warning earlier? See [`BACKTEST.md`](BACKTEST.md).
+## Repository layout
+| Folder | What it is |
+|---|---|
+| [`engine/`](engine/) | Identity engine, Safety Radar, recall and safety-mark checks, "Is it real?" checks, live official sources, evidence verification, ADK agents |
+| [`api/`](api/) | FastAPI service on Cloud Run that serves the engine |
+| [`agents/`](agents/) | Google ADK agent definitions |
+| [`research/`](research/) | Research Agent service: a headless browser that checks official recall sites (Cloud Run) |
+| [`browser/`](browser/) | A real Chrome with the SafeShelf extension, for "Try it" on the judges' page (Cloud Run) |
+| [`web/`](web/) | Judges' page (Firebase Hosting) |
+| [`extension/`](extension/) | Chrome extension |
+| [`android/`](android/) | Android app |
+| [`whatsapp/`](whatsapp/) | WhatsApp bot (text and voice notes) |
+| [`shops/`](shops/) | Test storefronts for the demo |
+| [`contracts/`](contracts/) | OpenAPI contract and JSON schemas shared by every component |
+| [`data/`](data/) | Data loaders, database schema and migrations, source registry |
+| [`bench/`](bench/) | Backtest, SafeShelfBench and the other evaluations, with results |
+| [`docs/`](docs/) | Design document ([`SAFESHELF.md`](docs/SAFESHELF.md), [PDF](docs/SafeShelf_Global.pdf)), backtest method, modules, tools, privacy and source access notes |
 
-## Earlier research
-Earlier work was ClearSight (satellite check, passed on Oct 11), SolventGate+, Witness, PitStop and the Retail/Media idea scan. It was removed from this branch but is kept in git:
-
+## Run it
 ```
-git checkout archive/pre-safeshelf -- <path>
+cp .env.example .env     # extension settings
+make db-up load-data     # local Postgres and data
+make api                 # API on http://localhost:8080 (MOCK=0 for the real engine)
+make web                 # judges' page on http://localhost:8095 (calls the live API)
+make test-engine         # engine tests
+make bench-all           # evaluations
 ```
+See the [`Makefile`](Makefile) for deploy targets and the README in each folder for details.

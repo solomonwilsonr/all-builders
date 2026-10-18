@@ -1,6 +1,6 @@
 # extension/ (Person B)
 
-Chrome extension: an in-page SafeShelf button that opens an "Is it safe? / Is it real?" card. Talks to the local SafeShelf API at `http://localhost:8080` for checks, chat and evidence. See [MODULES.md](../MODULES.md) M8.
+Chrome extension: an in-page SafeShelf button that opens an "Is it safe? / Is it real?" card. Talks to the local SafeShelf API at `http://localhost:8080` for checks, chat and evidence. See [MODULES.md](../docs/MODULES.md) M8.
 
 ## Configuration
 Edit `EXTENSION_API_BASE`, `EXTENSION_SHELF_SYNC`, `EXTENSION_SIGNIN_URL`, and `EXTENSION_FIREBASE_API_KEY` in the root `.env` (see `.env.example`). Run `npm --prefix extension run build:config` from the repo root before loading the extension and after each config change, then reload it in Chrome. Node 22+ is required. Only these public values are bundled; `GOOGLE_API_KEY` is never copied. For new API/sign-in domains, update the manifest host permissions and externally connectable matches.
