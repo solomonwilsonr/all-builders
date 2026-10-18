@@ -293,9 +293,10 @@ function showSample(preset, button) {
 }
 
 let presetsAll = [];
+let openInReal = null; // set by setUpRemote when the real browser is deployed: opens a page in the cloud Chrome
 async function setUpSamples() {
   shareWithFrame();
-  const { presets } = await (await fetch("samples/presets.json")).json();
+  const { presets, shops_url: shops } = await (await fetch("samples/presets.json")).json();
   presetsAll = presets;
   const list = document.getElementById("samples");
   presets.forEach((p, i) => {
@@ -309,27 +310,35 @@ async function setUpSamples() {
     b.onclick = () => showSample(p, b);
     list.append(el("li", { role: "presentation" }, b));
   });
-  // the same seven as a lineup above the browser: name, shop, the answer it must get; a tap opens its tab
+  // the same seven as a lineup above the browser: name, shop, the answer it must get. Each works both ways: as an
+  // instant test page (its tab below), or as a real page on the SafeShelf test shops, in the real browser or your own
   const lineup = document.getElementById("lineup");
   if (lineup) {
     const tabs = [...list.querySelectorAll("button")];
+    const panel = document.getElementById("shop-page");
     presets.forEach((p, i) => {
       const tone = p.control ? "green" : p.expect.overall[0];
-      const card = el("button", { type: "button", className: `lu lu-${tone}`, title: p.what },
+      const shopUrl = shops && p.shop ? `${shops}/${p.shop}.html` : null;
+      const openTest = () => {
+        if (panel.dataset.mode !== "test") document.getElementById("test-start")?.click();
+        tabs[i].click();
+        document.querySelector(".mac")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      const main = el("button", { type: "button", className: "lu-main", title: `${p.what}. Opens its test page.` },
         el("span", { className: "lu-n", "aria-hidden": "true", textContent: p.control ? "✓" : String(i + 1) }),
         el("b", { textContent: p.name }),
         el("small", { textContent: p.market }),
         el("span", { className: "lu-exp", textContent: p.expect.label.replace(/^\P{L}+/u, "") }));
-      card.onclick = () => {
-        const panel = document.getElementById("shop-page");
-        if (panel.dataset.mode === "choose") document.getElementById("test-start")?.click();
-        tabs[i].click();
-        document.querySelector(".mac")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      };
-      lineup.append(el("li", {}, card));
+      main.onclick = openTest;
+      const acts = el("div", { className: "lu-acts" },
+        Object.assign(el("button", { type: "button", className: "lu-act", textContent: "Test page", title: "Instant: the recorded check, with the extension running in the page" }), { onclick: openTest }),
+        openInReal && shopUrl ? Object.assign(el("button", { type: "button", className: "lu-act", textContent: "Real browser", title: "This product's shop page in a real Chrome with SafeShelf: a live check" }),
+          { onclick: () => openInReal(shopUrl) }) : null,
+        shopUrl ? el("a", { className: "lu-act", href: shopUrl, target: "_blank", rel: "noopener", textContent: "Shop page ↗", title: "Open the test shop page in your own browser (needs the SafeShelf extension)" }) : null);
+      lineup.append(el("li", {}, el("div", { className: `lu lu-${tone}` }, main, acts)));
     });
     // keep the lineup in step with whichever tab is open
-    new MutationObserver(() => tabs.forEach((t, i) => lineup.children[i].firstChild.setAttribute("aria-pressed", t.getAttribute("aria-selected"))))
+    new MutationObserver(() => tabs.forEach((t, i) => lineup.children[i].querySelector(".lu-main").setAttribute("aria-pressed", t.getAttribute("aria-selected"))))
       .observe(list, { subtree: true, attributes: true, attributeFilter: ["aria-selected"] });
   }
   list.querySelector("button")?.click();
@@ -400,10 +409,13 @@ function setUpRemote() {
     if (panel.dataset.mode === "real") mode("choose");
     left();
   };
-  $("remote-start").onclick = () => {
+  // a session starts on the SafeShelf test shops, or on one test product's page (`open`)
+  let startAt = "";
+  const start = (open = "") => {
     if (!quota.left()) { $("choose-msg").textContent = quota.usedUpText(); return; }
     quota.take().catch(() => {});
     $("choose-msg").textContent = "";
+    startAt = open;
     mode("real");
     mac.classList.add("remote");
     $("rwin").hidden = false;
@@ -412,12 +424,22 @@ function setUpRemote() {
     $("rframe").src = `${base}/view`;
     mac.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  $("remote-start").onclick = () => start();
+  // a product from the lineup: typed into the running Chrome's address bar, or the page a new session starts on
+  openInReal = (url) => {
+    if (timer) {
+      $("rframe").contentWindow?.postMessage({ type: "open", url }, origin);
+      mac.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (panel.dataset.mode === "real") {
+      $("rstate").textContent = "Starting… it opens on the test shops";
+    } else start(url);
+  };
   $("remote-end").onclick = () => { $("rframe").contentWindow?.postMessage({ type: "end" }, origin); end("Session ended."); };
   $("mode-back").onclick = () => { if (panel.dataset.mode === "real") $("remote-end").click(); else mode("choose"); };
   addEventListener("message", async (e) => {
     if (e.origin !== origin) return;
     if (e.data?.type === "safeshelf-browser:loaded") {
-      try { $("rframe").contentWindow.postMessage({ type: "start", token: await auth.currentUser.getIdToken() }, origin); }
+      try { $("rframe").contentWindow.postMessage({ type: "start", token: await auth.currentUser.getIdToken(), open: startAt }, origin); }
       catch (_) { end("Sign in again, then start a new session."); }
     }
     if (e.data?.type === "safeshelf-browser:ready") {

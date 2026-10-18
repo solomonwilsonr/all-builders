@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "safeshelf-shops",
+    "public": "public",
+    "ignore": ["**/.*"],
+    "headers": [
+      { "source": "**", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
+      { "source": "**/*.@(css|js|svg)", "headers": [{ "key": "Cache-Control", "value": "max-age=300" }] }
+    ]
+  }
+}

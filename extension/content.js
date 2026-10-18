@@ -31,6 +31,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     anchor: "h1",
     cards: null,
   };
+  const TEST_SHOPS = /^safeshelf-shops\.(web\.app|firebaseapp\.com)$/;
   const SITES = [
     {
       match: (h) => /(^|\.)amazon\.(in|com|co\.jp|com\.au|sg)$/.test(h),
@@ -60,7 +61,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       cards: { selector: "div[data-id]", title: "a[title]", price: null, link: "a[href*='/p/']", image: "img[src*='rukminim']" },
     },
     {
-      match: (h) => h === "localhost",
+      // the local demo pages, and the SafeShelf test shops (shops/, hosted): the seven test products as real pages
+      match: (h) => h === "localhost" || TEST_SHOPS.test(h),
       isProduct: () => !!document.body.dataset.safeshelfListingId,
       title: "#title",
       price: "#price",
@@ -90,9 +92,9 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   // Drops tracking parameters. Amazon pages become https://host/dp/ASIN, Flipkart keeps its product id.
   const cleanUrl = () => {
     const u = new URL(location.href);
-    // Local demo pages name the shop address they stand for, so the API checks that address, not localhost.
+    // Demo pages and test shops name the shop address they stand for, so the API checks that address, not theirs.
     const canonical = document.querySelector('link[rel="canonical"]')?.href;
-    if (/^(localhost|127\.0\.0\.1)$/.test(u.hostname) && canonical) return canonical;
+    if ((/^(localhost|127\.0\.0\.1)$/.test(u.hostname) || TEST_SHOPS.test(u.hostname)) && canonical) return canonical;
     const asin = u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/);
     if (/amazon\./.test(u.hostname) && asin) return `${u.origin}/dp/${asin[1]}`;
     for (const k of [...u.searchParams.keys()]) {

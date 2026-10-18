@@ -6,7 +6,8 @@ One judge per container (Cloud Run --concurrency 1). The whole session is one We
      ("ss.<token>"), so the token never appears in a request URL or the request log;
   2. the token is verified with Google's library (a real SafeShelf sign-in, for the Firebase project) before anything
      starts;
-  3. Chromium starts on a virtual screen with a fresh profile and the real extension, signed in with that token;
+  3. Chromium starts on a virtual screen with a fresh profile and the real extension, signed in with that token, on the
+     SafeShelf test shops (or one test product's page, `?start=`);
   4. the screen is streamed (x11vnc -> this WebSocket -> noVNC) until the judge ends it or SESSION_SECONDS pass;
   5. Chromium, the screen and the profile are deleted.
 """
@@ -15,6 +16,7 @@ import contextlib
 import json
 import logging
 import os
+import re
 import shutil
 import socket
 import uuid
@@ -29,7 +31,11 @@ PORT = int(os.environ.get("PORT", "8080"))
 FIREBASE_PROJECT = os.environ.get("FIREBASE_PROJECT", "shelf2026-3656b")
 API_BASE = os.environ.get("API_BASE", "https://safeshelf-api-368488022657.asia-south1.run.app").rstrip("/")
 SESSION_SECONDS = int(os.environ.get("SESSION_SECONDS", "300"))
-START_URL = os.environ.get("START_URL", "https://www.amazon.in/")
+# The SafeShelf test shops (shops/): the seven test products as real pages. A session starts on their home page, or on
+# one of their product pages; nothing else can be passed in.
+SHOPS_URL = os.environ.get("SHOPS_URL", "https://safeshelf-shops.web.app").rstrip("/")
+START_URL = os.environ.get("START_URL", SHOPS_URL + "/")
+SHOP_PAGE = re.compile(r"/[a-z0-9-]+/[a-z0-9-]+\.html")
 # Pages allowed to put the viewer in a frame and hand it a token (the judges' page, deployed and local)
 EMBEDDERS = [o for o in os.environ.get("EMBEDDERS", "https://shelf2026-3656b.web.app,https://shelf2026-3656b.firebaseapp.com,http://localhost:8095").split(",") if o]
 DEV_SKIP_AUTH = os.environ.get("DEV_SKIP_AUTH") == "1"  # local testing only; never set on Cloud Run
@@ -78,7 +84,13 @@ async def port_open(port: int, seconds: float) -> bool:
     return False
 
 
-async def start_browser(base: Path, ext: Path) -> list[asyncio.subprocess.Process]:
+def start_page(asked: str) -> str:
+    """The page Chrome opens on: a test shop product page if one was asked for, otherwise the start page."""
+    path = asked[len(SHOPS_URL):] if asked.startswith(SHOPS_URL + "/") else ""
+    return SHOPS_URL + path if SHOP_PAGE.fullmatch(path) else START_URL
+
+
+async def start_browser(base: Path, ext: Path, url: str = START_URL) -> list[asyncio.subprocess.Process]:
     env = {**os.environ, "DISPLAY": DISPLAY}
     procs = [await asyncio.create_subprocess_exec("Xvfb", DISPLAY, "-screen", "0", "1280x800x24", "-nolisten", "tcp",
                                                   stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)]
@@ -89,7 +101,7 @@ async def start_browser(base: Path, ext: Path) -> list[asyncio.subprocess.Proces
     procs.append(await asyncio.create_subprocess_exec(
         "chromium", "--no-sandbox", "--test-type", "--disable-dev-shm-usage", "--disable-gpu", "--no-first-run", "--no-default-browser-check",
         "--disable-sync", "--password-store=basic", f"--user-data-dir={base / 'profile'}", f"--load-extension={ext}",
-        f"--disable-extensions-except={ext}", "--window-position=0,0", "--window-size=1280,800", "--lang=en-IN", START_URL,
+        f"--disable-extensions-except={ext}", "--window-position=0,0", "--window-size=1280,800", "--lang=en-IN", url,
         env=env, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL))
     procs.append(await asyncio.create_subprocess_exec(
         "x11vnc", "-display", DISPLAY, "-rfbport", str(VNC_PORT), "-localhost", "-nopw", "-forever", "-noxdamage", "-quiet",
@@ -134,7 +146,7 @@ async def session(request: web.Request) -> web.StreamResponse:
     log.info(json.dumps({"event": "start", "session": sid, "user": claims.get("sub")}))
     try:
         base.mkdir(parents=True)
-        procs = await start_browser(base, write_extension(base, token, claims))
+        procs = await start_browser(base, write_extension(base, token, claims), start_page(request.query.get("start", "")))
         reader, writer = await asyncio.open_connection("127.0.0.1", VNC_PORT)
 
         async def to_screen():
@@ -165,7 +177,8 @@ async def session(request: web.Request) -> web.StreamResponse:
 
 
 async def view(_request: web.Request) -> web.Response:
-    page = (HERE / "view.html").read_text().replace("__EMBEDDERS__", json.dumps(EMBEDDERS)).replace("__SECONDS__", str(SESSION_SECONDS))
+    page = (HERE / "view.html").read_text().replace("__EMBEDDERS__", json.dumps(EMBEDDERS)).replace("__SECONDS__", str(SESSION_SECONDS)) \
+        .replace("__SHOPS__", json.dumps(SHOPS_URL))
     # only the SafeShelf pages may frame the viewer
     return web.Response(text=page, content_type="text/html", headers={"Content-Security-Policy": "frame-ancestors " + " ".join(EMBEDDERS)})
 

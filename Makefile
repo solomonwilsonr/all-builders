@@ -20,7 +20,7 @@ RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_
 WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 FIRECRAWL_SECRET ?= $(shell gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
+.PHONY: test-extension agents demo-pages shops deploy-shops api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
 	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery
 
@@ -49,6 +49,12 @@ agents:         ## Shelf Chat agent service on :8081 (needs GOOGLE_API_KEY in .e
 
 demo-pages:     ## serve the demo shop pages on :8090 (the chat is now on the site: make web, then /site/chat.html)
 	cd extension/demo && python3 -m http.server 8090
+
+shops:          ## build the SafeShelf test shops (the seven test products as real pages) and serve them on :8091
+	python3 shops/build.py && cd shops/public && python3 -m http.server 8091
+
+deploy-shops:   ## the test shops to their own Firebase Hosting site, https://safeshelf-shops.web.app (once first: firebase hosting:sites:create safeshelf-shops --project $(FIREBASE_PROJECT))
+	python3 shops/build.py && cd shops && firebase deploy --only hosting --project $(FIREBASE_PROJECT)
 
 api:            ## run the API locally on :8080 (MOCK=1 by default)
 	cd api && MOCK=$${MOCK:-1} PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --port 8080
