@@ -26,3 +26,4 @@ checklist.md
 docs/plan.md
 docs/MODULES.md
 firebase-debug*.log
+.firebase/
