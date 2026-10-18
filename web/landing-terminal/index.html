@@ -7,7 +7,7 @@
 <meta name="description" content="Kasauti checks any shopping listing for recalls, copies and fake shops, in Chrome, on WhatsApp, or from your own agent over MCP.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <script>try { const t = localStorage.getItem("kasauti-builders-theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}</script>
 </head>
@@ -22,7 +22,7 @@
     <nav class="nav-links" aria-label="Main">
       <a href="#features">Features</a>
       <a href="#agents">For agents</a>
-      <a href="../configuration/index.html">MCP setup</a>
+      <a href="#agents">MCP setup</a>
       <a href="../api-integration/index.html">API integration</a>
       <a href="#how">How it works</a>
       <a href="#questions">Questions</a>
@@ -46,23 +46,23 @@
 
   <!-- Hero -->
   <section class="panel panel-green hero">
-    <div class="grid-lines hero-grid">
-      <div class="hero-words">
-        <button class="copy" type="button" data-copy="git clone https://github.com/solomonwilsonr/all-builders">
-          <span>git clone solomonwilsonr/all-builders</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 10V4a1 1 0 0 1 1-1h6"/></svg>
-          <i class="copied" aria-live="polite"></i>
-        </button>
-        <h1 class="mono">Safety checks<br>for shoppers,<br>sellers and<br>agents.</h1>
-        <p class="lede">Kasauti checks the listing you are about to buy for official recalls, real hazard reports, copied photos and fake shops. It shows the evidence for every line, in English or Hindi.</p>
-        <div class="btns">
-          <a class="btn btn-white get" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener" data-key="c"><span class="d-only lbl">Add to Chrome <kbd>C</kbd></span><span class="m-only">Copy link for your computer</span></a>
-          <a class="btn btn-line d-only" href="../api-integration/index.html" data-key="a">Use the API <kbd>A</kbd></a>
-          <a class="btn btn-line m-only" href="#features">See how it works</a>
-        </div>
-        <p class="fine d-only">Free. Works on Amazon.in, Amazon.com and Flipkart.</p>
-        <p class="fine m-only">Kasauti runs in Chrome on a computer, because phones cannot add browser extensions. Copy the link and open it there. A WhatsApp version for phones is coming.</p>
+    <div class="hero-top">
+      <button class="copy" type="button" data-copy="git clone https://github.com/solomonwilsonr/all-builders">
+        <span>git clone solomonwilsonr/all-builders</span>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 10V4a1 1 0 0 1 1-1h6"/></svg>
+        <i class="copied" aria-live="polite"></i>
+      </button>
+      <h1 class="serif-h1">Safety checks for shoppers, sellers and agents.</h1>
+      <p class="lede center">Kasauti checks the listing you are about to buy for official recalls, real hazard reports, copied photos and fake shops. It shows the evidence for every line, in English or Hindi.</p>
+      <div class="btns center">
+        <a class="btn btn-white get" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener" data-key="c"><span class="d-only lbl">Add to Chrome <kbd>C</kbd></span><span class="m-only">Copy link for your computer</span></a>
+        <a class="btn btn-line d-only" href="../api-integration/index.html" data-key="a">Use the API <kbd>A</kbd></a>
+        <a class="btn btn-line m-only" href="#features">See how it works</a>
       </div>
+      <p class="fine d-only center">Free. Works on Amazon.in, Amazon.com and Flipkart.</p>
+      <p class="fine m-only center">Kasauti runs in Chrome on a computer, because phones cannot add browser extensions. Copy the link and open it there. A WhatsApp version for phones is coming.</p>
+    </div>
+    <div class="hero-panel">
       <div class="hero-art" aria-hidden="true">
         <div class="cell"><svg class="line-icon" viewBox="0 0 48 36"><rect x="4" y="3" width="40" height="26" rx="3"/><path d="M4 10h40M9 6.5h.1M13 6.5h.1M17 6.5h.1M34 14v12"/></svg></div>
         <div class="cell"></div>
@@ -73,44 +73,55 @@
         <div class="cell"><div class="px" data-px="ring" data-c="var(--px-pale)"></div></div>
         <div class="cell"></div>
       </div>
+      <div class="callout callout-1" aria-hidden="true">
+        <svg viewBox="0 0 20 20"><path d="M10 2 4 4.5v4.8c0 4 2.6 6.9 6 8.2 3.4-1.3 6-4.2 6-8.2V4.5L10 2Z"/><path d="m7.3 10 2 2 3.5-4"/></svg>
+        <div><b>2 false alarms</b><span>not 11, like keyword rules</span></div>
+      </div>
+      <div class="callout callout-2" aria-hidden="true">
+        <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5"/><path d="M10 6v4l3 2"/></svg>
+        <div><b>19 days old</b><span>this shop was just registered</span></div>
+      </div>
     </div>
   </section>
 
   <!-- What it checks against -->
   <section class="sources" aria-labelledby="sources-h">
-    <p id="sources-h" class="mono small dim">Checked against the public records of</p>
-    <ul class="source-row">
+    <p class="eyebrow">Checked against</p>
+    <h2 id="sources-h" class="serif-h small-serif">Built for shoppers.<br>Verified by regulators.</h2>
+    <ul class="logo-grid">
       <li><b>CPSC</b><span>United States</span></li>
-      <li><b>ACCC</b><span>Australia</span></li>
-      <li><b>EU Safety Gate</b><span>Europe</span></li>
-      <li><b>BIS</b><span>India</span></li>
+      <li><b>OECD GlobalRecalls</b><span>Australia, Japan, Korea, Singapore, Taiwan</span></li>
+      <li><b>CCPA &amp; BIS</b><span>India</span></li>
+      <li><b>CAA</b><span>Japan, live</span></li>
       <li><b>27,000+</b><span>catalog listings</span></li>
     </ul>
   </section>
 
-  <!-- A result, not a testimonial -->
-  <section class="quote" aria-label="Test results">
-    <div class="quote-words">
-      <p class="big-quote">“On 40 products that were never recalled, <mark>Kasauti raised 2 false alarms, where keyword rules raised 11.</mark> It also catches fewer recalls than keyword rules, and we would rather tell you that here.”</p>
-      <p class="quote-by"><b>SafeShelfBench</b>, our test set of 25 real recalls and 40 never-recalled products</p>
-    </div>
-    <div class="quote-cells" aria-hidden="true">
-      <div class="qc qc-photo"><img src="assets/2-touchstones.jpg" width="1920" height="1292" alt=""></div>
-      <div class="qc qc-mark">“</div>
-      <div class="qc"><svg viewBox="0 0 32 32"><rect x="2" y="2" width="28" height="28" rx="8" class="logo-stone"/><path d="M9 22.5 22.5 9" class="logo-streak"/></svg></div>
-      <div class="qc qc-text">2 vs 11<span>false alarms</span></div>
+  <!-- The problem -->
+  <section class="problem" aria-labelledby="problem-h">
+    <h2 id="problem-h" class="serif-h">Shopping safety never had a check that worked.<br><span class="accent-word">Until now.</span></h2>
+    <div class="problem-copy">
+      <p>Keyword rules panic at a discount and miss a relisted recall. Generic "trust" badges are bought, not checked, and neither one tells a shopper what was actually found.</p>
+      <p>Kasauti's answer: match the exact product, check official recall and hazard records, and show the evidence for every line it writes — in the browser, on WhatsApp, or from any agent over MCP.</p>
     </div>
   </section>
 
-  <!-- 01 -->
-  <section class="panel panel-warm feature" id="features" aria-labelledby="f1">
-    <div class="feature-head">
-      <span class="num mono">01</span>
-      <div>
-        <h2 id="f1">Check any listing in one click</h2>
-        <p>In Chrome on your computer, a black rail waits at the edge of Amazon or Flipkart. Press Check and the ring turns amber, red, green, or grey when the evidence is thin.</p>
-      </div>
+  <!-- A result, not a testimonial -->
+  <section class="panel stat-panel" aria-label="Test results">
+    <p class="eyebrow light">SafeShelfBench</p>
+    <h2 class="serif-h light small-serif">Measured against keyword rules, not just claimed.</h2>
+    <p class="stat-note">On 40 products that were never recalled, Kasauti raised 2 false alarms where keyword rules raised 11. It also catches fewer recalls than keyword rules, and we would rather tell you that here.</p>
+    <div class="stats">
+      <div class="stat"><b>2</b><span>false alarms on 40 never-recalled products</span></div>
+      <div class="stat"><b>11</b><span>false alarms from keyword rules on the same 40</span></div>
+      <div class="stat"><b>25</b><span>real recalls in the test set</span></div>
     </div>
+  </section>
+
+  <!-- See it in action -->
+  <section class="panel panel-warm action" id="features" aria-labelledby="f1">
+    <h2 id="f1" class="serif-h">See Kasauti check a listing</h2>
+    <p class="action-sub">In Chrome on your computer, a black rail waits at the edge of Amazon or Flipkart. Press Check and the ring turns amber, red, green, or grey when the evidence is thin.</p>
     <div class="window" data-ui aria-hidden="true">
       <div class="win-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="url">amazon.in/dp/B0CX65SFC</span></div>
       <div class="listing">
@@ -134,12 +145,42 @@
         </div>
       </div>
     </div>
+    <div class="action-cta">
+      <a class="btn btn-white get" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener"><span class="d-only lbl">Add to Chrome</span><span class="m-only">Copy link for your computer</span></a>
+    </div>
   </section>
 
-  <!-- 02 -->
+  <!-- What makes it trustworthy -->
+  <section class="ai-first" aria-labelledby="ai-h">
+    <h2 id="ai-h" class="serif-h">What makes Kasauti trustworthy</h2>
+    <div class="ai-grid">
+      <article class="ai-card">
+        <span class="ai-icon"><svg viewBox="0 0 20 20"><path d="M10 2 4 4.5v4.8c0 4 2.6 6.9 6 8.2 3.4-1.3 6-4.2 6-8.2V4.5L10 2Z"/><path d="m7.3 10 2 2 3.5-4"/></svg></span>
+        <h3>Evidence for every line</h3>
+        <p>Each check names the record behind it: a recall number, a hazard report, a seller's registration date. Nothing is asserted without a source.</p>
+      </article>
+      <article class="ai-card">
+        <span class="ai-icon"><svg viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M3 8h14M7 12h2"/></svg></span>
+        <h3>Code sets the colour, not the model</h3>
+        <p>The verdict's colour comes from a fixed rule, never from the language model. Gemini only writes the explanation, and it must cite evidence that exists.</p>
+      </article>
+      <article class="ai-card">
+        <span class="ai-icon"><svg viewBox="0 0 20 20"><path d="M6 8a4 4 0 0 1 8 0v2a4 4 0 0 1-8 0V8Z"/><path d="M4 10a6 6 0 0 0 12 0M10 16v2"/></svg></span>
+        <h3>Spoken back in 26 languages</h3>
+        <p>A short spoken verdict, written by code and translated by Gemini, follows the shopper's own language — including on WhatsApp.</p>
+      </article>
+      <article class="ai-card">
+        <span class="ai-icon"><svg viewBox="0 0 20 20"><path d="M7 10a3 3 0 1 1 6 0 3 3 0 0 1-6 0Z"/><path d="M3 17c.7-2.8 3-4 7-4s6.3 1.2 7 4"/></svg></span>
+        <h3>Read-only for agents too</h3>
+        <p>The same answers are served as MCP tools and REST endpoints. Every MCP tool is read-only, so an agent can check but never act on a shopper's behalf.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 01 -->
   <section class="panel panel-warm feature" aria-labelledby="f2">
     <div class="feature-head">
-      <span class="num mono">02</span>
+      <span class="num mono">01</span>
       <div>
         <h2 id="f2">Inspect every piece of evidence</h2>
         <p>Each check is its own line, with the record behind it. Click a check to see what the engine found. The colour is set by code, never by the model.</p>
@@ -171,13 +212,13 @@
     </div>
   </section>
 
-  <!-- 03 -->
+  <!-- 02 -->
   <section class="panel panel-warm feature" aria-labelledby="f3">
     <div class="feature-head">
-      <span class="num mono">03</span>
+      <span class="num mono">02</span>
       <div>
-        <h2 id="f3">Ask about it, in English or Hindi</h2>
-        <p>Follow-up questions about the product you just checked. Every answer names its evidence, or says it does not know.</p>
+        <h2 id="f3">Ask about it, spoken back in 26 languages</h2>
+        <p>Follow-up questions about the product you just checked, answered in plain language with a short spoken verdict in the shopper's own language. Every answer names its evidence, or says it does not know.</p>
       </div>
     </div>
     <div class="window chat" data-ui aria-hidden="true">
@@ -191,12 +232,12 @@
     </div>
   </section>
 
-  <!-- 04 -->
+  <!-- 03 -->
   <section class="panel panel-dark agents" id="agents" aria-labelledby="f4">
     <div class="grid-lines agents-grid">
       <div class="agents-words">
         <div class="feature-head">
-          <span class="num mono">04</span>
+          <span class="num mono">03</span>
           <div>
             <h2 id="f4" class="mono">Everything above, <span class="grad">agents</span> can do</h2>
             <p>Over the REST API or the MCP server at <code>/mcp</code>, from any agent that speaks MCP.</p>
@@ -220,19 +261,36 @@
       <article class="card">
         <svg class="art art-teal" viewBox="0 0 220 150" aria-hidden="true"><rect x="40" y="20" width="110" height="64" rx="18"/><path d="M62 84 52 102l26-18"/><rect x="88" y="62" width="96" height="54" rx="16"/><path d="M164 116l10 16-22-16"/><path d="M106 89h56M106 100h36" class="dash"/></svg>
         <p class="tag-chip"><span>*</span>On WhatsApp · soon</p>
-        <p>For phones: send a product link or a photo of the label, and get a text and a voice note back, in English or Hindi. The bot is built; the public number is on its way.</p>
+        <p>For phones: send a product link or a photo of the label, and get a text and a short spoken verdict back, in any of 26 languages. The bot is built; the public number is on its way.</p>
       </article>
       <article class="card">
         <svg class="art art-green" viewBox="0 0 220 150" aria-hidden="true"><circle cx="110" cy="72" r="18"/><circle cx="50" cy="40" r="13"/><circle cx="170" cy="40" r="13"/><circle cx="50" cy="112" r="13"/><circle cx="170" cy="112" r="13"/><path d="M94 63 62 46M126 63l32-17M94 81l-32 23M126 81l32 23" class="dash"/></svg>
         <p class="tag-chip"><span>*</span>MCP server</p>
-        <p>Eight read-only tools at /mcp: check a listing, find copies, safety marks, safer alternatives, product history and more.</p>
-        <a class="btn btn-line" href="../configuration/index.html">Connect your agent <span aria-hidden="true">↗</span></a>
+        <p>Ten read-only tools at /mcp: check a listing, find copies, safety marks, safer alternatives, product history, source coverage and more.</p>
+        <a class="btn btn-line" href="#agents">Connect your agent <span aria-hidden="true">↗</span></a>
       </article>
       <article class="card">
         <svg class="art art-purple" viewBox="0 0 220 150" aria-hidden="true"><rect x="74" y="16" width="72" height="22" rx="5"/><rect x="66" y="46" width="88" height="30" rx="6"/><rect x="56" y="84" width="108" height="50" rx="7"/><path d="M110 92v34" class="dash"/></svg>
         <p class="tag-chip"><span>*</span>Open bench</p>
         <p>SafeShelfBench: 25 real recalls and 40 never-recalled products, scored against keyword rules. The results are an API call away.</p>
       </article>
+    </div>
+  </section>
+
+  <!-- Why Kasauti is different -->
+  <section class="compare" aria-labelledby="compare-h">
+    <h2 id="compare-h" class="serif-h">Why Kasauti is different from keyword rules</h2>
+    <div class="compare-table" role="table">
+      <div class="compare-row compare-head" role="row">
+        <span role="columnheader"></span>
+        <span role="columnheader">Keyword rules</span>
+        <span role="columnheader" class="hi">Kasauti</span>
+      </div>
+      <div class="compare-row" role="row"><span role="rowheader">False alarms on 40 safe products</span><span class="no">11</span><span class="hi yes">2</span></div>
+      <div class="compare-row" role="row"><span role="rowheader">Shows the evidence behind each flag</span><span class="no">✕</span><span class="hi yes">✓</span></div>
+      <div class="compare-row" role="row"><span role="rowheader">Matches the exact product, not the category</span><span class="no">✕</span><span class="hi yes">✓</span></div>
+      <div class="compare-row" role="row"><span role="rowheader">Works for agents over MCP</span><span class="no">✕</span><span class="hi yes">✓</span></div>
+      <div class="compare-row" role="row"><span role="rowheader">Speaks the verdict back</span><span class="no">✕</span><span class="hi yes">26 languages</span></div>
     </div>
   </section>
 
@@ -308,7 +366,7 @@
   <footer class="foot mono">
     <p>© 2026 Team Hashes · Seshu and Solomon · AI Builder Cup 2026</p>
     <p>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</p>
-    <p class="credits">Pictures via Wikimedia Commons: <a href="https://commons.wikimedia.org/w/index.php?curid=80842528">“Burnt out Sansai USB charger”</a> by Gary Houston, CC0; <a href="https://commons.wikimedia.org/w/index.php?curid=27514969">“2 Touchstones”</a> by Mauro Cateb, CC BY-SA 3.0.</p>
+    <p class="credits">Picture via Wikimedia Commons: <a href="https://commons.wikimedia.org/w/index.php?curid=80842528">“Burnt out Sansai USB charger”</a> by Gary Houston, CC0.</p>
   </footer>
 </main>
 

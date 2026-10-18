@@ -1,0 +1,48 @@
+/* Android adaptation of web/site/theme.css. Keep the site's semantic verdict colors. */
+@font-face{font-family:'Schibsted Grotesk';src:url('../fonts/SchibstedGrotesk.ttf') format('truetype');font-weight:100 900;font-display:swap}
+:root{--display:'Schibsted Grotesk',sans-serif;--sans:'Schibsted Grotesk',sans-serif;--gut:20px}
+body.chat-page{background:#fff;font-family:var(--sans);--shadow:0 0 0 1px var(--line);--card:#fff}
+.top{background:#fff;backdrop-filter:none;border-bottom:1px solid var(--line)}
+.top .links,.top .nav-end>a,.top .menu{display:none!important}
+.top .nav{min-height:64px;gap:10px;padding:0 20px}.top .logo{pointer-events:none;font-size:21px;gap:9px}.top .logo svg{width:27px;height:30px}
+.top .btn{min-height:36px;padding:0 14px;font-size:12px;border-radius:2px}
+.chat{background:#fff}.chat-bar{padding:10px 16px;background:var(--soft);gap:7px}
+.about select{font-family:var(--sans);font-size:12px;padding:9px 10px;max-width:100%}.about{min-width:0}.about .linked b{font-size:12px}
+.chat-bar #shelfBtn,.chat-bar #clear{height:38px;min-height:38px;width:38px;padding:8px}.chat-bar .status{padding:6px}
+#log{padding:22px 18px;gap:18px;background:#fff}
+.hello{padding:0;gap:0}.hello-mark{display:none!important}
+.hello h1.display{font-family:var(--display);font-size:32px;line-height:1.08;letter-spacing:-.045em;font-weight:500}
+.hello h1.display>span{font-size:13px;line-height:1.5;color:var(--blue);margin-bottom:9px;font-weight:400;letter-spacing:.01em}
+.hello .lead{font-size:13px;line-height:1.65;margin:14px auto 22px;max-width:32ch;color:var(--muted)}
+.hello::before{content:'';display:block;height:112px;width:100%;margin:0 0 22px;background:url('assets/eddy.png') right 16px bottom / auto 106px no-repeat,url('assets/sky.png') center / cover no-repeat}
+.starters{grid-template-columns:1fr 1fr;gap:9px}
+.starter{border:1px solid var(--line);border-radius:2px;box-shadow:none;padding:12px 10px;gap:9px;min-height:70px}
+.starter:hover{box-shadow:none;transform:none;border-color:var(--blue)}
+.starter .ic{width:30px;height:34px;border-radius:2px}.starter .ic svg{width:17px;height:17px}.starter b{font-size:12px;line-height:1.35}
+.starter:last-child{grid-column:1/-1}.starter .sub{font-size:11px}
+.row .msg{font-size:14px;line-height:1.65;max-width:96%;border-radius:2px;padding:15px}
+.bot .msg{box-shadow:0 0 0 1px var(--line)}.user .msg{background:var(--blue);color:#fff}
+.card-title{font-weight:600;font-size:17px}.panel,.draft,.compare>div{border-radius:2px}
+.verdict,.lvl,.ev,.cbtn,.chips button,.todo,.qa>div,.where li,.surer li,.quote,.label-read code{border-radius:2px}
+.cbtn{min-height:38px;padding:6px 12px;white-space:normal;text-align:left}.acts button{min-height:36px}.shelf-count{background:var(--blue)}
+.composer{padding:10px 14px 12px;background:#fff;border-top:1px solid var(--line)}
+.ask-row{gap:7px;align-items:flex-end}.tools-btn{width:36px!important;height:40px!important;border-radius:2px;background:var(--ink)}
+.qbox{display:grid;grid-template-columns:36px 36px minmax(0,1fr) 40px;gap:4px;border-radius:2px;padding:6px;box-shadow:inset 0 0 0 1px var(--line)}
+.qbox:focus-within{box-shadow:inset 0 0 0 1.5px var(--blue)}
+.qbox textarea{grid-column:1/-1;grid-row:1;width:100%;box-sizing:border-box;min-height:42px;font-size:14px;text-align:start;padding:8px 6px;max-height:112px}
+#attach{grid-column:1;grid-row:2}#scan{grid-column:2;grid-row:2}#lang{grid-column:3;grid-row:2;justify-self:end;max-width:100%;font-size:12px}#send{grid-column:4;grid-row:2;min-height:36px;border-radius:2px;padding:0 9px}#send span{display:none}#mic{display:none!important}
+.hint{font-size:0;margin-top:6px}.hint #checksLeft{font-size:10px;font-weight:400;color:var(--muted)}
+.drawer{padding:24px 20px;background:#fff;box-shadow:-8px 0 30px #00112318}
+.drawer .p{position:static;display:block;padding:0;border-radius:0;white-space:normal;box-shadow:none;font-family:var(--sans);letter-spacing:normal}
+.drawer h2{font-family:var(--display);font-weight:500;font-size:26px;letter-spacing:-.035em}.drawer h3{font-weight:500}
+.drawer .icon{height:40px;width:40px;background:var(--soft);border-radius:2px}
+#shelf{width:100%;box-shadow:none}#shelf header{padding-bottom:18px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+#shelf .p{font-size:13px;line-height:1.6;max-width:38ch;margin-bottom:24px}
+.shelf-list{display:grid;gap:12px}.shelf-list li{border:1px solid var(--line);border-radius:2px;padding:16px;background:var(--soft);font-size:14px}
+.shelf-list li .meta{font-size:12px;line-height:1.6}.shelf-list li b{font-weight:500}
+.chat-page .ssa-modal{padding:14px!important;background:rgba(0,17,35,.4)}
+.chat-page .ssa{--ssa-display:'Schibsted Grotesk',sans-serif;font-family:var(--sans);border-radius:2px;box-shadow:0 16px 60px #00112320}
+.chat-page .ssa-main{padding:24px 22px}.chat-page .ssa-main h2{font-family:var(--display);font-size:28px;letter-spacing:-.035em}.chat-page .ssa-brand{font-family:var(--display)}
+.chat-page .ssa-btn,.chat-page .ssa input,.chat-page .ssa-last,.chat-page .ssa-note{border-radius:2px}.chat-page .ssa-btn{min-height:46px}.chat-page .ssa-sub{font-size:13px}.chat-page .ssa-kicker{border-radius:2px}
+@media(max-width:350px){.starters{grid-template-columns:1fr}.starter:last-child{grid-column:auto}.hello h1.display{font-size:28px}.hello::before{height:90px;background-size:auto 86px,cover}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

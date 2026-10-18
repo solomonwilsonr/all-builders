@@ -116,7 +116,8 @@
 .works .shop em { align-self: flex-end; margin-bottom: 1px; font: 600 .7rem var(--sans); font-style: normal; color: var(--dim); }
 .h-logos .sub { margin-bottom: 14px; }
 /* regulator wall: a check passes cell to cell, lighting each record as it is read */
-.wall-run { --scroll: 40s; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.wall-run { --scroll: 32s; overflow: hidden; border-bottom: 1px solid var(--line); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.wall-run.to-left { border-top: 1px solid var(--line); }
 .wall-track { display: flex; width: max-content; }
 .wall { --step: .55s; --cycle: calc(var(--step) * 10); position: relative; display: flex; }
 .wall li { --d: calc(var(--i) * var(--step)); position: relative; flex: 0 0 clamp(150px, 17vw, 230px); display: grid; place-items: center; min-height: clamp(84px, 8vw, 112px); overflow: hidden; border-right: 1px solid var(--line); font: 700 clamp(1.2rem, 1rem + .8vw, 1.7rem)/1 var(--display); letter-spacing: -.04em; color: #b4bac1; transition: color .2s, background .2s; }
@@ -135,15 +136,16 @@
   .wall li i svg { animation: wall-draw var(--cycle) var(--d) infinite; }
   .wall:hover li, .wall:hover li *, .wall:hover li::before, .wall:hover li::after { animation-play-state: paused; }
   .wall li:hover, .wall li:hover em { animation: none; }
-  /* the strip drifts left; the second copy closes the loop, hovering stops it */
+  /* top row drifts right to left, bottom row left to right; the copies close the loop, hovering stops it */
   .wall-track { animation: wall-scroll var(--scroll) linear infinite; }
+  .wall-run.to-right .wall-track { animation-direction: reverse; }
   .wall-run:hover .wall-track, .wall-run:focus-within .wall-track { animation-play-state: paused; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wall-run { overflow-x: auto; scrollbar-width: none; }
   .wall[aria-hidden] { display: none; }
 }
-@keyframes wall-scroll { to { transform: translateX(-50%); } }
+@keyframes wall-scroll { to { transform: translateX(-25%); } }
 @keyframes wall-name { 0%, 26%, 100% { color: #b4bac1; } 5%, 16% { color: var(--ink); } }
 @keyframes wall-glow { 0%, 24%, 100% { opacity: 0; } 5%, 14% { opacity: 1; } }
 @keyframes wall-bar { 0% { transform: scaleX(0); opacity: 1; } 9% { transform: scaleX(1); opacity: 1; } 22%, 100% { transform: scaleX(1); opacity: 0; } }
@@ -350,7 +352,7 @@
   .chart .lbl-x { display: none; }
   .bento { grid-template-columns: minmax(0, 1fr); }
   .cell { min-height: 0; }
-  .wall-run { --scroll: 28s; }
+  .wall-run { --scroll: 22s; }
   .h-cta { padding-bottom: 170px; }
   .cols.home-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
