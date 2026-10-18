@@ -471,16 +471,16 @@ const BUILD = {
 
 // --- The rest of the page follows the view: each person sees only their sections, ways to try it and products ---
 const SAY = {
-  shopper: { try: "Five ways to check before you buy. Pick one.", "prod-h": "Where you can use it", "prod-p": "Check a product wherever you shop.",
+  shopper: {
     "cta-h": "Check before you pay, wherever you shop.", "cta-p": "The Chrome extension and the WhatsApp number are coming soon. The web page works today, on a phone too.",
-    "cta-btns": [["site/get.html", "Get SafeShelf"], ["site/chat.html", "Open the chat"]], "hero-2": ["#try", "Try it now"] },
+    "cta-btns": [["site/get.html", "Get SafeShelf"], ["site/chat.html", "Open the chat"]] },
   marketplace: { try: "Paste a seller's listing and watch every check run live.", "prod-h": "What marketplaces use", "prod-p": "Scan the whole catalog, or check each listing as it goes live.",
     "cta-h": "Scan your catalog with SafeShelf", "cta-p": "Send a product list; get back the listings that need action, each with its evidence.",
     "cta-btns": [["site/get.html", "Talk to us"], ["site/agents.html", "Connect over the API"]], "hero-2": ["#check-own", "Check a listing"] },
   regulator: { try: "Paste any listing and watch the investigation run, step by step.", "hero-2": ["#accuracy", "See the proof"] },
   developer: { "prod-h": "What you build on", "prod-p": "The same engine, as read-only tools for your agent.",
     "cta-h": "Build on the evidence", "cta-p": "Read-only tools, sourced answers, and a verdict set by code.",
-    "cta-btns": [["site/agents.html", "For developers"], [`${API}/docs`, "API docs"]], "hero-2": ["#accuracy", "See the proof"] },
+    "cta-btns": [["site/agents.html", "For developers"], [`${API}/docs`, "API docs"]], "hero-1": ["#for", "See the developer view"], "hero-2": ["#accuracy", "See the proof"] },
 };
 const SHARED = { // the proof sections each person still sees
   shopper: [],
@@ -493,14 +493,12 @@ function applyView(id) {
   const visible = (sel) => [...document.querySelectorAll(sel)].filter((e) => !e.hidden);
   const lastOn = (items) => items.forEach((e, i) => e.classList.toggle("last-on", i === items.length - 1));
 
-  // sections and the jump menu, numbered again in order
+  // the jump menu keeps only the sections this person sees
   const blocks = visible("main > section.block");
-  blocks.forEach((b, i) => { const n = b.querySelector(".block-n"); if (n) n.textContent = String(i + 1).padStart(2, "0"); });
   const jump = document.querySelector(".jump");
   const links = [...jump.querySelectorAll("a")];
   links.forEach((a) => { a.hidden = !blocks.some((b) => `#${b.id}` === a.getAttribute("href")); });
   const shown = links.filter((a) => !a.hidden);
-  shown.forEach((a, i) => { a.querySelector("span").textContent = String(i + 1).padStart(2, "0"); });
   jump.style.setProperty("--n", shown.length);
   lastOn(shown);
 
@@ -526,15 +524,16 @@ function applyView(id) {
     const say = SAY[id]?.[e.dataset.say];
     if (e.dataset.say === "cta-btns") {
       if (say) e.replaceChildren(...say.map(([href, text], i) => el("a", { className: `jbtn${i ? " line" : ""}`, href, textContent: text })));
-    } else if (e.dataset.say === "hero-2") {
-      const [href, text] = say || ["#try", e.dataset.was];
+    } else if (e.dataset.say.startsWith("hero-")) {
+      if (!("wasHref" in e.dataset)) e.dataset.wasHref = e.getAttribute("href");
+      const [href, text] = say || [e.dataset.wasHref, e.dataset.was];
       e.href = href;
       e.textContent = text;
     } else e.textContent = say || e.dataset.was;
   }
 }
 
-// --- Switching further down the page: a "Viewing as" pill, shown once the four cards are scrolled past ---
+// --- Switching from anywhere: a "Viewing as" pill in the jump bar, hidden only while the four cards are on screen ---
 function switcher(pick, cards) {
   const face = el("img", { className: "fs-face", alt: "", decoding: "async" });
   const name = el("b");
@@ -569,14 +568,13 @@ function switcher(pick, cards) {
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !menu.hidden) { open(false); btn.focus(); } });
   addEventListener("resize", () => open(false));
 
-  // only below the cards: while they are on screen, or before them, the cards are the switch
+  // everywhere except while the four cards are on screen (they are the switch then)
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([e]) => {
-      const past = !e.isIntersecting && e.boundingClientRect.top < 0;
-      btn.hidden = !past;
-      if (!past) open(false);
+      btn.hidden = e.isIntersecting;
+      if (e.isIntersecting) open(false);
     }).observe(cards);
-  }
+  } else btn.hidden = false;
 
   return {
     sync(id) {

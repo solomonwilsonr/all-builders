@@ -8,9 +8,9 @@ import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedte
 import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018u";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
-import { setUpRoles } from "./roles.js?v=20261018h";
+import { setUpRoles } from "./roles.js?v=20261018r";
 import { setUpWhatsApp } from "./whatsapp.js?v=20261018c";
-import { setUpTour } from "./tour.js?v=20261018preview";
+import { setUpTour } from "./tour.js?v=20261018r";
 
 
 const el = (tag, props = {}, ...kids) => {
@@ -522,9 +522,11 @@ async function setUpVs() {
 
 // --- Tabs ---
 function setUpTabs() {
+  // each tab row (Check a product, Why trust it) switches only its own panels
   const tabs = [...document.querySelectorAll("[role=tab]")];
+  const rowOf = (tab) => tabs.filter((t) => t.closest("[role=tablist]") === tab.closest("[role=tablist]"));
   const pick = (tab) => {
-    for (const t of tabs) {
+    for (const t of rowOf(tab)) {
       const on = t === tab;
       t.setAttribute("aria-selected", String(on));
       t.tabIndex = on ? 0 : -1;
@@ -536,10 +538,12 @@ function setUpTabs() {
     }
     try { history.replaceState(null, "", `#${tab.id.replace("tab-", "")}`); } catch (_) { /* file:// */ }
   };
-  tabs.forEach((t, i) => {
+  tabs.forEach((t) => {
     t.onclick = () => pick(t);
     t.onkeydown = (e) => {
-      const next = e.key === "ArrowRight" ? tabs[(i + 1) % tabs.length] : e.key === "ArrowLeft" ? tabs[(i - 1 + tabs.length) % tabs.length] : null;
+      const row = rowOf(t).filter((x) => !x.hidden);
+      const i = row.indexOf(t);
+      const next = e.key === "ArrowRight" ? row[(i + 1) % row.length] : e.key === "ArrowLeft" ? row[(i - 1 + row.length) % row.length] : null;
       if (next) { pick(next); next.focus(); }
     };
   });

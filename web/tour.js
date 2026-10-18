@@ -49,17 +49,17 @@ const SLIDES = [
       <div class="tm-phone"><span class="tm-mic"><i></i></span><b>“Is this safe?”</b><small>Listening… हिन्दी · 日本語 · English</small></div>
       <div class="tm-phone wa"><span class="tm-wahead">SafeShelf</span><span class="tm-msg me">flipkart.com/kelvo-cx65…</span><span class="tm-msg bot"><b>⛔ Don't buy</b>Not the real product.</span><span class="tm-msg bot voice"><i></i>0:12</span></div>
     </div>` },
-  { id: "answers", pose: "thinking", target: "#answers", title: "One clear answer, with proof", text: "Every listing gets one of four answers. Plain code picks the colour from the evidence; Gemini only explains it.",
+  { id: "answers", pose: "thinking", tab: "answers", target: "#answers", title: "One clear answer, with proof", text: "Every listing gets one of four answers. Plain code picks the colour from the evidence; Gemini only explains it.",
     art: `<div class="tm-answers">
       <div class="tm-checks"><span>Official recalls</span><span>Buyer reviews</span><span>Safety marks</span><span>Is it real?</span></div>
       <ul class="tm-ans"><li class="red"><b>Don't buy</b>recalled or fake</li><li class="amber"><b>Be careful</b>reports under review</li><li class="green"><b>No problems found</b>in what was checked</li><li class="grey"><b>Can't tell yet</b>never a guess</li></ul>
     </div>` },
-  { id: "proof", pose: "surprised", target: "#accuracy", alt: { target: "#attack" }, title: "Tested, and attacked on purpose", text: "Only 2 false alarms in 40 safe products, against 6 for Gemini alone. We also tried to fool it; see what it decided.",
+  { id: "proof", pose: "surprised", tab: "accuracy", target: "#accuracy", alt: { tab: "attack", target: "#attack" }, title: "Tested, and attacked on purpose", text: "Only 2 false alarms in 40 safe products, against 6 for Gemini alone. We also tried to fool it; see what it decided.",
     art: `<div class="tm-proof2">
       <div class="tm-bars"><small>False alarms out of 40</small><div><span>SafeShelf</span><i class="me" style="--w:18%"></i><b>2</b></div><div><span>Gemini alone</span><i style="--w:55%"></i><b>6</b></div><div><span>Keyword rules</span><i style="--w:100%"></i><b>11</b></div></div>
       <ul class="tm-attacks"><li>Fake regulator page</li><li>Look-alike model number</li><li>Hidden text aimed at AI</li></ul>
     </div>` },
-  { id: "anywhere", pose: "flying", target: "#products", title: "Use it anywhere", text: "A Chrome extension, this web page, WhatsApp, catalog scans for marketplaces, and an API with 10 MCP tools for AI agents.",
+  { id: "anywhere", pose: "flying", target: "#products", title: "Use it anywhere", text: "Shoppers use the Chrome extension, this web page or WhatsApp. Marketplaces scan whole catalogs, and AI agents ask over 10 MCP tools.",
     art: `<div class="tm-prods">${[["#0271e4", "Chrome extension"], ["#f0a020", "Web page"], ["#1d9b52", "WhatsApp"], ["#7b5cd6", "Catalog scan"], ["#001123", "API · MCP"]]
       .map(([c, l]) => `<span style="--c:${c}"><i></i>${l}</span>`).join("")}</div>` },
   { id: "go", pose: "waving", title: "Your turn", text: "Name a product and Eddy will set up a live check, or close this and explore. Eddy is at the bottom right if you need him.",
@@ -77,7 +77,7 @@ function placeOf(slide) {
     if (!p.target) continue;
     const el = document.querySelector(p.target);
     if (!el) continue;
-    if (p.tab) { const t = $id(`tab-${p.tab}`); if (t && !t.hidden && !$id("try")?.hidden) return { ...p, prep: slide.prep, el }; continue; }
+    if (p.tab) { const t = $id(`tab-${p.tab}`); if (t && !t.hidden && !t.closest("[hidden]")) return { ...p, prep: slide.prep, el }; continue; }
     if (!el.closest("[hidden]")) return { ...p, el };
   }
   return null;
