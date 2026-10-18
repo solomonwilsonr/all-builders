@@ -15,7 +15,7 @@ import time
 
 from google.adk.tools import ToolContext
 
-from engine import assist, household, passport, safety
+from engine import assist, household, incidents, manual, passport, safety, specs
 from engine.agents import runtime
 
 log = logging.getLogger(__name__)
@@ -99,6 +99,114 @@ async def explain_pressure_tactics(tactics: list[str], tool_context: ToolContext
     body = assist.pressure([{"tactic": t, "quote": quotes[i] if i < len(quotes) else ""}
                             for i, t in enumerate(tactics or [])], _market(tool_context, market))
     return _done(tool_context, "explain_pressure_tactics", body, f"{len(body['tactics'])} pressure tactics", started)
+
+
+async def look_up_specs(brand: str, model: str, tool_context: ToolContext, kind: str = "") -> dict:
+    """Looks up a charger's or device's power specs on the web (watts, volts, amps, connector, fast-charge standards)
+    by brand and model number, so the shopper needn't read the label. Then pass the values to check_compatibility.
+    kind: charger, laptop, phone..."""
+    started = time.monotonic()
+    try:
+        body = await asyncio.to_thread(specs.look_up, brand, model, kind)
+    except Exception as error:  # noqa: BLE001  search down: ask for the label instead
+        log.warning("spec look-up failed: %s", type(error).__name__)
+        body = {"found": False, "note": "The web look-up didn't work just now: read the specs on the label."}
+    return _done(tool_context, "look_up_specs", body,
+                 f"Specs for {brand} {model}: " + (", ".join(f"{k} {v}" for k, v in body.get("values", {}).items())
+                                                    or "not found with a quote"), started)
+
+
+async def compare_products(tool_context: ToolContext, links: list[str] | None = None,
+                           product_ids: list[str] | None = None) -> dict:
+    """Which of these is safer? Checks two or three products side by side (product links the shopper pasted, or
+    SafeShelf product ids) and picks the safer one by SafeShelf's colours, never by price alone."""
+    from engine.agents import concierge
+    from engine.agents import links as pages
+    started = time.monotonic()
+    language = tool_context.state.get("language", "en")
+
+    async def by_link(url: str) -> dict:
+        try:
+            listing = await asyncio.to_thread(pages.read, url)
+        except pages.BlockedLink as problem:
+            return {"name": url, "overall": "unknown", "error": str(problem)}
+        page = listing.pop("read", "none")
+        if page == "none" and (name := pages.name_from_url(url)):
+            listing = {**listing, "title": name}
+        found = await concierge.investigate_listing(listing, page, language, remember=False)
+        v = found.get("verdict") or {}
+        return {"name": (found.get("title") or url)[:120], "url": url, "overall": v.get("overall"),
+                "safe": v.get("safe"), "real": v.get("real"), "price": found.get("price"),
+                "currency": found.get("currency"), "summary": found.get("summary"), "page_read": page}
+
+    async def by_id(pid: str) -> dict:
+        try:
+            record = await asyncio.to_thread(safety.safety, pid)
+            product = await asyncio.to_thread(passport.product, pid)
+        except Exception:  # noqa: BLE001
+            return {"name": pid, "overall": "unknown", "error": "SafeShelf has no such product"}
+        runtime.saw(record)
+        return {"name": " ".join(v for v in (product.get("brand"), product.get("model")) if v) or pid,
+                "product_id": pid, "overall": record.get("verdict"), "safe": record.get("verdict"),
+                "hazard_reports": sum(f.get("independent_reports") or 0 for f in record.get("ai_findings") or []),
+                "recalled": (record.get("official_status") or {}).get("recalled")}
+
+    checked = await asyncio.gather(*[by_link(u) for u in (links or [])[:3]],
+                                   *[by_id(i) for i in (product_ids or [])[:3]])
+    body = assist.compare(list(checked))
+    return _done(tool_context, "compare_products", body, f"Compared {len(checked)}: pick {body['pick'] or 'none'}",
+                 started)
+
+
+async def ask_shopper(question: str, options: list[str], tool_context: ToolContext) -> dict:
+    """Shows the shopper tappable answers for a question you need answered before you can help (what they
+    noticed, which product, which country). Up to 4 short options; then ask the question in your reply."""
+    started = time.monotonic()
+    body = {"question": question[:200], "options": [o.strip()[:40] for o in options if o and o.strip()][:4]}
+    runtime.current().results["quick_replies"] = body
+    return _done(tool_context, "ask_shopper", body, f"Asked: {body['question'][:80]}", started)
+
+
+async def file_incident_report(tool_context: ToolContext, description: str, brand: str = "", model: str = "",
+                               title: str = "", happened_on: str = "", market: str = "") -> dict:
+    """Sends the shopper's incident report to SafeShelf (POST /v1/incidents), where similar reports from other
+    buyers add up to an early warning. ONLY after you showed the report and the shopper's latest message says yes
+    to sending it; otherwise it is refused."""
+    started = time.monotonic()
+    if not assist.confirmed(tool_context.state.get("pasted") or ""):
+        body = {"error": "Not sent: the shopper hasn't said yes to sending it. Show the report and ask first."}
+        return _done(tool_context, "file_incident_report", body, body["error"], started)
+    try:
+        body = await asyncio.to_thread(incidents.report, {
+            "description": description, "brand": brand, "model": model, "title": title,
+            "happened_on": happened_on or None, "market": assist._market(market or tool_context.state.get("market"))},
+            tool_context.state.get("owner"))
+    except ValueError as problem:
+        body = {"error": str(problem)}
+    except Exception as error:  # noqa: BLE001
+        log.warning("incident not filed: %s", type(error).__name__)
+        body = {"error": "The report couldn't be sent just now: ask the shopper to try again later."}
+    return _done(tool_context, "file_incident_report", body,
+                 body.get("error") or f"Filed incident report {body.get('report_id')}", started)
+
+
+async def ask_manual(question: str, tool_context: ToolContext) -> dict:
+    """Answers a follow-up question from the manual the shopper sent earlier in this conversation, with pages."""
+    started = time.monotonic()
+    document = tool_context.state.get("document")
+    if not document:
+        body = {"error": "No manual in this conversation: ask the shopper to send it as a PDF."}
+        return _done(tool_context, "ask_manual", body, body["error"], started)
+    try:
+        data, pages = manual.decode(document)
+        body = await asyncio.to_thread(manual.ask, data, pages, question,
+                                       tool_context.state.get("language_name") or "English")
+    except Exception as error:  # noqa: BLE001
+        log.warning("manual follow-up failed: %s", type(error).__name__)
+        body = {"error": "The manual couldn't be read just now."}
+    runtime.current().results["manual"] = body
+    return _done(tool_context, "ask_manual", body, body.get("error") or
+                 f"Manual: {manual.pages_text(body.get('references') or []) or 'not covered'}", started)
 
 
 # ---------- something is wrong ----------
@@ -260,7 +368,8 @@ async def stop_sharing(invite_code: str, tool_context: ToolContext) -> dict:
     return await _household(tool_context, "stop_sharing", household.revoke, invite_code)
 
 
-OWNER_TOOLS = [check_compatibility, check_power_setup, check_suitability, explain_pressure_tactics, guide_symptoms,
-               repair_or_replace, find_disposal, write_incident_report, write_support_request, add_household_product,
+OWNER_TOOLS = [check_compatibility, look_up_specs, check_power_setup, check_suitability, explain_pressure_tactics,
+               compare_products, ask_shopper, guide_symptoms, repair_or_replace, find_disposal, write_incident_report,
+               file_incident_report, write_support_request, ask_manual, add_household_product,
                find_household_products, log_service_request, remove_household_product, share_household,
                join_household, household_sharing, stop_sharing]

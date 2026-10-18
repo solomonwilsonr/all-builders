@@ -1,5 +1,6 @@
 """Real handlers the API registers (api/app/main.py REAL_HANDLERS) when MOCK=0 and DATABASE_URL is set."""
 import json
+import logging
 import os
 import secrets
 import time
@@ -42,6 +43,8 @@ from engine import (
 )
 from engine.agents import handler as agent_handler
 from engine.sources import health as source_health
+
+log = logging.getLogger(__name__)
 
 
 async def identify_product(request: Request, params: dict[str, Any]) -> dict:
@@ -350,7 +353,12 @@ async def recheck_watchlists(request: Request, params: dict[str, Any]) -> dict:
     token = os.environ.get("SAFESHELF_RECHECK_TOKEN")
     if not (who(request).is_admin or (token and secrets.compare_digest(str(body.get("token") or ""), token))):
         raise HTTPException(status_code=403, detail="Needs the internal key or the re-check token")
-    return await run_in_threadpool(watch.recheck, max(1, min(int(body.get("limit") or 20), 100)))
+    out = await run_in_threadpool(watch.recheck, max(1, min(int(body.get("limit") or 20), 100)))
+    try:  # the same daily job reminds owners of return windows and warranties about to end
+        out |= await run_in_threadpool(household.remind)
+    except Exception as error:  # noqa: BLE001  the household tables may not be migrated yet
+        log.warning("household reminders failed: %s", type(error).__name__)
+    return out
 
 
 @bad_request

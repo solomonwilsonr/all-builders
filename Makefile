@@ -20,7 +20,7 @@ RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_
 WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 FIRECRAWL_SECRET ?= $(shell gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents web web-samples deploy-web \
+.PHONY: test-extension agents demo-pages api test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
 	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery
 
@@ -144,6 +144,8 @@ bench:          ## M2 backtest: reviews from the bucket (once), Gemini labels (c
 
 eval-agents:    ## agent test set (JAPAC cases with known answers) against API_URL; writes bench/agent_eval_results.json
 	API_URL=$(API_URL) engine/.venv/bin/python bench/agent_eval.py
+eval-owner-help: ## owner-help test set (right tool, safe wording) against API_URL; writes bench/owner_help_eval_results.json
+	API_URL=$(API_URL) engine/.venv/bin/python bench/owner_help_eval.py
 
 warm:           ## before a demo or recording: run every demo check once so the first click answers in seconds
 	@for body in \

@@ -5,6 +5,10 @@
 
 A link -> the shop page is read -> identify + safety + trust-check + alternatives on the SafeShelf API.
 A photo -> Gemini reads the product or label -> identify + safety + alternatives.
+A question (typed, a voice note, a tapped reply button) or a PDF manual -> Shelf Chat (POST /v1/agent/sessions,
+mode chat) as this sender (X-Owner-Ref wa:<number>, hashed by the API), so the household list, warranty dates,
+"my charger gets hot" and the manual work here too; the API remembers the conversation. The chat's tappable answers
+become WhatsApp reply buttons; drafts arrive as their own message, ready to forward.
 Reply: the text from bot.reply() (translated by Gemini for languages other than English and Hindi), then the same
 words as a voice note (Gemini TTS, OGG/Opus for WhatsApp).
 
@@ -13,6 +17,7 @@ API checks one), GOOGLE_CLOUD_PROJECT. With WA_TOKEN unset (DRY_RUN) replies are
 whole flow can be tested without a WhatsApp number.
 """
 import asyncio
+import base64
 import hashlib
 import hmac
 import json
@@ -43,6 +48,8 @@ app = FastAPI(title="SafeShelf WhatsApp bot")
 _seen: OrderedDict[str, None] = OrderedDict()  # Meta retries deliveries: answer each message id once
 _lang: dict[str, str] = {}                     # sender -> language code for this instance (no personal data stored)
 _translated: dict[tuple[str, str], str] = {}   # (language, English text) -> translation, for the fixed messages
+_product: dict[str, str] = {}                  # sender -> product last checked by link or photo, for follow-ups
+MANUAL_QUESTION = "What is this manual for? List its main safety warnings."
 _gemini: genai.Client | None = None
 
 PHOTO_SCHEMA = {
@@ -125,6 +132,9 @@ async def handle(message: dict) -> None:
             await send_text(sender, await fixed(lang, "help"))
             return
         await send_text(sender, await fixed(lang, "working"))
+        if asked["kind"] in ("chat", "voice", "manual"):
+            await chat_turn(sender, asked, lang, trace)
+            return
         async with httpx.AsyncClient(base_url=API, timeout=120, headers=api_headers(trace)) as api:
             if asked["kind"] == "link":
                 listing = await read_shop_page(asked["url"])
@@ -134,6 +144,7 @@ async def handle(message: dict) -> None:
                     post(api, "/v1/listings/trust-check", listing),
                     get(api, f"/v1/products/{identity['product_id']}/alternatives"))
                 text = bot.reply(identity, safety, lang, trust=trust, alternatives=alts)
+                _product[sender] = identity["product_id"]
             else:
                 seen = await read_photo(asked["media_id"])
                 if not seen.get("is_product") or not (seen.get("brand") or seen.get("model") or seen.get("title")):
@@ -145,6 +156,7 @@ async def handle(message: dict) -> None:
                     get(api, f"/v1/products/{identity['product_id']}/safety"),
                     get(api, f"/v1/products/{identity['product_id']}/alternatives"))
                 text = bot.reply(identity, safety, lang, alternatives=alts, from_photo=True)
+                _product[sender] = identity["product_id"]
             # The voice note is the short spoken verdict (engine/plain.py "say", a few seconds long) in the shopper's
             # language (POST /v1/voice/verdict); answers without one read the whole reply.
             spoken = None
@@ -164,6 +176,39 @@ async def handle(message: dict) -> None:
     except Exception as error:  # noqa: BLE001  the shopper always gets an answer
         log.warning(json.dumps({"event": "failed", "trace": trace, "error": f"{type(error).__name__}: {error}"[:300]}))
         await send_text(sender, await fixed(lang, "unknown"))
+
+
+async def chat_turn(sender: str, asked: dict, lang: str, trace: str) -> None:
+    """A question, voice note or manual answered by Shelf Chat, in the shopper's language (the chat writes it)."""
+    body = {"mode": "chat", "language": lang, "session_id": "WA-" + hashlib.sha256(sender.encode()).hexdigest()[:12]}
+    if asked["kind"] == "voice":
+        audio, mime = await download_media(asked["media_id"])
+        body["audio"] = f"data:{mime.split(';')[0].strip()};base64,{base64.b64encode(audio).decode()}"
+    elif asked["kind"] == "manual":
+        pdf, _ = await download_media(asked["media_id"])
+        body["document"] = "data:application/pdf;base64," + base64.b64encode(pdf).decode()
+        body["message"] = asked.get("caption") or MANUAL_QUESTION
+    else:
+        body["message"] = asked["text"]
+    if sender in _product:
+        body["product_id"] = _product[sender]
+    headers = {**api_headers(trace), "x-owner-ref": f"wa:{sender}"}
+    async with httpx.AsyncClient(base_url=API, timeout=180, headers=headers) as api:
+        answer = await post(api, "/v1/agent/sessions", body)
+    text, drafts = bot.chat_reply(answer)
+    spoken = bot.voice_text(text.replace("*", ""))  # the answer only, not the transcript or the bold marks
+    if answer.get("transcript"):
+        text = f"🎙️ “{answer['transcript']}”\n\n{text}"
+    interactive = bot.buttons(text, answer.get("quick_replies"))
+    if interactive:
+        await send_interactive(sender, interactive)
+    else:
+        await send_text(sender, text)
+    for draft in drafts:
+        await send_text(sender, draft)
+    await send_voice(sender, spoken, answer.get("language") or lang)
+    log.info(json.dumps({"event": "chat", "kind": asked["kind"], "lang": lang, "trace": trace,
+                         "tools": [s.get("tool") for s in answer.get("steps") or []]}))
 
 
 async def fixed(lang: str, key: str) -> str:
@@ -272,6 +317,18 @@ async def send_text(to: str, text: str) -> None:
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(f"{GRAPH}/{WA_PHONE_ID}/messages", headers=wa_headers(), json={
             "messaging_product": "whatsapp", "to": to, "type": "text", "text": {"body": text[:4096]}})
+        response.raise_for_status()
+
+
+async def send_interactive(to: str, interactive: dict) -> None:
+    if DRY_RUN:
+        log.info(json.dumps({"dry_run": "buttons", "to": to[-4:], "text": interactive["body"]["text"],
+                             "buttons": [b["reply"]["title"] for b in interactive["action"]["buttons"]]},
+                            ensure_ascii=False))
+        return
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post(f"{GRAPH}/{WA_PHONE_ID}/messages", headers=wa_headers(), json={
+            "messaging_product": "whatsapp", "to": to, "type": "interactive", "interactive": interactive})
         response.raise_for_status()
 
 

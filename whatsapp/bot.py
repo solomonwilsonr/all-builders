@@ -57,6 +57,8 @@ HAZARD_WORDS = {
 TEXT = {
     "en": {
         "help": "Send me a product link or a photo of the product or its label. I'll check: Is it safe? Is it real?\n"
+                "Or just ask, by text or voice note: \"my charger gets hot\", \"will this charger work with my laptop?\", "
+                "\"when does my warranty end?\". Send a manual as a PDF and ask about it.\n"
                 "Write in your language, or reply with its name to switch: HINDI, TAMIL, BANGLA, 日本語, 한국어, 中文, "
                 "BAHASA, ไทย, TIẾNG VIỆT, FILIPINO…",
         "working": "Checking this product. One moment…",
@@ -84,7 +86,8 @@ TEXT = {
     },
     "hi": {
         "help": "मुझे किसी प्रोडक्ट का लिंक या उसकी या उसके लेबल की फ़ोटो भेजें। मैं जाँचूँगा: क्या यह सुरक्षित है? "
-                "क्या यह असली है?\nEnglish के लिए ENGLISH लिखें, या अपनी भाषा का नाम लिखें (TAMIL, BANGLA, 日本語…)।",
+                "क्या यह असली है?\nया बस लिखकर या वॉइस नोट से पूछें: \"मेरा चार्जर गरम हो रहा है\", \"मेरी वारंटी कब खत्म "
+                "होगी?\"। मैनुअल PDF भेजकर उसके बारे में पूछें।\nEnglish के लिए ENGLISH लिखें, या अपनी भाषा का नाम लिखें (TAMIL, BANGLA, 日本語…)।",
         "working": "इस प्रोडक्ट की जाँच कर रहा हूँ। एक पल…",
         "unknown": "मैं पहचान नहीं पाया कि यह कौन सा प्रोडक्ट है। लेबल (ब्रांड और मॉडल नंबर) की साफ़ फ़ोटो या दुकान का "
                    "लिंक भेजें।",
@@ -141,18 +144,58 @@ def needs_translation(lang: str) -> bool:
     return lang not in TEXT
 
 
+GREETINGS = {"", "hi", "hii", "hello", "hey", "help", "start", "menu", "namaste", "नमस्ते", "हेलो", "हाय", "?"}
+
+
 def parse(message: dict) -> dict:
-    """A WhatsApp Cloud API message -> {kind: link|photo|help|switch, ...}."""
+    """A WhatsApp Cloud API message -> {kind: link|photo|voice|manual|chat|help|switch, ...}. A question (typed, a
+    voice note or a tapped reply button) goes to Shelf Chat; a link or a photo gets the product check."""
     kind = message.get("type")
     if kind == "image":
         return {"kind": "photo", "media_id": message["image"]["id"], "caption": message["image"].get("caption", "")}
+    if kind == "audio":
+        return {"kind": "voice", "media_id": message["audio"]["id"]}
+    if kind == "document" and (message["document"].get("mime_type") or "").startswith("application/pdf"):
+        return {"kind": "manual", "media_id": message["document"]["id"],
+                "caption": message["document"].get("caption", ""), "filename": message["document"].get("filename")}
+    if kind == "interactive":
+        reply = (message.get("interactive") or {}).get("button_reply") or {}
+        return {"kind": "chat", "text": reply.get("title", "")}
     text = (message.get("text") or {}).get("body", "") if kind == "text" else ""
     found = URL.search(text)
-    if found:
+    if found and len(URL.findall(text)) == 1:
         return {"kind": "link", "url": found.group(0).rstrip(").,"), "text": text}
     if text.strip().lower() in NAMES:
         return {"kind": "switch", "text": text}
-    return {"kind": "help", "text": text}
+    if text.strip().lower().strip("!.") in GREETINGS:
+        return {"kind": "help", "text": text}
+    return {"kind": "chat", "text": text}  # two links ("which is safer?") also go to the chat
+
+
+def buttons(text: str, quick: dict | None) -> dict | None:
+    """WhatsApp reply buttons for the chat's tappable answers (at most 3, titles up to 20 characters), or None."""
+    options = [o for o in (quick or {}).get("options") or [] if o]
+    if not 2 <= len(options) <= 3 or any(len(o) > 20 for o in options):
+        return None
+    return {"type": "button", "body": {"text": text[:1024]},
+            "action": {"buttons": [{"type": "reply", "reply": {"id": f"q{i}", "title": o}}
+                                   for i, o in enumerate(options)]}}
+
+
+def chat_reply(answer: dict) -> tuple[str, list[str]]:
+    """Shelf Chat's answer as WhatsApp text, plus drafts to send as their own messages (easy to forward or copy).
+    Tappable answers that don't fit WhatsApp's buttons are listed in the text."""
+    text = ((answer.get("messages") or [{}])[0].get("text") or "").strip()
+    text = re.sub(r"\*\*(.+?)\*\*", r"*\1*", text)  # markdown bold -> WhatsApp bold
+    quick = answer.get("quick_replies") or {}
+    if quick.get("options") and not buttons(text, quick):
+        text += "\n\nReply with: " + " / ".join(quick["options"])
+    drafts = []
+    for key in ("write_support_request", "write_incident_report"):
+        d = (answer.get("assist") or {}).get(key)
+        if d and d.get("body"):
+            drafts.append(f"📋 {d.get('subject') or d.get('title')}\n\n{d['body']}"[:4096])
+    return text, drafts
 
 
 def listing_from_html(url: str, html: str) -> dict:

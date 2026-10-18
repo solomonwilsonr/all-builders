@@ -5,20 +5,27 @@
     due(rows, today)                  return windows and warranties that end within DUE_DAYS
     log_service(tenant, owner, id, entry)   a service request or warranty claim, kept on the product
     invite / accept / members / revoke      family sharing: the owner shares a code, the relative accepts it
+    remind(today)                     scheduler: a notification when a return window or warranty is about to end
+
+A product with a brand and model (or a SafeShelf product id) also goes on the owner's watchlist (engine/watch.py), so
+the scheduled recheck warns them if it is recalled later.
 
 Sharing needs both sides: the owner creates an invite, and only the person who accepts it can see the household's
 products (read-only; they can't change or delete them). The owner can revoke it at any time. Owners are kept only as
 hashes (engine/tenancy.py) and a receipt photo only as its SHA-256.
 """
 import calendar
+import logging
 import secrets
 from datetime import UTC, date, datetime, timedelta
 
 from psycopg.types.json import Jsonb
 
-from engine import store
+from engine import store, watch, webhooks
 
+log = logging.getLogger(__name__)
 DUE_DAYS = 14
+REMIND = {"return": [3, 1], "warranty": [30, 7]}  # days before the end when the owner is reminded
 INVITE_DAYS = 7
 FIELDS = ("name", "brand", "model", "category", "product_id", "bought_from", "order_ref", "bought_on", "price",
           "currency", "return_by", "warranty_until", "receipt_sha256", "notes")
@@ -107,7 +114,62 @@ def add(tenant_id: str, owner_ref: str | None, item: dict) -> dict:
         f"""INSERT INTO household_items (id, tenant_id, owner_ref, {", ".join(FIELDS)})
             VALUES (%s, %s, %s, {", ".join(["%s"] * len(FIELDS))}) RETURNING *""",
         (item_id, tenant_id, owner, *(values[k] for k in FIELDS))).fetchone()
-    return _out(row)
+    out = _out(row)
+    out["watching_for_recalls"] = _watch(tenant_id, owner, values)
+    return out
+
+
+def _watch(tenant_id: str, owner: str, values: dict) -> bool:
+    """Puts the product on the owner's watchlist when SafeShelf can recognise it (product id, or brand and model)."""
+    if not (values.get("product_id") or (values.get("brand") and values.get("model"))):
+        return False
+    try:
+        watch.create(tenant_id, owner, {"product_id": values.get("product_id"), "brand": values.get("brand"),
+                                        "model": values.get("model"), "title": values.get("name")})
+    except Exception as error:  # noqa: BLE001  the product is saved; the recall watch is extra
+        log.info("household watch not added: %s", type(error).__name__)
+        return False
+    return True
+
+
+def reminders(rows: list[dict], today: date) -> list[dict]:
+    """The reminders due today: each return window and warranty, REMIND days before it ends (and on the last day)."""
+    out = []
+    for row in rows:
+        for label, s in status(row, today).items():
+            if s["days_left"] in (*REMIND[label], 0):
+                ends = "Last day to return" if label == "return" and s["days_left"] == 0 else \
+                    f"{'Return window' if label == 'return' else 'Warranty'} ends in {s['days_left']} days"
+                out.append({"item_id": row.get("item_id") or row.get("id"), "owner_ref": row.get("owner_ref"),
+                            "tenant_id": row.get("tenant_id"), "kind": f"{label}_ending", "until": s["until"],
+                            "days_left": s["days_left"],
+                            "text": f"{ends} for {row.get('name')} ({s['until']})."})
+    return out
+
+
+def remind(today: date | None = None) -> dict:
+    """Scheduler (with the watchlist recheck): writes each due reminder once (dedupe key) and sends it to the
+    tenant's webhooks; screens show it with the owner's notifications."""
+    today = today or datetime.now(UTC).date()
+    rows = store.conn().execute(
+        """SELECT id, tenant_id, owner_ref, name, return_by, warranty_until FROM household_items
+           WHERE deleted_at IS NULL AND (return_by BETWEEN %s AND %s OR warranty_until BETWEEN %s AND %s)""",
+        (today, today + timedelta(days=max(REMIND["return"])), today,
+         today + timedelta(days=max(REMIND["warranty"])))).fetchall()
+    sent = 0
+    for r in reminders(rows, today):
+        key = f"{r['item_id']}|{r['kind']}|{r['days_left']}|{r['until']}"
+        new = store.conn().execute(
+            """INSERT INTO notification_events (id, tenant_id, owner_ref, kind, dedupe_key, body)
+               VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (tenant_id, dedupe_key) DO NOTHING RETURNING id""",
+            (store.short_id("NE-", r["tenant_id"], key), r["tenant_id"], r["owner_ref"], r["kind"], key,
+             Jsonb({k: r[k] for k in ("item_id", "until", "days_left", "text")}))).fetchone()
+        if new:
+            sent += 1
+            webhooks.emit(r["tenant_id"], "household.reminder", {"owner_ref": r["owner_ref"],
+                                                                  **{k: r[k] for k in ("item_id", "kind", "until",
+                                                                                       "days_left", "text")}})
+    return {"reminders": sent}
 
 
 def _shared_owners(tenant_id: str, owner_ref: str) -> list[str]:

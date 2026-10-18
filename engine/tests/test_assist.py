@@ -240,3 +240,94 @@ def test_owner_tools_are_on_the_concierge_and_state_reaches_them(monkeypatch):
     asyncio.run(concierge.chat_session({"product_id": "unmatched", "message": "My charger gets hot", "_owner": "OW-1",
                                         "context": {"url": "https://www.amazon.co.jp/dp/X"}}))
     assert seen["owner"] == "OW-1" and seen["tenant"] == "public" and seen["market"] == "jp"
+
+
+# ---------- second round: voice, specs, compare, consent, reminders, memory ----------
+
+def test_voice_notes_decode_with_codec_parameters():
+    from engine.agents import listen
+    data, mime = listen.decode("data:audio/ogg;codecs=opus;base64," + base64.b64encode(b"OggS....").decode())
+    assert data.startswith(b"OggS") and mime == "audio/ogg"
+    assert listen.decode("data:audio/x-m4a;base64,AAAA")[1] == "audio/mp4"
+    with pytest.raises(listen.BadAudio):
+        listen.decode("data:video/mp4;base64,AAAA")
+
+
+def test_specs_keep_only_values_their_quote_backs_up():
+    from engine import specs
+    out = specs.verify({"watts": 65, "volts": 20, "amps": 3.25, "connector": "USB-C", "protocols": ["USB PD", "PPS"],
+                        "quotes": {"watts": "Output: 65W max", "volts": "5V/9V/15V/20V", "amps": "up to 5A",
+                                   "connector": "USB-C port", "protocols": "supports USB PD 3.0"}})
+    assert out["values"] == {"watts": 65, "volts": 20, "connector": "USB-C", "protocols": ["USB PD"]}
+    assert specs.look_up("Anker", "")["found"] is False
+
+
+def test_compare_picks_by_colour_never_by_price_alone():
+    out = assist.compare([{"name": "Cheap", "overall": "amber", "price": 299},
+                          {"name": "Genuine", "overall": "green", "price": 1399}])
+    assert out["pick"] == "Genuine"
+    assert assist.compare([{"name": "A", "overall": "red"}, {"name": "B", "overall": "amber"}])["pick"] is None
+    assert assist.compare([{"name": "A", "overall": "unknown"}, {"name": "B", "overall": "unknown"}])["pick"] is None
+    assert assist.compare([{"name": "A", "overall": "green"}])["pick"] is None
+
+
+def test_consent_needs_the_shoppers_own_yes():
+    for yes in ("Yes, send it", "ok", "हाँ भेज दो", "はい", "go ahead please"):
+        assert assist.confirmed(yes), yes
+    for no in ("What happens after?", "not now", "no", "yesterday it melted"):
+        assert not assist.confirmed(no), no
+
+
+def test_nothing_is_filed_without_a_yes(monkeypatch):
+    from engine import incidents
+    from engine.agents import owner_tools
+
+    class Ctx:
+        agent_name, state = "shelf_chat", {"pasted": "what would happen after?"}
+    monkeypatch.setattr(incidents, "report", lambda *a: pytest.fail("filed without consent"))
+    runtime.start(None)
+    out = asyncio.run(owner_tools.file_incident_report(Ctx(), "It melted", brand="Kelvo"))
+    assert out["error"].startswith("Not sent")
+    Ctx.state = {"pasted": "Yes, send it", "owner": "OW-1", "market": "in"}
+    monkeypatch.setattr(incidents, "report", lambda body, who: {"report_id": "IR-1", "who": who, **body})
+    assert asyncio.run(owner_tools.file_incident_report(Ctx(), "It melted", brand="Kelvo"))["report_id"] == "IR-1"
+
+
+def test_reminders_before_returns_and_warranties_end():
+    rows = [{"id": "HI-1", "name": "charger", "owner_ref": "OW-1", "tenant_id": "public",
+             "return_by": date(2026, 10, 21), "warranty_until": date(2026, 11, 17)},
+            {"id": "HI-2", "name": "kettle", "return_by": date(2026, 10, 18)}]
+    found = {(r["item_id"], r["kind"], r["days_left"]) for r in household.reminders(rows, date(2026, 10, 18))}
+    assert found == {("HI-1", "return_ending", 3), ("HI-1", "warranty_ending", 30), ("HI-2", "return_ending", 0)}
+    assert household.reminders(rows, date(2026, 10, 19)) == []
+
+
+def test_memory_keeps_the_last_turns_and_the_facts():
+    from engine import chat_memory
+    m = {}
+    for i in range(10):
+        m = chat_memory.remember(m, f"q{i}", f"a{i}", product_id="SS-P-1" if i == 0 else None)
+    assert len(m["history"]) == chat_memory.MAX_TURNS and m["history"][-1] == {"role": "assistant", "text": "a9"}
+    assert m["product_id"] == "SS-P-1"
+    assert chat_memory.load("SS-A-1", None) == {}  # no owner, no memory
+
+
+def test_a_follow_up_uses_the_remembered_product_history_and_manual(monkeypatch):
+    from engine import chat_memory
+    saved = {}
+    monkeypatch.setattr(chat_memory, "load", lambda sid, owner: {
+        "product_id": "SS-P-10291", "history": [{"role": "user", "text": "is it safe?"}], "document": pdf_url(2)})
+    monkeypatch.setattr(chat_memory, "save", lambda sid, owner, memory: saved.update(memory))
+    seen = {}
+
+    async def fake_chat(body, document=None):
+        seen.update(body=body, document=document)
+        return {"product_id": body["product_id"], "messages": [{"text": "Because of 6 reports."}]}
+    monkeypatch.setattr(concierge, "_chat", fake_chat)
+    out = asyncio.run(concierge.chat_session({"message": "why?", "_owner": "OW-1", "session_id": "SS-A-1"}))
+    assert seen["body"]["product_id"] == "SS-P-10291" and seen["body"]["history"] and seen["document"]
+    assert out["messages"][0]["text"] and saved["history"][-1]["text"] == "Because of 6 reports."
+    # what the screen sends wins
+    asyncio.run(concierge.chat_session({"message": "and this?", "product_id": "unmatched", "_owner": "OW-1",
+                                        "session_id": "SS-A-1"}))
+    assert seen["body"]["product_id"] == "unmatched"

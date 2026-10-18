@@ -808,11 +808,26 @@
       const copy = node("button", { type: "button", className: "cbtn", onclick: async () => { try { await navigator.clipboard.writeText(`${subject}\n\n${ta.value}`); copy.lastChild.textContent = "Copied"; } catch (_) { ta.select(); } } }, icon("copy"), "Copy");
       parts.push(node("div", { className: "draft" }, node("b", { textContent: subject }), ta,
         d.send_to?.length ? node("ul", {}, ...d.send_to.map((t) => node("li", {}, node("b", { textContent: `${t.to}: ` }), ...linkify(t.how)))) : null,
-        node("div", { className: "row-btns" }, copy, node("span", { className: "meta", textContent: d.note || "A draft: SafeShelf has not sent anything." }))));
+        node("div", { className: "row-btns" }, copy, key === "write_incident_report" ? fileButton(d, ta) : null, node("span", { className: "meta", textContent: d.note || "A draft: SafeShelf has not sent anything." }))));
     }
+    if (json.transcript) parts.unshift(node("div", { className: "meta", textContent: `Heard: “${json.transcript}”` }));
+    const quick = json.quick_replies?.options || [];
+    if (quick.length) parts.push(node("div", { className: "row-btns" }, ...quick.map((o) => node("button", { type: "button", className: "cbtn", textContent: o, onclick: () => ask(o) }))));
     const refs = json.manual?.references || [];
     if (refs.length) parts.push(node("div", { className: "meta" }, "From the manual: ", ...refs.map((r) => node("code", { textContent: `p. ${r.printed_page || r.page}${r.quote ? ` "${r.quote}"` : ""}` }))));
     return parts.length ? node("div", { className: "assist" }, ...parts) : null;
+  }
+  // Sending the report is the shopper's own click (their consent): POST /v1/incidents, like "Report a problem".
+  function fileButton(d, ta) {
+    const f = d.fields || {};
+    const b = node("button", { type: "button", className: "cbtn blue", onclick: async () => {
+      b.disabled = true;
+      try {
+        const r = await apiPost("/v1/incidents", { description: ta.value, brand: f.brand, model: f.model, title: f.product, market: f.market, happened_on: /^\d{4}-\d{2}-\d{2}$/.test(f.happened_on || "") ? f.happened_on : undefined }, { "X-Reporter-Ref": owner() }, 60000);
+        b.replaceWith(node("span", { className: "meta", textContent: `Sent to SafeShelf (${r.report_id || "received"}). ${r.signal?.status || ""}` }));
+      } catch (err) { b.disabled = false; addNote(`The report wasn't sent: ${err.message}`); }
+    } }, icon("flag"), "Send to SafeShelf");
+    return b;
   }
   const linkify = (text) => String(text).split(/(https?:\/\/[^\s)]+)/).filter(Boolean).map((part) => (/^https?:\/\//.test(part) ? linkTo(part.replace(/[.,]$/, ""), part.replace(/^https?:\/\/(www\.)?/, "").replace(/[.,]$/, "")) : part));
   const download = (name, text) => {
@@ -1042,10 +1057,12 @@
   // ---- Asking ----
   async function ask(q) {
     q = q.trim();
-    if ((!q && !image) || busy) return;
+    if ((!q && !image && !voiceNote) || busy) return;
     const manualFor = image ? null : manualDoc;
+    const audio = voiceNote;
+    voiceNote = null;
     const sent = image;
-    const userRow = addUser(...[sent ? node("img", { className: "sent", src: sent, alt: "Image sent" }) : null, q || null].filter(Boolean));
+    const userRow = addUser(...[sent ? node("img", { className: "sent", src: sent, alt: "Image sent" }) : null, audio ? "🎙️ Voice note" : null, q || null].filter(Boolean));
     $("q").value = "";
     grow();
     unattach();
@@ -1059,10 +1076,10 @@
       // A demo product's first answer also gets its answer card (GET /v1/products/{id}/safety), fetched alongside.
       const demoPid = !linked && !sent && !/https?:\/\//.test(q) ? product() : null;
       const safetyFor = demoPid && demoPid !== "unmatched" && !shownBar.has(demoPid) ? apiGet(`/v1/products/${encodeURIComponent(demoPid)}/safety`, {}, 30000).catch(() => null) : null;
-      const { json, seconds } = await call({ mode: "chat", ...about, message: q, ...(sent ? { image: sent } : {}), ...(manualFor ? { document: manualFor } : {}), language: lang, session_id: sid,
+      const { json, seconds } = await call({ mode: "chat", ...about, message: q, ...(sent ? { image: sent } : {}), ...(manualFor ? { document: manualFor } : {}), ...(audio ? { audio } : {}), language: lang, session_id: sid,
         history: keep ? thread.slice(-keep) : [] }, sent || /https?:\/\//.test(q) ? 200000 : 150000, live(pending, sent ? "Reading the image…" : "Working on it…"));
       const m = json.messages?.[0] || {};
-      thread.push({ role: "user", text: q || "(sent an image)" }, { role: "assistant", text: m.text || "" });
+      thread.push({ role: "user", text: q || json.transcript || "(sent an image)" }, { role: "assistant", text: m.text || "" });
       if (json.link) linked = { ...json.link, investigation_id: json.investigation_id };
       const ctx = ctxFor(json, linked && !(sent && !json.link) ? linked : null, lang);
       const safety = safetyFor && !json.link ? await safetyFor : null;
@@ -1086,7 +1103,7 @@
       showChips();
       if (spokenAsk) { spokenAsk = false; speakText(await spokenLine(ctx), json.language || lang); }
     } catch (err) {
-      failed(pending, err, () => { userRow.remove(); pending.closest(".row").remove(); image = sent; ask(q); });
+      failed(pending, err, () => { userRow.remove(); pending.closest(".row").remove(); image = sent; voiceNote = audio; ask(q); });
     }
     setBusy(false);
     $("q").focus();
@@ -1230,6 +1247,30 @@
     };
     rec.start();
   }
+  // No speech recognition in this browser: record a voice note instead; SafeShelf writes down what was said.
+  let voiceNote = null;
+  let recorder = null;
+  async function toggleRecord() {
+    if (recorder) { recorder.stop(); return; }
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (_) { addNote("Allow the microphone to ask out loud, or type your question."); return; }
+    const chunks = [];
+    recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = (e) => chunks.push(e.data);
+    recorder.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+      recorder = null;
+      $("mic").classList.remove("on"); $("mic").setAttribute("aria-pressed", "false"); $("q").placeholder = placeholder();
+      if (!blob.size) return;
+      try { voiceNote = await readFile(blob); } catch (err) { addNote(`Voice note not sent: ${err.message}`); return; }
+      spokenAsk = true;
+      ask($("q").value);
+    };
+    recorder.start();
+    $("mic").classList.add("on"); $("mic").setAttribute("aria-pressed", "true");
+    $("q").placeholder = "Recording… press the mic again to send";
+  }
 
   // ---- My Shelf: the shopper's watched products (GET/DELETE /v1/watchlists, keyed by the Google account or this browser's id) ----
   const names = (() => { try { return JSON.parse(store.get("safeshelf-shelf-names", "{}")) || {}; } catch (_) { return {}; } })();
@@ -1329,6 +1370,7 @@
   $("scan").onclick = openScan;
   $("labelShot").onchange = () => scanLabel($("labelShot").files[0]);
   if (Recognition) { $("mic").hidden = false; $("mic").onclick = toggleMic; }
+  else if (window.MediaRecorder && navigator.mediaDevices?.getUserMedia) { $("mic").hidden = false; $("mic").onclick = toggleRecord; }
 
   // ---- Wiring ----
   for (const s of STARTERS) {

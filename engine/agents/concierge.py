@@ -16,8 +16,8 @@ from google.adk.agents import LlmAgent
 from google.adk.tools import ToolContext
 from google.adk.tools.agent_tool import AgentTool
 
-from engine import assist, chat, chat_core, gemini, manual, region, safety
-from engine.agents import cache, guard, links, owner_tools, pipeline, runtime, screenshot, tools
+from engine import assist, chat, chat_core, chat_memory, gemini, manual, region, safety
+from engine.agents import cache, guard, links, listen, owner_tools, pipeline, runtime, screenshot, tools
 
 log = logging.getLogger(__name__)
 
@@ -65,7 +65,16 @@ short lines or numbered steps instead of 3 sentences.
 - A manual: if the shopper wants help with installation, cleaning, maintenance or an error code, ask them to send
   the manual as a PDF; SafeShelf then answers from it with page numbers.
 - Drafts (reports, support requests) are for the shopper to copy and send; never say SafeShelf sent anything.
-- Write web addresses as plain URLs (https://...), never as markdown links."""
+- Write web addresses as plain URLs (https://...), never as markdown links.
+- "Will this charger work with my laptop?" with brand and model but no ratings: look_up_specs for each (in one
+  turn), then check_compatibility with the values it found; say they came from the web and to check the label.
+- "Which is safer?" with two or three links or products: compare_products, then give its pick and why.
+- When you need the shopper's answer to continue (what they noticed, which product, which country, yes or no),
+  call ask_shopper with 2 to 4 short options and ask the question in your reply.
+- Filing: write_incident_report first and ask "Shall I send this report to SafeShelf?" (ask_shopper: Yes, send it /
+  Not now). Only when the shopper's latest message says yes, call file_incident_report with the same details.
+- If a manual was sent earlier in this chat, answer questions about the product's use, cleaning, maintenance or
+  error codes with ask_manual and give its page numbers."""
 
 ALTERNATIVE_INSTRUCTION = """You are SafeShelf's Safer Alternative Finder. Given a product_id, call get_alternatives,
 and when it helps, get_relationships, to recommend at most two products to buy instead.
@@ -95,7 +104,7 @@ NOTES = {
 
 
 async def investigate_listing(listing: dict, page: str, language: str, page_evidence: dict | None = None,
-                              note: str | None = None) -> dict:
+                              note: str | None = None, remember: bool = True) -> dict:
     """The full investigation of a listing the chat got from a link or an image, as the chat's check result."""
     found = await pipeline.investigate({"listing": listing, "product_id": "unmatched", "language": language,
                                         **({"page_evidence": page_evidence} if page_evidence else {})})
@@ -107,7 +116,8 @@ async def investigate_listing(listing: dict, page: str, language: str, page_evid
             "reviews": [{"rating": r.get("rating"), "title": r.get("title"), "text": (r.get("text") or "")[:400]}
                         for r in sorted(listing.get("reviews", []), key=lambda r: r.get("rating") or 5)[:10]],
             "verdict": found.get("verdict"), "investigation_id": found.get("investigation_id")}
-    runtime.current().results["checkLink"] = link
+    if remember:  # a comparison checks several links without switching the chat to any of them
+        runtime.current().results["checkLink"] = link
     note = NOTES.get(note or page)
     return {**link, "summary": found["messages"][0]["text"], "label": found.get("label"), **({"note": note} if note else {})}
 
@@ -216,8 +226,13 @@ def _answer(product_id, language, session_id, text: str, seen: set[str], mode: s
     out = chat_core.result(product_id, language, session_id, text, seen)
     out["mode"] = mode
     out["steps"] = runtime.current().steps
-    if runtime.current().results.get("assist"):  # owner-help results (drafts to copy, steps, dates) for the screen
-        out["assist"] = runtime.current().results["assist"]
+    results = runtime.current().results
+    if results.get("assist"):  # owner-help results (drafts to copy, steps, dates) for the screen
+        out["assist"] = results["assist"]
+    if results.get("quick_replies", {}).get("options"):  # tappable answers to the question the reply asks
+        out["quick_replies"] = results["quick_replies"]
+    if results.get("manual") and "error" not in results["manual"]:
+        out["manual"] = results["manual"]
     return out
 
 
@@ -257,7 +272,57 @@ async def manual_session(body: dict, message: str, product_id, language: str, se
     return out
 
 
+async def hear(audio: str) -> str:
+    """What the shopper said in a voice note."""
+    import time
+    try:
+        data, mime_type = listen.decode(audio)
+    except listen.BadAudio as problem:
+        raise HTTPException(status_code=422, detail=f"audio: {problem}") from None
+    started = time.monotonic()
+
+    def work():
+        calls = gemini.track()
+        return listen.transcribe(data, mime_type), calls
+    try:
+        heard, calls = await asyncio.to_thread(work)
+    except Exception as error:  # noqa: BLE001
+        log.warning("voice note not transcribed: %s", type(error).__name__)
+        heard, calls = {"transcript": ""}, []
+    runtime.step("shelf_chat", "listen", f"Heard: {heard['transcript'][:120]}" if heard["transcript"] else
+                 "The voice note could not be understood", time.monotonic() - started, calls)
+    return heard["transcript"]
+
+
 async def chat_session(body: dict) -> dict:
+    """One chat turn, with the conversation's memory (engine/chat_memory.py): a follow-up needs only the question.
+    What the screen sends wins over what was remembered."""
+    owner, session_id = body.get("_owner"), body.get("session_id") or runtime.new_id("SS-A-")
+    memory = await asyncio.to_thread(chat_memory.load, session_id, owner)
+    heard = await hear(body["audio"]) if body.get("audio") else None
+    if body.get("audio") and not heard and not body.get("message"):
+        raise HTTPException(status_code=422, detail="The voice note could not be understood: please say it again "
+                                                    "or type the question")
+    merged = {**body, "session_id": session_id, "message": heard or body.get("message"),
+              "history": body.get("history") or memory.get("history") or [],
+              "market": body.get("market") or memory.get("market")}
+    if "product_id" not in body and memory.get("product_id"):  # the product this conversation is about
+        merged["product_id"] = memory["product_id"]
+        merged["context"] = body.get("context") or memory.get("link")
+    document = body.get("document") or memory.get("document")
+    out = await _chat(merged, document if not body.get("document") else None)
+    if heard:
+        out["transcript"] = heard
+    if owner:
+        text = out["messages"][0]["text"] if out.get("messages") else ""
+        chat_memory.save(session_id, owner, chat_memory.remember(
+            memory, merged.get("message") or "(sent an image)", text, product_id=out.get("product_id"),
+            link=out.get("link"), market=merged.get("market"), document=document))
+    return out
+
+
+async def _chat(body: dict, document: str | None = None) -> dict:
+    """document: a manual sent earlier in this conversation (follow-ups go through the ask_manual tool)."""
     message = (body.get("message") or "").strip()
     image = body.get("image")
     if not message and not image:
@@ -286,11 +351,14 @@ async def chat_session(body: dict) -> dict:
     if image:
         prompt = "[The shopper sent an image; SafeShelf read it and checked that listing (the check result below).]\n" \
             + prompt
+    if document:
+        prompt = "[The shopper sent a product manual earlier in this chat: ask_manual answers from it.]\n" + prompt
     if url:  # a pasted link is about that product, whatever product the screen had selected
         prompt = f"[The shopper pasted a product link: {url} - call check_link with it first.]\n" + prompt
     try:
         # owner and tenant come from the request headers (engine/agents/handler.py), never from the message
-        state = {"language": language, "pasted": message[:1000], "owner": body.get("_owner"),
+        state = {"language": language, "language_name": chat_core.LANGUAGES[language], "document": document,
+                 "pasted": message[:1000], "owner": body.get("_owner"),
                  "tenant": body.get("_tenant") or "public",
                  "market": body.get("market") or region.of((context or {}).get("url"),
                                                            (context or {}).get("currency")) or "in"}

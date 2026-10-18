@@ -460,6 +460,7 @@ def incident_report(f: dict) -> dict:
                         {"to": "The brand or seller", "how": "Their support page or the order page."}]
             + ([{"to": regulator["name"], "how": regulator["how"][0]}] if regulator else []),
             "note": "Nothing is sent by SafeShelf: copy it, fill in the [brackets] and send it yourself.",
+            "fields": {k: f.get(k) for k in ("brand", "model", "product", "happened_on") if f.get(k)} | {"market": m},
             "label": LABEL}
 
 
@@ -483,3 +484,38 @@ def support_request(f: dict) -> dict:
             "body": body, "missing": [FILL] if FILL in body else [],
             "note": "Nothing is sent by SafeShelf: copy it, fill in the [brackets] and send it yourself.",
             "label": LABEL}
+
+
+# ---------- compare products ----------
+
+RANK = {"green": 0, "unknown": 1, "not_enough_evidence": 1, "insufficient_evidence": 1, "amber": 2, "red": 3}
+CONFIRM = re.compile(r"^\W*(yes|yeah|yep|sure|ok|okay|send( it)?|file( it)?|submit( it)?|go ahead|please do|confirm|"
+                     r"हाँ|हां|haan|ha|ji|はい|네|예|是|好|ya|iya|boleh|oo|opo|ใช่|ครับ|ค่ะ|có|vâng|ஆம்|అవును|ಹೌದು|হ্যাঁ)"
+                     r"(?=$|[\s,.!?।、。])",  # not \b: Indic words end in vowel signs, which aren't word characters
+                     re.IGNORECASE)
+
+
+def compare(checked: list[dict]) -> dict:
+    """checked: [{name, overall, safe, real, price, currency, reasons}] from SafeShelf's checks.
+    -> {ranked, pick, why}: the safer pick by the code's colours, never by price alone."""
+    ranked = sorted(checked, key=lambda c: (RANK.get(c.get("overall") or "unknown", 1),
+                                            RANK.get(c.get("safe") or "unknown", 1), c.get("price") or 0))
+    if len(ranked) < 2:
+        return {"ranked": ranked, "pick": None, "why": "Give two products (links or product names) to compare."}
+    best, second = ranked[0], ranked[1]
+    key = (RANK.get(best.get("overall") or "unknown", 1), RANK.get(best.get("safe") or "unknown", 1))
+    if key == (RANK.get(second.get("overall") or "unknown", 1), RANK.get(second.get("safe") or "unknown", 1)):
+        why = ("SafeShelf found no safety difference between them" + (
+            ": neither could be fully checked" if key[0] == 1 else "") + ", so compare seller, warranty and price.")
+        return {"ranked": ranked, "pick": None, "why": why, "label": LABEL}
+    if key[0] >= 2:
+        return {"ranked": ranked, "pick": None, "why": f"{best.get('name')} has fewer concerns, but every option has "
+                "a warning: consider a different product.", "label": LABEL}
+    return {"ranked": ranked, "pick": best.get("name"),
+            "why": f"{best.get('name')} is {best.get('overall')} in SafeShelf's checks, {second.get('name')} is "
+                   f"{second.get('overall')}.", "label": LABEL}
+
+
+def confirmed(message: str) -> bool:
+    """The shopper's own message says yes (any JAPAC language): needed before anything is filed for them."""
+    return bool(CONFIRM.search(message or ""))
