@@ -471,7 +471,7 @@ const BUILD = {
 
 // --- The rest of the page follows the view: each person sees only their sections, ways to try it and products ---
 const SAY = {
-  shopper: { try: "Four ways to check before you buy. Pick one.", "prod-h": "Where you can use it", "prod-p": "Check a product wherever you shop.",
+  shopper: { try: "Five ways to check before you buy. Pick one.", "prod-h": "Where you can use it", "prod-p": "Check a product wherever you shop.",
     "cta-h": "Check before you pay, wherever you shop.", "cta-p": "The Chrome extension and the WhatsApp number are coming soon. The web page works today, on a phone too.",
     "cta-btns": [["site/get.html", "Get SafeShelf"], ["site/chat.html", "Open the chat"]], "hero-2": ["#try", "Try it now"] },
   marketplace: { try: "Paste a seller's listing and watch every check run live.", "prod-h": "What marketplaces use", "prod-p": "Scan the whole catalog, or check each listing as it goes live.",

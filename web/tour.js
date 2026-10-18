@@ -31,16 +31,13 @@ const SLIDES = [
   { id: "views", pose: "curious", target: "#for", title: "Pick who you are", text: "Shopper, marketplace, regulator or developer: the page keeps only the parts for you, and tells the same story your way.",
     art: `<div class="tm-views">${[["shopper", "Shopper"], ["marketplace", "Marketplace"], ["regulator", "Regulator"], ["developer", "Developer"]]
       .map(([v, l]) => `<span class="tm-view${v === "marketplace" ? " pick" : ""}"><img src="site/assets/eddy-${v}.png" alt=""><b>${l}</b></span>`).join("")}</div>${HAND}` },
-  { id: "answers", pose: "thinking", target: "#answers", title: "One clear answer, with proof", text: "Every listing gets one of four answers. Plain code picks the colour from the evidence; Gemini only explains it.",
-    art: `<div class="tm-answers">
-      <div class="tm-checks"><span>Official recalls</span><span>Buyer reviews</span><span>Safety marks</span><span>Is it real?</span></div>
-      <ul class="tm-ans"><li class="red"><b>Don't buy</b>recalled or fake</li><li class="amber"><b>Be careful</b>reports under review</li><li class="green"><b>No problems found</b>in what was checked</li><li class="grey"><b>Can't tell yet</b>never a guess</li></ul>
-    </div>` },
   { id: "shop", pose: "pointing", tab: "shop-page", prep: toTestPages, target: "#shop-page .win", title: "Check right on the shop page", text: "Open a test shop page, or paste any product link, then press the shield. The answer opens beside the listing.",
     art: `<div class="tm-browser"><div class="tm-win">${BAR("example-deals-store.test")}<span class="tm-ext">${SHIELD}</span>
       <div class="tm-shop"><span class="tm-thumb b"></span><span class="tm-lines"><b>Kelvo CX-65 65W charger</b><i>₹299</i><em>Buy now</em></span></div>
       <div class="tm-panel slide"><span class="tm-brand">${SHIELD}SafeShelf</span><div class="tm-verdict red"><b>Don't buy</b><small>Not real: a fifth of the genuine price</small></div><span class="tm-proof">Photos copied from the official listing</span></div>
     </div></div>${HAND}` },
+  { id: "chat", pose: "happy", tab: "chat", target: "#chat .chatwin", title: "Or just ask Eddy", text: "The real chat: pick a product or paste any link or screenshot, then ask in your own words. It remembers the conversation and shows its sources.",
+    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}Eddy · SafeShelf</span><span class="tm-msg me">Is this charger safe in a child's room?</span><span class="tm-msg bot"><b class="amber">Be careful</b>Buyers report it overheating.</span><span class="tm-msg bot">Sources: 3 buyer reviews · BIS registry</span></div></div>` },
   { id: "paste", pose: "excited", tab: "check-own", target: "#check-own", title: "Paste any listing, watch it think", text: "Copy a title from any shop. Eight agents check it live while you watch, then you get the answer.",
     art: `<div class="tm-paste">
       <div class="tm-form"><small>Product title</small><span class="tm-field"><span class="tm-typed">Anker PowerCore 10000 A1263</span></span><span class="tm-go">Check it live</span></div>
@@ -50,6 +47,11 @@ const SLIDES = [
     art: `<div class="tm-talk">
       <div class="tm-phone"><span class="tm-mic"><i></i></span><b>“Is this safe?”</b><small>Listening… हिन्दी · 日本語 · English</small></div>
       <div class="tm-phone wa"><span class="tm-wahead">SafeShelf</span><span class="tm-msg me">flipkart.com/kelvo-cx65…</span><span class="tm-msg bot"><b>⛔ Don't buy</b>Not the real product.</span><span class="tm-msg bot voice"><i></i>0:12</span></div>
+    </div>` },
+  { id: "answers", pose: "thinking", target: "#answers", title: "One clear answer, with proof", text: "Every listing gets one of four answers. Plain code picks the colour from the evidence; Gemini only explains it.",
+    art: `<div class="tm-answers">
+      <div class="tm-checks"><span>Official recalls</span><span>Buyer reviews</span><span>Safety marks</span><span>Is it real?</span></div>
+      <ul class="tm-ans"><li class="red"><b>Don't buy</b>recalled or fake</li><li class="amber"><b>Be careful</b>reports under review</li><li class="green"><b>No problems found</b>in what was checked</li><li class="grey"><b>Can't tell yet</b>never a guess</li></ul>
     </div>` },
   { id: "proof", pose: "surprised", target: "#accuracy", alt: { target: "#attack" }, title: "Tested, and attacked on purpose", text: "Only 2 false alarms in 40 safe products, against 6 for Gemini alone. We also tried to fool it; see what it decided.",
     art: `<div class="tm-proof2">

@@ -8,9 +8,9 @@ import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedte
 import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018u";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
-import { setUpRoles } from "./roles.js?v=20261018d";
+import { setUpRoles } from "./roles.js?v=20261018f";
 import { setUpWhatsApp } from "./whatsapp.js?v=20261018c";
-import { setUpTour } from "./tour.js?v=20261018c";
+import { setUpTour } from "./tour.js?v=20261018d";
 
 
 const el = (tag, props = {}, ...kids) => {
@@ -505,7 +505,11 @@ function setUpTabs() {
       const on = t === tab;
       t.setAttribute("aria-selected", String(on));
       t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      const panel = document.getElementById(t.getAttribute("aria-controls"));
+      panel.hidden = !on;
+      // the chat is a whole page: it loads the first time its tab opens
+      const frame = on && panel.querySelector("iframe[data-src]");
+      if (frame && !frame.dataset.loaded) { frame.dataset.loaded = "1"; frame.src = frame.dataset.src; }
     }
     try { history.replaceState(null, "", `#${tab.id.replace("tab-", "")}`); } catch (_) { /* file:// */ }
   };

@@ -205,3 +205,11 @@
   .tg-modal, .tg-card.in *, .tg-launch.fresh img, .tg-lit { animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
 }
 @media print { .tg-launch, .tg-modal { display: none !important; } }
+
+/* chat: one phone, the site's chat */
+.tm-talk.solo { grid-template-columns: minmax(0, 300px); justify-content: center; }
+.tm-phone.chat { background: var(--soft); }
+.tm-phone.chat .tm-wahead { display: flex; align-items: center; gap: 8px; background: #fff; color: var(--ink); border-bottom: 1px solid var(--line); }
+.tm-phone.chat .tm-wahead svg { width: 18px; height: 18px; }
+.tm-phone.chat .tm-msg.me { background: var(--blue); color: #fff; }
+.tm-msg b.amber { color: var(--amber); }

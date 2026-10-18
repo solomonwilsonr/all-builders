@@ -135,6 +135,14 @@ h1 { margin: 0; font-size: clamp(2.3rem, 1.3rem + 3.8vw, 4.3rem); line-height: 1
 .trypanel { animation: pop .25s ease; scroll-margin-top: 252px; } /* the browser's own jump to #check-own still shows the tab row */
 .panel-lede { margin: 0 0 16px; max-width: 70ch; color: var(--ink-2); }
 
+/* ---------- the chat with Eddy: the real chat page in a window ---------- */
+.chat-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 24px; margin-bottom: 14px; }
+.chat-head .panel-lede { flex: 1 1 420px; }
+.chat-head .jbtn { flex: none; }
+.chatwin { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 30px 60px rgba(0, 17, 35, .14); }
+.chatwin .rtime { font-family: inherit; font-size: 12.5px; color: var(--muted); }
+.chatframe { display: block; width: 100%; height: clamp(560px, 78vh, 820px); border: 0; background: #fff; }
+
 /* ---------- the three steps above the demo browser ---------- */
 .steps3 { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 14px; color: var(--ink-2); }
 .steps3 li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 7px; border-radius: 99px; background: var(--soft); }
@@ -816,6 +824,8 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
   .jump { grid-template-columns: repeat(var(--n, 6), max-content); overflow-x: auto; scrollbar-width: none; }
   .jump::-webkit-scrollbar { display: none; }
   .jump a { white-space: nowrap; }
+  .trytabs { grid-template-columns: repeat(var(--n, 3), minmax(210px, 1fr)); overflow-x: auto; scrollbar-width: none; }
+  .trytabs::-webkit-scrollbar { display: none; }
 }
 @media (max-width: 900px) {
   .jhero-top { grid-template-columns: minmax(0, 1fr); }
@@ -844,7 +854,9 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
   .how3, .rules { grid-template-columns: minmax(0, 1fr); }
   .how-q + .how-q::before, .how-a::before { left: 50%; top: -12px; transform: translate(-50%, -50%); }
   .how-a::before { transform: translate(-50%, -50%) rotate(90deg); }
-  .trytabs { grid-template-columns: minmax(0, 1fr); }
+  .trytabs { grid-template-columns: minmax(0, 1fr); overflow-x: visible; }
+  .chatwin .rtime { display: none; }
+  .chatframe { height: min(82vh, 720px); }
   .trytabs [role=tab] { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px 12px; }
   .trytabs [role=tab]:last-child { border-bottom: 0; }
   .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
