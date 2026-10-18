@@ -1,0 +1,62 @@
+[
+  {
+    "id": "01",
+    "animal": "Bear",
+    "file": "01-shelly-bear.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-00c308ce-11e9-4c85-846b-df34eb73e03e.png"
+  },
+  {
+    "id": "02",
+    "animal": "Fox",
+    "file": "02-shelly-fox.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-3bb05332-1069-4683-89bb-ea9654154fec.png"
+  },
+  {
+    "id": "03",
+    "animal": "Rabbit",
+    "file": "03-shelly-rabbit.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-e4ce0aee-e0a4-4e0f-b6de-79d28e9b14df.png"
+  },
+  {
+    "id": "04",
+    "animal": "Panda",
+    "file": "04-shelly-panda.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-71b974be-8854-4bd7-83dc-06fa8d4a1f9a.png"
+  },
+  {
+    "id": "05",
+    "animal": "Elephant",
+    "file": "05-shelly-elephant.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-7b130521-058a-4445-8261-308d8c63593b.png"
+  },
+  {
+    "id": "06",
+    "animal": "Cat",
+    "file": "06-shelly-cat.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-1cdd2b5f-873f-4621-ba98-506765c889a7.png"
+  },
+  {
+    "id": "07",
+    "animal": "Penguin",
+    "file": "07-shelly-penguin.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-e4a0909c-3413-4992-a39b-1cc66abce48b.png"
+  },
+  {
+    "id": "08",
+    "animal": "Owl",
+    "file": "08-shelly-owl.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-31d04c7d-250e-4e67-a55d-73b225e78c26.png"
+  },
+  {
+    "id": "09",
+    "animal": "Koala",
+    "file": "09-shelly-koala.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-795da80e-7e20-4d9f-98e5-c7bb257606cf.png"
+  },
+  {
+    "id": "10",
+    "animal": "Lion",
+    "file": "10-shelly-lion.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-7f316740-4eb9-48fe-baf2-a5ad968a763f.png"
+  }
+]

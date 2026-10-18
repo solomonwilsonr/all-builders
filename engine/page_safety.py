@@ -36,20 +36,29 @@ NOT_KINDS = NOT_BRANDS | {"with", "pack", "for", "and", "black", "white", "blue"
 
 def page_reviews(listing: dict) -> list[dict]:
     """The page's reviews in the Radar's shape. The text is required; rating and date are optional."""
-    out = []
+    out, seen = [], set()
     today = datetime.now(UTC).date().isoformat()
     for review in (listing.get("reviews") or [])[:MAX_REVIEWS]:
         text = str(review.get("text") or "").strip()
-        if not text:
+        key = "".join(c for c in text.lower().removesuffix("read more") if c.isalnum())[:160]
+        if not text or key in seen:  # the same review twice (spacing and a "Read more" tail differ) counts once
             continue
+        seen.add(key)
         date = str(review.get("date") or "")[:10]
         try:
             datetime.fromisoformat(date)
         except ValueError:
             date = today  # undated: counts as seen today, so the trend is never invented from it
+        verified = review.get("verified_purchase")
         out.append({"title": str(review.get("title") or "")[:200] or None, "text": text[:1500],
-                    "rating": review.get("rating"), "date": date})
+                    "rating": review.get("rating"), "date": date,
+                    "verified_purchase": verified if isinstance(verified, bool) else None})
     return out
+
+
+def listing_key(listing: dict) -> str:
+    """Where a listing's reviews and their labels are kept, so the safety check and the review verdict share them."""
+    return f"listing:{listing.get('url') or listing.get('title') or ''}"
 
 
 def kind_words(title: str) -> str:
@@ -98,7 +107,7 @@ def listing_safety(listing: dict) -> dict:
         fp["category"] = kind_words(re.sub(re.escape(brand), "", title, flags=re.IGNORECASE) if brand else title)
     status = recall_status(searchable_brand(listing, brand), fp)
 
-    key = f"listing:{listing.get('url') or listing.get('title') or ''}"
+    key = listing_key(listing)
     reviews = page_reviews(listing)
     if reviews:
         safety.add_reviews(key, reviews)

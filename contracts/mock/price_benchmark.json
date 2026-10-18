@@ -1,0 +1,85 @@
+{
+  "verdict": "too_low",
+  "headline": "Price looks too low",
+  "listing_price": 299,
+  "currency": "INR",
+  "mrp": 1999,
+  "category": "60W chargers and adapters",
+  "specs": {
+    "power_watts": 60,
+    "ports_usb_c": 1
+  },
+  "genuine_range": {
+    "low": 1199,
+    "median": 1549,
+    "high": 2499
+  },
+  "position": 0.19,
+  "comparables": [
+    {
+      "name": "Ambrane 60W GaN charger",
+      "brand": "Ambrane",
+      "price": 1199,
+      "kind": "comparable",
+      "source": "ambraneindia.com",
+      "source_url": "https://www.ambraneindia.com/",
+      "seen": "2026-10-17"
+    },
+    {
+      "name": "Mi 67W SonicCharge",
+      "brand": "Mi",
+      "price": 1299,
+      "kind": "comparable",
+      "source": "mi.com",
+      "source_url": "https://www.mi.com/in",
+      "seen": "2026-10-17"
+    },
+    {
+      "name": "Anker 735 GaNPrime 65W",
+      "brand": "Anker",
+      "price": 1799,
+      "kind": "comparable",
+      "source": "anker.com",
+      "source_url": "https://www.anker.com/in",
+      "seen": "2026-10-17"
+    },
+    {
+      "name": "Apple 70W USB-C adapter",
+      "brand": "Apple",
+      "price": 2499,
+      "kind": "comparable",
+      "source": "apple.com",
+      "source_url": "https://www.apple.com/in",
+      "seen": "2026-10-17"
+    }
+  ],
+  "reasons": [
+    "Genuine 60W chargers and adapters from 4 brands cost ₹1,199 to ₹2,499",
+    "This listing's ₹299 is under 40% of the lowest genuine price (₹1,199): a discount that deep is not normal",
+    "₹5 per watt against ₹19 to ₹38 per watt for genuine GaN chargers and adapters",
+    "That is under 40% of the lowest genuine price for this technology: too cheap for what it claims"
+  ],
+  "policy_version": "is-it-possible-v1",
+  "label": "Prices found online from brand and retailer pages - check the links. Not a statement about this seller.",
+  "value": {
+    "verdict": "too_cheap_for_tech",
+    "unit": "watt",
+    "per_unit": {
+      "listing": 5.0,
+      "low": 18.5,
+      "median": 25.8,
+      "high": 38.4
+    },
+    "features": [
+      "gan"
+    ],
+    "compared_with_same_technology": true,
+    "text": "₹5 per watt against ₹19 to ₹38 per watt for genuine GaN chargers and adapters"
+  },
+  "answer": {
+    "verdict": "not_possible",
+    "subject": "60W charger",
+    "text": "Genuine 60W chargers cost ₹1,199 to ₹2,499. ₹299 is 25% of the cheapest genuine one, so a genuine 60W charger at this price is not possible."
+  },
+  "basis": "curated_brands"
+}

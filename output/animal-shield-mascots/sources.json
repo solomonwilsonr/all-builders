@@ -1,0 +1,62 @@
+[
+  {
+    "id": "01",
+    "animal": "Bear",
+    "file": "01-bear-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-e5d5e299-9494-4207-b512-d5879d96b05d.png"
+  },
+  {
+    "id": "02",
+    "animal": "Fox",
+    "file": "02-fox-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-f6c8f326-1d21-4283-9483-9b41d576bd14.png"
+  },
+  {
+    "id": "03",
+    "animal": "Elephant",
+    "file": "03-elephant-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-d10e9ee2-b567-4ace-8a19-1034a589a750.png"
+  },
+  {
+    "id": "04",
+    "animal": "Penguin",
+    "file": "04-penguin-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-48d0b5ef-9b53-4656-a986-9d0d05ab3aa1.png"
+  },
+  {
+    "id": "05",
+    "animal": "Otter",
+    "file": "05-otter-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-99b14b0b-36df-4068-8032-8f8c1e7f38f4.png"
+  },
+  {
+    "id": "06",
+    "animal": "Rabbit",
+    "file": "06-rabbit-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-0081f349-9538-4ada-97a2-e1e58cf6c3ea.png"
+  },
+  {
+    "id": "07",
+    "animal": "Koala",
+    "file": "07-koala-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-50d81297-20a9-4eb8-9d7c-3d285950d7b4.png"
+  },
+  {
+    "id": "08",
+    "animal": "Panda",
+    "file": "08-panda-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-33e3538f-2751-48f8-a79f-b6d387991131.png"
+  },
+  {
+    "id": "09",
+    "animal": "Lion",
+    "file": "09-lion-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-1054f178-3f2d-4946-b92c-76aa148d5a4a.png"
+  },
+  {
+    "id": "10",
+    "animal": "Capybara",
+    "file": "10-capybara-shield.png",
+    "source": "/Users/seshu/.codex/generated_images/01a14a48-ff14-7ea1-b66a-23c600185b0f/exec-4c91f07f-87e2-4be2-9239-97f7701ef7a2.png"
+  }
+]

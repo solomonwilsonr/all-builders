@@ -101,13 +101,25 @@ def brand_entry(brand: str | None) -> dict:
     return brands.get(b) or next((e for e in brands.values() if b and b in e.get("aliases", [])), {})
 
 
+def named_sellers(entry: dict, url: str | None) -> list[str]:
+    """The sellers the brand named for the shop this URL is on. A brand that published a list per shop (boAt: Amazon's
+    sellers are not Flipkart's) is held to that shop's list; one that published a single list uses it everywhere."""
+    by_shop = entry.get("marketplaces") or {}
+    if by_shop:
+        names = by_shop.get(registrable(host(url)), {}).get("sellers", []) if host(url) else []
+    else:
+        names = entry.get("sellers", [])
+    aliases = entry.get("seller_aliases") or {}  # other names a named company trades under (SafeShelf's additions)
+    return [*names, *(a for n in names for a in aliases.get(n, []))]
+
+
 def authorised(brand: str, seller: str | None, url: str | None) -> bool:
     entry = brand_entry(brand)
     domain = host(url)
     if domain and any(domain == d or domain.endswith("." + d) for d in entry.get("domains", [])):
         return True
     s = norm_brand(seller)
-    named = [norm_brand(n) for n in entry.get("sellers", [])]
+    named = [norm_brand(n) for n in named_sellers(entry, url)]
     # Marketplaces show the full company name: "Clicktech Retail Private Ltd" for the "Clicktech Retail" a brand names
     return bool(s) and (s == norm_brand(brand) or any(s == n or (len(n) >= 5 and s.startswith(n)) for n in named))
 

@@ -1,0 +1,23 @@
+{
+  "verdict": "third_party",
+  "official": false,
+  "headline": "Not an official partner",
+  "tone": "none",
+  "text": "boAt product sold by Random Traders on Amazon.in. boAt's listed Amazon.in sellers: Appario Retail, Techretailer, Techvast Pvt. Ltd. and 8 more.",
+  "brand": "boAt",
+  "seller": "Random Traders",
+  "marketplace": "amazon.in",
+  "official_channels": null,
+  "source": {
+    "text": "boAt's own warranty page: 'Authorised Sales Channels' and 'Authorised Sellers'",
+    "url": "https://www.boat-lifestyle.com/pages/warranty",
+    "as_of": null,
+    "retrieved": "2026-10-17"
+  },
+  "reasons": [
+    "Random Traders is not among the 11 sellers boAt names for Amazon.in",
+    "The list may name a seller by its company name, and a seller not on it can still be genuine"
+  ],
+  "policy_version": "official-seller-v1",
+  "label": "From the brand's own published page, not a regulator's finding. A seller that is not named can still be genuine: lists change, and a seller may trade under another name."
+}
