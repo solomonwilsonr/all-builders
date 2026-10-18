@@ -23,7 +23,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
   // One entry per shop. Selectors are best effort: shops change them, so each has fallbacks.
   const GENERIC = {
-    isProduct: () => !document.body?.hasAttribute("data-safeshelf-skip"), // e.g. the chat test console (demo/chat.html)
+    isProduct: () => !document.body?.hasAttribute("data-safeshelf-skip"),
     title: "h1",
     price: null,
     seller: null,

@@ -20,7 +20,7 @@ RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_
 WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 FIRECRAWL_SECRET ?= $(shell gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: api-docs test-extension agents demo-pages shops deploy-shops api api-real test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
+.PHONY: api-docs test-extension demo-pages shops deploy-shops api api-real test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
 	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery promo-video support-kb
 
@@ -62,9 +62,6 @@ promo-video:    ## the 30-second demo reels (promo/demo-30s.html site style, pro
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
 	node extension/tests/run_all.mjs
-
-agents:         ## Shelf Chat agent service on :8081 (needs GOOGLE_API_KEY in .env or agents/.env)
-	cd agents && uv run --python 3.12 uvicorn server:app --reload --port 8081
 
 demo-pages:     ## serve the demo shop pages on :8090 (the chat is now on the site: make web, then /site/chat.html)
 	cd extension/demo && python3 -m http.server 8090

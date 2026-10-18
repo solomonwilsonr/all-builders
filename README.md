@@ -17,7 +17,6 @@ SafeShelf checks any product listing and answers two questions: **Is it safe?** 
 |---|---|
 | [`engine/`](engine/) | Identity engine, Safety Radar, recall and safety-mark checks, "Is it real?" checks, live official sources, evidence verification, ADK agents |
 | [`api/`](api/) | FastAPI service on Cloud Run that serves the engine |
-| [`agents/`](agents/) | Google ADK agent definitions |
 | [`research/`](research/) | Research Agent service: a headless browser that checks official recall sites (Cloud Run) |
 | [`browser/`](browser/) | A real Chrome with the SafeShelf extension, for "Try it" on the judges' page (Cloud Run) |
 | [`web/`](web/) | Judges' page (Firebase Hosting) |

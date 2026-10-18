@@ -12,6 +12,8 @@ skills-lock.json
 .build-research/
 extension/config.generated.js
 
+# built by shops/build.py
+shops/public/
 # copied from extension/ by `make web-ext`
 web/ext/
 # copied from extension/ by `make browser-ext`
