@@ -1,7 +1,8 @@
-// Eddy's tour of the judges' page: a centred card with one slide per step of the page, in the page's order. Each slide has Eddy (the mascot, cut from
-// the brand sheet into site/assets/guide/) in a pose that fits, a big title, one line, and a moving picture of the
-// feature with a cursor using it. "Show me on the page" closes the card, opens the right Try it tab and lights up that
-// part of the page. The last slide takes a product name and puts it into Paste a listing for the real live check.
+// Eddy's tour of the judges' page, one step per part of the page, in the page's order. The first and last steps are a
+// centred card with Eddy (the mascot, cut from the brand sheet into site/assets/guide/) and a moving picture; every
+// step between is a coachmark: the page scrolls to the real part (opening its Try it tab), a spotlight dims the rest,
+// and a small card with an arrow points at it, with Eddy, the dots, Back / Next and "Seen this before? Skip the tour".
+// The last step takes a product name and puts it into Paste a listing for the real live check.
 // Navigation: Back / Next, clickable dots, arrow keys, swipe, Esc. It opens once by itself after sign-in (remembered
 // on this browser; ?notour turns that off) and any time from Eddy's button at the bottom right. Slides for parts the
 // chosen view hides (roles.js) are left out. Plain module, no build step; the pictures are fixed markup.
@@ -106,13 +107,18 @@ export function setUpTour() {
       <h2 id="tg-title"></h2>
       <p id="tg-text"></p>
       <div class="tg-art" aria-hidden="true"><div class="tg-stage"></div></div>
-      <button type="button" class="tg-show">Show me on the page <span aria-hidden="true">→</span></button>
       <div class="tg-foot">
+        <img class="tg-mini" alt="" src="${POSE("hi")}">
         <button type="button" class="tg-back">Back</button>
         <span class="tg-dots" role="tablist" aria-label="Tour slides"></span>
         <button type="button" class="tg-next"></button>
       </div>
+      <p class="tg-skip">Seen this before? <button type="button">Skip the tour</button></p>
+      <span class="tg-arrow" aria-hidden="true"></span>
     </div>`;
+  const spot = document.createElement("div");
+  spot.className = "tg-spot";
+  wrap.prepend(spot);
   document.body.append(wrap);
 
   const q = (sel) => wrap.querySelector(sel);
@@ -122,6 +128,7 @@ export function setUpTour() {
   let slides = [];
   let at = 0;
   let lastFocus = null;
+  let pinned = null; // the part of the page the current coachmark points at
 
   // the pictures are drawn at 520 × 270 and scaled to fit the card
   const fit = () => { stage.style.transform = `scale(${Math.min(1, art.clientWidth / 520)})`; art.style.height = `${270 * Math.min(1, art.clientWidth / 520)}px`; };
@@ -129,15 +136,14 @@ export function setUpTour() {
   function show(i) {
     at = Math.max(0, Math.min(i, slides.length - 1));
     const s = slides[at];
-    const eddy = q(".tg-eddy");
-    eddy.src = POSE(s.pose);
+    q(".tg-eddy").src = q(".tg-mini").src = POSE(s.pose);
     q("#tg-title").textContent = s.title;
     q("#tg-text").textContent = s.text;
     stage.innerHTML = s.art;
     stage.dataset.slide = s.id;
-    q(".tg-show").hidden = !s.target;
     q(".tg-back").textContent = at === 0 ? "Skip" : "Back";
     q(".tg-next").textContent = at === 0 ? "Take the tour" : at === slides.length - 1 ? "Done" : "Next";
+    q(".tg-skip").hidden = at === 0 || at === slides.length - 1;
     q(".tg-dots").replaceChildren(...slides.map((sl, j) => {
       const d = document.createElement("button");
       d.type = "button";
@@ -147,6 +153,7 @@ export function setUpTour() {
       d.onclick = () => show(j);
       return d;
     }));
+    pin(s); // before fit(): a centred step's picture is only measurable once the card has left coachmark mode
     card.classList.remove("in");
     void card.offsetWidth; // restart the entrance and the picture's motion
     card.classList.add("in");
@@ -155,6 +162,63 @@ export function setUpTour() {
     art.setAttribute("aria-hidden", String(!form)); // only the last slide's picture is something to use
     if (form) form.onsubmit = (e) => { e.preventDefault(); tryProduct(form.elements[0].value.trim()); };
   }
+
+  // the sticky top bar and jump bar cover the top of the page; parts are scrolled to just below them
+  const topBar = () => [document.querySelector("body > header.top"), document.querySelector(".jump")]
+    .reduce((h, el) => h + (el && !el.closest("[hidden]") ? el.offsetHeight : 0), 0);
+
+  // a step that points at the page: open its tab, scroll it into view and put the card beside it
+  function pin(slide) {
+    const p = slide.target && placeOf(slide);
+    wrap.classList.toggle("pin", !!p);
+    pinned = null;
+    if (!p) { card.style.left = card.style.top = ""; return; }
+    if (p.tab) openTab(p.tab);
+    p.prep?.();
+    pinned = document.querySelector(p.target);
+    const r = pinned.getBoundingClientRect();
+    const off = topBar() + 16, room = innerHeight - off;
+    const y = r.height < room * .5 ? r.top - off - (room - r.height - card.offsetHeight) / 2 : r.top - off;
+    scrollTo({ top: Math.max(0, scrollY + y), behavior: "instant" }); // straight there, so the card never trails the page
+    place();
+  }
+
+  // the spotlight around the part, and the card on whichever side has room, its arrow pointing at the part
+  function place() {
+    if (!pinned || wrap.hidden) return;
+    const vw = document.documentElement.clientWidth, vh = innerHeight, m = 12, gap = 18, pad = 8;
+    const r = pinned.getBoundingClientRect();
+    const top = topBar();
+    const b = { l: Math.max(4, r.left - pad), r: Math.min(vw - 4, r.right + pad), t: Math.max(top + 4, r.top - pad), b: Math.min(vh - 4, r.bottom + pad) };
+    const cw = card.offsetWidth, ch = card.offsetHeight;
+    let side = vw - b.r >= cw + gap + m ? "right" : b.l >= cw + gap + m ? "left" : vh - b.b >= ch + gap + m ? "below" : b.t - top >= ch + gap + m ? "above" : null;
+    if (!side) { // a big part: light up the top of it and put the card underneath
+      b.b = Math.max(b.t + 90, vh - ch - gap - m);
+      side = vh - b.b >= ch + gap + m ? "below" : "over";
+    }
+    Object.assign(spot.style, { left: `${b.l}px`, top: `${b.t}px`, width: `${b.r - b.l}px`, height: `${Math.max(0, b.b - b.t)}px` });
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(v, hi));
+    const mx = (b.l + b.r) / 2, my = (b.t + b.b) / 2;
+    let x, y, a;
+    if (side === "right" || side === "left") {
+      x = side === "right" ? b.r + gap : b.l - gap - cw;
+      y = clamp(my - ch / 2, top + m, vh - ch - m);
+      a = clamp(my - y, 26, ch - 26);
+    } else if (side === "over") {
+      x = (vw - cw) / 2; y = vh - ch - m; a = 0;
+    } else {
+      x = clamp(mx - cw / 2, m, vw - cw - m);
+      y = side === "below" ? b.b + gap : b.t - gap - ch;
+      a = clamp(mx - x, 26, cw - 26);
+    }
+    card.dataset.side = side;
+    card.style.left = `${Math.round(x)}px`;
+    card.style.top = `${Math.round(y)}px`;
+    card.style.setProperty("--a", `${Math.round(a)}px`);
+  }
+  let frame = 0;
+  const follow = () => { if (pinned && !frame) frame = requestAnimationFrame(() => { frame = 0; place(); }); };
+  window.addEventListener("scroll", follow, { passive: true });
 
   function open() {
     slides = SLIDES.filter(wanted);
@@ -170,23 +234,11 @@ export function setUpTour() {
 
   function close(refocus = true) {
     wrap.hidden = true;
+    wrap.classList.remove("pin");
+    pinned = null;
     launch.hidden = false;
     document.documentElement.classList.remove("tg-on");
     if (refocus) lastFocus?.focus?.({ preventScroll: true });
-  }
-
-  // close the card, open the right tab, and light up that part of the page for a moment
-  function showOnPage(slide) {
-    const p = placeOf(slide);
-    if (!p) return;
-    close(false);
-    if (p.tab) openTab(p.tab);
-    p.prep?.();
-    const el = document.querySelector(p.target);
-    if (!el) return;
-    el.scrollIntoView({ behavior: calm() ? "auto" : "smooth", block: el.offsetHeight > innerHeight * .7 ? "start" : "center" });
-    el.classList.remove("tg-lit"); void el.offsetWidth; el.classList.add("tg-lit");
-    setTimeout(() => el.classList.remove("tg-lit"), 2600);
   }
 
   // the last slide: put the product into Paste a listing, ready for the live check (the person presses it)
@@ -206,8 +258,8 @@ export function setUpTour() {
   q(".tg-x").addEventListener("click", () => close());
   q(".tg-back").addEventListener("click", () => (at === 0 ? close() : show(at - 1)));
   q(".tg-next").addEventListener("click", () => (at < slides.length - 1 ? show(at + 1) : close()));
-  q(".tg-show").addEventListener("click", () => showOnPage(slides[at]));
-  wrap.addEventListener("click", (e) => { if (e.target === wrap) close(); });
+  q(".tg-skip button").addEventListener("click", () => close());
+  wrap.addEventListener("click", (e) => { if (e.target === wrap && !pinned) close(); }); // coachmarks close only on purpose
   wrap.addEventListener("keydown", (e) => {
     if (e.key === "Escape") return close();
     if (e.target.matches?.("input")) return;
@@ -227,7 +279,7 @@ export function setUpTour() {
     x0 = null;
     if (Math.abs(dx) > 50) show(at + (dx < 0 ? 1 : -1));
   });
-  window.addEventListener("resize", () => { if (!wrap.hidden) fit(); });
+  window.addEventListener("resize", () => { if (!wrap.hidden) { fit(); place(); } });
 
   // first visit on this browser: open by itself once the page has drawn its views
   if (!store.get() && !new URLSearchParams(location.search).has("notour")) setTimeout(open, 1200);
