@@ -23,7 +23,7 @@ export function makeQuota(db, area) {
     get guest() { return state.guest; },
     get ready() { return state.ready; },
     limit,
-    left: () => (!state.user ? 0 : UNLIMITED ? Infinity : Math.max(0, limit() - state.used)),
+    left: () => (UNLIMITED ? Infinity : !state.user ? 0 : Math.max(0, limit() - state.used)),
     onChange(f) { listeners.add(f); return () => listeners.delete(f); },
     /** Load the count for this person (call on every sign-in change). */
     async load(user) {
@@ -72,8 +72,8 @@ export function makeQuota(db, area) {
     },
     /** One line for the page: what is left and why. */
     text() {
-      if (!state.user) return "Sign in to run checks";
       if (UNLIMITED) return "Unlimited checks while we test";
+      if (!state.user) return "Sign in to run checks";
       const n = api.left();
       if (state.guest) return n ? "1 free guest check on this browser" : "Guest check used: sign in for 5 checks a day";
       return n ? `${n} of ${LIMITS.account} checks left today` : "Today's 5 checks are used: more tomorrow";

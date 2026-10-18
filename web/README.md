@@ -2,8 +2,10 @@
 
 One static page (no build step, no keys) that calls the same API as the extension.
 
-**Sign-in is required.** The page starts hidden behind the sign-in card (`signin-card.js`: Google, email and
-password, or a guest), through Firebase Auth, project `shelf2026-3656b`; settings in `firebase-config.js`. The demo
+**No sign-in is asked for**, so judges go straight in. Every visitor is signed in as a guest by itself (`auth.js`
+for the demo, `site/account.js` for the website), through Firebase Auth, project `shelf2026-3656b`; settings in
+`firebase-config.js`. If Firebase refuses the guest sign-in, the pages still work: the API is public. Only the
+extension's hand-off page (`signin.html`) still shows the sign-in card (`signin-card.js`). The demo
 keeps its own sign-in, separate from the website's (`firebase-app.js`). Every API call carries the person's ID token.
 AI checks are limited per person (`quota.js`, counted in Firestore `usage/{uid}_{area}`, enforced by
 `firestore.rules`): a guest gets 1 check ever on the browser, a Google or email account 5 a day. The website

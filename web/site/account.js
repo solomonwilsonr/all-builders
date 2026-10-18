@@ -1,12 +1,11 @@
-// Sign-in for the website: its own login, separate from the judges' demo (../firebase-app.js). The site stays
-// readable signed out; the nav gets a "Sign in" button that opens the shared sign-in card (Google, email and
-// password, or a guest). Signed in, the nav shows the person's photo (or "Guest") with a menu: who, checks left,
-// My Shelf, Chat with Eddy, Try it live, Sign out. AI features (the chat) use window.safeshelfAccount.take() for each check:
-// a guest gets 1 ever on this browser, an account 5 a day (../quota.js, counted in Firestore). Other scripts listen
-// for "safeshelf:account"; window.safeshelfSignIn() opens the card.
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+// Sign-in for the website: its own login, separate from the judges' demo (../firebase-app.js). Nobody is asked to
+// sign in: every visitor is signed in as a guest by itself, and the nav shows no Sign in button. Someone already
+// signed in with an account sees their photo with a menu: who, checks left, My Shelf, Chat with Eddy, Try it live,
+// Sign out. AI features (the chat) use window.safeshelfAccount.take() for each check (../quota.js). Other scripts
+// listen for "safeshelf:account"; window.safeshelfSignIn() still opens the card if a page asks for it.
+import { onAuthStateChanged, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { firebaseArea } from "../firebase-app.js?v=20261017v";
-import { makeQuota } from "../quota.js?v=20261018u";
+import { makeQuota } from "../quota.js?v=20261018ns";
 import { rememberAccount, signInCard } from "../signin-card.js?v=20261017v";
 
 const { auth, db } = firebaseArea("site");
@@ -58,11 +57,9 @@ document.addEventListener("keydown", (e) => {
 function render(user) {
   slot?.remove();
   menuOpen = () => {};
-  if (!user) {
-    const button = make("button", { type: "button", className: "btn btn-ghost btn-sm acct-in", textContent: "Sign in" });
-    button.onclick = () => openModal(button);
-    slot = button;
-  } else {
+  slot = null;
+  if (!user || user.isAnonymous) return; // guests: no sign-in to offer
+  {
     const guest = user.isAnonymous;
     const name = guest ? "Guest" : user.displayName || user.email || "Signed in";
     const face = user.photoURL ? make("img", { src: user.photoURL, alt: "", referrerPolicy: "no-referrer" })
@@ -73,11 +70,6 @@ function render(user) {
     const left = make("p", { className: "acct-left", textContent: quota.text() });
     const items = [make("div", { className: "acct-who" }, make("b", { textContent: guest ? "Guest" : user.displayName || "Signed in" }),
       make("small", { textContent: guest ? "No account: 1 free check on this browser" : user.email || "" })), left];
-    if (guest) {
-      const up = make("button", { type: "button", role: "menuitem", className: "acct-up", textContent: "Sign in for 5 checks a day" });
-      up.onclick = async () => { await signOut(auth); openModal(toggle); };
-      items.push(up);
-    }
     items.push(make("a", { href: "shelf.html", role: "menuitem", textContent: "My Shelf" }),
       make("a", { href: "chat.html", role: "menuitem", textContent: "Chat with Eddy" }),
       make("a", { href: "../index.html", role: "menuitem", textContent: "Try it live" }), out);
@@ -95,7 +87,14 @@ function render(user) {
   end?.insertBefore(slot, end.querySelector(".btn-ink, .menu"));
 }
 
+// A visitor with no account becomes a guest by itself. If Firebase refuses, the page still works as a visitor.
+const visitor = {
+  uid: null, email: null, name: null, guest: true, token: async () => "",
+  left: () => quota.left(), text: () => quota.text(), usedUpText: () => quota.usedUpText(), take: () => quota.take(),
+};
+
 onAuthStateChanged(auth, (user) => {
+  if (!user) signInAnonymously(auth).catch(() => {});
   rememberAccount("site", user);
   quota.load(user);
   window.safeshelfAccount = user ? {
@@ -103,7 +102,7 @@ onAuthStateChanged(auth, (user) => {
     token: (fresh) => user.getIdToken(fresh),
     left: () => quota.left(), text: () => quota.text(), usedUpText: () => quota.usedUpText(),
     take: () => quota.take(), // resolves true if this check is allowed and counted
-  } : null;
+  } : visitor;
   document.documentElement.classList.toggle("signed-in", Boolean(user));
   render(user);
   dispatchEvent(new CustomEvent("safeshelf:account", { detail: window.safeshelfAccount }));

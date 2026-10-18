@@ -1,11 +1,11 @@
 // SafeShelf judges' page. Plain modules, no build step, no keys: it calls the same API as the extension, with the
-// demo's own sign-in (auth.js: Google, email or guest); nothing runs until the person signs in.
+// demo's own sign-in (auth.js), which signs every visitor in as a guest by itself: no sign-in screen.
 // "Try a sample" runs the real SafeShelf extension on each sample listing (web/ext/, make web-ext); "Check your own
 // listing" streams a live run (POST /v1/agent/sessions/stream, server-sent events). Every AI check counts against the
 // person's limit (quota.js: a guest gets 1, an account 5 a day) so the demo's Gemini budget lasts.
 // The API (or ?api=http://localhost:PORT), and what a shopper can do with an answer: actions.js.
 import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedteam } from "./actions.js?v=20261017v";
-import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018u";
+import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018ns";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
 import { setUpRoles } from "./roles.js?v=20261018j";
@@ -266,7 +266,7 @@ async function live(view, request) {
 function shareWithFrame() {
   window.SafeShelfDemo = {
     api: API,
-    token: (fresh) => auth.currentUser.getIdToken(fresh),
+    token: async (fresh) => (await auth.currentUser?.getIdToken(fresh)) || "",
     who: () => ({ email: auth.currentUser?.email || "", name: auth.currentUser?.displayName || "", role: document.documentElement.dataset.role || "shopper" }),
     quota: { left: () => quota.left(), take: () => { quota.take().catch(() => {}); } },
     // a real product page, read live by the API; one live run per page opened (it may use a real browser)
@@ -463,7 +463,7 @@ function setUpRemote() {
   addEventListener("message", async (e) => {
     if (e.origin !== origin) return;
     if (e.data?.type === "safeshelf-browser:loaded") {
-      try { $("rframe").contentWindow.postMessage({ type: "start", token: await auth.currentUser.getIdToken(), open: startAt }, origin); startAt = ""; }
+      try { $("rframe").contentWindow.postMessage({ type: "start", token: (await auth.currentUser?.getIdToken()) || "", open: startAt }, origin); startAt = ""; }
       catch (_) { end("Sign in again, then start a new session."); }
     }
     if (e.data?.type === "safeshelf-browser:ready") {

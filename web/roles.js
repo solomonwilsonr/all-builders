@@ -4,7 +4,7 @@
 // data/catalog.json); the developer view also calls the live API. ?for=marketplace (or regulator, developer) scrolls
 // to that part. Plain module, no build step. Text is always set as text, never as HTML.
 import { API, el } from "./actions.js?v=20261017v";
-import { authFetch, quota } from "./auth.js?v=20261018u";
+import { authFetch, quota } from "./auth.js?v=20261018ns";
 
 const STORY = "recall_jp"; // the sample every view tells
 const TONE = { red: "red", amber: "amber", green: "green", unknown: "grey" };

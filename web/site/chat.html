@@ -391,7 +391,7 @@
   </aside>
 
 <script src="site.js"></script>
-<script type="module" src="account.js?v=20261018u"></script>
+<script type="module" src="account.js?v=20261018ns"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -742,7 +742,7 @@
   // ---- Things to do with an answer: watch it, a safer option, I already bought it, report a problem ----
   // Signed in with Google (account.js), My Shelf follows the account; signed out, it is this browser's own id.
   const owner = () => {
-    if (window.safeshelfAccount) return `google-${window.safeshelfAccount.uid}`;
+    if (window.safeshelfAccount?.uid) return `google-${window.safeshelfAccount.uid}`;
     let id = store.get("safeshelf-owner", "");
     if (!id) { id = `web-${(crypto.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36))}`; store.set("safeshelf-owner", id); }
     return id;

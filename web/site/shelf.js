@@ -69,16 +69,14 @@ onAuthStateChanged(auth, (user) => {
   stop = null;
   items = [];
   if (!user) {
-    const b = make("button", { type: "button", className: "btn btn-blue", textContent: "Sign in" });
-    b.onclick = () => window.safeshelfSignIn?.();
-    state("Sign in with the same account you use in the SafeShelf extension to see your saved products.", b);
+    state("Products you save in the SafeShelf extension appear here.", make("a", { className: "btn btn-line", href: "get.html", textContent: "Get the extension" }));
     return;
   }
   stop = onSnapshot(collection(db, "users", user.uid, "shelf"), (snap) => {
     items = snap.docs.map((d) => ({ ...d.data(), docId: d.id })).sort((a, b) => String(b.saved_at).localeCompare(String(a.saved_at)));
     if (!items.length) {
       state(user.isAnonymous
-        ? "You're signed in as a guest, so nothing is saved to an account. Sign in with Google or email here and in the extension to keep a shelf."
+        ? "Nothing saved yet. Products you save in the SafeShelf extension appear here."
         : "Nothing saved yet. In the SafeShelf extension, sign in with this account, then save a product from a shop page. It appears here right away.",
       make("a", { className: "btn btn-line", href: "get.html", textContent: "Get the extension" }));
       return;

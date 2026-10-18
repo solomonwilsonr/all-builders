@@ -1,12 +1,12 @@
-// Sign-in for the judges' demo page and the extension hand-off page. Nothing on the page works until the person
-// signs in: the page starts hidden (<html class="auth-locked">) and the sign-in card is shown instead (Google, email
-// and password, or a guest). The demo has its own sign-in, separate from the website's (firebase-app.js); the
-// extension hand-off uses the website's. API calls go through authFetch, which sends the Firebase ID token, and
+// Sign-in for the judges' demo page and the extension hand-off page. The demo never asks: every visitor is signed in
+// as a guest by itself, so judges go straight in. The extension hand-off still needs a real account: that page starts
+// hidden (<html class="auth-locked">) behind the sign-in card. The demo has its own sign-in, separate from the
+// website's (firebase-app.js); the extension hand-off uses the website's. API calls go through authFetch, which sends the Firebase ID token, and
 // `quota` counts the AI checks used (quota.js: a guest gets 1, an account 5 a day).
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { onAuthStateChanged, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { firebaseArea } from "./firebase-app.js?v=20261017v";
 import { API } from "./firebase-config.js";
-import { makeQuota } from "./quota.js?v=20261018u";
+import { makeQuota } from "./quota.js?v=20261018ns";
 import { rememberAccount, signInCard } from "./signin-card.js?v=20261017v";
 
 export { API };
@@ -63,7 +63,15 @@ function completeSignIn(user) {
   mountAccount();
 }
 
+// The demo: no sign-in screen. Sign in as a guest; if Firebase refuses, the page still opens (the API is public).
+function openAsVisitor() {
+  root.classList.remove("auth-locked");
+  quota.load(null);
+  signInAnonymously(auth).catch(() => resolveSignedIn(null));
+}
+
 onAuthStateChanged(auth, (user) => {
+  if (!user && !chooseAccount) return openAsVisitor();
   if (!user || (chooseAccount && !accountChosen)) {
     quota.load(null);
     return lock();
@@ -71,29 +79,31 @@ onAuthStateChanged(auth, (user) => {
   completeSignIn(user);
 });
 
-/** Resolves with the Firebase user once someone is signed in. */
+/** Resolves with the Firebase user once someone is signed in (null on the demo if the guest sign-in failed). */
 export const requireSignIn = () => signedIn;
 
 /** fetch() with the signed-in person's ID token. A 401 or 403 asks once more with a fresh token: the old one may
  * have just expired. */
 export async function authFetch(url, init = {}) {
   const user = auth.currentUser || (await signedIn);
+  if (!user) return fetch(url, init);
   const send = async (fresh) => fetch(url, { ...init, headers: { ...init.headers, Authorization: `Bearer ${await user.getIdToken(fresh)}` } });
   const res = await send(false);
   return res.status === 401 || res.status === 403 ? send(true) : res;
 }
 
-// Show who is signed in (or "Guest") and the way out; a guest's button reads "Sign in" (to get 5 checks a day).
+// Show who is signed in and the way out. Guests see nothing: there is no sign-in to offer them.
 let account = null;
 function mountAccount() {
   if (chooseAccount) return; // the extension hand-off needs only Firebase
   const row = document.querySelector("body > header .brand-row, main .brand-row");
   const user = auth.currentUser;
-  if (!row || !user) return;
   account?.remove();
-  const out = make("button", { type: "button", className: "link", textContent: user.isAnonymous ? "Sign in" : "Sign out" });
+  account = null;
+  if (!row || !user || user.isAnonymous) return;
+  const out = make("button", { type: "button", className: "link", textContent: "Sign out" });
   out.onclick = () => signOut(auth);
-  const who = user.isAnonymous ? "Guest" : [user.displayName, user.email].filter(Boolean).join(" · ") || "Signed in";
+  const who = [user.displayName, user.email].filter(Boolean).join(" · ") || "Signed in";
   account = make("span", { className: "account" }, make("span", { className: "who", textContent: who }), out);
   row.append(account);
 }
