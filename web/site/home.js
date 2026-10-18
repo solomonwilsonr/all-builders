@@ -286,6 +286,23 @@
     try { const saved = localStorage.getItem("safeshelf-lang"); if (saved && [...hcLang.options].some((o) => o.value === saved)) hcLang.value = saved; } catch (_) { /* storage off */ }
     const grow = () => { hcQ.style.height = "auto"; hcQ.style.height = `${Math.min(hcQ.scrollHeight, 160)}px`; };
     hcQ.addEventListener("input", grow);
+    // Placeholder types itself out, a few example questions in turn; holds still while the box is in use
+    if (!pageMotion.matches) {
+      const lines = [hcQ.placeholder, "Is this baby walker on any recall list?", "क्या यह चार्जर सुरक्षित है?",
+        "Is this Flipkart shop real or a copy?", "このヘルメットは安全ですか？", "Paste a link and ask: is it worth the price?"];
+      let line = 0, pos = 0, del = false;
+      const tick = () => {
+        if (document.activeElement === hcQ || hcQ.value) { hcQ.placeholder = lines[0]; line = pos = 0; del = false; return setTimeout(tick, 600); }
+        const text = [...lines[line]]; // by code point, so Hindi and Japanese never show half a character
+        pos += del ? -1 : 1;
+        hcQ.placeholder = text.slice(0, pos).join("") + (pos < text.length ? "|" : "");
+        if (!del && pos >= text.length) { del = true; return setTimeout(tick, 2200); }
+        if (del && pos <= 0) { del = false; line = (line + 1) % lines.length; return setTimeout(tick, 350); }
+        setTimeout(tick, del ? 22 : 48 + Math.random() * 40);
+      };
+      hcQ.placeholder = "";
+      setTimeout(tick, 900);
+    }
     hcQ.addEventListener("keydown", (e) => { // Enter sends; Shift+Enter is a new line; never while an IME is composing
       if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); hcForm.requestSubmit(); }
     });
