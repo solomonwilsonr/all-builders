@@ -8,9 +8,9 @@ import { API, afterBlock, badgeEl, listenBlock, setListing, setUpAsk, setUpRedte
 import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018u";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
-import { setUpRoles } from "./roles.js?v=20261018r";
+import { setUpRoles } from "./roles.js?v=20261018e";
 import { setUpWhatsApp } from "./whatsapp.js?v=20261018c";
-import { setUpTour } from "./tour.js?v=20261018r";
+import { setUpTour } from "./tour.js?v=20261018e";
 
 
 const el = (tag, props = {}, ...kids) => {
