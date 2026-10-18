@@ -1,11 +1,13 @@
 {
- "_note": "The sample listings on the judges' page. Each one's recording (samples/<id>.json) is a real run of the live API, made by web/record_samples.py. 'expect' is what a correct answer must show; the page checks every run against it. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; the Anker recall is a real CPSC notice.",
+ "_note": "The sample listings on the judges' page. Each one's recording (samples/<id>.json) is a real run of the live API, made by web/record_samples.py. 'expect' is what a correct answer must show; the page checks every run against it. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; the Anker recall is a real CPSC notice. Each 'shop' is the same listing as a real page on the SafeShelf test shops (shops/, hosted at 'shops_url'), for the real browser and the installed extension.",
+ "shops_url": "https://safeshelf-shops.web.app",
  "presets": [
   {
    "id": "recall_jp",
    "name": "HAIARA W5PRO power bank",
    "what": "Recalled in Japan: CAA notice read live, exact model 型番 W5PRO",
    "market": "Amazon.co.jp · Japan",
+   "shop": "kaimono/haiara-w5pro",
    "expect": {
     "overall": [
      "red"
@@ -28,6 +30,7 @@
    "name": "Power bank recalled in the US",
    "what": "Same model recalled in the US (CPSC); not confirmed for India, so amber with the country named",
    "market": "India",
+   "shop": "haatbox/anker-a1263",
    "expect": {
     "overall": [
      "amber"
@@ -50,6 +53,7 @@
    "name": "Fake shop, too-cheap price",
    "what": "A brand-name charger at a fifth of the genuine price, on a 20-day-old website that hides instructions for AI tools",
    "market": "India",
+   "shop": "megadealz24/kelvo-cx-65-original",
    "expect": {
     "overall": [
      "red"
@@ -74,6 +78,7 @@
    "name": "Borrowed safety mark",
    "what": "A charger that prints another brand's BIS licence number as its own",
    "market": "India",
+   "shop": "haatbox/voltnova-vn-65pd",
    "expect": {
     "overall": [
      "amber",
@@ -99,6 +104,7 @@
    "name": "Buyers report melting",
    "what": "A genuine charger, not recalled, whose reviews keep mentioning melted ports, burning smells and sparks",
    "market": "India",
+   "shop": "haatbox/kelvo-cx-65",
    "expect": {
     "overall": [
      "amber"
@@ -122,6 +128,7 @@
    "name": "Product nobody has data on",
    "what": "A Japanese kettle SafeShelf has never seen, with no reviews: it must not invent a safety answer",
    "market": "Japan",
+   "shop": "kaimono/zorvana-kt-12",
    "expect": {
     "overall": [
      "unknown"
@@ -145,6 +152,7 @@
    "name": "Clean product (control)",
    "what": "A genuine charger with 24 normal reviews and no recall. A correct answer raises no warning at all",
    "market": "India",
+   "shop": "haatbox/safevolt-sv-65",
    "expect": {
     "overall": [
      "green",

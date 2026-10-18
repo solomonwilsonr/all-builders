@@ -1,0 +1,88 @@
+/* Rounded workspace reference, adapted to SafeShelf's existing blue/mint identity. */
+:root { --soft:#edf4fa; --line:#e1eaf2; --line-2:#e8f0f6; }
+body.chat-page { background:#f3f7fb; --shadow:0 5px 24px #00112308; }
+.top { background:linear-gradient(110deg,#d6eaff,#edf5fc);border:0; }
+.top .nav { min-height:72px;padding:0 20px; }
+.top .logo { font-size:19px;font-weight:500;gap:9px; }
+.top .logo svg { padding:7px;width:42px;height:44px;background:#fff;border-radius:50%; }
+.top .btn,.acct-face { border-radius:24px!important;box-shadow:none;min-height:44px;padding:0 17px; }
+.acct-menu { border-radius:22px;overflow:hidden;box-shadow:0 10px 40px #00112318; }
+.acct-menu button,.acct-menu a { min-height:44px; }
+.chat { background:linear-gradient(#edf5fc 0,#f3f7fb 230px); }
+.chat-bar { margin:0 16px;padding:5px 0 9px;gap:8px;background:transparent;border:0; }
+#ux-context { font-size:12px;color:var(--muted);padding-left:8px; }
+.chat-bar #clear { background:#fff;border-radius:24px;box-shadow:none;min-height:44px;padding:0 14px;font-size:12px; }
+.chat-bar .status { background:#fff;box-shadow:none;border:0; }
+#log { padding:12px 18px 18px;background:transparent;gap:16px; }
+.welcome { gap:16px;align-items:stretch; }
+.hello { width:100%;padding:19px 20px 21px;margin:0;border-radius:28px;background:#fff;box-shadow:0 6px 24px #00112305; }
+.hello::before { height:112px;border-radius:20px;margin-bottom:17px;background-size:auto 106px,cover; }
+.hello h1.display { font-size:28px;font-weight:600;letter-spacing:-.035em;line-height:1.13; }
+.hello h1.display>span { margin-bottom:8px;font-size:12px;font-weight:400; }
+.hello .lead { font-size:13px;line-height:1.65;margin:12px auto 0;max-width:34ch; }
+.starters { width:100%;max-width:none!important;gap:12px; }
+.starter { border:0;border-radius:24px;min-height:82px;display:flex;flex-direction:column;gap:10px;padding:18px 14px;background:#fff;box-shadow:none;font-size:14px;font-weight:500; }
+.starter::before { content:'↗';display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--blue-pale);color:var(--blue);font-size:19px; }
+.starter:nth-child(2) { background:#fff; }.starter:nth-child(2)::before { content:'⌗';background:var(--mint);color:var(--mint-ink); }
+.starter.ux-sample { flex-direction:row;border-radius:24px;background:#e8f0f7;min-height:46px;font-weight:400;padding:12px;font-size:12px; }
+.starter.ux-sample::before { display:none; }
+.starter:hover { transform:none;box-shadow:0 0 0 1px #0271e433; }
+.row .msg { border-radius:22px;font-size:14px;line-height:1.7;max-width:96%;padding:17px; }
+.bot .msg { box-shadow:0 4px 20px #00112306;border-bottom-left-radius:7px;background:#fff; }
+.user .msg { border-bottom-right-radius:7px;background:var(--blue); }
+.bot .msg.err { background:var(--red-bg); }
+.card-title { font-size:18px;line-height:1.4; }
+.panel,.draft,.compare>div,.qa>div,.where li,.surer li { border-radius:18px; }
+.panel { background:#edf4fa;padding:16px; }.draft,.compare>div { background:#fff; }
+.verdict,.lvl,.ev,.cbtn,.chips button,.label-read code { border-radius:20px; }
+.verdict { padding:6px 12px; }.lvl { padding:4px 10px; }
+.ev { padding:6px 12px;min-height:36px; }
+.cbtn { padding:8px 14px;min-height:44px;background:#f3f7fb;box-shadow:none; }
+.todo { border-radius:16px;padding:13px; }.quote { border-radius:0 14px 14px 0;padding:10px 13px; }
+.acts { gap:6px;margin-top:12px; }.acts button { padding:6px 11px;border-radius:24px; }
+.composer { padding:8px 14px 10px;background:#f3f7fb;border-top:0; }
+#ux-status { margin:0 5px 7px;font-size:11px;line-height:1.5; }
+.qbox { border-radius:28px;padding:8px;background:#fff;box-shadow:0 2px 16px #00112308; }
+.qbox:focus-within { box-shadow:0 0 0 1.5px #0271e455; }
+.qbox textarea { font-size:15px;padding:9px 10px;min-height:44px; }
+#attach,#scan { border-radius:50%;width:46px;height:46px;background:#edf4fa;color:var(--ink); }
+#send { min-height:46px;border-radius:24px;background:var(--blue); }
+#lang { font-size:12px;min-height:46px; }.langpick:hover { border-radius:22px; }
+.hint { text-align:center; }.hint #checksLeft { font-size:11px; }
+.attached { border-radius:18px;background:#fff;padding:9px; }
+.chips { gap:8px; }.chips button { background:#fff;box-shadow:none;min-height:42px;padding:8px 13px; }
+.drawer { background:#f3f7fb;padding:24px 20px; }
+#shelf header { border:0;margin-bottom:14px;padding-bottom:5px; }
+.drawer h2 { font-size:27px;font-weight:600; }
+.drawer .icon { border-radius:50%;background:#fff; }
+#shelf .p { font-size:13px;margin:0 0 22px;color:var(--muted); }
+.shelf-list { gap:14px; }.shelf-list li { padding:20px;border:0;border-radius:24px;background:#fff;box-shadow:0 4px 22px #00112304; }
+#shelfList li:has(>strong) { align-items:center;text-align:center;padding:30px 23px;gap:16px; }
+#shelfList li:has(>strong)::before { content:'';display:block;width:74px;height:74px;border-radius:50%;background:#e8f2fd url('assets/eddy.png') center 6px / auto 72px no-repeat; }
+#shelfList li>strong { font-size:20px;line-height:1.4; }.shelf-list li .meta { font-size:12px; }
+#shelfList li>.btn { align-self:center;border-radius:24px;padding:0 23px;min-height:48px; }
+.shelf-list .cbtn { background:#edf4fa;border-radius:24px; }
+#ux-confirm { border:0;border-radius:28px;padding:26px;box-shadow:0 18px 70px #00112322; }
+#ux-confirm h2 { font-size:23px; }.ux-dialog-actions .btn { border-radius:24px; }
+.chat-page .ssa { border-radius:28px;box-shadow:0 18px 70px #00112322; }
+.chat-page .ssa-main { padding:27px 24px; }.chat-page .ssa-main h2 { font-size:27px;line-height:1.25; }
+.chat-page .ssa-btn,.chat-page .ssa-last { border-radius:24px;min-height:48px; }
+.chat-page .ssa input { border-radius:16px;padding:13px 15px;min-height:48px; }
+.chat-page .ssa-brand svg { padding:4px;background:#e8f2fd;width:34px;height:34px;border-radius:50%; }
+.chat-page .ssa-art { border-radius:0; }.chat-page .ssa-kicker { border-radius:20px; }.chat-page .ssa-note { border-radius:16px; }
+@media(max-width:350px) {
+  .top .nav { padding:0 16px; }.top .logo { font-size:17px; }
+  #log { padding:9px 12px 14px; }.hello { padding:15px;border-radius:24px; }.hello h1.display { font-size:25px; }
+  .hello::before { height:88px;background-size:auto 84px,cover; }.starter { padding:14px 10px;font-size:13px;border-radius:21px; }
+}
+/* Keep tall authentication cards reachable when the keyboard reduces the viewport. */
+.chat-page .ssa-modal { display:flex;align-items:flex-start;justify-content:center;overflow-y:auto; }
+.chat-page .ssa { flex-shrink:0;margin:0 auto; }
+.chat-page .ssa-close { width:44px;height:44px;border-radius:50%;background:#fffffff0; }
+@media(max-width:720px) {
+  .chat-page .ssa-art { padding:12px 20px 0; }
+  .chat-page .ssa-stage { width:88px;height:92px; }
+  .chat-page .ssa-eddy { width:88px; }
+  .chat-page .ssa-head { font-size:19px;padding-bottom:16px; }
+  .chat-page .ssa-main { padding:23px 22px;gap:11px; }
+}

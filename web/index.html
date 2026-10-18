@@ -9,80 +9,65 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261018preview">
+<link rel="stylesheet" href="style.css?v=20261018p">
 <link rel="stylesheet" href="whatsapp.css?v=20261018c">
-<link rel="stylesheet" href="tour.css?v=20261018d">
-<script type="module" src="app.js?v=20261018preview"></script>
+<link rel="stylesheet" href="tour.css?v=20261018m">
+<script type="module" src="app.js?v=20261018p"></script>
 </head>
 <body>
-<a class="skip" href="#for">Skip to the demo</a>
+<a class="skip" href="#try">Skip to the demo</a>
 <header class="top">
   <nav class="nav brand-row" aria-label="Primary navigation">
     <a class="logo" href="site/index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
-    <div class="links" id="links"><a href="site/index.html">Product</a><a href="site/chat.html">Chat</a><a href="site/how.html">How it works</a><a href="site/agents.html">For agents</a><a href="site/results.html">Results</a><a href="site/team.html">Team</a><a href="index.html" aria-current="page">Try it live</a></div>
+    <div class="links" id="links"><a href="site/index.html">Product</a><a href="site/how.html">How it works</a><a href="site/results.html">Results</a><a href="site/team.html">Team</a><a href="index.html" aria-current="page">Try it live</a></div>
     <div class="nav-end"><a class="btn btn-ink btn-sm" href="site/get.html">Get SafeShelf</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
   </nav>
 </header>
 
-<section class="jhero" aria-labelledby="hero-h">
-  <div class="jhero-top">
-    <div>
-      <span class="jbadge"><i>S</i>Live demo · Cloud Run and Gemini on Vertex AI</span>
-      <h1 id="hero-h">Is it safe? Is it real? <span>Know before you pay.</span></h1>
-      <p class="lede">SafeShelf checks a product listing against official recalls, buyer reports and the signs of a fake shop, then answers in plain words, <strong>with its proof</strong>.</p>
-      <div class="hero-btns"><a class="jbtn" href="#for">Pick your view</a><a class="jbtn line" href="#try" data-say="hero-2">Try it now</a></div>
-    </div>
-    <div class="jeddy" aria-hidden="true">
-      <img src="site/assets/guide/eddy-waving.webp" alt="">
-      <span class="say">Pick who you are, then try a <b>real listing</b>.</span>
-    </div>
+<section class="dhero" aria-labelledby="hero-h">
+  <div class="dhero-in">
+    <span class="dbadge"><i>S</i>Retail &amp; Commerce · Cloud Run · Gemini on Vertex AI</span>
+    <h1 id="hero-h">Every SafeShelf product, working. <span>In the order a shopper meets them.</span></h1>
+    <p class="lede">Seven steps, from checking a listing to the API for AI agents. Every answer cites its source.</p>
+    <div class="hero-btns"><a class="jbtn" href="#shop-page">Start with a test product</a><a class="jbtn line" href="#trust">Skip to the proof</a></div>
+    <ul class="dstats" aria-label="What it checks against">
+      <li><b>8,689</b>official recalls</li>
+      <li><b>29,379</b>buyer reviews</li>
+      <li><b>2 of 40</b>false alarms</li>
+      <li><b>26</b>languages</li>
+    </ul>
   </div>
-  <ul class="facts" aria-label="Real data behind every answer">
-    <li><b>8,689</b>official recalls<span>US and 7 Asia-Pacific regulators</span></li>
-    <li><b>29,379</b>buyer reviews<span>read for fire, burn and shock</span></li>
-    <li><b>2 / 40</b>false alarms<span>Gemini alone: 6, keyword rules: 11</span></li>
-    <li><b>26</b>languages<span>answers read aloud</span></li>
-  </ul>
 </section>
 
-<nav class="jump" aria-label="On this page">
-  <a href="#for"><span>01</span>Your view</a>
-  <a href="#try"><span>02</span>Try it</a>
-  <a href="#answers"><span>03</span>How it answers</a>
-  <a href="#accuracy"><span>04</span>Is it accurate?</a>
-  <a href="#attack"><span>05</span>Can it be fooled?</a>
-  <a href="#products"><span>06</span>Where to use it</a>
+<nav class="journey" aria-label="The demo, step by step">
+  <div class="journey-head"><b>The demo in seven steps</b><span class="jroles">I'm a <a href="#try">Shopper</a><a href="#business">Marketplace</a><a href="#regulator">Regulator</a><a href="#developers">Developer</a></span></div>
+  <ol>
+    <li><a href="#try"><span class="jn">1</span><b>Before you buy</b><small>Check a listing</small></a></li>
+    <li><a href="#reach"><span class="jn">2</span><b>Reach everyone</b><small>Voice, WhatsApp, Android</small></a></li>
+    <li><a href="#after"><span class="jn">3</span><b>After you buy</b><small>Shelf, warranty, manual</small></a></li>
+    <li><a href="#wrong"><span class="jn">4</span><b>If it goes wrong</b><small>Safe steps, refund, report</small></a></li>
+    <li><a href="#business"><span class="jn">5</span><b>Marketplaces</b><small>And regulators: scans, recalls</small></a></li>
+    <li><a href="#developers"><span class="jn">6</span><b>Developers</b><small>REST, MCP, A2A for agents</small></a></li>
+    <li><a href="#trust"><span class="jn">7</span><b>Why trust it</b><small>Gemini's job, accuracy, attacks</small></a></li>
+  </ol>
 </nav>
 
 <main id="main">
 
-  <section class="block" id="for" aria-labelledby="h-for">
-    <header class="block-head"><span class="block-n">01</span><h2 id="h-for">Who are you?</h2><p>One engine, four people. Pick yours for a one-minute tour of the same product, in your terms.</p></header>
-    <div id="for-views"><p class="muted">Loading the four views…</p></div>
-  </section>
-
-  <section class="block" id="try" aria-labelledby="h-try" data-for="shopper marketplace regulator">
-    <header class="block-head"><span class="block-n">02</span><h2 id="h-try">Try it</h2><p data-say="try">Five ways to use the live product. Pick one.</p></header>
-    <div class="trytabs" role="tablist" aria-label="Ways to try SafeShelf">
-      <button type="button" role="tab" data-for="shopper" id="tab-shop-page" aria-controls="shop-page" aria-selected="true">
+  <section class="block" id="try" aria-labelledby="h-try">
+    <header class="block-head"><span class="kicker">Step 1 of 7</span><h2 id="h-try">Before you buy: check the listing</h2><p>Three ways in. A test shop page shows the answer on the listing itself; paste a listing to watch eight agents work; or just ask Eddy.</p></header>
+    <div class="trytabs" role="tablist" aria-label="Ways to check a listing">
+      <button type="button" role="tab" id="tab-shop-page" aria-controls="shop-page" aria-selected="true">
         <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M6.5 6.5h.01M9.5 6.5h.01"/></svg></span>
         <span class="tt-t"><b>On a shop page</b><small>A real browser, or 7 test pages</small></span>
       </button>
-      <button type="button" role="tab" data-for="shopper" id="tab-chat" aria-controls="chat" aria-selected="false" tabindex="-1">
-        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg></span>
-        <span class="tt-t"><b>Chat with Eddy</b><small>Ask anything, paste a link or a screenshot</small></span>
-      </button>
-      <button type="button" role="tab" data-for="shopper marketplace regulator" id="tab-check-own" aria-controls="check-own" aria-selected="false" tabindex="-1">
+      <button type="button" role="tab" id="tab-check-own" aria-controls="check-own" aria-selected="false" tabindex="-1">
         <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>
         <span class="tt-t"><b>Paste a listing</b><small>Check any product from any shop, live</small></span>
       </button>
-      <button type="button" role="tab" data-for="shopper" id="tab-ask-out-loud" aria-controls="ask-out-loud" aria-selected="false" tabindex="-1">
-        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
-        <span class="tt-t"><b>Ask out loud</b><small>Talk to it, or show it the label</small></span>
-      </button>
-      <button type="button" role="tab" data-for="shopper" id="tab-whatsapp" aria-controls="whatsapp" aria-selected="false" tabindex="-1">
-        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c0 2.5 2.5 5 5 5"/></svg></span>
-        <span class="tt-t"><b>On WhatsApp</b><small>Send a link or a label photo, get a voice note</small></span>
+      <button type="button" role="tab" id="tab-chat" aria-controls="chat" aria-selected="false" tabindex="-1">
+        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg></span>
+        <span class="tt-t"><b>Chat with Eddy</b><small>Ask anything, paste a link or a screenshot</small></span>
       </button>
     </div>
 
@@ -93,6 +78,7 @@
             <div class="pv-win">
               <div class="pv-bar"><span class="pv-lights"><i></i><i></i><i></i></span><span class="pv-url">amazon.co.jp/dp/W5PRO</span></div>
               <div class="pv-shop"><span class="pv-thumb"><svg viewBox="0 0 40 40"><rect x="11" y="4" width="18" height="32" rx="4" fill="#fff" stroke="#26323f" stroke-width="2"/><rect x="16" y="8" width="8" height="2.4" rx="1.2" fill="#26323f"/><circle cx="16" cy="30" r="1.4" fill="#3bbf63"/><circle cx="20" cy="30" r="1.4" fill="#3bbf63"/><circle cx="24" cy="30" r="1.4" fill="#3bbf63"/></svg></span><span class="pv-info"><b>HAIARA W5PRO 10000mAh</b><span class="pv-price">¥2,980</span><span class="pv-btns"><i>Add to cart</i><i>Buy now</i></span></span></div>
+              <div class="pv-more"><b>About this item</b><i></i><i></i><i class="s"></i><b>Customer reviews</b><span class="pv-rev"><em>★★★★☆</em><i></i></span><span class="pv-rev"><em>★★☆☆☆</em><i class="s"></i></span></div>
               <div class="pv-rail"><i></i><i></i><i></i><i class="pv-shield"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></i></div>
             </div>
             <div class="pv-panel">
@@ -108,8 +94,8 @@
           </div></div>
           <span class="pick-tag">Real website</span>
           <h3>Real browser</h3>
-          <p>A real Chrome with the SafeShelf extension, on the real Amazon or Flipkart. Open any product and press Check.</p>
-          <ul><li>Any real product page</li><li>5 minutes, about 15 seconds to start</li><li><span id="remote-left"></span></li></ul>
+          <p>A real Chrome with the SafeShelf extension. It opens on our test shops, where all seven test products are real pages; Amazon and Flipkart work too.</p>
+          <ul><li>The seven test products, or any real product page</li><li>5 minutes, about 15 seconds to start</li><li><span id="remote-left"></span></li></ul>
           <button class="jbtn" type="button" id="remote-start">Start a real browser</button>
         </article>
         <article class="pick pick-test">
@@ -140,7 +126,7 @@
       </div>
       <div class="modebar" id="modebar"><button class="back" type="button" id="mode-back">← Back to the two choices</button><b id="mode-name">Test pages</b></div>
       <section class="lineup" aria-labelledby="lineup-h">
-        <div class="lineup-head"><h3 id="lineup-h">All seven test products</h3><p>The right answer is known for each. Tap one to open it in the browser below.</p></div>
+        <div class="lineup-head"><h3 id="lineup-h">All seven test products</h3><p>The right answer is known for each, and each works both ways: an instant test page, or a real shop page in the real browser.</p></div>
         <ol class="lineup-list" id="lineup"></ol>
       </section>
       <ol class="steps3" aria-label="How to try it">
@@ -181,49 +167,6 @@
           <p class="rnote">A shared cloud browser: don't sign in to your own shopping accounts here. It closes by itself after 5 minutes.</p>
         </div>
         <div class="dock" aria-hidden="true"><i class="d1"></i><i class="d2"></i><i class="d3 on"></i><i class="d4"></i><i class="d5"></i></div>
-      </div>
-    </div>
-
-    <div class="trypanel" role="tabpanel" id="chat" aria-labelledby="tab-chat" data-view="intro" hidden>
-      <div class="intro">
-        <article class="pick pick-wide">
-          <div class="pv pv-chat" aria-hidden="true"><div class="pv-s">
-            <div class="pv-cw">
-              <div class="pv-bar"><span class="pv-lights"><i></i><i></i><i></i></span><span class="pv-who"><img src="site/assets/guide/eddy-hi.webp" alt=""><b>Eddy</b><small>SafeShelf chat</small></span></div>
-              <div class="pv-msgs">
-                <p class="pv-me">Is this HAIARA power bank safe?</p>
-                <p class="pv-dots"><i></i><i></i><i></i></p>
-                <div class="pv-bot"><span class="pv-mark"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Don't buy</b><small>Recalled in Japan for a fire risk, exact model W5PRO.</small><span class="pv-src">CAA notice ↗</span></div>
-                <span class="pv-chips"><i>Safer option?</i><i>Read it aloud</i></span>
-              </div>
-            </div>
-            <span class="pv-pill"><i></i>Sources under every answer</span>
-          </div></div>
-          <div class="pick-body">
-            <span class="pick-tag">Live API</span>
-            <h3>Chat with Eddy</h3>
-            <p>The same chat shoppers use on the website. Ask in your own words, paste a link or drop a screenshot.</p>
-            <ul><li>Remembers the conversation</li><li>Sources under every answer</li><li>Sign in once inside the chat</li></ul>
-            <button class="jbtn" type="button" data-start>Open the chat</button>
-          </div>
-        </article>
-      </div>
-      <div class="live">
-        <div class="modebar"><button class="back" type="button" data-preview>← Back to the preview</button><b>Chat with Eddy</b></div>
-      <div class="chat-head">
-        <p class="panel-lede">The real SafeShelf chat on the live API, the same one shoppers use on the website. It remembers the conversation and shows its sources under every answer.</p>
-        <a class="jbtn line" href="site/chat.html" target="_blank" rel="noopener">Open full screen ↗</a>
-      </div>
-      <ol class="steps3" aria-label="How to try the chat">
-        <li><b>1</b>Pick a demo product, or paste any product link</li>
-        <li><b>2</b>Ask, or tap a starter</li>
-        <li><b>3</b>Open a source under the answer</li>
-        <li class="aside">The gear opens more agents: Investigate, Safer alternative, Report draft</li>
-      </ol>
-      <div class="chatwin">
-        <div class="rbar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><b>SafeShelf Chat</b><span class="rstate">Live API</span><span class="rtime">Sign in once inside the chat to ask</span></div>
-        <iframe class="chatframe" id="chatframe" title="SafeShelf chat with Eddy" data-src="site/chat.html?embed=1" src="about:blank" allow="microphone; camera; clipboard-write"></iframe>
-      </div>
       </div>
     </div>
 
@@ -284,7 +227,78 @@
       </div>
     </div>
 
-    <div class="trypanel" role="tabpanel" id="ask-out-loud" aria-labelledby="tab-ask-out-loud" data-view="intro" hidden>
+    <div class="trypanel" role="tabpanel" id="chat" aria-labelledby="tab-chat" data-view="intro" hidden>
+      <div class="intro">
+        <article class="pick pick-wide">
+          <div class="pv pv-chat" aria-hidden="true"><div class="pv-s">
+            <div class="pv-cw">
+              <div class="pv-bar"><span class="pv-lights"><i></i><i></i><i></i></span><span class="pv-who"><img src="site/assets/eddy-face.webp" alt=""><b>Eddy</b><small>SafeShelf chat</small></span></div>
+              <div class="pv-msgs">
+                <p class="pv-me">Is this HAIARA power bank safe?</p>
+                <p class="pv-dots"><i></i><i></i><i></i></p>
+                <div class="pv-bot"><span class="pv-mark"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Don't buy</b><small>Recalled in Japan for a fire risk, exact model W5PRO.</small><span class="pv-src">CAA notice ↗</span></div>
+                <span class="pv-chips"><i>Safer option?</i><i>Read it aloud</i></span>
+              </div>
+            </div>
+            <span class="pv-pill"><i></i>Sources under every answer</span>
+          </div></div>
+          <div class="pick-body">
+            <span class="pick-tag">Live API</span>
+            <h3>Chat with Eddy</h3>
+            <p>The same chat shoppers use on the website. Ask in your own words, paste a link or drop a screenshot.</p>
+            <ul><li>Remembers the conversation</li><li>Sources under every answer</li><li>Sign in once inside the chat</li></ul>
+            <button class="jbtn" type="button" data-start>Open the chat</button>
+          </div>
+        </article>
+      </div>
+      <div class="live">
+        <div class="modebar"><button class="back" type="button" data-preview>← Back to the preview</button><b>Chat with Eddy</b></div>
+      <div class="chat-head">
+        <p class="panel-lede">The real SafeShelf chat on the live API, the same one shoppers use on the website. It remembers the conversation and shows its sources under every answer.</p>
+        <a class="jbtn line" href="site/chat.html" target="_blank" rel="noopener">Open full screen ↗</a>
+      </div>
+      <ol class="steps3" aria-label="How to try the chat">
+        <li><b>1</b>Pick a demo product, or paste any product link</li>
+        <li><b>2</b>Ask, or tap a starter</li>
+        <li><b>3</b>Open a source under the answer</li>
+        <li class="aside">The gear opens more agents: Investigate, Safer alternative, Report draft</li>
+      </ol>
+      <div class="chatwin">
+        <div class="rbar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><b>SafeShelf Chat</b><span class="rstate">Live API</span><span class="rtime">Sign in once inside the chat to ask</span></div>
+        <iframe class="chatframe" id="chatframe" title="SafeShelf chat with Eddy" data-src="site/chat.html?embed=1" src="about:blank" allow="microphone; camera; clipboard-write"></iframe>
+      </div>
+      </div>
+    </div>
+
+    <div class="covers">
+      <h3 class="sub-h">Every check covers</h3>
+      <ul><li><b>Official recalls</b><span>10 regulators, live where they allow it</span></li><li><b>Exact model, and its copies</b><span>a look-alike never inherits a recall</span></li><li><b>Buyer hazard reports</b><span>reviews and photos read for fire, burn and shock</span></li><li><b>Safety marks</b><span>checked against the registry, not the photo</span></li><li><b>Is it real?</b><span>price, copied photos, shop age, hidden AI text</span></li><li><b>First look</b><span>never-seen products found live with Google Search</span></li></ul>
+    </div>
+  </section>
+
+  <section class="block" id="reach" aria-labelledby="h-reach">
+    <header class="block-head"><span class="kicker">Step 2 of 7</span><h2 id="h-reach">Reach everyone: voice, WhatsApp and Android</h2><p>Recall notices are English web pages. The people they miss shop on a phone, often in another language.</p></header>
+    <div class="gap">
+      <article><b>87%</b><p>of banned or recalled products inspected were still for sale online.</p><a href="https://www.oecd.org/en/topics/sub-issues/product-safety.html" target="_blank" rel="noopener">OECD product safety sweep</a></article>
+      <article><b>3,500+</b><p>products without an ISI mark, or with a fake one, seized in a single raid on e-commerce warehouses in Delhi.</p><a href="https://www.pib.gov.in/PressReleasePage.aspx?PRID=2115618" target="_blank" rel="noopener">BIS via PIB, 27 Mar 2025</a></article>
+      <article><b>0</b><p>recall databases in India. Orders and raids sit in English press releases; we gathered 36 of them, 2021–2026.</p><a href="site/results.html">Our data</a></article>
+    </div>
+    <div class="trytabs reach-tabs" role="tablist" aria-label="Ways to reach every shopper">
+      <button type="button" role="tab" id="tab-ask-out-loud" aria-controls="ask-out-loud" aria-selected="true">
+        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
+        <span class="tt-t"><b>Ask out loud</b><small>Talk to it, or show it the label</small></span>
+      </button>
+      <button type="button" role="tab" id="tab-whatsapp" aria-controls="whatsapp" aria-selected="false" tabindex="-1">
+        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c0 2.5 2.5 5 5 5"/></svg></span>
+        <span class="tt-t"><b>On WhatsApp</b><small>Send a link or a label photo, get a voice note</small></span>
+      </button>
+      <button type="button" role="tab" id="tab-android" aria-controls="android" aria-selected="false" tabindex="-1">
+        <span class="tt-i" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span>
+        <span class="tt-t"><b>Android app</b><small>Share a link from any shop app to Eddy</small></span>
+      </button>
+    </div>
+
+    <div class="trypanel" role="tabpanel" id="ask-out-loud" aria-labelledby="tab-ask-out-loud" data-view="intro">
       <div class="intro">
         <article class="pick pick-wide">
           <div class="pv pv-voice" aria-hidden="true"><div class="pv-s">
@@ -342,10 +356,125 @@
       <div id="wa"><p class="muted">Loading the chat…</p></div>
       </div>
     </div>
+
+    <div class="trypanel" role="tabpanel" id="android" aria-labelledby="tab-android" hidden>
+      <div class="android">
+        <div class="phones" aria-hidden="true">
+          <img src="site/assets/android/home.webp" alt="" loading="lazy" width="180" height="400">
+          <img src="site/assets/android/chat.webp" alt="" loading="lazy" width="180" height="400">
+          <img src="site/assets/android/shelf.webp" alt="" loading="lazy" width="180" height="400">
+        </div>
+        <div class="android-t">
+          <span class="st soon">Soon</span>
+          <h3>SafeShelf for Android</h3>
+          <p>For shoppers who live in shopping apps, not browsers. Share a product from Amazon or Flipkart to SafeShelf, and Eddy checks it with the same live API.</p>
+          <ul><li>Share a link from any app; nothing is sent until you confirm</li><li>Label photo from the camera, or a screenshot</li><li>Voice entry, 26 answer languages, My Shelf</li></ul>
+          <p class="muted">Version 0.2.0, installed on our test phones. The source is in the repository.</p>
+          <a class="jbtn line" href="https://github.com/solomonwilsonr/all-builders/tree/main/android" target="_blank" rel="noopener">See the Android source</a>
+        </div>
+      </div>
+    </div>
+    <p class="planned"><b>Planned next</b><span>"Still on sale" report for India</span><span>Check before you gift, for Diwali</span><span>Free for shoppers, NGOs and researchers</span><span>Consumer groups we plan to approach; none is a partner yet</span></p>
   </section>
 
-  <section class="block" id="answers" aria-labelledby="h-answers">
-    <header class="block-head"><span class="block-n">03</span><h2 id="h-answers">How it answers</h2><p>Two questions about every listing, then one of four answers, each with the evidence behind it.</p></header>
+  <section class="block" id="after" aria-labelledby="h-after">
+    <header class="block-head"><span class="kicker">Step 3 of 7</span><h2 id="h-after">After you buy: it keeps watching</h2><p>Most recalls arrive after the product is home. SafeShelf remembers what you bought and tells you when that changes.</p></header>
+    <div class="dgrid">
+      <article class="dcard">
+        <header><span class="st built">Built</span><h3>My Shelf and recall alerts</h3><p>Saved products are rechecked for new recalls</p></header>
+        <div class="mock"><p><b>Kelvo CX-65 charger</b><small>amazon.in · saved 3 Oct</small><span class="tag warn">CAREFUL</span></p><p><b>NEWDERY power bank</b><small>flipkart.com · saved 9 Oct</small><span class="tag flag">RECALLED</span></p><p><b>Electric kettle</b><small>flipkart.com · saved 12 Oct</small><span class="tag ok">ALL CLEAR</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="I saved a power bank to My Shelf. What happens if it gets recalled?">Ask Eddy <span aria-hidden="true">→</span></button> <a class="link-sm" href="site/shelf.html">Open My Shelf</a></footer>
+      </article>
+      <article class="dcard">
+        <header><span class="st built">Built</span><h3>Warranty and return dates</h3><p>Typed in, or read from a receipt photo</p></header>
+        <div class="mock"><p><b>Return window</b><small>ends 21 Oct 2026</small><span class="tag warn">3 DAYS</span></p><p><b>Warranty</b><small>ends 12 Mar 2027</small><span class="tag ok">OK</span></p><p><b>Receipt</b><small>photo · Flipkart order</small><span class="tag ok">READ</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="How do I keep track of the return and warranty dates for my charger?">Ask Eddy <span aria-hidden="true">→</span></button></footer>
+      </article>
+      <article class="dcard">
+        <header><span class="st built">Built</span><h3>Ask the manual</h3><p>Answers only from the manual, with page numbers</p></header>
+        <div class="mock"><p><b>Can I charge it overnight?</b><small>p. 14 · Safety</small><span class="tag flag">NO</span></p><p><b>What do the 3 lights mean?</b><small>p. 6 · Status</small><span class="tag ok">p. 6</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="Can you answer questions from my product's manual?">Ask Eddy <span aria-hidden="true">→</span></button></footer>
+      </article>
+      <article class="dcard">
+        <header><span class="st built">Built</span><h3>Family sharing</h3><p>A one-time code, read-only, either side can stop</p></header>
+        <div class="mock"><p><b>Amma</b><small>sees your shelf · read-only</small><span class="tag ok">SHARED</span></p><p><b>Invite code</b><small>valid for 24 hours</small><span class="tag ok">4F7K-2Q</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="Can my parents see the products I saved?">Ask Eddy <span aria-hidden="true">→</span></button></footer>
+      </article>
+    </div>
+    <p class="note-line">Built and tested on Vertex AI; the household tools go live with the next API deploy. Until then Eddy answers these from the same rules.</p>
+  </section>
+
+  <section class="block" id="wrong" aria-labelledby="h-wrong">
+    <header class="block-head"><span class="kicker">Step 4 of 7</span><h2 id="h-wrong">If something goes wrong</h2><p>Heat, swelling, a burning smell. Safe steps first, then the paperwork: refund, complaint, report, disposal.</p></header>
+    <div class="dgrid">
+      <article class="dcard">
+        <header><span class="st built">Built</span><h3>Safe steps, right now</h3><p>Never “test it”; emergency numbers per country</p></header>
+        <div class="mock"><p><b>1 · Unplug it, if you can do so safely</b><small>don't touch it if it is swelling</small><span class="tag flag">NOW</span></p><p><b>2 · Move it onto a hard surface</b><small>away from bedding and curtains</small><span class="tag flag">NOW</span></p><p><b>3 · Fire or smoke: call 112</b><small>India; numbers for every country</small><span class="tag warn">CALL</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="My power bank is getting very hot and swelling. What should I do?">Ask Eddy <span aria-hidden="true">→</span></button></footer>
+      </article>
+      <article class="dcard">
+        <header><span class="st live">Live</span><h3>Refund or complaint, drafted</h3><p>The Report draft agent fills it in from the case</p></header>
+        <div class="mock"><p><b>To: the seller</b><small>refund request, case attached</small><span class="tag ok">DRAFT</span></p><p><b>To: the consumer helpline</b><small>complaint, with the evidence</small><span class="tag ok">DRAFT</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="Draft a refund request for a recalled power bank I bought on Flipkart.">Ask Eddy <span aria-hidden="true">→</span></button></footer>
+      </article>
+      <article class="dcard">
+        <header><span class="st built">Built</span><h3>Report a hazard</h3><p>From the extension; a person reviews it first</p></header>
+        <div class="mock"><p><b>Heat report · CX-65</b><small>joins 9 reports on all versions</small><span class="tag warn">UNDER REVIEW</span></p><p><b>Your details</b><small>never stored, only a hashed reference</small><span class="tag ok">PRIVATE</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="How do I report a product that overheated?">Ask Eddy <span aria-hidden="true">→</span></button></footer>
+      </article>
+      <article class="dcard">
+        <header><span class="st built">Built</span><h3>Safe disposal</h3><p>Official battery and e-waste collection</p></header>
+        <div class="mock"><p><b>Lithium battery</b><small>not in household waste</small><span class="tag warn">E-WASTE</span></p><p><b>Where</b><small>authorised collection points, by country</small><span class="tag ok">FIND</span></p></div>
+        <footer><button class="ask-eddy" type="button" data-ask="How do I safely dispose of a swollen power bank in India?">Ask Eddy <span aria-hidden="true">→</span></button></footer>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" id="business" aria-labelledby="h-business">
+    <header class="block-head"><span class="kicker">Step 5 of 7</span><h2 id="h-business">For marketplaces and regulators</h2><p>The same engine, at catalog scale. Every finding comes with its case file, so a person can act on it.</p></header>
+    <div class="role-block" id="marketplace">
+      <div class="role-head"><img src="site/assets/eddy-marketplace.webp" alt="" width="56" height="56"><div><span class="kicker">Marketplace or seller</span><h3>Which listings need action first?</h3></div><span class="st built">Built</span></div>
+      <div id="view-marketplace"><p class="muted">Loading the catalog scan…</p></div>
+    </div>
+    <div class="role-block" id="regulator">
+      <div class="role-head"><img src="site/assets/eddy-regulator.webp" alt="" width="56" height="56"><div><span class="kicker">Regulator or researcher</span><h3>What is the evidence, and where is it from?</h3></div><span class="st live">Live</span></div>
+      <div id="view-regulator"><p class="muted">Loading the evidence pack…</p></div>
+    </div>
+    <div class="role-block" id="recalls">
+      <div class="role-head"><img src="site/assets/eddy-regulator.webp" alt="" width="56" height="56"><div><span class="kicker">Recall Catalog</span><h3>Search every official notice SafeShelf has loaded</h3></div><span class="st live">Live</span></div>
+      <form class="rc-form" id="rc-form" role="search">
+        <label class="sr" for="rc-q">Search recalls</label>
+        <input id="rc-q" name="q" type="search" placeholder="power bank, heater, baby walker…" value="power bank" autocomplete="off">
+        <label class="sr" for="rc-country">Country</label>
+        <select id="rc-country" name="country"><option value="">All 10 regulators</option><option>India</option><option>Japan</option><option>Australia</option><option>South Korea</option><option>Singapore</option><option>Taiwan</option><option>United States</option></select>
+        <button class="jbtn" type="submit">Search</button>
+      </form>
+      <p class="rc-total muted" id="rc-total" aria-live="polite"></p>
+      <ul class="rc-list" id="rc-list"></ul>
+    </div>
+  </section>
+
+  <section class="block" id="developers" aria-labelledby="h-developers">
+    <header class="block-head"><span class="kicker">Step 6 of 7</span><h2 id="h-developers">For developers and AI agents</h2><p>Shopping assistants ask SafeShelf the same questions: ten read-only tools over MCP, a streaming REST API and an A2A agent card.</p></header>
+    <div class="role-block">
+      <div class="role-head"><img src="site/assets/eddy-developer.webp" alt="" width="56" height="56"><div><span class="kicker">Developer or AI agent</span><h3>Can my agent ask the same thing?</h3></div><span class="st live">Live</span></div>
+      <div id="view-developer"><p class="muted">Loading the API playground…</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="trust" aria-labelledby="h-trust">
+        <header class="block-head"><span class="kicker">Step 7 of 7</span><h2 id="h-trust">Why trust it</h2><p>Gemini does the reading, searching and talking. Plain code makes the final call, so it cannot invent a recall.</p></header>
+    <div class="split">
+      <div class="split-a"><h3><span class="dot2 blue"></span>What Gemini does</h3><ul><li><b>Reads 29,379 buyer reviews</b>and review photos, for fire, burn and shock reports</li><li><b>Reads the label</b>from a photo: brand, model, ratings, safety marks</li><li><b>Finds the genuine product</b>with Google Search, for products never seen before</li><li><b>Holds the conversation</b>Gemini Live by voice; chat with sources in 26 languages</li><li><b>Spots tricks aimed at AI</b>hidden instructions in listings, fake regulator pages</li></ul></div>
+      <div class="split-b"><h3><span class="dot2 ink"></span>What code decides</h3><ul><li><b>Sets the colour</b>red, amber, green or grey, from the evidence alone</li><li><b>Decides what counts</b>only an exact model inherits a recall</li><li><b>Says “can't tell yet”</b>when the evidence is thin, instead of guessing</li></ul></div>
+    </div>
+    <div class="prooftabs" role="tablist" aria-label="Why trust it">
+      <button type="button" role="tab" id="tab-answers" aria-controls="answers" aria-selected="true">How it answers</button>
+      <button type="button" role="tab" id="tab-accuracy" aria-controls="accuracy" aria-selected="false" tabindex="-1">Is it accurate?</button>
+      <button type="button" role="tab" id="tab-attack" aria-controls="attack" aria-selected="false" tabindex="-1">Can it be fooled?</button>
+    </div>
+    <div class="proofpanel" role="tabpanel" id="answers" aria-labelledby="tab-answers">
+      <p class="proof-lede">Two questions about every listing, then one of four answers, each with the evidence behind it.</p>
     <div class="how3">
       <div class="how-q">
         <span class="how-step">It asks</span>
@@ -371,36 +500,22 @@
       <p><b>Code picks the answer.</b> Plain rules turn the evidence into a colour; Gemini only explains it, in your language.</p>
       <p><b>Exact model only.</b> A look-alike's recall is never blamed on the wrong product.</p>
     </div>
-  </section>
-
-  <section class="block" id="accuracy" aria-labelledby="h-vs-gemini" data-for="marketplace regulator developer">
-    <header class="block-head"><span class="block-n">04</span><h2 id="h-vs-gemini">Is it accurate?</h2><p>Tested on 25 real recalls and 40 products that were never recalled, against Gemini alone and keyword rules.</p></header>
-    <div id="vs"></div>
-  </section>
-
-  <section class="block" id="attack" aria-labelledby="h-attack" data-for="regulator developer">
-    <header class="block-head"><span class="block-n">05</span><h2 id="h-attack">Can it be fooled?</h2><p>We attacked our own code: fake regulator pages, look-alike models, hidden instructions. Here is what it decided.</p></header>
-    <div id="redteam"></div>
-  </section>
-
-  <section class="block" id="products" aria-labelledby="h-products" data-for="shopper marketplace developer">
-    <header class="block-head"><span class="block-n">06</span><h2 id="h-products" data-say="prod-h">Where to use it</h2><p data-say="prod-p">One checking engine, five ways to reach it.</p></header>
-    <div class="prods">
-      <article class="prod-card" data-for="shopper"><span class="pi" style="background:#0271e4"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 9h8M9.4 13.5 5.4 6.6M14.6 13.5l-4 6.9"/></svg></span>
-        <span class="st built">Built</span><h3>Chrome extension</h3><p>A Check button on Amazon and Flipkart product pages. Ask questions, listen to the answer, save products for later recall alerts.</p><a href="#shop-page">Try it above</a></article>
-      <article class="prod-card" data-for="shopper"><span class="pi" style="background:#f0a020"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span>
-        <span class="st live">Live</span><h3>Web page</h3><p>The same check in any browser, on a phone too. Chat with Eddy, paste a listing, talk to it, or show it a label.</p><a href="#chat">Chat with Eddy above</a></article>
-      <article class="prod-card" data-for="shopper"><span class="pi" style="background:#1d9b52"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/></svg></span>
-        <span class="st soon">Soon</span><h3>WhatsApp</h3><p>Send a link or a photo of the label; get a text and a voice note back in English, Hindi and 24 more languages.</p><a href="#whatsapp">Try the chat above</a></article>
-      <article class="prod-card" data-for="marketplace"><span class="pi" style="background:#7b5cd6"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 9v11"/></svg></span>
-        <span class="st built">Built</span><h3>Catalog scan</h3><p>For sellers and marketplaces: scan a whole product list for recall matches and fake safety marks.</p><span class="pc-note">Found 49 of 50 planted problems in 500 listings</span></article>
-      <article class="prod-card" data-for="marketplace developer"><span class="pi" style="background:#001123"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg></span>
-        <span class="st live">Live</span><h3>API for AI agents</h3><p>Shopping assistants ask SafeShelf the same questions: 10 read-only tools over MCP, plus REST.</p><a href="site/agents.html">For developers</a></article>
     </div>
+    <div class="proofpanel" role="tabpanel" id="accuracy" aria-labelledby="tab-accuracy" hidden>
+      <p class="proof-lede">Tested on 25 real recalls and 40 products that were never recalled, against Gemini alone and keyword rules.</p>
+    <div id="vs"></div>
+    </div>
+    <div class="proofpanel" role="tabpanel" id="attack" aria-labelledby="tab-attack" hidden>
+      <p class="proof-lede">We attacked our own code: fake regulator pages, look-alike models, hidden instructions. Here is what it decided.</p>
+    <div id="redteam"></div>
+    </div>
+  </section>
+
+  <section class="end" aria-label="Get SafeShelf">
     <div class="cta">
-      <h2 data-say="cta-h">Want SafeShelf on your own shop pages?</h2>
-      <p data-say="cta-p">The Chrome extension and the WhatsApp number are coming soon. Developers can use the API today.</p>
-      <div class="hero-btns" data-say="cta-btns"><a class="jbtn" href="site/get.html">Get SafeShelf</a><a class="jbtn line" href="site/agents.html">For developers</a></div>
+      <h2>That was all of SafeShelf.</h2>
+      <p>The web page and the API work today. The Chrome extension, WhatsApp number and Android app are coming soon.</p>
+      <div class="hero-btns"><a class="jbtn" href="site/get.html">Get SafeShelf</a><a class="jbtn line" href="site/agents.html">For developers</a></div>
       <img class="cta-eddy" src="site/assets/guide/eddy-flying.webp" alt="" aria-hidden="true">
     </div>
   </section>

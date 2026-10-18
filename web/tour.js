@@ -1,7 +1,9 @@
-// Eddy's tour of the judges' page: a centred card with one slide per feature. Each slide has Eddy (the mascot, cut from
-// the brand sheet into site/assets/guide/) in a pose that fits, a big title, one line, and a moving picture of the
-// feature with a cursor using it. "Show me on the page" closes the card, opens the right Try it tab and lights up that
-// part of the page. The last slide takes a product name and puts it into Paste a listing for the real live check.
+// Eddy's tour of the judges' page, one step per part of the page, in the page's order. Every step is a coachmark: the
+// page scrolls to the real part (opening its Try it tab), a spotlight dims the rest, and a small card with an arrow
+// points at it, with Eddy (the mascot, site/assets/guide/) in a pose per step, the dots, Back / Next and "Seen this
+// before? Skip the tour".
+// The first step points at the seven-steps card; the last at Paste a listing, and Done puts the cursor in it. The
+// centred card (with a product box on the last step) is only the fallback when a step's part isn't on the page.
 // Navigation: Back / Next, clickable dots, arrow keys, swipe, Esc. It opens once by itself after sign-in (remembered
 // on this browser; ?notour turns that off) and any time from Eddy's button at the bottom right. Slides for parts the
 // chosen view hides (roles.js) are left out. Plain module, no build step; the pictures are fixed markup.
@@ -21,7 +23,7 @@ const openTab = (id) => { const t = $id(`tab-${id}`); if (t && t.getAttribute("a
 const setField = (form, name, value) => { const f = form?.elements[name]; if (f) { f.value = value; f.dispatchEvent(new Event("input", { bubbles: true })); } };
 
 const SLIDES = [
-  { id: "hello", pose: "hi", title: "Meet Eddy, your safety wingman", text: "Take a quick tour of SafeShelf: it tells you if a product is safe and real before you pay, with the proof.",
+  { id: "hello", pose: "hi", target: ".journey", title: "Meet Eddy, your safety wingman", text: "SafeShelf tells you if a product is safe and real before you pay, with the proof. The demo runs in these seven steps; I'll walk you through them.",
     art: `<div class="tm-hello">
       <div class="tm-win">${BAR("amazon.co.jp/dp/W5PRO")}
         <div class="tm-shop"><span class="tm-thumb"></span><span class="tm-lines"><b>HAIARA W5PRO 10000mAh</b><i>¥2,980</i><em>Add to cart</em></span></div>
@@ -29,40 +31,41 @@ const SLIDES = [
       </div>
       <ul class="tm-facts"><li><b>8,689</b>official recalls</li><li><b>29,379</b>buyer reviews</li><li><b>26</b>languages</li></ul>
     </div>` },
-  { id: "views", pose: "curious", target: "#for", title: "Pick who you are", text: "Shopper, marketplace, regulator or developer: the page keeps only the parts for you, and tells the same story your way.",
-    art: `<div class="tm-views">${[["shopper", "Shopper"], ["marketplace", "Marketplace"], ["regulator", "Regulator"], ["developer", "Developer"]]
-      .map(([v, l]) => `<span class="tm-view${v === "marketplace" ? " pick" : ""}"><img src="site/assets/eddy-${v}.png" alt=""><b>${l}</b></span>`).join("")}</div>${HAND}` },
   { id: "shop", pose: "pointing", tab: "shop-page", prep: toTestPages, target: "#shop-page .win", title: "Check right on the shop page", text: "Open a test shop page, or paste any product link, then press the shield. The answer opens beside the listing.",
     art: `<div class="tm-browser"><div class="tm-win">${BAR("example-deals-store.test")}<span class="tm-ext">${SHIELD}</span>
       <div class="tm-shop"><span class="tm-thumb b"></span><span class="tm-lines"><b>Kelvo CX-65 65W charger</b><i>₹299</i><em>Buy now</em></span></div>
       <div class="tm-panel slide"><span class="tm-brand">${SHIELD}SafeShelf</span><div class="tm-verdict red"><b>Don't buy</b><small>Not real: a fifth of the genuine price</small></div><span class="tm-proof">Photos copied from the official listing</span></div>
     </div></div>${HAND}` },
-  { id: "chat", pose: "happy", tab: "chat", target: "#chat .chatwin", title: "Or just ask Eddy", text: "The real chat: pick a product or paste any link or screenshot, then ask in your own words. It remembers the conversation and shows its sources.",
-    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}Eddy · SafeShelf</span><span class="tm-msg me">Is this charger safe in a child's room?</span><span class="tm-msg bot"><b class="amber">Be careful</b>Buyers report it overheating.</span><span class="tm-msg bot">Sources: 3 buyer reviews · BIS registry</span></div></div>` },
   { id: "paste", pose: "excited", tab: "check-own", target: "#check-own", title: "Paste any listing, watch it think", text: "Copy a title from any shop. Eight agents check it live while you watch, then you get the answer.",
     art: `<div class="tm-paste">
       <div class="tm-form"><small>Product title</small><span class="tm-field"><span class="tm-typed">Anker PowerCore 10000 A1263</span></span><span class="tm-go">Check it live</span></div>
       <ol class="tm-agents"><li>Page reader</li><li>Is it real?</li><li>Safety Radar</li><li>Recall checker</li><li>Safety marks</li><li>Verdict, set by code</li></ol>
     </div>${HAND}` },
-  { id: "talk", pose: "happy", tab: "ask-out-loud", target: "#ask-out-loud", alt: { tab: "whatsapp", target: "#whatsapp" }, title: "Ask out loud, or on WhatsApp", text: "Point the camera at the label and ask \"Is this safe?\", or forward a link on WhatsApp. Answers come back as a voice note, in 26 languages.",
+  { id: "chat", pose: "happy", tab: "chat", target: "#chat .chatwin", title: "Or just ask Eddy", text: "The real chat: pick a product or paste any link or screenshot, then ask in your own words. It remembers the conversation and shows its sources.",
+    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}Eddy · SafeShelf</span><span class="tm-msg me">Is this charger safe in a child's room?</span><span class="tm-msg bot"><b class="amber">Be careful</b>Buyers report it overheating.</span><span class="tm-msg bot">Sources: 3 buyer reviews · BIS registry</span></div></div>` },
+  { id: "talk", pose: "happy", tab: "ask-out-loud", target: "#ask-out-loud", alt: { tab: "whatsapp", target: "#whatsapp" }, title: "Reach everyone", text: "Point the camera at the label and ask out loud, forward a link on WhatsApp, or share it from the Android app. Answers come back by voice, in 26 languages.",
     art: `<div class="tm-talk">
       <div class="tm-phone"><span class="tm-mic"><i></i></span><b>“Is this safe?”</b><small>Listening… हिन्दी · 日本語 · English</small></div>
       <div class="tm-phone wa"><span class="tm-wahead">SafeShelf</span><span class="tm-msg me">flipkart.com/kelvo-cx65…</span><span class="tm-msg bot"><b>⛔ Don't buy</b>Not the real product.</span><span class="tm-msg bot voice"><i></i>0:12</span></div>
     </div>` },
-  { id: "answers", pose: "thinking", target: "#answers", title: "One clear answer, with proof", text: "Every listing gets one of four answers. Plain code picks the colour from the evidence; Gemini only explains it.",
+  { id: "after", pose: "thumbs", target: "#after", title: "After you buy, it keeps watching", text: "Saved products are rechecked for new recalls. Eddy also keeps return and warranty dates, answers from the manual and shares the list with family.",
+    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}My Shelf</span><span class="tm-msg bot"><b>Recalled since you bought it</b>NEWDERY power bank, saved 9 Oct.</span><span class="tm-msg bot"><b class="amber">Return window: 3 days left</b>Kelvo CX-65 charger</span><span class="tm-msg bot">Manual, p. 14: don't charge it overnight.</span></div></div>` },
+  { id: "wrong", pose: "surprised", target: "#wrong", title: "If something goes wrong", text: "Safe steps first, never \"test it\". Then a drafted refund or complaint, a hazard report a person reviews, and where to dispose of it safely.",
+    art: `<div class="tm-talk solo"><div class="tm-phone wa chat"><span class="tm-wahead">${SHIELD}Eddy · SafeShelf</span><span class="tm-msg me">My power bank is hot and swelling</span><span class="tm-msg bot"><b>Unplug it if safe, move it to a hard surface</b>Fire or smoke: call 112.</span><span class="tm-msg bot">Refund request drafted · case attached</span></div></div>` },
+  { id: "anywhere", pose: "flying", target: "#business", alt: { target: "#developers" }, title: "Marketplaces, regulators and AI agents", text: "The same engine scans whole catalogs, hands regulators an evidence pack, searches every recall notice, and answers AI agents over 10 MCP tools.",
+    art: `<div class="tm-prods">${[["#0271e4", "Chrome extension"], ["#f0a020", "Web page"], ["#1d9b52", "WhatsApp"], ["#7b5cd6", "Catalog scan"], ["#001123", "API · MCP"]]
+      .map(([c, l]) => `<span style="--c:${c}"><i></i>${l}</span>`).join("")}</div>` },
+  { id: "answers", pose: "thinking", tab: "answers", target: "#answers", title: "Why trust it", text: "Gemini reads reviews and labels, searches, talks and translates. Plain code makes the final call from the evidence, so it cannot invent a recall.",
     art: `<div class="tm-answers">
       <div class="tm-checks"><span>Official recalls</span><span>Buyer reviews</span><span>Safety marks</span><span>Is it real?</span></div>
       <ul class="tm-ans"><li class="red"><b>Don't buy</b>recalled or fake</li><li class="amber"><b>Be careful</b>reports under review</li><li class="green"><b>No problems found</b>in what was checked</li><li class="grey"><b>Can't tell yet</b>never a guess</li></ul>
     </div>` },
-  { id: "proof", pose: "surprised", target: "#accuracy", alt: { target: "#attack" }, title: "Tested, and attacked on purpose", text: "Only 2 false alarms in 40 safe products, against 6 for Gemini alone. We also tried to fool it; see what it decided.",
+  { id: "proof", pose: "surprised", tab: "accuracy", target: "#accuracy", alt: { tab: "attack", target: "#attack" }, title: "Tested, and attacked on purpose", text: "Only 2 false alarms in 40 safe products, against 6 for Gemini alone. We also tried to fool it; see what it decided.",
     art: `<div class="tm-proof2">
       <div class="tm-bars"><small>False alarms out of 40</small><div><span>SafeShelf</span><i class="me" style="--w:18%"></i><b>2</b></div><div><span>Gemini alone</span><i style="--w:55%"></i><b>6</b></div><div><span>Keyword rules</span><i style="--w:100%"></i><b>11</b></div></div>
       <ul class="tm-attacks"><li>Fake regulator page</li><li>Look-alike model number</li><li>Hidden text aimed at AI</li></ul>
     </div>` },
-  { id: "anywhere", pose: "flying", target: "#products", title: "Use it anywhere", text: "A Chrome extension, this web page, WhatsApp, catalog scans for marketplaces, and an API with 10 MCP tools for AI agents.",
-    art: `<div class="tm-prods">${[["#0271e4", "Chrome extension"], ["#f0a020", "Web page"], ["#1d9b52", "WhatsApp"], ["#7b5cd6", "Catalog scan"], ["#001123", "API · MCP"]]
-      .map(([c, l]) => `<span style="--c:${c}"><i></i>${l}</span>`).join("")}</div>` },
-  { id: "go", pose: "waving", title: "Your turn", text: "Name a product and Eddy will set up a live check, or close this and explore. Eddy is at the bottom right if you need him.",
+  { id: "go", pose: "waving", tab: "check-own", target: "#check-own", title: "Your turn", text: "Paste any product here and press Check it live for the real check. I'm at the bottom right if you need me.",
     art: `<form class="tm-try" autocomplete="off"><img src="${POSE("thumbs")}" alt=""><label class="sr" for="tg-product">A product to check</label><input id="tg-product" type="text" maxlength="200" placeholder="e.g. Anker PowerCore 10000 A1263"><button type="submit" class="primary">Set up the check</button></form>` },
 ];
 
@@ -77,7 +80,7 @@ function placeOf(slide) {
     if (!p.target) continue;
     const el = document.querySelector(p.target);
     if (!el) continue;
-    if (p.tab) { const t = $id(`tab-${p.tab}`); if (t && !t.hidden && !$id("try")?.hidden) return { ...p, prep: slide.prep, el }; continue; }
+    if (p.tab) { const t = $id(`tab-${p.tab}`); if (t && !t.hidden && !t.closest("[hidden]")) return { ...p, prep: slide.prep, el }; continue; }
     if (!el.closest("[hidden]")) return { ...p, el };
   }
   return null;
@@ -105,13 +108,18 @@ export function setUpTour() {
       <h2 id="tg-title"></h2>
       <p id="tg-text"></p>
       <div class="tg-art" aria-hidden="true"><div class="tg-stage"></div></div>
-      <button type="button" class="tg-show">Show me on the page <span aria-hidden="true">→</span></button>
       <div class="tg-foot">
+        <img class="tg-mini" alt="" src="${POSE("hi")}">
         <button type="button" class="tg-back">Back</button>
         <span class="tg-dots" role="tablist" aria-label="Tour slides"></span>
         <button type="button" class="tg-next"></button>
       </div>
+      <p class="tg-skip">Seen this before? <button type="button">Skip the tour</button></p>
+      <span class="tg-arrow" aria-hidden="true"></span>
     </div>`;
+  const spot = document.createElement("div");
+  spot.className = "tg-spot";
+  wrap.prepend(spot);
   document.body.append(wrap);
 
   const q = (sel) => wrap.querySelector(sel);
@@ -121,6 +129,7 @@ export function setUpTour() {
   let slides = [];
   let at = 0;
   let lastFocus = null;
+  let pinned = null; // the part of the page the current coachmark points at
 
   // the pictures are drawn at 520 × 270 and scaled to fit the card
   const fit = () => { stage.style.transform = `scale(${Math.min(1, art.clientWidth / 520)})`; art.style.height = `${270 * Math.min(1, art.clientWidth / 520)}px`; };
@@ -128,15 +137,15 @@ export function setUpTour() {
   function show(i) {
     at = Math.max(0, Math.min(i, slides.length - 1));
     const s = slides[at];
-    const eddy = q(".tg-eddy");
-    eddy.src = POSE(s.pose);
+    q(".tg-eddy").src = q(".tg-mini").src = POSE(s.pose);
     q("#tg-title").textContent = s.title;
     q("#tg-text").textContent = s.text;
     stage.innerHTML = s.art;
     stage.dataset.slide = s.id;
-    q(".tg-show").hidden = !s.target;
-    q(".tg-back").textContent = at === 0 ? "Skip" : "Back";
+    q(".tg-back").textContent = "Back";
+    q(".tg-back").hidden = at === 0; // the first step's way out is "Skip the tour" underneath
     q(".tg-next").textContent = at === 0 ? "Take the tour" : at === slides.length - 1 ? "Done" : "Next";
+    q(".tg-skip").hidden = at === slides.length - 1;
     q(".tg-dots").replaceChildren(...slides.map((sl, j) => {
       const d = document.createElement("button");
       d.type = "button";
@@ -146,6 +155,7 @@ export function setUpTour() {
       d.onclick = () => show(j);
       return d;
     }));
+    pin(s); // before fit(): a centred step's picture is only measurable once the card has left coachmark mode
     card.classList.remove("in");
     void card.offsetWidth; // restart the entrance and the picture's motion
     card.classList.add("in");
@@ -154,6 +164,63 @@ export function setUpTour() {
     art.setAttribute("aria-hidden", String(!form)); // only the last slide's picture is something to use
     if (form) form.onsubmit = (e) => { e.preventDefault(); tryProduct(form.elements[0].value.trim()); };
   }
+
+  // the sticky top bar and jump bar cover the top of the page; parts are scrolled to just below them
+  const topBar = () => [document.querySelector("body > header.top"), document.querySelector(".jump")]
+    .reduce((h, el) => h + (el && !el.closest("[hidden]") ? el.offsetHeight : 0), 0);
+
+  // a step that points at the page: open its tab, scroll it into view and put the card beside it
+  function pin(slide) {
+    const p = slide.target && placeOf(slide);
+    wrap.classList.toggle("pin", !!p);
+    pinned = null;
+    if (!p) { card.style.left = card.style.top = ""; return; }
+    if (p.tab) openTab(p.tab);
+    p.prep?.();
+    pinned = document.querySelector(p.target);
+    const r = pinned.getBoundingClientRect();
+    const off = topBar() + 16, room = innerHeight - off;
+    const y = r.height < room * .5 ? r.top - off - (room - r.height - card.offsetHeight) / 2 : r.top - off;
+    scrollTo({ top: Math.max(0, scrollY + y), behavior: "instant" }); // straight there, so the card never trails the page
+    place();
+  }
+
+  // the spotlight around the part, and the card on whichever side has room, its arrow pointing at the part
+  function place() {
+    if (!pinned || wrap.hidden) return;
+    const vw = document.documentElement.clientWidth, vh = innerHeight, m = 12, gap = 18, pad = 8;
+    const r = pinned.getBoundingClientRect();
+    const top = topBar();
+    const b = { l: Math.max(4, r.left - pad), r: Math.min(vw - 4, r.right + pad), t: Math.max(top + 4, r.top - pad), b: Math.min(vh - 4, r.bottom + pad) };
+    const cw = card.offsetWidth, ch = card.offsetHeight;
+    let side = vw - b.r >= cw + gap + m ? "right" : b.l >= cw + gap + m ? "left" : vh - b.b >= ch + gap + m ? "below" : b.t - top >= ch + gap + m ? "above" : null;
+    if (!side) { // a big part: light up the top of it and put the card underneath
+      b.b = Math.max(b.t + 90, vh - ch - gap - m);
+      side = vh - b.b >= ch + gap + m ? "below" : "over";
+    }
+    Object.assign(spot.style, { left: `${b.l}px`, top: `${b.t}px`, width: `${b.r - b.l}px`, height: `${Math.max(0, b.b - b.t)}px` });
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(v, hi));
+    const mx = (b.l + b.r) / 2, my = (b.t + b.b) / 2;
+    let x, y, a;
+    if (side === "right" || side === "left") {
+      x = side === "right" ? b.r + gap : b.l - gap - cw;
+      y = clamp(my - ch / 2, top + m, vh - ch - m);
+      a = clamp(my - y, 26, ch - 26);
+    } else if (side === "over") {
+      x = (vw - cw) / 2; y = vh - ch - m; a = 0;
+    } else {
+      x = clamp(mx - cw / 2, m, vw - cw - m);
+      y = side === "below" ? b.b + gap : b.t - gap - ch;
+      a = clamp(mx - x, 26, cw - 26);
+    }
+    card.dataset.side = side;
+    card.style.left = `${Math.round(x)}px`;
+    card.style.top = `${Math.round(y)}px`;
+    card.style.setProperty("--a", `${Math.round(a)}px`);
+  }
+  let frame = 0;
+  const follow = () => { if (pinned && !frame) frame = requestAnimationFrame(() => { frame = 0; place(); }); };
+  window.addEventListener("scroll", follow, { passive: true });
 
   function open() {
     slides = SLIDES.filter(wanted);
@@ -169,23 +236,11 @@ export function setUpTour() {
 
   function close(refocus = true) {
     wrap.hidden = true;
+    wrap.classList.remove("pin");
+    pinned = null;
     launch.hidden = false;
     document.documentElement.classList.remove("tg-on");
     if (refocus) lastFocus?.focus?.({ preventScroll: true });
-  }
-
-  // close the card, open the right tab, and light up that part of the page for a moment
-  function showOnPage(slide) {
-    const p = placeOf(slide);
-    if (!p) return;
-    close(false);
-    if (p.tab) openTab(p.tab);
-    p.prep?.();
-    const el = document.querySelector(p.target);
-    if (!el) return;
-    el.scrollIntoView({ behavior: calm() ? "auto" : "smooth", block: el.offsetHeight > innerHeight * .7 ? "start" : "center" });
-    el.classList.remove("tg-lit"); void el.offsetWidth; el.classList.add("tg-lit");
-    setTimeout(() => el.classList.remove("tg-lit"), 2600);
   }
 
   // the last slide: put the product into Paste a listing, ready for the live check (the person presses it)
@@ -204,9 +259,9 @@ export function setUpTour() {
   launch.addEventListener("click", open);
   q(".tg-x").addEventListener("click", () => close());
   q(".tg-back").addEventListener("click", () => (at === 0 ? close() : show(at - 1)));
-  q(".tg-next").addEventListener("click", () => (at < slides.length - 1 ? show(at + 1) : close()));
-  q(".tg-show").addEventListener("click", () => showOnPage(slides[at]));
-  wrap.addEventListener("click", (e) => { if (e.target === wrap) close(); });
+  q(".tg-next").addEventListener("click", () => (at < slides.length - 1 ? show(at + 1) : slides[at].id === "go" && pinned ? tryProduct("") : close()));
+  q(".tg-skip button").addEventListener("click", () => close());
+  wrap.addEventListener("click", (e) => { if (e.target === wrap && !pinned) close(); }); // coachmarks close only on purpose
   wrap.addEventListener("keydown", (e) => {
     if (e.key === "Escape") return close();
     if (e.target.matches?.("input")) return;
@@ -226,7 +281,7 @@ export function setUpTour() {
     x0 = null;
     if (Math.abs(dx) > 50) show(at + (dx < 0 ? 1 : -1));
   });
-  window.addEventListener("resize", () => { if (!wrap.hidden) fit(); });
+  window.addEventListener("resize", () => { if (!wrap.hidden) { fit(); place(); } });
 
   // first visit on this browser: open by itself once the page has drawn its views
   if (!store.get() && !new URLSearchParams(location.search).has("notour")) setTimeout(open, 1200);

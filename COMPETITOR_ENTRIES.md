@@ -557,6 +557,224 @@ Method: the same `gh search repos` variants (name, description, `in:readme`, per
 
 **What it means for SafeShelf:** a text search of all 67 new candidates' READMEs/descriptions for recall, counterfeit, fake shop/store, product safety, certification and genuine product found no direct overlap. The only new Retail entry (LIVE/Studio, a live-commerce compliance co-pilot) is about on-air regulatory claims, not product safety or counterfeits. Several new BFSI entries use "evidence" and "certificate" language (Virasat's forged-certificate detection, VoltProof's used-EV claim checks, TrustChain's trade-document-vs-physical-goods checks) but all are financial/document verification, not a shopper-facing recall or fake-shop check. SafeShelf's product-safety, recall and counterfeit-detection angle remains unclaimed across all ten scans, through the submission-eve surge.
 
+## Eleventh scan (2026-10-18, submission day)
+Method: the same `gh search repos` variants (name, description, `in:readme`, per-theme, created since 2026-08-15) plus `gh search code` (5 variants) → 574 unique candidates, 243 not named in this file. We fetched each README and description and kept the 204 that name the cup, then read those. 192 are real new entries; one more (aaronthomas7/podlens) is the same PodLens idea already listed under poseidon139/podlens.
+
+**New real entries (191):**
+
+| Theme | Repo | Idea |
+|---|---|---|
+| BFSI | [05lakb/scamguard](https://github.com/05lakb/scamguard) | "Last Mile Guard": holds a coached-scam payment, reads the customer's words, calls them in-app, briefs the fraud analyst. Live |
+| BFSI | [1906037ssrisaran/aibuildercup](https://github.com/1906037ssrisaran/aibuildercup) | "ShieldIQ X": explainable financial-crime investigation workspace for analysts. Live |
+| BFSI | [Adagard-Trios/AI-Buildathon-2026](https://github.com/Adagard-Trios/AI-Buildathon-2026) | "FirstStep": scam check plus decision copilot for first-time investors. Live |
+| BFSI | [adipal10/pramaan](https://github.com/adipal10/pramaan) | "PRAMAAN": catches fake refund photos for shops and unfair health-claim denials for people. Live |
+| BFSI | [AgentsBakery/Bukti](https://github.com/AgentsBakery/Bukti) | Credit scoring for Indonesian/Malaysian warungs from notebooks, QRIS history and receipts. Live |
+| BFSI | [akshaynara/fraudlens-ai](https://github.com/akshaynara/fraudlens-ai) | "FraudLens": connects fraud complaints (UPI receipts, screenshots) into mule networks. Live |
+| BFSI | [ansumandas2811/claimsure](https://github.com/ansumandas2811/claimsure) | Hospital claim-readiness agent: checks inpatient records (FHIR) against insurance policy before submission |
+| BFSI | [chalasanisreenivasulu2-glitch/TrustLens](https://github.com/chalasanisreenivasulu2-glitch/TrustLens) | "TrustLens APAC": scam check for payment messages and screenshots. Live |
+| BFSI | [Dillibabu390/aegies-guard](https://github.com/Dillibabu390/aegies-guard) | "AegisGuard": pre-settlement fraud and AML swarm for payment rails |
+| BFSI | [HemantBK/Argus](https://github.com/HemantBK/Argus) | "Argus": checks an NBFC lending policy clause by clause against dated RBI rules. Live |
+| BFSI | [Hu2Hoang/EWS](https://github.com/Hu2Hoang/EWS) | Graph-aware early warning for non-performing loans (Vietnam). Live |
+| BFSI | [iamharshitgupta/anumati](https://github.com/iamharshitgupta/anumati) | "Anumati": trust and liability gateway for AI-agent UPI payments |
+| BFSI | [lgnarangoda/muragala](https://github.com/lgnarangoda/muragala) | Pre-payment scam second opinion and coercion shield for Sri Lanka (Sinhala/Tamil). Live |
+| BFSI | [Mahak2432/IntelliSettle](https://github.com/Mahak2432/IntelliSettle) | Verifies Indian smallholder crop-insurance claims against evidence the farmer can't fake. Live |
+| BFSI | [MugheesMb/firstpass](https://github.com/MugheesMb/firstpass) | "FirstPass": checks Letter of Credit documents before the bank does. Live |
+| BFSI | [nithesh1705/argus-bfsi-compliance-intelligence](https://github.com/nithesh1705/argus-bfsi-compliance-intelligence) | "ARGUS": RM sales-call recordings → regulation-cited compliance findings. Live |
+| BFSI | [onefinops-gac/h2s-aibuilder](https://github.com/onefinops-gac/h2s-aibuilder) | "One FinOps": AI cost control tower for regulated institutions |
+| BFSI | [palani-unison/algodragon-aml-copilot](https://github.com/palani-unison/algodragon-aml-copilot) | AML compliance desk for UAE gold dealers, real estate and VASPs. Live |
+| BFSI | [praffulsilakari7777/dukaan-ai](https://github.com/praffulsilakari7777/dukaan-ai) | "Dukaan AI": voice bookkeeping and loan-readiness for kirana stores |
+| BFSI | [rithikrice/theHundred-Coconut](https://github.com/rithikrice/theHundred-Coconut) | "Coconut": financial investigations that make missing evidence explicit. Live |
+| BFSI | [rps011/safemeai-portal-public](https://github.com/rps011/safemeai-portal-public) | "SafeMeAI": fraud and risk assistant (India). Live |
+| BFSI | [shieryl-ryle/traceguard](https://github.com/shieryl-ryle/traceguard) | "TraceGuard": graph tracing of fund movements with cited case briefs. Live |
+| BFSI | [shreyasshettyb/nexusclear-pramaan-ai](https://github.com/shreyasshettyb/nexusclear-pramaan-ai) | "NexusClear": resolves real-time payment chain freezes (India). Live |
+| BFSI | [SinghShanu/aegisgov-ai](https://github.com/SinghShanu/aegisgov-ai) | Policy-as-code and multi-agent safety harness for JAPAC banks |
+| BFSI | [smita1078/sahay](https://github.com/smita1078/sahay) | "Sahay": bank KYC that disabled and elderly customers can complete (Hindi/Marathi). Live |
+| BFSI | [sumitgarg9604/DocuBridge](https://github.com/sumitgarg9604/DocuBridge) | Multilingual loan-document intake. Live |
+| BFSI | [surbhi02jain/afterlife](https://github.com/surbhi02jain/afterlife) | Helps bereaved Indian families find and claim a relative's unknown accounts and policies. Live |
+| BFSI | [taivnaaiwnl/singsing](https://github.com/taivnaaiwnl/singsing) | "Kervan Credit Passport": informal records → verified credit passport for small businesses. Live |
+| BFSI | [tanmaydarmorha/mimamori](https://github.com/tanmaydarmorha/mimamori) | "Mimamori": teller decision support that stops coached scams at the bank counter (Japan). Live |
+| BFSI | [vaishob/findoc-assist-treasury-risk](https://github.com/vaishob/findoc-assist-treasury-risk) | Treasury settlement-risk extraction from email threads |
+| BFSI | [vzzzzzzz17/signalledger-ai-builder-cup-2026](https://github.com/vzzzzzzz17/signalledger-ai-builder-cup-2026) | Context on trading-community calls: claims, disclosed risk, track record. Live |
+| **Retail** | [aibuilder2026/smart-clearance](https://github.com/aibuilder2026/smart-clearance) | Routes near-expiry FMCG stock to where it will sell (India). Live |
+| **Retail** | [anamol-saxena/review-iq](https://github.com/anamol-saxena/review-iq) | Collects and analyses customer reviews with Gemini |
+| **Retail** | [anishreddy3/agent-checkout-guard](https://github.com/anishreddy3/agent-checkout-guard) | Risk guard on every AI-agent checkout over Google's Universal Commerce Protocol |
+| **Retail** | [anpixelstudio/vera](https://github.com/anpixelstudio/vera) | "VERA": kitchen CCTV compliance alerts |
+| **Retail** | [ashfaque-rifaye/project-tesselle](https://github.com/ashfaque-rifaye/project-tesselle) | "Project Tesselle": voice shopping agent for purchases that must fit a space, device or deadline. Live |
+| **Retail** | [ashwinich16/Scout](https://github.com/ashwinich16/Scout) | "Scout": conversational styling companion. Live |
+| **Retail** | [Crunchygrunt/Retail_Revoluts_StoreMind](https://github.com/Crunchygrunt/Retail_Revoluts_StoreMind) | Agent-readiness and commerce copilot for Indian SME/D2C sellers (fail-closed checkout gate). Live |
+| **Retail** | [DidinAmarudinn/Riverside](https://github.com/DidinAmarudinn/Riverside) | "Demand Radar": reads shopper conversations to capture demand the POS never saw |
+| **Retail** | [ethoart/savipola](https://github.com/ethoart/savipola) | "SaviPola": marketplace for Sri Lankan farmers, buyers and transport |
+| **Retail** | [galihsatriawan/etalase](https://github.com/galihsatriawan/etalase) | "Etalase": makes WhatsApp sellers shoppable by AI agents (MCP, UCP). Live |
+| **Retail** | [JiaLe331/TurnWise](https://github.com/JiaLe331/TurnWise) | Restaurant cameras → live table board, clearing queue and seating advice. Live |
+| **Retail** | [Khushi-Agrawal-2019/DarkOps](https://github.com/Khushi-Agrawal-2019/DarkOps) | Quick-commerce refund complaints → supply-chain root-cause investigation |
+| **Retail** | [kumarAmaragonda/SmartAIPricingTool](https://github.com/kumarAmaragonda/SmartAIPricingTool) | "SmartDupe": finds bioequivalent generic drugs and cosmetic dupes from a pack or label photo. Live |
+| **Retail** | [msacreativesfew/Juris-lens](https://github.com/msacreativesfew/Juris-lens) | "JurisLens": cross-border regulatory compliance check for physical products before launch |
+| **Retail** | [Nitish-007/PromoMind_Ai](https://github.com/Nitish-007/PromoMind_Ai) | Demand forecasting and sales copilot for kiranas and small grocers |
+| **Retail** | [novitaguok/OmniLang](https://github.com/novitaguok/OmniLang) | Multilingual WhatsApp/LINE commerce agent for JAPAC micro-SMEs. Live |
+| **Retail** | [nyogendran/savvy-cart-ai](https://github.com/nyogendran/savvy-cart-ai) | Which store and which card to use for Colombo household staples. Live |
+| **Retail** | [phaniprojectworks/SignalShift.ai](https://github.com/phaniprojectworks/SignalShift.ai) | Pauses ad spend on sizes about to sell out |
+| **Retail** | [radhikaaudi/Veriqo](https://github.com/radhikaaudi/Veriqo) | Verify a used car from photos + VAHAN RC record before paying (India) |
+| **Retail** | [Sarthak115/KitchenProof](https://github.com/Sarthak115/KitchenProof) | Surprise, AI-verified restaurant kitchen audits from a phone. Live |
+| **Retail** | [sgirabin/2026-aibuildercup-hackathon](https://github.com/sgirabin/2026-aibuildercup-hackathon) | "ShopProof": identical-product fingerprint across Shopee/Lazada/TikTok Shop listings, Chrome extension. **Nearest to SafeShelf's listing check, but for price comparison, not safety**; MVP still on a branch |
+| **Retail** | [swaraj-dash/RetailIQ](https://github.com/swaraj-dash/RetailIQ) | Recovers out-of-stock lost sales and calibrates replenishment |
+| **Retail** | [tahreemrasul/kyberium](https://github.com/tahreemrasul/kyberium) | "Rewear": rebuild a look you love from clothes you already own. Live |
+| **Retail** | [tjmanoj/retailnova](https://github.com/tjmanoj/retailnova) | "RetailNova": every customer conversation as a demand signal. Live |
+| **Retail** | [Vaisalini/bazaar](https://github.com/Vaisalini/bazaar) | "bazaar": your agent negotiates with every local shop's agent in parallel |
+| **Retail** | [Xhahat/inventory-rescue](https://github.com/Xhahat/inventory-rescue) | Supplier messages + sales history → budget-constrained stock recovery plan for D2C food brands. Live |
+| Manufacturing | [akanthed/AshvaTrace](https://github.com/akanthed/AshvaTrace) | Investigates gaps between a machine's actual and expected power draw. Live |
+| Manufacturing | [amunjuluri/plantmemory](https://github.com/amunjuluri/plantmemory) | "PlantMemory": breakdown knowledge from logbooks and SAP for factory-floor workers |
+| Manufacturing | [asadiiefji/dr-macx](https://github.com/asadiiefji/dr-macx) | "Dr. Macx": OEE monitoring for stamping presses with a talking 3D kiosk (Indonesia). Live |
+| Manufacturing | [awasthimohit1/cbamforge_ai](https://github.com/awasthimohit1/cbamforge_ai) | "CBAMForge": EU CBAM compliance agent for exporters. Live |
+| Manufacturing | [Bhanuprasad5/ThermaPlan_AI](https://github.com/Bhanuprasad5/ThermaPlan_AI) | "TEEVRA": heat-safe, carbon-aware production scheduler for hot-climate factories. Live |
+| Manufacturing | [DivineTechie/takumi](https://github.com/DivineTechie/takumi) | "TAKUMI": any existing factory camera becomes a quality and operations layer. Live |
+| Manufacturing | [EkaTantra/plant-ops-copilot](https://github.com/EkaTantra/plant-ops-copilot) | "Plant Ops Copilot": maintenance copilot that catches failures for small manufacturers. Live |
+| Manufacturing | [Felina14/remedy-mesh](https://github.com/Felina14/remedy-mesh) | "Remedy Mesh": catches car-recall scope drift and failed fixes, sources parts, amends the Part 573 filing (NHTSA). **Recall, but OEM-side**. Live |
+| Manufacturing | [GaBaGa-crypto/ai-builder-cup-2026](https://github.com/GaBaGa-crypto/ai-builder-cup-2026) | Milling-sound anomaly detection on the Purdue MSM dataset (Taiwan). Live |
+| Manufacturing | [HyperfocuSam/relay-foundry-factory-interviews](https://github.com/HyperfocuSam/relay-foundry-factory-interviews) | "Factory Interviews": capture how a factory process really works, pick one defensible AI pilot. Live |
+| Manufacturing | [Inforable/Optiflow](https://github.com/Inforable/Optiflow) | "LubeGuard": reliability intelligence for steam-turbine lube-oil systems |
+| Manufacturing | [keane13/SenpaiQC](https://github.com/keane13/SenpaiQC) | Expert-taught inspection and rework cell (YOLO + Gemini Robotics ER) |
+| Manufacturing | [mk-tdev/BatchLens](https://github.com/mk-tdev/BatchLens) | Agentic quality investigator inside a playable factory. Live |
+| Manufacturing | [muskanrath30/cosmic-voyagers-21-octo-fiesta](https://github.com/muskanrath30/cosmic-voyagers-21-octo-fiesta) | Predictive-maintenance copilot grounded in the maintenance manual. Live |
+| Manufacturing | [ranjithaRnayak/jarvis-senpai](https://github.com/ranjithaRnayak/jarvis-senpai) | Scan a raw-material tag; tracks expiry, reorders, finds suppliers. Live |
+| Manufacturing | [Sangam282/aeroguard-enterprise-ai](https://github.com/Sangam282/aeroguard-enterprise-ai) | "AeroGuard / FactoryMind": industrial telemetry and anomaly dashboard. Live |
+| Manufacturing | [sarvesh-sg/canesense](https://github.com/sarvesh-sg/canesense) | "CaneSense": sugar-mill cane-supply agents with satellite plot reads |
+| Manufacturing | [SiddhantOswal/Momentum](https://github.com/SiddhantOswal/Momentum) | Purchase order → reviewed setup and production card for corrugated-box plants |
+| Manufacturing | [srihitha2005/Opex](https://github.com/srihitha2005/Opex) | "OpEx": CNC plant copilot that prices every fix in rupees |
+| Manufacturing | [surajmalthumkar8/root-and-escape](https://github.com/surajmalthumkar8/root-and-escape) | "Root & Escape": 8D quality-investigation copilot that won't accept "operator error". Live |
+| Manufacturing | [tetra-vi/Ecuraa](https://github.com/tetra-vi/Ecuraa) | "ComplyBridge": bills and logbooks → CBAM carbon evidence for small manufacturers |
+| Manufacturing | [Umang3172/crux](https://github.com/Umang3172/crux) | "Crux": rotating-machine fault investigator that asks for the one deciding measurement |
+| Media | [Abhinav1341/sans_and_papyrus](https://github.com/Abhinav1341/sans_and_papyrus) | "Sans & Papyrus": story game teaching social-emotional skills to children 6–14, with a parent growth report. Live |
+| Media | [ajalcance/gen6th-accord-prototype](https://github.com/ajalcance/gen6th-accord-prototype) | "Gen6th Accord": AI persona passport. Live |
+| Media | [ashishgupta-cpu/Youtube-Audio-Translate](https://github.com/ashishgupta-cpu/Youtube-Audio-Translate) | Real-time English↔Hindi audio translation for YouTube. Live |
+| Media | [diyakarmakar779/klick](https://github.com/diyakarmakar779/klick) | Meet, remember and reconnect with people at events (Calendar, Luma). Live |
+| Media | [gowthamvarma/agentic-news](https://github.com/gowthamvarma/agentic-news) | Agentic news analyser (ADK). Live |
+| Media | [iamhamzanadeem/showrunner-ai](https://github.com/iamhamzanadeem/showrunner-ai) | "Showrunner AI": agentic ad and short-film production (Veo, Lyria). Live |
+| Media | [jiromyy/CORVUS](https://github.com/jiromyy/CORVUS) | "Corvus": private, source-grounded memory of what you watch and read |
+| Media | [jpooja139/raahi](https://github.com/jpooja139/raahi) | "Raahi": voice-guided AI engineer for creators (Hindi/English) |
+| Media | [kartikey19427/InteractiveLearning](https://github.com/kartikey19427/InteractiveLearning) | "Askademy": any topic → narrated interactive lesson and quiz. Live |
+| Media | [kyawoo-23/teach-milo](https://github.com/kyawoo-23/teach-milo) | "Teach Milo": learner teaches a curious AI student from their notes. Live |
+| Media | [lennonkc/hello-watch-assistant](https://github.com/lennonkc/hello-watch-assistant) | Spoiler-free film companion that answers only from what you've seen. Live |
+| Media | [nakulmohlajee/takeone](https://github.com/nakulmohlajee/takeone) | "TakeOne": AI director — script, teleprompter shoot, automatic edit |
+| Media | [nileshnsmart/lantern](https://github.com/nileshnsmart/lantern) | "Lantern": grandparents' spoken stories → bilingual family storybook |
+| Media | [remtekindo/facesmash](https://github.com/remtekindo/facesmash) | "Face Smash": cloaks photos against face recognition |
+| Media | [rohitshukla11/likeness-ai](https://github.com/rohitshukla11/likeness-ai) | "Likeness AI": creators license their face for AI ads, anyone can verify. Live |
+| Media | [saitej123/Gemini-Multimodal-Studio](https://github.com/saitej123/Gemini-Multimodal-Studio) | Document or topic → narrated video lesson. Live |
+| Media | [Sihyeon-Ji/trend-interpreter](https://github.com/Sihyeon-Ji/trend-interpreter) | One product → localised meme-aware copy for Korea, Japan and English markets, with brand-risk checks. Live |
+| Media | [Sjain14/proof_card_google_ai_builders_cup](https://github.com/Sjain14/proof_card_google_ai_builders_cup) | "Proof Card": live claim-by-claim fact-check of speeches, forwards on Telegram. Live |
+| Media | [SMani0547/AniForge-AI](https://github.com/SMani0547/AniForge-AI) | Anime studio: sketch a character, build a scene, versioned AI video |
+| Media | [testofschool/preflight](https://github.com/testofschool/preflight) | "Preflight": checks an AI-video prompt before you pay to generate it. Live |
+| Media | [therealyash/ResiliLearn](https://github.com/therealyash/ResiliLearn) | Adaptive knowledge-gap catch-up engine |
+| Media | [Vertex-Veritas-AI-Builder-Cup/ContentShield](https://github.com/Vertex-Veritas-AI-Builder-Cup/ContentShield) | Checks new uploads against a catalogue of approved originals before they spread |
+| Media | [VibeRick/viberick-dub](https://github.com/VibeRick/viberick-dub) | Dubs a YouTube video into up to 125 languages in the creator's own voice. Live |
+| Future of Work | [Akshada-Porje/MetisRealityGraph](https://github.com/Akshada-Porje/MetisRealityGraph) | "Metis RealityGraph": evidence-first production-incident reconstruction. Live |
+| Future of Work | [alfianhid/knowbridge](https://github.com/alfianhid/knowbridge) | Evidence-backed decision briefs for Singapore SMEs on Google Workspace. Live |
+| Future of Work | [ard3051997/mcp-gc-ai-builder-cup](https://github.com/ard3051997/mcp-gc-ai-builder-cup) | Multi-agent copilot over Play Console, RevenueCat, GA4 and AdMob for app teams. Live |
+| Future of Work | [ashok2605/prompt2prod](https://github.com/ashok2605/prompt2prod) | Autonomous AI dev crew: prompt → tests → code → Cloud Run release. Live |
+| Future of Work | [azmfrsdev/flowhub](https://github.com/azmfrsdev/flowhub) | Company offering catalogue + agents that research prospects and draft proposals. Live |
+| Future of Work | [berezovsky360/low-ai-builder-cup](https://github.com/berezovsky360/low-ai-builder-cup) | "LOW": Markdown workspace and low-code runtime on Google Cloud (work in progress) |
+| Future of Work | [bharathisrihari-sketch/EchoFlow_AI_New](https://github.com/bharathisrihari-sketch/EchoFlow_AI_New) | Real-time speech-to-speech voice normaliser for contact centres |
+| Future of Work | [carelessfinch/aibuildercup](https://github.com/carelessfinch/aibuildercup) | Multi-agent "research group" that sets up validated plasma simulations |
+| Future of Work | [CodeWithMir/Understudy](https://github.com/CodeWithMir/Understudy) | Gemini watches you do a task once and returns rule-following, verified automation. Live |
+| Future of Work | [drkunalmishra/pitchops-ai](https://github.com/drkunalmishra/pitchops-ai) | Broker content → persona playbook → compliant sales pitch. Live |
+| Future of Work | [edmundzen/ecs-desk](https://github.com/edmundzen/ecs-desk) | Three agents read, sort and draft small-business admin; a human approves. Live |
+| Future of Work | [FCnGO/HaloMeetAI](https://github.com/FCnGO/HaloMeetAI) | "HoloMeet": personal agents negotiate introductions between people at the same venue (AI Studio) |
+| Future of Work | [francisnguyenanh/Ripple-finale](https://github.com/francisnguyenanh/Ripple-finale) | "Ripple": business-rule intelligence and governed change |
+| Future of Work | [Gemii-Team/gcp-ai-builder-cup-2026](https://github.com/Gemii-Team/gcp-ai-builder-cup-2026) | "K.I.W.I.": team chat workspace with agents that cite sources (English/Thai) |
+| Future of Work | [hamzam1997/tryout](https://github.com/hamzam1997/tryout) | Meeting ideas → agent-attempted pull requests with a friction log. Live |
+| Future of Work | [Hari-code-clips/say-it-back](https://github.com/Hari-code-clips/say-it-back) | "Say It Back": each worker reads back permit-to-work safety steps in their own language before release. Live |
+| Future of Work | [hilbertaiofficial/decision-os](https://github.com/hilbertaiofficial/decision-os) | "DecisionOS": decision and execution layer across Gmail, Jira, Slack, GitHub. Live |
+| Future of Work | [Illuztrado/agent-commons-test-auth](https://github.com/Illuztrado/agent-commons-test-auth) | Cross-organisation agent negotiation rooms with hash-verifiable result cards. Live |
+| Future of Work | [JimChen-g/growthos-ai-builder-cup-2026](https://github.com/JimChen-g/growthos-ai-builder-cup-2026) | Approval-gated AI growth orchestration for SaaS. Live |
+| Future of Work | [Jotadebeese/neuroproxy](https://github.com/Jotadebeese/neuroproxy) | "NeuroProxy": self-healing API gateway (Go + Gemini) |
+| Future of Work | [mahvin92/Candor](https://github.com/mahvin92/Candor) | Cancer mutation analyst with honestly labelled evidence |
+| Future of Work | [mehulsethia/Threadline](https://github.com/mehulsethia/Threadline) | Agentic CRM: conversations → closed deals |
+| Future of Work | [Namangoel1904/StrataIQ](https://github.com/Namangoel1904/StrataIQ) | Role-adaptive enterprise knowledge and voice copilot |
+| Future of Work | [naveenam-dev/AIBuilderCupRepo](https://github.com/naveenam-dev/AIBuilderCupRepo) | On-call second brain: runbooks, Slack, Jira → verified procedure. Live |
+| Future of Work | [NeetiSingh-ai/fold](https://github.com/NeetiSingh-ai/fold) | "Fold": turns repeated Gemini calls into verified, free code. Live |
+| Future of Work | [nhaminhbach/translucid](https://github.com/nhaminhbach/translucid) | Selective-transparency engine for whistleblower and consumer-dispute evidence |
+| Future of Work | [nt-codee/contract-copilot](https://github.com/nt-codee/contract-copilot) | Vendor-contract review for Malaysian/Singaporean SMEs with verified citations. Live |
+| Future of Work | [okihita/nata](https://github.com/okihita/nata) | "Nata": receipt photo → journal, tax and licensing for Indonesian SMBs |
+| Future of Work | [prabhakarcs786/twinops](https://github.com/prabhakarcs786/twinops) | Tests and challenges a network fix before a human approves it. Live |
+| Future of Work | [praveensaharan/RoleSpace](https://github.com/praveensaharan/RoleSpace) | Per-role AI access policy for software companies. Live |
+| Future of Work | [rahulrao85/pratibimb](https://github.com/rahulrao85/pratibimb) | "Pratibimb": AI mirror of a senior decision-maker's past rulings. Live |
+| Future of Work | [Rkatkuri53/RecruitGO](https://github.com/Rkatkuri53/RecruitGO) | Recruitment lifecycle and ATS platform. Live |
+| Future of Work | [Sajidhussain19/rationale](https://github.com/Sajidhussain19/rationale) | "Rationale": decision ledger for teams with a conflict radar. Live |
+| Future of Work | [SamratKumar29/Blue](https://github.com/SamratKumar29/Blue) | "Blue": privacy-first work companion owned by the employee. Live |
+| Future of Work | [sankalp2515/Abide](https://github.com/sankalp2515/Abide) | "Abide": the employee's request becomes the permission card for office agents |
+| Future of Work | [SherefAbolmagd/agentgig](https://github.com/SherefAbolmagd/agentgig) | Marketplace to hire AI agents per finished task (A2A). Live |
+| Future of Work | [shreyyx10/Agentic-SRE](https://github.com/shreyyx10/Agentic-SRE) | On-call agent for Kubernetes alerts with second-model check |
+| Future of Work | [sopan1000/Autov1ops](https://github.com/sopan1000/Autov1ops) | "AutoOps": AI on-call engineer. Live |
+| Future of Work | [steffy-lo/decision-radar](https://github.com/steffy-lo/decision-radar) | Organisational decision memory with an impact graph |
+| Future of Work | [topskill-ai/topskill-aibuildercup](https://github.com/topskill-ai/topskill-aibuildercup) | Turn an expert's skill into a paid AI agent (A2A). Live |
+| Future of Work | [tructran1911/omniops-ai](https://github.com/tructran1911/omniops-ai) | AP 3-way match (contract, acceptance, VAT e-invoice) for Vietnam. Live |
+| Future of Work | [vaishob/covercall](https://github.com/vaishob/covercall) | Voice-first shift cover for Singapore cafés, checked against the Employment Act |
+| Future of Work | [wl-geek/truesite](https://github.com/wl-geek/truesite) | QR-anchored BIM overlay on site plus a Gemini as-built check. Live |
+| Sustainability | [abdm693/hack2skill-hackathon](https://github.com/abdm693/hack2skill-hackathon) | "Naqsha": rough idea → walkable, LDA-checked 3D home design (Pakistan). Live |
+| Sustainability | [ahmadsyafiqkamil/teduh](https://github.com/ahmadsyafiqkamil/teduh) | "TEDUH": urban-heat-island mitigation planning per Jakarta sub-district |
+| Sustainability | [ahmadwaliradhi/findyourdent](https://github.com/ahmadwaliradhi/findyourdent) | Dentist/clinic/patient platform for Indonesia with BPJS guidance. Live |
+| Sustainability | [AI-Builder-Cup-2026-Click-to-Safe/drivereport-mobile](https://github.com/AI-Builder-Cup-2026-Click-to-Safe/drivereport-mobile) | Dashcam review and evidence-based road-incident reporting (React Native app). Live |
+| Sustainability | [ajitonelsonn/Bottle-Valor](https://github.com/ajitonelsonn/Bottle-Valor) | "BotleValor": verified plastic-bottle recycling rewards in Dili, Timor-Leste. Live |
+| Sustainability | [Anandu-K-Balachandran-cogni/greenprint](https://github.com/Anandu-K-Balachandran-cogni/greenprint) | "Greenprint": AI-designed green homes for a family's plot and climate. Live |
+| Sustainability | [Barath-kanth/zivo](https://github.com/Barath-kanth/zivo) | "Zivo": neighbourhood-care marketplace for elders and Tamil/Sinhala speakers in Sri Lanka. Live |
+| Sustainability | [basilchackomathewbyf-dot/bigyellow-beacon](https://github.com/basilchackomathewbyf-dot/bigyellow-beacon) | "BigYellow Beacon": offline-first safety and wellbeing copilot for seafarers (Gemma on ship) |
+| Sustainability | [csm-kr/kibo](https://github.com/csm-kr/kibo) | "KIBO": talk to your phone and an existing self-order kiosk fills its own cart (accessibility). Live |
+| Sustainability | [dager23/second-opinion](https://github.com/dager23/second-opinion) | Live scam guardian on suspicious calls ("digital arrest"), brings in a family guardian |
+| Sustainability | [Disha-D3322/aftermath](https://github.com/Disha-D3322/aftermath) | "AfterMath": multilingual disaster reports → verified incidents, matched to volunteers. Live |
+| Sustainability | [dzakybd/embrace](https://github.com/dzakybd/embrace) | AI front door for social-services complaint desks, any language. Live |
+| Sustainability | [EmanRohail/solarsense](https://github.com/EmanRohail/solarsense) | "SolarSense": show a rooftop-solar problem, hear the fix in your language. Live |
+| Sustainability | [hwayeonkim/CalmLine](https://github.com/hwayeonkim/CalmLine) | Sits between callers and public-service agents, filtering abuse |
+| Sustainability | [hypta/home-in-brief](https://github.com/hypta/home-in-brief) | "Home in Brief": official hazard and cost records for an Auckland address, for first-home buyers. Live |
+| Sustainability | [ibrahimyu/langkahrehab](https://github.com/ibrahimyu/langkahrehab) | "Langkah": home rehab coach for amputee patients (Indonesia). Live |
+| Sustainability | [japan-gse-builders/hachi](https://github.com/japan-gse-builders/hachi) | "Hachi": daily AI check-in call for older English speakers in Japan. Live |
+| Sustainability | [jltuts/smartcareops-prod](https://github.com/jltuts/smartcareops-prod) | "SmartCareOps": healthcare intake and coordination |
+| Sustainability | [Matrix-Mantra/Matrix-01](https://github.com/Matrix-Mantra/Matrix-01) | "hospitalsofnepal.com": Nepali-first hospital finder and ranking. Live |
+| Sustainability | [mesaketk/annadrishti](https://github.com/mesaketk/annadrishti) | "AnnaDrishti": season-by-season food-security early warning for India's districts. Live |
+| Sustainability | [minthein128/scamshield](https://github.com/minthein128/scamshield) | "Kakwe": warns Myanmar/SEA migrant workers about trafficking and scam-job offers. Live |
+| Sustainability | [murali7032/RescueFlow-AI](https://github.com/murali7032/RescueFlow-AI) | Surplus food recovery that handles failed matches and rematching |
+| Sustainability | [NipunDilshanSenevirathne/If-I-Disappear](https://github.com/NipunDilshanSenevirathne/If-I-Disappear) | Before leaving home for months, finds what stops and who needs to know (Sri Lanka). Live |
+| Sustainability | [officialasishkumar/tephra-public](https://github.com/officialasishkumar/tephra-public) | "TEPHRA": volcanic-ash decision desk for airline dispatch. Live |
+| Sustainability | [padmanabhan-r/timbul](https://github.com/padmanabhan-r/timbul) | "Timbul": textbook figure → tactile sheet a blind student explores by voice. Live |
+| Sustainability | [puteramohammadnilam-cmd/banjir-platform](https://github.com/puteramohammadnilam-cmd/banjir-platform) | "MyFlood": modelled flood depth and cost for Malaysian small businesses |
+| Sustainability | [Raghavrs1999/AgriResilience-AI](https://github.com/Raghavrs1999/AgriResilience-AI) | Voice-first agronomy and micro-climate defence for smallholders |
+| Sustainability | [Rahul21sai/LeadNet](https://github.com/Rahul21sai/LeadNet) | "Bengaluru, on the record": civic issue reports with evidence trails, messages to representatives |
+| Sustainability | [ramasamyp-aiengineer/terra-sentinel-ai](https://github.com/ramasamyp-aiengineer/terra-sentinel-ai) | "TerraSentinel": InSAR early warning for ground movement under roads, metros, dams. Live |
+| Sustainability | [renataputri19/carbonpilot](https://github.com/renataputri19/carbonpilot) | "CarbonPilot": ranked, costed decarbonisation actions for APAC companies. Live |
+| Sustainability | [ritikaprasad281/ResQ-Bharat](https://github.com/ritikaprasad281/ResQ-Bharat) | Satellite-grounded flood intelligence for Indian river basins. Live |
+| Sustainability | [shanthoshrajelumalai/smartdiary-ai](https://github.com/shanthoshrajelumalai/smartdiary-ai) | "SmartDairy": methane reduction and feed optimisation for dairy. Live |
+| Sustainability | [Shraddha259/lastmile-resilience-agent](https://github.com/Shraddha259/lastmile-resilience-agent) | "LastMile": after a flood alert, checks on every vulnerable resident until confirmed safe. Live |
+| Sustainability | [Si-za1/aapatvani](https://github.com/Si-za1/aapatvani) | "AapatVani": Nepali/English/voice disaster reports → traceable incident records with road-access analysis |
+| Sustainability | [sokhamphou/ai-traffic-dispatcher](https://github.com/sokhamphou/ai-traffic-dispatcher) | Multi-agent traffic and accident response for Cambodian cities |
+| Sustainability | [stellaephile/propus-ai-buildercup](https://github.com/stellaephile/propus-ai-buildercup) | Ask Delhi's bus and metro data a question, get sourced tables and maps. Live |
+| Sustainability | [SunchhayK/mekongpulse](https://github.com/SunchhayK/mekongpulse) | Flood early warning and crop advice for Cambodian communes, Khmer voice bulletins on Telegram. Live |
+| Sustainability | [swar186j/Maadhyam-prototype](https://github.com/swar186j/Maadhyam-prototype) | Citizen assistant for Indian government services. Live |
+| Sustainability | [teknojaya/neighbourhood](https://github.com/teknojaya/neighbourhood) | "NeighbourHood": neighbourhood community app. Live |
+| Sustainability | [venunayira/LegisiMate](https://github.com/venunayira/LegisiMate) | Evidence-backed legal case preparation for individuals and small businesses. Live |
+| Sustainability | [victorchengwei/greenledger-seaguard](https://github.com/victorchengwei/greenledger-seaguard) | Ship collision-avoidance support (YOLOv8 + COLREG rules). Live |
+| Sustainability | [Vrushali2710/aquavigil](https://github.com/Vrushali2710/aquavigil) | Water-contamination and purifier-health sentry for intermittent supply systems |
+| Sustainability | [waikinli98/floodsafe_hk](https://github.com/waikinli98/floodsafe_hk) | "FloodSafe HK": walking routes around flooded streets in a Hong Kong rainstorm. Live |
+| Sustainability | [yayadontknow/enjoyable-lite](https://github.com/yayadontknow/enjoyable-lite) | Live AI audio description for any YouTube video, 33 languages |
+| Sustainability | [yujiediana0706/bloomforher](https://github.com/yujiediana0706/bloomforher) | "ReBloom AI": career transition into AI roles for women. Live |
+| Sustainability | [Zulfan-Afandi/apps-dapur-rantau](https://github.com/Zulfan-Afandi/apps-dapur-rantau) | "Dapur Rantau": healthy, budget meal planning for people living far from home (Indonesia). Live |
+
+**Already counted under another repo:** aaronthomas7/podlens (same PodLens as poseidon139/podlens), Neuralkey/new_neuralkey_ai_verification_assisted (same team as Neuralkey/neuralkey_ai_verification_assisted), shametha/Coconut (copy of rithikrice/theHundred-Coconut), professionalabhiyan/aeroguard-ai-enterprise-2.8 (copy of Sangam282/aeroguard-enterprise-ai), SiddhantOswal/momentum-behind-the-build (companion site for SiddhantOswal/Momentum).
+
+**Placeholders and noise (not counted):** Kunal-Bhoi/AiBuilderCup and anshgandhiii/AIBuilderCup (one-line README); Banti2023/finshield-nexus and priyayadav1717/green-rev (description only, empty README); anitohlm/resilia (IDE migration template README); profile pages (GamersStop, abhisek11, NeetiSingh-ai). 39 further candidates never name the cup in their README or description.
+
+### Running count (eleventh scan): **≈497 real public entries**
+| Theme | Tenth scan | New | Total |
+|---|---|---|---|
+| Sustainability & Social Impact | ~69 | 46 | **~115** |
+| Future of Work | ~67 | 43 | **~110** |
+| BFSI | ~69 | 31 | **~100** |
+| Retail & Commerce | ~40 | 26 | **~66** |
+| Manufacturing | ~39 | 22 | **~61** |
+| Media, Content & Digital | ~22 | 23 | **~45** |
+| **Total** | **≈306** | **191** | **≈497** |
+
+126 of the 191 new entries link a live deployment in their README.
+
+**What it means for SafeShelf:** submission day brought the two closest entries yet, and neither is a shopper-facing safety check. **ShopProof** (sgirabin) fingerprints an exact product across Shopee, Lazada and TikTok Shop listings with a Chrome extension, but to compare prices, not to check recalls or counterfeits, and its MVP is still on a branch. **Remedy Mesh** (Felina14) is about recalls, but from the carmaker's side: it catches US vehicle-recall scope drift and amends NHTSA filings. Nearby but different: SmartDupe (generic-drug and cosmetic dupes for savings), Veriqo (used-car checks against VAHAN), PRAMAAN (fake refund photos), KitchenProof and VERA (kitchen hygiene audits), JurisLens (regulatory check for a seller before launch). Across all eleven scans, no public entry checks a consumer product or listing against JAPAC regulators' recall and safety notices.
+
 ## All entries: live demo / website links (compiled 2026-10-17)
 
 Checked every tracked repo via `gh repo view --json homepageUrl` and, where empty, the README for a live-demo URL (Cloud Run, Firebase, Vercel, Netlify, GitHub Pages, or an explicit "Live demo" link). Template/placeholder URLs found in READMEs (e.g. `xxxxx`, `YOUR_PROJECT_ID`, `....`) were treated as not deployed. Grouped by theme, in the order used throughout this file.

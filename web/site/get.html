@@ -3,111 +3,96 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Get SafeShelf</title>
-  <meta name="description" content="Get SafeShelf: the web page on any phone, the Chrome extension and WhatsApp soon, and the MCP server for agents.">
+  <title>SafeShelf for Android — Check before you pay</title>
+  <meta name="description" content="Meet SafeShelf for Android. Check a shopping link, scan a product label, ask Eddy and save products to My Shelf. Explore the app and download the Android test build.">
+  <meta name="theme-color" content="#0271e4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="theme.css?v=20261018b">
   <link rel="stylesheet" href="pages.css?v=20261018b">
+  <link rel="stylesheet" href="get.css?v=20261018ux2">
 </head>
-<body>
+<body class="app-page">
+<a class="app-skip" href="#app-main">Skip to content</a>
 <div class="page">
   <header class="top">
     <nav class="nav wrap" aria-label="Primary navigation">
       <a class="logo" href="index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
       <div class="links" id="links"><a href="index.html">Product</a><a href="chat.html">Chat</a><a href="how.html">How it works</a><a href="agents.html">For agents</a><a href="results.html">Results</a><a href="team.html">Team</a></div>
-      <div class="nav-end"><a class="btn btn-ghost btn-sm" href="../index.html">See demo</a><a class="btn btn-ink btn-sm" href="get.html">Get SafeShelf</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
+      <div class="nav-end"><a class="btn btn-ghost btn-sm" href="../index.html">See demo</a><a class="btn btn-ink btn-sm" href="#download" aria-current="page">Get the app</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
     </nav>
   </header>
 
-  <main>
-    <section class="h-hero inner" aria-labelledby="hero-h">
-      <div class="h-hero-grid">
-        <div>
-          <span class="backed"><i>S</i>Get SafeShelf</span>
-          <h1 class="display" id="hero-h">Check before you pay, <span>wherever you shop.</span></h1>
-          <p class="lead">Open the SafeShelf web page on any phone or computer today, or point your own agent at the MCP server. The Chrome extension is coming soon. Every one gets the same evidence, from the same engine.</p>
-          <div class="btns"><a class="btn btn-blue" href="../index.html">Open the web page</a><a class="btn btn-line" href="agents.html">Connect an agent</a></div>
-          
+  <main id="app-main">
+    <section class="app-hero wrap h-hero photo" aria-labelledby="app-title">
+      <div class="app-hero-copy">
+        <p class="app-eyebrow"><span class="app-android" aria-hidden="true">↓</span> SafeShelf for Android <span class="app-tag">Test build</span></p>
+        <h1 class="display" id="app-title">Check before you buy.<br><span>Wherever you shop.</span></h1>
+        <p class="lead">Share a shopping link or photograph a product label. Ask Eddy about recalls, safety and authenticity—and see the sources behind the answer.</p>
+        <div class="btns"><a class="btn btn-blue" href="../downloads/SafeShelf-0.4.0-debug.apk" download="SafeShelf-0.4.0-debug.apk">Download for Android <span aria-hidden="true">↓</span></a><a class="btn btn-line" href="#inside">Explore the app <span aria-hidden="true">↗</span></a></div>
+        <p class="app-build">v0.4.0 <span>·</span> Android 8.0+ <span>·</span> APK · 2.1 MB</p>
+        <p class="app-small">Android test build · Not on Google Play yet. <a href="#install">Installation guide</a></p>
+      </div>
+      <div class="app-hero-device"><div class="app-phone"><img src="assets/app/home.webp" width="720" height="1600" alt="SafeShelf Android Home with Eddy and shortcuts to scan a label, speak a question or check a product" fetchpriority="high"></div><span>Actual app screen · v0.4.0</span></div>
+    </section>
+
+    <nav class="app-jump wrap" aria-label="On this page"><span>SafeShelf for Android</span><div><a href="#inside">Explore the app</a><a href="#install">How to install</a><a href="#app-faq-title">FAQs</a></div><a class="app-jump-download" href="../downloads/SafeShelf-0.4.0-debug.apk" download="SafeShelf-0.4.0-debug.apk">Download APK <span aria-hidden="true">↓</span></a></nav>
+    <section class="app-proof wrap" aria-label="What the app helps you do">
+      <p><span>01</span> Bring a link or a label.</p><p><span>02</span> Ask Eddy. See the sources.</p><p><span>03</span> Keep products in My Shelf.</p>
+    </section>
+
+    <section class="app-benefits wrap" aria-label="Ways to use SafeShelf"><article><span aria-hidden="true">↗</span><h2>Bring a shopping link</h2><p>Share from another Android app or paste a link. Review your question before sending.</p></article><article><span aria-hidden="true">⌗</span><h2>Start with a label</h2><p>Take a clear photo of the brand and model. Add it to a product check with Eddy.</p></article><article><span aria-hidden="true">＋</span><h2>Keep products close</h2><p>Save supported products to My Shelf and check their latest in-app recall status.</p></article></section>
+
+    <section class="app-section wrap" id="inside" aria-labelledby="inside-title">
+      <div class="app-section-head"><p class="kicker">A little check. More peace of mind.</p><h2 class="display" id="inside-title">Everything you need.<br>One simple app.</h2><p class="lead">Explore the four app screens. Choose a tab to see what you can do and how it works.</p></div>
+      <div class="app-tour">
+        <div class="app-tour-copy">
+          <div class="app-screen-tabs" role="tablist" aria-label="Explore app screens">
+            <button type="button" role="tab" id="screen-home" aria-selected="true" aria-controls="screen-panel" data-screen="home">Home</button>
+            <button type="button" role="tab" id="screen-chat" aria-selected="false" aria-controls="screen-panel" tabindex="-1" data-screen="chat">Check</button>
+            <button type="button" role="tab" id="screen-shelf" aria-selected="false" aria-controls="screen-panel" tabindex="-1" data-screen="shelf">My Shelf</button>
+            <button type="button" role="tab" id="screen-account" aria-selected="false" aria-controls="screen-panel" tabindex="-1" data-screen="account">Account</button>
+          </div>
+          <div id="screen-panel" role="tabpanel" aria-labelledby="screen-home" tabindex="0">
+            <p class="app-tour-number" id="screen-number">01 / 04</p>
+            <h3 class="display" id="screen-title">Start with what<br>you have.</h3>
+            <p id="screen-copy">Paste a shopping link or type a question. Prefer a photo or your voice? The shortcuts are right there. Your question opens in Check for you to review before sending.</p>
+            <ul class="app-checklist" id="screen-points"><li>A product-link and question field</li><li>Label scans and voice input from Home</li><li>Quick access to My Shelf and Eddy</li></ul>
+            <a class="app-text-link" id="screen-full" href="assets/app/home.webp" target="_blank" rel="noopener">View the full screen <span aria-hidden="true">↗</span></a>
+          </div>
+          <p class="app-screen-note">Actual app screens · v0.4.0. Live answers depend on the product and available evidence.</p>
         </div>
-        <div class="h-eddy" aria-hidden="true"><img src="assets/guide/eddy-excited.webp" alt=""></div>
+        <figure class="app-tour-visual"><div class="app-phone tour-phone"><img id="screen-image" src="assets/app/home.webp" width="720" height="1600" alt="SafeShelf Home screen with the product question field and shortcuts" loading="lazy"></div><figcaption id="screen-caption">Home · Your next check starts here.</figcaption></figure>
       </div>
     </section>
 
-    <section class="h-sec" id="ways" aria-labelledby="ways-h" style="padding-top:clamp(48px,6vw,80px)">
-      <div class="h-head"><h2 class="display" id="ways-h"><span class="mark" aria-hidden="true"></span>Four ways to get SafeShelf.</h2><p class="lead">Start with the web page: it works today on a phone or a computer. The small screens below are illustrations of the same checks; there is no app-store app.</p></div>
-      <div class="bento four">
-        <article class="cell way">
-          <div class="way-art" style="background-image:url(assets/hill.png)" aria-hidden="true"><div class="mini-phone"><b>SafeShelf</b><span class="vp warn">Careful</span><i></i><i style="width:70%"></i><i style="width:50%"></i></div></div>
-          <h3>Phone browser <span class="state">Live</span></h3>
-          <p>Phones cannot add browser extensions, so open the SafeShelf web page instead: sample listings with known answers, and a live check of your own listing.</p>
-          <a class="btn btn-blue btn-sm" href="../index.html">Open the web page</a>
-        </article>
-        <article class="cell way">
-          <div class="way-art" style="background-image:url(assets/deep.png)" aria-hidden="true"><div class="mini-tty"><span>&gt;</span> check_listing(<br>&nbsp;&nbsp;url=<em>"amazon.in/…"</em>)<br><span>→</span> verdict: "careful"</div></div>
-          <h3>Your agent <span class="state">Live</span></h3>
-          <p>Ten read-only MCP tools at <code>/mcp</code>, REST endpoints and an A2A agent card, for any agent that shops.</p>
-          <a class="btn btn-line btn-sm" href="agents.html">Connect an agent</a>
-        </article>
-        <article class="cell way">
-          <div class="way-art" style="background-image:url(assets/sea.png)" aria-hidden="true"><div class="mini-rail"><div><i></i><i style="width:70%"></i><b>₹299</b><i style="width:50%"></i></div><aside><span></span>Careful</aside></div></div>
-          <h3>Chrome extension <span class="state soon">Soon</span></h3>
-          <p>A black rail at the edge of Amazon and Flipkart: press Check and the verdict comes first, with the evidence underneath. Not available to download yet.</p>
-          <span class="btn btn-ghost btn-sm" aria-disabled="true">Coming soon</span>
-        </article>
-        <article class="cell way">
-          <div class="way-art" style="background-image:url(assets/field.png)" aria-hidden="true"><div class="mini-wa"><header>SafeShelf</header><p class="me">amazon.in/dp/B0NWDRY</p><p><b>Don't buy.</b> Recalled in the US for fire and burn hazards.</p></div></div>
-          <h3>WhatsApp <span class="state soon">Soon</span></h3>
-          <p>Send a product link or a photo of the label, and get a text and a voice note back in English or Hindi. Built and tested; the public number is on its way.</p>
-          <span class="btn btn-ghost btn-sm" aria-disabled="true">Number coming soon</span>
-        </article>
+    <section class="app-section wrap" id="install" aria-labelledby="install-title">
+      <div class="app-install">
+        <div class="app-install-intro"><p class="kicker">From download to your first check</p><h2 class="display" id="install-title">A few taps.<br>Then you’re in.</h2><p class="lead">Install the Android test build, open SafeShelf, and bring your first product question.</p><a class="app-text-link" href="../downloads/SafeShelf-0.4.0-debug.apk" download="SafeShelf-0.4.0-debug.apk">Get the APK <span aria-hidden="true">↓</span></a></div>
+        <ol class="app-install-steps"><li><span>01</span><div><h3>Download on your Android phone</h3><p>Use the download button on this page. You’ll get <strong>SafeShelf-0.4.0-debug.apk</strong>. Downloaded on a computer? Transfer the file to your phone.</p></div></li><li><span>02</span><div><h3>Open the file and install</h3><p>Open the APK from Downloads or your Files app. If Android asks, allow this browser or Files app to install it, then tap Install.</p></div></li><li><span>03</span><div><h3>Meet Eddy. Check a product.</h3><p>Open SafeShelf, sign in with email or try guest access, then paste a shopping link or scan a label. Review your question and press Send.</p></div></li></ol>
       </div>
     </section>
 
-    <section class="h-sec" aria-labelledby="plans-h">
-      <div class="h-head"><h2 class="display" id="plans-h"><span class="mark" aria-hidden="true"></span>Free to check, on the web today.</h2><p class="lead">No card and nothing to install. Sign in with Google or email for more checks; agents connect over MCP or REST.</p></div>
-      <div class="plans">
-        <article class="plan"><small>Guest</small><h3>Free</h3><ul><li>1 live check on this browser</li><li>Six sample listings with known answers</li><li>Every line with its source</li></ul><a class="btn btn-line btn-sm" href="../index.html">Try a sample</a></article>
-        <article class="plan main"><small>Signed in</small><h3>Free <span>· 5 checks a day</span></h3><ul><li>Live checks of your own listings</li><li>Ask Eddy and Listen in 26 languages</li><li>Your shelf, watched after you buy</li><li class="soon">Chrome extension and WhatsApp, soon</li></ul><a class="btn btn-blue btn-sm" href="../index.html">Sign in and check</a></article>
-        <article class="plan"><small>Agents and marketplaces</small><h3>API</h3><ul><li>Ten read-only MCP tools at /mcp</li><li>Streaming REST API and an A2A card</li><li>Catalog Scan: 500 listings in one run</li><li>A case file for every finding</li></ul><a class="btn btn-line btn-sm" href="agents.html">Connect an agent</a></article>
-      </div>
-      <p class="plans-note"><span>While we test, signed-in checks are not counted. The API rate-limits every caller.</span><a href="index.html#faq">Questions? See the FAQs →</a></p>
-    </section>
-
-    <section class="h-sec" aria-labelledby="ask-h">
-      <div class="h-head"><h2 class="display" id="ask-h"><span class="mark" aria-hidden="true"></span>Ask in your own language. Honest when it doesn't know.</h2></div>
-      <div class="bento two">
-        <article class="cell pix hill">
-          <div class="cell-h"><div><b>Ask in your own language</b><small>English, Hindi and 24 more JAPAC languages, read aloud if you like</small></div><a href="chat.html" aria-label="Open the chat">+</a></div>
-          <div class="cell-b"><div class="card thread">
-            <p class="bubble me" lang="hi">क्या यह चार्जर बच्चे के कमरे के लिए सुरक्षित है?</p>
-            <p class="bubble bot" lang="hi">इस मॉडल के USB-C पोर्ट गरम होने की 9 रिपोर्ट जाँच में हैं। जाँच पूरी होने तक इसे बच्चों की पहुँच से दूर रखें।<small lang="en">Evidence: EV-201, EV-207 · ▶ Listen</small></p>
-          </div></div>
-        </article>
-        <article class="cell pix">
-          <div class="cell-h"><div><b>Honest when it doesn't know</b><small>A look-alike's recall is not this product's recall</small></div><a href="how.html#identity" aria-label="The identity rule">+</a></div>
-          <div class="cell-b"><div class="recent card">
-            <p><i style="background:#eceff2;color:var(--muted)">?</i><span><b>Not sure yet</b><small>thin evidence is grey, never green</small></span><span class="vp grey">Grey</span></p>
-            <p><i style="background:var(--ok-bg);color:var(--ok)">✓</i><span><b>Private by default</b><small>personal details filtered before sending</small></span><span class="vp ok">On</span></p>
-            <p><i style="background:var(--amber-bg);color:var(--amber)">!</i><span><b>Exact model only</b><small>no look-alike recalls</small></span><span class="vp warn">Rule</span></p>
-          </div></div>
-        </article>
+    <section class="app-section wrap app-faq" aria-labelledby="app-faq-title">
+      <div class="app-section-head"><p class="kicker">A few things to know</p><h2 class="display" id="app-faq-title">Before you download.</h2></div>
+      <div class="app-faq-list">
+        <details><summary>Is this on Google Play?</summary><p>This version is a direct-download Android test build, not a Google Play release. The download on this page is the v0.4.0 APK. A production store release has not been published.</p></details>
+        <details><summary>What phone do I need?</summary><p>An Android phone running Android 8.0 or newer, an up-to-date Android System WebView, and an internet connection for sign-in and live checks. Camera and voice input are optional; voice input depends on your device’s speech-recognition support.</p></details>
+        <details><summary>Can I try it without creating an account?</summary><p>Yes. Choose Continue as guest in the app’s sign-in card, or use email and password. Your remaining checks are shown in the app. Google sign-in is currently available on the website, not inside the Android app.</p></details>
+        <details><summary>Will my phone send recall notifications?</summary><p>Not in this build. Save a supported product using “Watch for recalls”, then open My Shelf to see its latest status. Background push notifications have not been connected.</p></details>
+        <details><summary>What happens to my links, photos and saved products?</summary><p>Links and photos are sent when you request a check. Camera access is optional. Signed-in watchlists use your account; a guest watchlist stays linked to this app’s stored identity. Clearing app data removes access to that guest watchlist. Desktop-extension saves use a separate shelf.</p></details>
+        <details><summary>Can I use SafeShelf on an iPhone or a computer?</summary><p>This download is for Android. You can <a href="chat.html">use Eddy in your web browser</a> on other devices. An iOS app is not available.</p></details>
+        <details><summary>Does a green result guarantee the product is safe?</summary><p>No. An answer reflects the records and evidence checked, which can be incomplete. Read the sources and uncertainty shown in the result; no matching recall is not a guarantee of safety or authenticity.</p></details>
       </div>
     </section>
 
-    <section class="h-cta" aria-labelledby="cta-h">
-      <h2 class="display" id="cta-h">Check before you pay. <span>Every time.</span></h2>
-      <p>Free for shoppers. Clear about uncertainty. Built for India and JAPAC.</p>
-      <div class="btns"><a class="btn btn-white" href="../index.html">Open the web page</a><a class="btn btn-ink" href="agents.html">MCP and REST</a></div>
-      <img class="fly" src="assets/guide/eddy-flying.webp" alt="" aria-hidden="true">
-    </section>
+    <section class="app-download wrap" id="download" aria-labelledby="download-title"><div class="app-download-band"><div><p class="app-eyebrow">Your next shopping companion</p><h2 class="display" id="download-title">Know a little more.<br>Before you bring it home.</h2><p>SafeShelf for Android. Your links, your questions, the evidence.</p><a class="btn btn-white" href="../downloads/SafeShelf-0.4.0-debug.apk" download="SafeShelf-0.4.0-debug.apk">Download the Android app <span aria-hidden="true">↓</span></a><small>v0.4.0 test build · Android 8.0+ · Direct APK download</small></div><img src="assets/guide/eddy-excited.webp" width="320" height="360" alt="" loading="lazy" aria-hidden="true"></div></section>
   </main>
-
   <footer class="foot">
     <div class="cols home-cols">
       <div class="brand-col"><a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a><p>Evidence-backed product checks for shoppers in India, Japan, Australia, Singapore and beyond.</p></div>
-      <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="chat.html">Chat</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="get.html">Get SafeShelf</a></li><li><a href="how.html#where">WhatsApp (soon)</a></li></ul></div>
+      <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="chat.html">Chat</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="get.html">Android app</a></li><li><a href="#install">Install the app</a></li></ul></div>
       <div><h4>Learn</h4><ul><li><a href="how.html">How it works</a></li><li><a href="results.html">Results</a></li><li><a href="results.html#backtest">SafeShelfBench</a></li><li><a href="index.html#faq">FAQs</a></li></ul></div>
       <div><h4>Builders</h4><ul><li><a href="agents.html">MCP server</a></li><li><a href="agents.html#rest">REST API</a></li><li><a href="../api-integration/index.html">API docs</a></li></ul></div>
       <div><h4>Project</h4><ul><li><a href="team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li><li><a href="../index.html">Judges' page</a></li></ul></div>
@@ -120,6 +105,7 @@
   </footer>
 </div>
 <script src="site.js?v=20261018b" defer></script>
+<script src="get.js?v=20261018app2" defer></script>
 <script type="module" src="account.js?v=20261018u"></script>
 </body>
 </html>

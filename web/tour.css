@@ -1,4 +1,4 @@
-/* Eddy's tour (tour.js): a centred card over the dimmed page, one slide per feature, in the site theme: grotesk
+/* Eddy's tour (tour.js): a centred card for the first and last steps, coachmarks pointing at the page between, in the site theme: grotesk
    titles, blue / mint / ink, near-square buttons. Each slide's picture is drawn at 520 × 270 and scaled to fit. */
 
 /* Eddy's button, bottom right; a "Need a hand?" bubble until he has been met */
@@ -36,10 +36,9 @@
 .tg-art { position: relative; overflow: hidden; border-radius: 14px; background: radial-gradient(circle, #d6dbe1 1px, transparent 1.4px) 0 0 / 16px 16px, var(--soft); box-shadow: inset 0 0 0 1px var(--line-2); text-align: left; }
 .tg-stage { position: absolute; left: 0; top: 0; width: 520px; height: 270px; transform-origin: 0 0; }
 .tg-card.in .tg-stage { animation: tg-up .4s ease .08s both; }
-.tg-card button.tg-show { min-height: 0; margin-top: 12px; padding: 4px 6px; background: none; box-shadow: none; color: var(--blue); font-size: 14px; }
-.tg-card button.tg-show:hover { text-decoration: underline; text-underline-offset: 3px; }
 .tg-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-top: 14px; }
 .tg-foot button.tg-back { justify-self: start; min-height: 44px; padding: 0 14px; background: none; box-shadow: none; color: var(--ink-2); font-size: 15px; }
+.tg-modal:not(.pin) .tg-foot button.tg-back[hidden] { display: block; visibility: hidden; } /* keeps the dots centred */
 .tg-foot button.tg-back:hover { background: var(--soft); color: var(--ink); }
 .tg-foot button.tg-next { justify-self: end; min-height: 46px; padding: 0 22px; background: var(--ink); color: #fff; box-shadow: none; font-size: 15px; }
 .tg-foot button.tg-next:hover { background: var(--blue); color: #fff; }
@@ -48,6 +47,38 @@
 .tg-dots button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: width .2s ease, background-color .2s ease; }
 .tg-dots button:hover::before { background: var(--dim); }
 .tg-dots button[aria-selected="true"]::before { width: 18px; border-radius: 4px; background: var(--ink); }
+
+.tg-mini, .tg-arrow, .tg-spot { display: none; }
+.tg-card > p.tg-skip { margin: 12px 0 0; font-size: 13px; color: var(--dim); }
+.tg-skip button { min-height: 0; padding: 0; background: none; box-shadow: none; font: inherit; color: var(--blue); }
+.tg-skip button:hover { background: none; text-decoration: underline; text-underline-offset: 3px; }
+
+/* coachmarks: the page stays in view, a spotlight dims the rest, the card points at the part with its arrow */
+.tg-modal.pin { display: block; padding: 0; overflow: hidden; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.tg-modal.pin .tg-spot { display: block; position: fixed; border-radius: 14px; pointer-events: none; box-shadow: 0 0 0 3px rgba(2, 113, 228, .6), 0 0 0 200vmax rgba(0, 17, 35, .5); transition: left .3s ease, top .3s ease, width .3s ease, height .3s ease; }
+.tg-modal.pin .tg-card { position: absolute; width: min(400px, calc(100vw - 24px)); padding: 26px 26px 16px; border-radius: 12px; text-align: left; box-shadow: 0 18px 50px rgba(0, 17, 35, .3); transition: left .3s ease, top .3s ease; }
+.tg-modal.pin .tg-eddy, .tg-modal.pin .tg-art { display: none; }
+.tg-modal.pin .tg-card h2 { margin: 0; max-width: none; padding-right: 24px; font-size: 1.45rem; letter-spacing: -.025em; }
+.tg-modal.pin .tg-card > p:not(.tg-skip) { margin: 10px 0 0; max-width: none; color: var(--ink-2); font-size: 15.5px; }
+.tg-modal.pin .tg-foot { grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 4px; margin-top: 18px; }
+.tg-modal.pin .tg-mini { display: block; width: 52px; max-width: none; height: 52px; margin: -6px 0 -6px -6px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0, 17, 35, .16)); }
+.tg-modal.pin .tg-card.in .tg-mini { animation: tg-hop .5s ease both; }
+.tg-modal.pin .tg-dots { order: 1; justify-self: center; }
+.tg-modal.pin .tg-dots { gap: 0; min-width: 0; }
+.tg-modal.pin .tg-dots button { width: 12px; }
+.tg-modal.pin .tg-dots button::before { width: 6px; height: 6px; }
+.tg-modal.pin .tg-dots button[aria-selected="true"]::before { width: 14px; }
+.tg-modal.pin .tg-foot button { white-space: nowrap; }
+.tg-modal.pin .tg-foot button.tg-back { order: 2; min-height: 40px; padding: 0 10px; }
+.tg-modal.pin .tg-foot button.tg-next { order: 3; min-height: 40px; padding: 0 16px; background: var(--blue); }
+.tg-modal.pin .tg-foot button.tg-next:hover { background: var(--ink); }
+.tg-modal.pin .tg-skip { text-align: right; }
+.tg-modal.pin .tg-arrow { display: block; position: absolute; width: 18px; height: 18px; background: #fff; transform: rotate(45deg); border-radius: 3px; }
+.tg-card[data-side="right"] .tg-arrow { left: -8px; top: calc(var(--a) - 9px); }
+.tg-card[data-side="left"] .tg-arrow { right: -8px; top: calc(var(--a) - 9px); }
+.tg-card[data-side="below"] .tg-arrow { top: -8px; left: calc(var(--a) - 9px); }
+.tg-card[data-side="above"] .tg-arrow { bottom: -8px; left: calc(var(--a) - 9px); }
+.tg-card[data-side="over"] .tg-arrow { display: none; }
 
 /* ---------- the pictures (520 × 270) ---------- */
 .tg-stage .tg-hand { position: absolute; width: 26px; z-index: 5; filter: drop-shadow(0 3px 4px rgba(0, 17, 35, .3)); opacity: 0; }
@@ -200,9 +231,13 @@
   .tg-dots button::before { width: 6px; height: 6px; }
   .tg-dots button[aria-selected="true"]::before { width: 12px; }
   .tg-launch img { width: 58px; height: 58px; }
+  .tg-modal.pin .tg-card { padding: 20px 18px 14px; }
+  .tg-modal.pin .tg-card h2 { font-size: 1.25rem; }
+  .tg-modal.pin .tg-card > p:not(.tg-skip) { font-size: 14.5px; }
+  .tg-modal.pin .tg-mini { width: 40px; height: 40px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tg-modal, .tg-card.in *, .tg-launch.fresh img, .tg-lit { animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+  .tg-modal, .tg-card.in *, .tg-launch.fresh img, .tg-lit, .tg-spot, .tg-modal.pin .tg-card { transition: none !important; animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
 }
 @media print { .tg-launch, .tg-modal { display: none !important; } }
 
