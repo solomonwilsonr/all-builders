@@ -10,6 +10,11 @@ globalThis.fetch = async () => ({ ok: true, status: 200, headers: { get: () => s
 const { reviewWidget, reviewSummary } = await import(new URL("../check.js", import.meta.url));
 
 const vm = reviewWidget(mock);
+assert.strictEqual(vm.positiveShare, 0.76, "positive bar uses the supplied rating share");
+assert.strictEqual(vm.complaints[0].share, 0.12, "concern bars retain the numeric buyer share");
+assert.strictEqual(reviewWidget({ ...mock, rating: {} }).positiveShare, null, "missing positive share does not create a chart");
+assert.strictEqual(reviewWidget({ ...mock, complaints: [{ phrase: "issue", mentions: 2 }] }).complaints[0].share, null, "review counts are not converted to buyer percentages");
+assert.strictEqual(reviewWidget({ ...mock, complaints: [{ phrase: "issue", share_estimate: 0 }] }).complaints[0].share, 0, "zero share remains zero");
 assert.strictEqual(vm.tone, "mixed");
 assert.strictEqual(vm.word, "Mixed reviews");
 assert.strictEqual(vm.stars, "★ 4.1 · 3,412 ratings · 38 reviews read");

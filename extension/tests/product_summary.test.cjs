@@ -1,0 +1,20 @@
+const assert = require('node:assert/strict');
+const { read, el } = require('./helpers.cjs');
+const source = read('content.js');
+const code = source.slice(source.indexOf('  const money ='), source.indexOf('  // --- TEMP COST GUARD'));
+const contextCard = Function('el', 'icon', code + '; return contextCard;')(el, (kind) => el('svg', { kind }));
+const card = contextCard({ title: '<Product title>', price: 15999, currency: 'INR', seller: 'Test seller',
+  url: 'https://example.com', image_urls: ['https://example.com/photo.png'], page_text: 'ASIN: B0EXAMPLE1\nM.R.P.: ₹29,999\nProduct details' });
+assert.equal(card.kids[0].tag, 'img');
+assert(card.text().includes('<Product title>'), 'title is rendered as text');
+assert(card.text().includes('ASIN B0EXAMPLE1'));
+assert(card.text().includes('₹29,999'));
+const button = card.kids.find((n) => n.tag === 'button');
+const details = card.kids.find((n) => n.tag === 'pre');
+assert.equal(details.hidden, true);
+button.click(); assert.equal(details.hidden, false);
+button.click(); assert.equal(details.hidden, true);
+assert.equal(contextCard({ title: 'No image' }).className, 'ctx no-photo');
+const render = source.slice(source.indexOf('    const render ='));
+assert(render.indexOf('contextCard(getPage())') < render.indexOf('        heroEl,'), 'summary precedes safety verdict');
+console.log('ok product summary: image, price, metadata, details toggle and first position');

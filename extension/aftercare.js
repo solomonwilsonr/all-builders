@@ -136,11 +136,20 @@
 
   // --- I already bought it ---
   const afterPanel = (el, r, page) => {
-    const out = el("div");
-    const btn = el("button", { type: "button", className: "small", textContent: "I already bought it: what now?" });
+    const out = el("div", { className: "after-output" });
+    const error = el("p", { className: "after-error", role: "alert", hidden: true });
+    const symbol = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    for (const [key, value] of Object.entries({ viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "1.8", "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true" })) symbol.setAttribute(key, value);
+    const path = document.createElementNS(symbol.namespaceURI, "path");
+    path.setAttribute("d", "M4 7l8-4 8 4v10l-8 4-8-4z M4 7l8 4 8-4 M12 11v10 M8 5l8 4");
+    symbol.append(path);
+    const intro = el("p", { className: "after-intro", textContent: "Get next steps, refund drafts and help reporting a problem." });
+    const btn = el("button", { type: "button", className: "after-start", textContent: "Get next steps" });
     btn.onclick = async () => {
       btn.disabled = true;
-      btn.textContent = "Writing your steps and drafts…";
+      btn.textContent = "Preparing your options…";
+      btn.ariaBusy = "true";
+      error.hidden = true;
       try {
         const a = await call("afterPurchase", { body: { investigation_id: r.outcome?.investigation_id, product_id: r.product_id || undefined, url: page.url, title: page.title, brand: page.brand,
           model: page.model, currency: page.currency, page_text: page.page_text, reviews: (page.reviews || []).slice(0, 60),
@@ -152,35 +161,60 @@
           copy.onclick = async () => { try { await navigator.clipboard.writeText(ta.value); copy.textContent = "Copied ✓"; } catch (_) { ta.select(); copy.textContent = "Selected: copy it"; } };
           const ja = d.translations?.ja ? el("button", { type: "button", className: "small", textContent: "日本語" }) : null;
           if (ja) ja.onclick = () => { ta.value = d.translations.ja.body; };
-          return el("div", { className: "draftbox" }, el("strong", { textContent: d.kind === "refund_request" ? `Refund request to ${d.to}` : `Report to ${d.to}` }),
+          return el("details", { className: "draftbox" }, el("summary", { textContent: d.kind === "refund_request" ? `Refund request · ${d.to}` : `Report · ${d.to}` }),
             ...(d.how || []).map((h) => el("div", { className: "note", textContent: h })), ta, el("div", { className: "tools" }, ...[copy, ja].filter(Boolean)),
             el("div", { className: "note", textContent: d.status }));
         };
-        const dl = el("button", { type: "button", className: "small", textContent: "Download the case file" });
+        const dl = el("button", { type: "button", className: "small", textContent: "Download case file" });
         dl.onclick = () => {
           const a2 = el("a", { href: URL.createObjectURL(new Blob([a.case_file.markdown], { type: "text/markdown" })), download: `safeshelf-case-${a.investigation_id || "file"}.md` });
           a2.click();
         };
         out.replaceChildren(el("div", { className: "after" }, el("strong", { textContent: a.headline }),
-          el("ol", {}, ...a.steps.map((s) => el("li", {}, el("b", { textContent: s.title }), ` ${s.detail}`,
+          el("ol", {}, ...a.steps.map((s) => el("li", {}, el("b", { textContent: s.title }), el("p", { textContent: s.detail }),
             ...(s.url ? [" ", el("a", { href: s.url, target: "_blank", rel: "noopener", textContent: "Notice" })] : [])))),
           ...a.drafts.filter((d) => d.body).map(draft), el("div", { className: "tools" }, dl),
           el("div", { className: "note", textContent: a.label })));
         btn.remove();
+        intro.hidden = true;
         if (await store.get("voiceMode", false)) say(a.say, LOCALES.en);
-      } catch (err) { btn.disabled = false; btn.textContent = `Couldn't load it (${err.message}). Try again`; }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "Try again";
+        error.textContent = `Couldn't load your options: ${err.message}`;
+        error.hidden = false;
+      } finally { btn.ariaBusy = "false"; }
     };
-    return el("div", { className: "aftercare" }, btn, out);
+    return el("div", { className: "aftercare" },
+      el("div", { className: "after-head" }, el("span", { className: "after-icon" }, symbol),
+        el("div", {}, el("h3", { textContent: "Already bought it?" }), el("span", { className: "after-caption", textContent: "After-purchase support" }))), intro, btn, error, out);
   };
 
   const STYLE = `
     .codebadge { display:inline-block; margin-left:4px; font-size:10px; font-weight:600; padding:0 6px; border-radius:4px; background:#e8f2fd; color:#0271e4; text-decoration:none; white-space:nowrap; }
     a.codebadge:hover { background:#0271e4; color:#fff; }
-    .aftercare { margin:10px 0; }
-    .after { display:grid; gap:8px; padding:12px 14px; border-radius:10px; background:#f5f6f7; margin-top:8px; }
-    .after ol { margin:0; padding-left:18px; display:grid; gap:4px; }
-    .draftbox { display:grid; gap:4px; background:#fff; border-radius:8px; border:1px solid #e4e7eb; padding:8px 10px; }
-    .draft { width:100%; box-sizing:border-box; font:12px/1.4 ui-monospace, Menlo, monospace; padding:8px; border:1px solid #e4e7eb; border-radius:4px; }
+    .aftercare { padding:15px; border:1px solid #e6e3f3; border-radius:20px; background:linear-gradient(120deg,#f5f2fc,#fcfbff); }
+    .after-head { display:flex; align-items:center; gap:10px; }
+    .after-head h3 { margin:0; font-size:18px; line-height:1.25; letter-spacing:-.035em; color:var(--ink); }
+    .after-icon { display:grid; place-items:center; flex:none; width:36px; height:36px; border-radius:12px; background:#eae2fb; color:#7250bd; }
+    .after-icon svg { width:23px; height:23px; }
+    .after-caption { display:block; margin-top:3px; font-size:11px; color:var(--muted); }
+    .after-intro { margin:12px 0; font-size:12px; line-height:1.5; color:var(--muted); }
+    .aftercare .after-start { font:inherit; width:100%; min-height:38px; border:0; border-radius:999px; background:#7352b5; color:#fff; padding:9px 14px; font-size:12px; font-weight:600; cursor:pointer; }
+    .after-start:hover { background:#62429f; } .after-start:disabled { opacity:.7; cursor:wait; }
+    .after-error { color:var(--amber); font-size:12px; line-height:1.5; margin:10px 0 0; }
+    .aftercare [hidden] { display:none; }
+    .after { display:grid; gap:10px; margin-top:14px; }
+    .after > strong { font-size:14px; line-height:1.4; }
+    .after ol { margin:0; padding-left:23px; display:grid; gap:10px; font-size:12px; }
+    .after ol li::marker { color:#7352b5; font-weight:700; }
+    .after li b { display:block; } .after li p { margin:3px 0 0; color:var(--muted); line-height:1.5; }
+    .aftercare .draftbox { min-width:0; background:#fff; border-radius:12px; border:1px solid #e6e3f0; padding:10px 12px; }
+    .draftbox > summary { cursor:pointer; font-size:12px; font-weight:600; line-height:1.5; overflow-wrap:anywhere; color:var(--ink); }
+    .draftbox[open] > summary { margin-bottom:9px; }
+    .aftercare .draft { display:block; width:100%; box-sizing:border-box; resize:vertical; font:12px/1.5 var(--font); padding:10px; margin:8px 0; border:1px solid #e4e7eb; border-radius:8px; background:#fcfcfe; color:var(--ink); }
+    .aftercare .note { font-size:11px; line-height:1.5; color:var(--muted); overflow-wrap:anywhere; }
+    .aftercare .tools { display:flex; flex-wrap:wrap; gap:6px; }
     .voicetoggle { font-size:13px; display:inline-flex; align-items:center; gap:4px; }`;
 
   globalThis.SafeShelfAftercare = { speakPlain, autoSpeak, voiceToggle, guardBuy, unguard, afterPanel, badge, buyTarget, STYLE };

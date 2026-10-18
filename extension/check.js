@@ -221,12 +221,15 @@ export function reviewWidget(v) {
   const stars = [r.average && `★ ${r.average}`, r.count && `${r.count.toLocaleString("en-IN")} rating${r.count === 1 ? "" : "s"}`].filter(Boolean).join(" · ");
   const flag = (v.trust?.flags || [])[0];
   return {
+    flagCount: (v.trust?.flags || []).length,
+    positiveShare: Number.isFinite(r.positive_share) ? Math.max(0, Math.min(1, r.positive_share)) : null,
     tone: REVIEW_TONE[v.verdict],
     word: v.headline,
     stars: [stars, v.reviews_read && `${v.reviews_read} review${v.reviews_read === 1 ? "" : "s"} read`].filter(Boolean).join(" · "),
     liked: (v.liked || []).slice(0, 2).map((t) => upper(t.phrase)),
     // Up to ten, most common first: the share of buyers when the reviews read allow one, else how many reviews say it
     complaints: (v.complaints || []).slice(0, 10).map((c) => ({
+      share: Number.isFinite(c.share_estimate) ? Math.max(0, Math.min(1, c.share_estimate)) : null,
       text: upper(c.phrase),
       sub: c.share_estimate ? `about ${Math.max(1, Math.round(100 * c.share_estimate))}% of buyers` : `${c.mentions} review${c.mentions === 1 ? "" : "s"}`,
       // The reviews counted for it, from the API's own answer: opening a complaint shows them, no second call
@@ -275,7 +278,7 @@ export function priceWidget(v) {
   const at = (n) => (top > 0 && n != null ? Math.min(100, Math.max(0, (100 * n) / top)) : null);
   const range = v.genuine_range;
   return {
-    tone: tone[0], word: v.headline || tone[1], answer: v.answer || null, listing: v.listing_price ?? null, currency: cur,
+    verdict: v.verdict, valueVerdict: v.value?.verdict || null, tone: tone[0], word: v.headline || tone[1], answer: v.answer || null, listing: v.listing_price ?? null, currency: cur,
     line: v.listing_price != null
       ? `${money(v.listing_price, cur)}${range ? ` · genuine ${v.category || "products"}: ${money(range.low, cur)} – ${money(range.high, cur)}` : ""}`
       : "No price found on this page",
@@ -339,10 +342,11 @@ export function listingAgeWidget(v) {
   const brand = brandLine(v.brand);
   const known = ["new", "recent", "under_a_year", "established", "listed_at_least", "no_reviews"].includes(v.verdict);
   if (!known && !brand) return null; // nothing to show
-  if (!known) return { tone: "none", word: "Listing age not available", text: "This page shows no date for the listing.", band: null, listed: null, brand,
+  if (!known) return { verdict: v.verdict, tone: "none", word: "Listing age not available", text: "This page shows no date for the listing.", band: null, listed: null, brand,
     note: "The brand's time on Amazon is not the listing's age.", reasons: [...(v.reasons || []), v.label].filter(Boolean) };
   const [y, m, d] = String(v.listed_on || "").split("-").map(Number);
-  return { tone: ["ok", "warn", "none"].includes(v.tone) ? v.tone : "none", word: v.headline, text: v.text,
+  return { verdict: v.verdict, tone: ["ok", "warn", "none"].includes(v.tone) ? v.tone : "none", word: v.headline, text: v.text,
+    ageDays: Number.isFinite(v.age_days) ? Math.max(0, v.age_days) : null,
     band: v.age_days != null ? (v.verdict === "listed_at_least" ? `at least ${ageWords(v.age_days)}` : ageWords(v.age_days)) : null,
     listed: y && m && d ? `${FROM[v.basis] || "First listed"} ${d} ${MONTH_NAMES[m - 1]} ${y}` : null, brand,
     note: "This is the listing's age, not the seller's.", reasons: [...(v.reasons || []), v.label].filter(Boolean) };
@@ -366,13 +370,13 @@ export function officialSellerWidget(v) {
   // The brand published nothing usable: one quiet line saying so (and which brand and seller were seen), never a blank
   if (!OFFICIAL_SHOWN.includes(v.verdict)) {
     const seen = v.seller ? `seller: ${v.seller}` : "";
-    return { quiet: true, tone: "none", word: null, text: `Seller check: ${v.text}${seen ? ` (${seen})` : ""}`, seller: v.seller || null, marketplace: v.marketplace || null, source: null, reasons: [] };
+    return { verdict: v.verdict, quiet: true, tone: "none", word: null, text: `Seller check: ${v.text}${seen ? ` (${seen})` : ""}`, seller: v.seller || null, marketplace: v.marketplace || null, source: null, reasons: [] };
   }
   const src = v.source || {};
   const when = src.as_of || src.retrieved;
   const [y, m, d] = String(when || "").split("-").map(Number);
   // official: true = an official partner (green pill); false = not one (dark pill); null = not settled (plain). Never red.
-  return { tone: v.tone === "ok" ? "ok" : "none", official: v.official === true ? true : v.official === false ? false : null,
+  return { verdict: v.verdict, tone: v.tone === "ok" ? "ok" : "none", official: v.official === true ? true : v.official === false ? false : null,
     word: v.headline, text: v.text, seller: v.seller || null, marketplace: v.marketplace || null,
     source: src.text ? { text: src.text, url: safeHttp(src.url), when: y && m && d ? `${src.as_of ? "published" : "read"} ${d} ${MONTH_NAMES[m - 1]} ${y}` : null } : null,
     reasons: [...(v.reasons || []), v.label].filter(Boolean) };
@@ -481,4 +485,71 @@ async function runCheckNow(page) {
       sources: (inv?.matches || []).filter((m) => m.tier !== "lookalike").slice(0, 4).map((m) => ({ authority: m.authority, record_id: m.record_id, url: m.url, title: m.title, local: m.local, tier: m.tier })),
       lead: outcome.lead_record || null, limitations: outcome.limitations || [], policy_version: outcome.policy_version } : null,
   };
+}
+
+// The SafeShelf score: 0-100 from six checks, each worth its weight. A check with no result is left out and the rest are
+// rescaled, so "could not check" never counts as good or bad. Code only: the same inputs always give the same score.
+export const SCORE_WEIGHTS = { recall: 30, tech: 25, reviews: 15, price: 15, seller: 10, age: 5 };
+export const SCORE_LABELS = { recall: "Recall check", tech: "Technology", reviews: "Buyer reviews", seller: "Seller", price: "Price", age: "Listing age" };
+const RECALL_POINTS = { confirmed_recall: 0, substantiated_hazard_signal: 20, potential_concern: 55, no_matching_notice_found: 95 };
+const SELLER_POINTS = { official_brand: 100, official_seller: 100, amazon_retail: 90, channel_listed: 90, official_website: 90, channel_not_listed: 50, third_party: 40, third_party_website: 40 };
+const PRICE_POINTS = { normal: 100, high: 80, below_usual: 45, too_low: 10 }; // cheaper than usual costs more than it used to
+const VALUE_POINTS = { fair: 100, pricey_for_tech: 80, cheap_for_tech: 40, too_cheap_for_tech: 10 };
+const AGE_POINTS = { established: 100, listed_at_least: 90, under_a_year: 75, recent: 45, new: 25 };
+// Points (0-100) for one check, or null when it has no usable result. `x` is the check's widget view model; recall is the outcome word.
+export function scorePoints(key, x) {
+  if (x == null) return null;
+  if (key === "recall") return RECALL_POINTS[x] ?? null;
+  if (key === "reviews") {
+    const base = { good: x.positiveShare >= 0.85 ? 100 : 90, mixed: 55, poor: 20 }[x.tone];
+    return base == null ? null : Math.max(0, base - Math.min(30, 10 * (x.flagCount || 0)));
+  }
+  if (key === "seller") return SELLER_POINTS[x.verdict] ?? null;
+  if (key === "price") {
+    const got = [PRICE_POINTS[x.verdict], VALUE_POINTS[x.valueVerdict]].filter((n) => n != null);
+    return got.length ? Math.min(...got) : null;
+  }
+  if (key === "tech") {
+    if (x.verdict === "possible") return (x.claims || []).some((c) => c.result && c.result !== "cant_tell") ? 100 : null; // nothing assessed is not a pass
+    return { doubtful: 35, not_possible: 0 }[x.verdict] ?? null;
+  }
+  if (key === "age") return AGE_POINTS[x.verdict] ?? null;
+  return null;
+}
+export const scoreBand = (n) => (n >= 80 ? { key: "good", word: "Looks good" } : n >= 60 ? { key: "ok", word: "Okay, read the reviews" } : n >= 40 ? { key: "careful", word: "Be careful" } : { key: "avoid", word: "Avoid" });
+// What the card's own colour says about safety (the verdict at the top, which also counts what buyers report): never read as clean.
+const LEVEL_POINTS = { red: 0, amber: 40 };
+const ANSWER_POINTS = { not_possible: 10, unlikely: 35 }; // "is this possible at this price?" (price against the technology claimed)
+const worst = (...n) => { const got = n.filter((x) => x != null); return got.length ? Math.min(...got) : null; };
+// inputs: { recall: outcome word, level: the verdict colour, answer: the price/technology answer, reviews, seller, price, tech, age: widget view models (null or missing = no result) }
+export function safetyScore(inputs) {
+  const signals = Object.keys(SCORE_WEIGHTS).map((key) => {
+    const points = key === "recall" ? worst(scorePoints("recall", inputs.recall), LEVEL_POINTS[inputs.level])
+      : key === "tech" ? worst(scorePoints("tech", inputs.tech), ANSWER_POINTS[inputs.answer?.verdict])
+      : scorePoints(key, inputs[key]);
+    return { key, label: SCORE_LABELS[key], weight: SCORE_WEIGHTS[key], points, loss: points == null ? null : SCORE_WEIGHTS[key] * (100 - points) };
+  });
+  const used = signals.filter((x) => x.points != null);
+  const weight = used.reduce((a, x) => a + x.weight, 0);
+  const total = Object.values(SCORE_WEIGHTS).reduce((a, b) => a + b, 0);
+  const out = { signals, used: used.length, of: signals.length, enough: weight >= total / 2, score: null, cap: null, band: null };
+  if (!weight) return out;
+  let score = used.reduce((a, x) => a + x.weight * x.points, 0) / weight;
+  const tooCheap = inputs.price?.verdict === "too_low" || inputs.price?.valueVerdict === "too_cheap_for_tech";
+  const notOfficial = inputs.seller?.official === false || /^third_party/.test(inputs.seller?.verdict || "");
+  const caps = [[inputs.recall === "confirmed_recall", 15, "a confirmed recall"], [inputs.level === "red", 25, "a red safety verdict"],
+    [inputs.tech?.verdict === "not_possible", 25, "a claim that is not possible"], [tooCheap && notOfficial, 40, "a too-cheap price from a seller that is not official"],
+    [inputs.answer?.verdict === "not_possible", 45, "a price that is not possible for the technology claimed"], [inputs.level === "amber", 59, "safety problems reported"]];
+  // Weakest link: a poor result on any big check (weight 15 or more) means the score cannot say "Looks good", however clean the
+  // other checks are (no recall and a possible technology must not hide poor reviews).
+  for (const x of used) if (x.weight >= 15 && x.points <= 25) caps.push([true, 59, `${x.label.toLowerCase()} coming out poor`]);
+  for (const [on, max, why] of caps) if (on && score > max) { score = max; out.cap = why; }
+  out.score = Math.round(score);
+  out.band = scoreBand(out.score);
+  return out;
+}
+// The order the cards show in: the check hurting the score most first (weight x points lost), checks with no result last.
+export function scoreOrder(result) {
+  const rank = [...result.signals].sort((a, b) => (b.loss ?? -1) - (a.loss ?? -1) || Object.keys(SCORE_WEIGHTS).indexOf(a.key) - Object.keys(SCORE_WEIGHTS).indexOf(b.key));
+  return Object.fromEntries(rank.map((x, i) => [x.key, x.points == null ? 100 + i : i]));
 }

@@ -12,9 +12,19 @@
     "https://*.run.app/*",
     "https://firestore.googleapis.com/*"
   ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "action": {
     "default_title": "SafeShelf",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
   },
   "externally_connectable": {
     "matches": [
@@ -57,5 +67,21 @@
       },
       "description": "Open the SafeShelf menu"
     }
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/flags/*.png"
+      ],
+      "matches": [
+        "http://localhost:8090/*",
+        "https://www.amazon.in/*",
+        "https://www.amazon.com/*",
+        "https://www.amazon.co.jp/*",
+        "https://www.amazon.com.au/*",
+        "https://www.amazon.sg/*",
+        "https://www.flipkart.com/*"
+      ]
+    }
+  ]
 }

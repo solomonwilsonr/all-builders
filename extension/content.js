@@ -422,20 +422,32 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   `;
 
   const CTX_STYLE = `
-    .ctx { display:flex; gap:10px; border-radius:10px; padding:10px; margin:8px 0; background:#fff; border:1px solid var(--line); color:var(--ink); font:13px/1.4 var(--font); }
-    .ctx > img { width:56px; height:56px; object-fit:contain; background:var(--soft); border-radius:8px; flex:none; }
-    .ctx .body { min-width:0; flex:1; }
-    .ctx .t { font-weight:600; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    .ctx .m { color:var(--muted); } .ctx s { color:var(--muted); }
-    .ctx .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; justify-content:flex-start; }
-    .ctx .chip { border-radius:99px; padding:1px 8px; font-size:12px; background:var(--soft); color:var(--ink); }
-    .ctx .more { font:inherit; font-size:12px; padding:0; border:0; background:none; color:var(--link); cursor:pointer; text-decoration:underline; margin-top:6px; }
-    .ctx pre { white-space:pre-wrap; word-break:break-word; max-height:180px; overflow:auto; margin:6px 0 0; font:12px/1.4 ui-monospace,monospace; background:var(--soft); border-radius:6px; padding:8px; }
+    .ctx { display:grid; grid-template-columns:52px minmax(0,1fr); gap:7px 10px; border-radius:16px; padding:10px; margin:8px 0 10px; background:#fff; border:1px solid var(--line); color:var(--ink); font:13px/1.4 var(--font); box-shadow:0 5px 18px rgba(24,47,78,.035); }
+    .ctx > img { width:52px; height:64px; object-fit:contain; background:#f2f6fc; border-radius:10px; box-sizing:border-box; padding:4px; }
+    .ctx.no-photo { grid-template-columns:minmax(0,1fr); }
+    .ctx .body { min-width:0; }
+    .ctx .t { font-size:13px; line-height:1.3; font-weight:650; letter-spacing:-.025em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .ctx .m { display:flex; flex-wrap:wrap; gap:3px 7px; align-items:baseline; margin-top:4px; color:var(--muted); font-size:11px; }
+    .ctx .listing-price { color:var(--link); font-size:19px; line-height:1.15; font-weight:700; letter-spacing:-.035em; }
+    .ctx s { color:var(--muted); font-size:10px; }
+    .ctx .seller-name { min-width:0; overflow-wrap:anywhere; }
+    .ctx .chips { grid-column:1 / -1; display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-start; }
+    .ctx .chip { display:inline-flex; align-items:center; gap:5px; max-width:100%; box-sizing:border-box; border-radius:99px; padding:3px 7px; font-size:10px; background:#f1f5fb; color:var(--ink-2); overflow-wrap:anywhere; }
+    .ctx .chip svg { flex:none; width:13px; height:13px; }
+    .ctx .more { grid-column:1 / -1; font:inherit; display:flex; align-items:center; gap:5px; justify-self:end; width:auto; padding:4px 7px; border:0; border-radius:8px; background:#eaf3ff; color:var(--link); cursor:pointer; font-size:12px; font-weight:600; text-align:left; }
+    .ctx .more svg { width:13px; height:13px; }
+    .ctx .more::after { content:"›"; margin-left:6px; font-size:16px; line-height:1; }
+    .ctx .more[aria-expanded=true]::after { transform:rotate(90deg); }
+    .ctx pre { grid-column:1 / -1; min-width:0; white-space:pre-wrap; overflow-wrap:anywhere; max-height:180px; overflow:auto; margin:0; font:11px/1.5 ui-monospace,monospace; background:var(--soft); border-radius:10px; padding:10px; }
+    .ctx pre[hidden] { display:none; }
     .ctx-h { font-size:12px; color:var(--muted); margin-top:10px; }
+    @media (max-width:380px) { .ctx { grid-template-columns:44px minmax(0,1fr); gap:6px 8px; padding:9px; } .ctx > img { width:44px; height:56px; } .ctx .t { font-size:13px; } .ctx .listing-price { font-size:18px; } }
   `;
 
   const STYLE = `
     ${TOKENS}
+    /* The in-page widget uses the blue brand accent for controls and selection. */
+    :host([data-accent]) { --lime:#e8f2fd; --lime-d:#0271e4; }
     :host { all:initial; display:flex; font:15px/1.5 var(--font); color:var(--ink); letter-spacing:-.01em; }
 
     /* Side rail: frosted strip of soft square buttons */
@@ -450,6 +462,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     :host(.float[data-surface=solid]) .bar { background:#fff; backdrop-filter:none; }
     :host(.float.shelf-only) .fab:not(.go-shelf), :host(.float.shelf-only) .box { display:none !important; } /* not a product page */
     :host(.float) { top:var(--ss-y,50%); }
+    :host(.float.drawer-open) { top:50%; } /* an open card is centred in the window, so it can use nearly all of its height */
     .grip { display:grid; place-items:center; width:44px; height:14px; margin:-4px 0 -2px; padding:0; border:0; border-radius:6px; background:none; cursor:grab; touch-action:none; }
     .grip::before { content:""; width:22px; height:4px; border-radius:2px; background:var(--muted); opacity:.45; transition:opacity .12s; }
     .grip:hover::before, .grip:focus-visible::before { opacity:.85; } .grip:focus-visible { outline:2px solid var(--link); outline-offset:2px; }
@@ -492,15 +505,15 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .fab.loading[aria-expanded="true"] { border-color:transparent; box-shadow:none; }
     @keyframes ss-ring { to { stroke-dashoffset:-100; } }
     .fab.unknown { background:var(--unknown-bg); color:var(--unknown); }
-    .fab.green { background:var(--green-bg); color:var(--green); } .fab.amber { background:var(--amber-bg); color:var(--amber); } .fab.red { background:var(--red-bg); color:var(--red); }
-    .fab.green[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px #3bbf63; } .fab.amber[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px #f0a020; } .fab.red[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--red); } .fab.unknown[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px #9aa3ad; }
+    .fab.green { background:var(--lime); color:var(--blue); } .fab.amber { background:var(--amber-bg); color:var(--amber); } .fab.red { background:var(--red-bg); color:var(--red); }
+    .fab.green[aria-expanded="true"] { border-color:var(--blue); box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--blue); } .fab.amber[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px #f0a020; } .fab.red[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--red); } .fab.unknown[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px #9aa3ad; }
     :host(.inline) { display:block; position:absolute; bottom:12px; right:12px; z-index:100; }
     :host(.inline) .fab { padding:4px 11px; font-size:12px; white-space:nowrap; border-radius:4px; border-color:#fff; box-shadow:0 2px 10px rgba(0,17,35,.18); }
     :host(.inline) .bar { gap:6px; }
     .bar { display:flex; gap:8px; align-items:center; }
 
     /* Panels: pastel frame (tinted by the verdict) around a white card */
-    .box { box-sizing:border-box; width:min(400px,calc(100vw - 100px)); max-height:76vh; overflow:auto; scrollbar-width:thin; padding:0; border-radius:14px; background:var(--card); border-top:4px solid var(--lime-d); box-shadow:var(--shadow); }
+    .box { box-sizing:border-box; width:min(400px,calc(100vw - 100px)); max-height:calc(100vh - 32px); overflow:auto; scrollbar-width:thin; padding:0; border-radius:14px; background:var(--card); border-top:4px solid var(--lime-d); box-shadow:var(--shadow); }
     .box.green { border-top-color:#3bbf63; } .box.amber { border-top-color:#f0a020; } .box.red { border-top-color:var(--red); } .box.unknown { border-top-color:#9aa3ad; }
     .box[hidden] { display:none; }
     :host(.pop) { position:fixed; top:0; left:0; z-index:2147483647; }
@@ -627,6 +640,159 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .rv-why ul { margin:4px 0 0; padding-left:18px; }
     .rv.loading .rv-stars { animation:ss-rv-pulse 1.2s ease-in-out infinite alternate; } @keyframes ss-rv-pulse { to { opacity:.4; } }
     @media (prefers-reduced-motion: reduce) { .rv.loading .rv-stars { animation:none; } }
+    /* Product insights: full-width pastel cards, adapted to the extension viewport. */
+    .box { width:min(460px,calc(100vw - 80px)); border:1px solid #edf0f6; border-radius:24px; background:#f9fbfe; }
+    .card { padding:16px; border-radius:24px; background:#f9fbfe; }
+    .head { margin:0 0 14px; } .head .brand-row .brand { font-size:14px; }
+    .ibtn { border-radius:50%; min-width:36px; height:36px; }
+    .hero { position:relative; margin:0; padding:20px 18px; border-radius:22px; gap:0 14px; border:1px solid #e5e9ef; background:#f3f5f8; }
+    .hero.red { background:linear-gradient(120deg,#fff4ec,#fffaf7); border-color:#fae5dc; }
+    .hero.amber { background:linear-gradient(120deg,#fff6e8,#fffcf7); border-color:#f4e6ce; }
+    .hero.green { background:linear-gradient(120deg,#edf9f1,#f9fdfa); border-color:#daeee1; }
+    .hero .ic { width:48px; height:48px; border-radius:50%; box-shadow:none; background:rgba(255,255,255,.7); }
+    .hero .headline { font-size:23px; line-height:1.2; letter-spacing:-.035em; }
+    .hero .sum { grid-column:2; font-size:13px; line-height:1.55; margin-top:10px; color:var(--ink-2); }
+    .hero .upd { grid-column:1 / -1; font-size:11px; padding:6px 10px; background:var(--green-bg); color:var(--green); white-space:normal; }
+    .widget-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin-top:12px; align-items:start; }
+    .possible-stack { display:contents; }
+    .widget-grid :is(.rv,.ip,.sa,.os,.technology-card) { position:relative; margin:0; min-width:0; padding:18px; border-radius:22px; border:1px solid #e5eafa; overflow-wrap:anywhere; background:linear-gradient(115deg,#f5f8ff,#fff); box-shadow:0 5px 16px rgba(36,54,86,.035); }
+    .widget-grid > :is(.rv,.ip,.sa,.os):empty,.widget-grid [hidden] { display:none; }
+    .widget-grid .ip { background:linear-gradient(115deg,#fbf9ff,#ffffff); border-color:#eeebf6; }
+    .widget-grid .sa { background:linear-gradient(115deg,#fffaf0,#fffdf9); border-color:#f3ead7; }
+    .widget-grid .os { background:linear-gradient(115deg,#f0fcf4,#f8fdf9); border-color:#dff0e5; }
+    .widget-grid .technology-card { background:linear-gradient(115deg,#f5f3ff,#fafaff); border-color:#e6e2fc; }
+    .widget-symbol { position:absolute; top:18px; left:18px; display:grid; place-items:center; width:40px; height:40px; border-radius:13px; background:#e9f0ff; color:#1762f5; }
+    .widget-symbol svg { width:25px; height:25px; }
+    .ip .widget-symbol { color:#875ac1; background:#f1ebfa; }
+    .sa .widget-symbol { color:#bb7300; background:#fff0d4; }
+    .os .widget-symbol { color:#07994b; background:#dcf8e6; }
+    .technology-card .widget-symbol { color:#6630d5; background:#ece5ff; }
+    .widget-label,.widget-grid .ip > .ip-sec:first-of-type > .ip-q { display:block; font-size:12px; font-weight:400; color:var(--muted); margin-bottom:5px; letter-spacing:0; }
+    .widget-grid > :is(.rv,.sa,.os) > .widget-label,.technology-card > .widget-label { margin-left:54px; }
+    .widget-grid :is(.rv-top,.sa-top) { display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+    .widget-grid :is(.rv-top,.sa-top),.os > div:has(.os-pill),.ip > .ip-sec:first-of-type { margin-left:54px; min-height:34px; }
+    .widget-grid .ip > .ip-q { margin-left:54px; min-height:40px; display:flex; align-items:center; }
+    .widget-grid :is(.rv-word,.sa-word,.ip-word) { font-size:21px; font-weight:700; line-height:1.2; letter-spacing:-.035em; color:var(--ink); }
+    .widget-grid .ip-sec.warn .ip-word { color:var(--amber); }
+    .widget-grid :is(.rv-stars,.sa-band) { white-space:normal; font-size:12px; line-height:1.5; color:var(--muted); }
+    .widget-grid .os-pill { padding:0; border:0; border-radius:0; background:transparent; color:var(--ink); font-size:21px; line-height:1.2; letter-spacing:-.035em; }
+    .widget-grid .os-pill.yes { color:var(--green); }
+    .widget-grid :is(.ip-line,.sa-line,.os-line,.sa-sub) { font-size:13px; line-height:1.55; margin-top:9px; color:var(--muted); }
+    .technology-card .ip-claim { margin-left:54px; font-size:14px; line-height:1.5; }
+    .technology-card .ip-why { font-size:12px; }
+    .widget-grid .technology-card:not([hidden]) { display:grid; grid-template-columns:40px minmax(0,1fr); gap:4px 14px; align-items:start; }
+    .widget-grid .technology-card > .widget-symbol { position:static; grid-column:1; grid-row:1 / span 2; }
+    .widget-grid .technology-card > .widget-label { grid-column:2; margin:0; }
+    .widget-grid .technology-card > :is(.ip-claim,.ip-line) { grid-column:2; min-width:0; margin:0; }
+    .technology-card .ip-claim > span { min-width:0; }
+    .widget-grid :is(.rv-more,.sa-more,.os-more,.ip-more,.rv-why) { margin-top:14px; font-size:12px; }
+    .widget-grid summary { cursor:pointer; line-height:1.5; color:var(--link); }
+    .widget-grid .ip-chart { height:16px; border-radius:999px; margin:14px 4px 10px; background:#e9edf3; }
+    .widget-grid .ip-band { border-radius:999px; background:linear-gradient(90deg,#e4f5ba,#96edc4); box-shadow:none; }
+    .widget-grid .ip-dot { width:14px; height:14px; margin:-7px 0 0 -7px; border:2px solid white; box-sizing:border-box; }
+    .widget-grid .rv-row { font-size:12px; } .widget-grid .rv-revs { margin-left:0; }
+    .widget-grid .rv-flag { margin-top:10px; }
+    .widget-grid .rv .rv-word { color:var(--ink); }
+    .widget-grid .widget-symbol svg { display:block; flex:none; }
+    .widget-grid .widget-symbol svg path { display:inline; }
+    .widget-grid > .rv { padding:12px 14px; }
+    .rv > .widget-symbol { top:12px; left:14px; width:34px; height:34px; border-radius:11px; }
+    .rv-heading { margin-left:44px; min-height:34px; }
+    .rv-heading .widget-label { margin:0 0 2px; font-size:11px; }
+    .rv-heading .rv-word { display:block; font-size:19px; line-height:1.15; }
+    .rv-rating { display:flex; gap:6px; align-items:center; margin-top:3px; color:var(--muted); font-size:11px; line-height:1.35; flex-wrap:wrap; }
+    .rv-average { color:var(--ink); font-size:14px; }
+    .rv-rating-star { color:#ffb300; font-size:16px; }
+    .rv-sentiment { display:grid; grid-template-columns:90px minmax(0,1fr); align-items:center; gap:10px; padding:9px 11px; background:#edf5ff; border-radius:11px; margin-top:10px; }
+    .rv-positive { display:flex; flex-direction:column; gap:2px; }
+    .rv-positive strong { font-size:26px; line-height:1; letter-spacing:-.04em; color:#1267fa; }
+    .rv-positive > span { color:var(--muted); font-size:10px; }
+    .rv-track { height:12px; border-radius:999px; background:#d9e2f1; overflow:hidden; }
+    .rv-fill { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#328dff,#1670fc); }
+    .rv-legend { display:flex; justify-content:space-between; gap:6px; margin-top:5px; color:var(--muted); font-size:10px; }
+    .rv-legend > span { display:flex; align-items:center; gap:4px; }
+    .rv-key { width:8px; height:8px; border-radius:50%; background:#d9e2f1; flex:none; }
+    .rv-key.positive { background:#2581ff; }
+    .rv-feedback { margin:11px 0 8px; font-size:13px; letter-spacing:-.02em; }
+    .rv-feedback > span { color:var(--link); font-weight:500; }
+    .rv-themes { display:flex; gap:8px; padding:8px 10px; border-radius:14px; border:1px solid #ddf2e6; background:#f0fbf6; }
+    .rv-theme-icon { display:grid; place-items:center; width:32px; height:32px; border-radius:50%; background:#d0f5d9; color:#188e39; flex:none; }
+    .rv-theme-icon svg { width:19px; height:19px; }
+    .rv-caption { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+    .rv-chips { display:flex; gap:6px; flex-wrap:wrap; }
+    .rv-chip { display:flex; align-items:center; gap:5px; border-radius:999px; background:#dcf8eb; color:#126247; padding:4px 7px; font-size:11px; font-weight:600; }
+    .rv-chip svg { background:#3db950; color:white; border-radius:50%; padding:2px; width:12px; height:12px; }
+    .rv-concerns { margin-top:8px; padding:9px 10px; border:1px solid #e5ebf7; border-radius:14px; }
+    .rv-concern-heading { display:flex; justify-content:space-between; gap:8px; align-items:center; font-size:9px; color:var(--muted); margin-bottom:6px; }
+    .rv-concern-heading > span:first-child { display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:.04em; }
+    .rv-concern-heading svg { color:#eb861c; width:18px; height:18px; }
+    .widget-grid .rv-concern-row { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 28px; gap:8px; align-items:center; color:var(--ink); padding:4px 0; font-size:11px; list-style:none; }
+    .rv-concern-row::-webkit-details-marker { display:none; }
+    .rv-concern-name { line-height:1.4; }
+    .rv-concern-track { height:10px; border-radius:999px; background:#e3eaf4; overflow:hidden; }
+    .rv-concern-track > span { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#398fff,#2482fa); }
+    .rv-concern-value { text-align:right; font-weight:600; }
+    .rv-concern-count { grid-column:2 / -1; text-align:right; color:var(--muted); }
+    .rv-remaining { border-top:1px dashed #dfe6f3; padding-top:6px; margin-top:6px; }
+    .widget-grid .rv-remaining > summary { padding:6px 8px; background:#edf3fc; border-radius:9px; color:var(--muted); font-size:12px; }
+    .widget-grid .rv > .rv-why { border-top:1px solid #e2e9f5; padding-top:9px; margin-top:10px; font-weight:600; }
+    @media (max-width:380px) { .rv-sentiment { grid-template-columns:75px minmax(0,1fr); gap:8px; } .rv-legend { flex-wrap:wrap; gap:3px; } }
+    .price-comparison { margin-top:8px; }
+    .price-amount { font-size:30px; font-weight:700; color:var(--ink); letter-spacing:-.04em; }
+    .widget-grid .ip-chart { background:linear-gradient(90deg,#ff91ad 0%,#ffda9b 38%,#a6efc5 100%); height:14px; }
+    .widget-grid .ip-band { background:rgba(37,172,104,.2); border:1px solid rgba(37,172,104,.35); box-sizing:border-box; }
+    .widget-grid .ip-dot { width:17px; height:17px; margin:-8.5px 0 0 -8.5px; background:#ef476e; box-shadow:0 1px 5px #e395a5; }
+    .widget-grid .ip-sec.ok .ip-dot { background:var(--green); }
+    .price-axis,.age-axis { display:flex; justify-content:space-between; gap:12px; font-size:12px; color:var(--ink); }
+    .price-comparison > .ip-line { text-align:center; font-size:11px; }
+    .review-meter { display:flex; flex-wrap:wrap; gap:3px; margin:16px 0 4px; }
+    .review-meter > span:not(.meter-caption) { flex:1; height:16px; border-radius:4px; background:#e3ebfa; }
+    .review-meter > span.active { background:#3982ff; }
+    .meter-caption { flex-basis:100%; font-size:11px; color:var(--muted); margin-top:5px; }
+    .age-meter { position:relative; height:11px; margin:18px 4px 8px; background:#e6e9ee; border-radius:5px; }
+    .age-fill { width:var(--age-position); height:100%; border-radius:5px; background:linear-gradient(90deg,#ff8115,#f2d744); }
+    .age-meter::after { content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg,transparent 0 3px,#fff 3px 5px); }
+    .age-marker { position:absolute; left:clamp(0px,var(--age-position),calc(100% - 12px)); top:-2px; width:11px; height:11px; border:2px solid #fff; border-radius:50%; background:#f7a20a; z-index:1; }
+    .age-axis { font-size:10px; color:var(--muted); }
+    .tabs { margin-top:16px; } .tab { font-size:12px; padding:10px 8px; }
+    .hist-panel { margin:0 0 12px; padding:12px 14px; border-radius:18px; background:#f2fafb; border:1px solid #d3ecf1; }
+    .hist-panel[hidden] { display:none; }
+    .hist-title { margin:0 0 8px; font-size:14px; }
+    /* The score card: first in the grid; the other cards are ordered by the board (style.order), worst check first. */
+    .sc { order:-1; margin:0 0 12px; position:relative; min-width:0; padding:18px; border-radius:22px; border:1px solid #dfe8f5; background:linear-gradient(115deg,#f2f8ff,#fff); box-shadow:0 5px 16px rgba(36,54,86,.035); }
+    .widget-grid > .sc { margin:0; }
+    .sc > .widget-label { margin-left:54px; }
+    .sc-top { margin-left:54px; display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; min-height:38px; }
+    .sc-num { font-size:34px; line-height:1; letter-spacing:-.04em; color:var(--ink); }
+    .sc-of { font-size:13px; color:var(--muted); }
+    .sc-word { font-size:15px; font-weight:600; margin-left:6px; color:var(--ink); }
+    .sc-track { height:12px; margin:14px 0 8px; border-radius:999px; background:#e3eaf4; overflow:hidden; }
+    .sc-fill { display:block; width:0; height:100%; border-radius:inherit; background:#9aa6b8; transition:width .3s ease; }
+    .sc.good .sc-fill { background:#25ac68; } .sc.ok .sc-fill { background:#7fbf2f; } .sc.careful .sc-fill { background:#f2a20c; } .sc.avoid .sc-fill { background:#e0524a; }
+    .sc.good .sc-num { color:#16844a; } .sc.careful .sc-num { color:#b86e00; } .sc.avoid .sc-num { color:#c23a32; }
+    .sc.loading .sc-num { opacity:.55; }
+    .sc-basis { font-size:12px; color:var(--muted); }
+    .sc-more { margin-top:12px; font-size:12px; } .sc-more summary { cursor:pointer; color:var(--link); }
+    .sc-rows { list-style:none; margin:8px 0 6px; padding:0; display:grid; gap:4px; }
+    .sc-rows li { display:flex; justify-content:space-between; gap:10px; } .sc-rows b { font-weight:600; }
+    .sc-note { margin:6px 0 0; font-size:11px; color:var(--muted); }
+    .chat-cards { margin-top:8px; } .chat-cards > * { order:0; }
+    .fab-score { position:absolute; right:-5px; bottom:-5px; min-width:22px; height:22px; padding:0 5px; box-sizing:border-box; border-radius:11px; border:2px solid currentColor; background:#fff; color:var(--ink); font-size:11px; font-weight:700; line-height:18px; text-align:center; pointer-events:none; }
+    .fab-score[hidden] { display:none; }
+    /* Scored: the shield is hidden and the number sits in its place, coloured by the score (--sc), border too. */
+    .fab.scored > svg:not(.ring) { display:none; }
+    .fab.scored, .fab.scored[aria-expanded="true"] { border:2px solid var(--sc); color:var(--sc); }
+    .fab.scored[aria-expanded="true"] { box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--sc); }
+    .fab.scored .fab-score { position:absolute; inset:0; min-width:0; height:auto; padding:0; border:0; border-radius:0; background:transparent; color:var(--sc); display:grid; place-items:center; font-size:19px; font-weight:800; letter-spacing:-.03em; line-height:1; }
+    .head .ibtn.hist { border-radius:11px; background:#e2f3f6; color:#0d7a8f; margin-right:4px; }
+    .head .ibtn.hist:hover { background:#d3ecf1; color:#0d7a8f; }
+    .head .ibtn.hist[aria-pressed="true"] { box-shadow:0 0 0 2px var(--lime-d); }
+    .actions button.primary { border-radius:999px; font-weight:600; }
+    .actions .more { gap:4px; } .actions .small { font-size:12px; }
+    .actions button.big { width:100%; min-height:48px; justify-content:center; font-size:15px; }
+    .actions button.big svg { width:18px; height:18px; }
+    :is(button,a,summary):focus-visible { outline:2px solid var(--lime-d); outline-offset:3px; }
+    @media (max-width:380px) { .card { padding:12px; } .hero { gap:0 10px; padding:16px; } .hero .sum { grid-column:1 / -1; } }
     /* Plain answer: what to do, where we checked (plan v2.2 UX) */
     .todo { margin-top:10px; padding:12px 14px; border-radius:10px; background:var(--lime); border:0; }
     .todo strong { display:block; font-size:14px; margin-bottom:4px; }
@@ -637,7 +803,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .places ul { list-style:none; margin:0; padding:0; } .places li { display:flex; gap:6px; align-items:baseline; margin:5px 0; line-height:1.35; }
     .places .pm { width:1.1em; font-weight:800; flex:none; text-align:center; }
     .places li.ok .pm { color:var(--green); } .places li.warn .pm { color:var(--red); } .places li.maybe .pm { color:var(--amber); } .places li.skip .pm { color:var(--unknown); }
-    .places .flag { flex:none; } .places .note { color:var(--unknown); font-size:12px; margin:6px 0 0; }
+    .places .flag { flex:none; }
+    .places .country-flag { display:block; width:28px; height:20px; object-fit:contain; border-radius:3px; margin-top:2px; } .places .note { color:var(--unknown); font-size:12px; margin:6px 0 0; }
     details.more { margin-top:10px; } details.more > summary { cursor:pointer; font-weight:600; font-size:13px; color:var(--unknown); padding:6px 2px; }
     /* What was checked, by country (plan v2.2) */
     .coverage { margin-top:8px; padding:10px 14px; border-radius:10px; background:var(--soft); font-size:13px; }
@@ -651,7 +818,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .coverage .legend { color:var(--unknown); font-size:12px; margin:2px 0 8px; }
     .coverage .note { color:var(--unknown); font-size:12px; margin:2px 0 0 1.2em; }
     .coverage .sub { margin:8px 0 2px; font-weight:600; }
-    .aftercare-block { margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+    .aftercare-block { margin-top:12px; }
     .dividerlabel { margin:0 0 8px; font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
 
     /* Chat */
@@ -723,6 +890,102 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     button.small:hover { border-color:var(--lime-d); color:var(--lime-d); }
     .row button.small:first-child { background:var(--lime-d); border-color:var(--lime-d); color:#fff; }
     button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:2px solid var(--lime-d); outline-offset:2px; }
+    .recall-widget .recall-intro { margin:10px 0 12px; color:var(--muted); font-size:12px; }
+    .recall-widget .recall-progress { border-top:1px solid #edf0f5; margin-top:8px; padding-top:8px; }
+    .recall-widget .recall-progress > summary { cursor:pointer; font-size:12px; font-weight:600; color:var(--muted); }
+    .recall-widget .recall-empty { font-size:12px; color:var(--muted); padding:12px; background:var(--soft); border-radius:12px; }
+    /* Closer look: compact progress, advice and country-by-country evidence. */
+    .first { padding:16px; border:1px solid #e9edf3; border-radius:20px; box-shadow:0 5px 18px rgba(20,42,70,.04); }
+    .first h3 { gap:8px; margin:0; font-size:17px; letter-spacing:-.025em; }
+    .first-title { display:flex; align-items:center; gap:10px; min-width:0; }
+    .first-search { display:grid; place-items:center; flex:none; width:36px; height:36px; border-radius:50%; background:#e9f3ff; color:#2b73d7; }
+    .first-search svg { width:20px; height:20px; }
+    .first .tag { display:flex; align-items:center; gap:4px; padding:5px 9px; font-size:11px; white-space:nowrap; background:#edf4fd; color:#2b73d7; }
+    .first .tag svg { width:14px; height:14px; }
+    .first .tag[data-state=done] { background:#edf8e4; color:#338c23; }
+    .first .tag[data-state=stopped] { background:var(--amber-bg); color:var(--amber); }
+    .first .lede { margin:12px 0 8px; font-size:12px; line-height:1.55; }
+    .first > ol,.first .recall-progress > ol { display:grid; gap:12px; margin:12px 0 16px; }
+    .first > ol > li,.first .recall-progress > ol > li { display:flex; align-items:flex-start; gap:10px; padding:0; }
+    .first > ol > li[hidden],.first .recall-progress > ol > li[hidden] { display:none; }
+    .first > ol > li::before,.first > ol > li:is(.done,.skip)::before,.first .recall-progress > ol > li::before { content:none; }
+    .first-step-icon { display:grid; place-items:center; width:32px; height:32px; flex:none; border-radius:50%; background:#f1f3f6; color:#6b7887; }
+    .first-step-icon svg { width:18px; height:18px; }
+    .first li.done .first-step-icon { background:#eaf7e9; color:#269527; }
+    .first li:not(.done):not(.skip) .first-step-icon { background:#eaf2ff; color:#2b73d7; }
+    .first-step-copy { display:grid; gap:3px; min-width:0; }
+    .first-step-copy strong { color:var(--ink); font-size:12px; line-height:1.4; font-weight:600; }
+    .first-step-message { color:var(--muted); font-size:11px; line-height:1.5; }
+    .first .todo { position:relative; padding:14px 14px 12px 48px; border-radius:13px; background:#eff8e3; }
+    .first .todo > strong > svg { position:absolute; left:12px; top:14px; width:26px; height:26px; padding:4px; box-sizing:border-box; border-radius:50%; background:#deedc7; color:#4d8028; }
+    .first .todo strong { font-size:14px; }
+    .first .todo p { font-size:12px; line-height:1.6; margin:5px 0 0; }
+    .first .places { padding:13px; background:#fbfcfe; border:1px solid #edf0f5; border-radius:14px; }
+    .first .places > strong { display:flex; gap:8px; align-items:center; font-size:13px; line-height:1.4; margin-bottom:10px; }
+    .first .places > strong > svg { flex:none; width:28px; height:28px; padding:5px; box-sizing:border-box; border-radius:50%; background:#e9f3ff; color:#2b73d7; }
+    .first .places ul { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+    .first .places li { position:relative; display:flex; align-items:flex-start; gap:5px; margin:0; padding:9px 8px; background:#f3f5f8; border:1px solid #e3e7ed; border-radius:12px; font-size:10px; line-height:1.4; }
+    .first .places li::before { content:none; }
+    .first .places li.ok { background:#f0f9f2; border-color:#dcefe1; }
+    .first .places li.warn { background:var(--red-bg); border-color:#f5d8d4; }
+    .first .places li.maybe { background:var(--amber-bg); border-color:#f1e1c9; }
+    .first .places li .pm { display:none; }
+    .first .places li.your-country { grid-column:1 / -1; }
+    .first .places li .flag { flex:none; }
+    .first .places li > span:last-child { min-width:0; overflow-wrap:anywhere; }
+    .first .places .codebadge { display:block; box-sizing:border-box; max-width:100%; margin:5px 0 0; padding:3px 5px; white-space:normal; overflow-wrap:anywhere; line-height:1.4; }
+    .first .places li b { display:block; color:var(--ink); font-size:11px; margin-bottom:3px; }
+    .first .places .note { padding-top:10px; margin-top:10px; border-top:1px solid #e5eaf0; font-size:10px; line-height:1.55; }
+    .first.recall-widget .places { margin:0; padding:0; border:0; background:transparent; }
+    .first.recall-widget .places > strong { display:none; }
+    .places { position:relative; }
+    .places .country-detail[hidden] { display:none; }
+    .places .country-detail { position:absolute; left:0; right:0; z-index:5; pointer-events:none; display:flex; align-items:flex-start; gap:12px; padding:16px; margin:0; border:1px solid #e3e9f1; border-radius:16px; background:#fff; box-shadow:0 8px 20px rgba(24,47,78,.07); }
+    .places .country-detail::after { content:""; position:absolute; left:35px; bottom:-7px; width:12px; height:12px; transform:rotate(45deg); background:white; border-right:1px solid #e3e9f1; border-bottom:1px solid #e3e9f1; }
+    .country-detail-copy { min-width:0; }
+    .places .country-detail .country-flag { width:36px; height:25px; flex:none; }
+    .country-detail-copy > strong { display:block; font-size:15px; line-height:1.35; color:var(--ink); }
+    .country-detail-status { margin:7px 0 0; font-size:12px; line-height:1.6; color:var(--muted); }
+    .country-detail.ok .country-detail-status { color:var(--green); }
+    .country-detail.warn .country-detail-status { color:var(--red); }
+    .country-detail.maybe .country-detail-status { color:var(--amber); }
+    .country-chips { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .country-chip { font:inherit; display:flex; align-items:center; gap:8px; width:100%; min-width:0; min-height:48px; padding:9px 10px; border:1px solid #e1e7ef; border-radius:14px; background:#f4f6f9; color:var(--ink); cursor:pointer; text-align:left; }
+    .country-chip.ok { background:linear-gradient(120deg,#eff9f0,#f5fbf7); border-color:#dcefe0; }
+    .country-chip.warn { background:var(--red-bg); border-color:#f0d4cf; }
+    .country-chip.maybe { background:var(--amber-bg); border-color:#f1e2c7; }
+    .country-chip.your-country { grid-column:1 / -1; }
+    .country-chip[aria-expanded=true] { border-color:#539be3; box-shadow:0 0 0 1px #539be3,0 4px 12px rgba(48,103,160,.08); }
+    .country-chip.ok[aria-expanded=true] { border-color:#70c768; box-shadow:0 0 0 1px #70c768,0 4px 12px rgba(65,143,60,.09); }
+    .country-chip:hover { filter:brightness(.98); }
+    .country-name { flex:1; min-width:0; overflow-wrap:anywhere; font-size:11px; font-weight:600; line-height:1.4; }
+    .country-state { display:grid; place-items:center; flex:none; width:22px; height:22px; border-radius:50%; background:#e3e8ef; color:var(--muted); font-size:14px; font-weight:700; }
+    .country-chip.ok .country-state { background:#cff0c8; color:#2e8c24; }
+    .country-chip.warn .country-state { background:#fbd7d2; color:var(--red); }
+    .country-chip.maybe .country-state { background:#ffe4b6; color:var(--amber); }
+    .recall-widget h3 { flex-wrap:wrap; }
+    .recall-widget .tag { white-space:normal; font-size:10px; line-height:1.4; }
+    .recall-widget .tag svg { flex:none; }
+    .first .tag[data-state=warning] { background:var(--amber-bg); color:var(--amber); }
+    .first .tag[data-state=partial] { background:var(--unknown-bg); color:var(--unknown); }
+    .country-dropdown > summary { cursor:pointer; padding:9px 0; font-size:12px; font-weight:600; color:var(--link); }
+    .country-dropdown[open] > summary { margin-bottom:8px; }
+    .first.recall-widget details.more > summary,.first.recall-widget .recall-progress > summary { padding:10px 0; font-size:13px; font-weight:600; color:var(--ink); }
+    @media (max-width:340px) { .country-chips { grid-template-columns:minmax(0,1fr); } }
+    .first details.more { border-top:1px solid #edf0f5; padding-top:6px; margin-top:12px; }
+    .first details.more > summary { color:var(--ink); font-size:13px; }
+    @media (max-width:380px) { .first { padding:12px; } .first h3 { font-size:15px; flex-wrap:wrap; } .first .places ul { grid-template-columns:minmax(0,1fr); } }
+    /* A faint red wash identifies negative results without changing verdicts or chart colors. */
+    .widget-grid .rv.poor,
+    .widget-grid .ip:has(.ip-sec.warn),
+    .widget-grid .technology-card:has(.ip-claim.warn,.ip-claim.stop),
+    .widget-grid .sa.warn,
+    .widget-grid .os:has(.os-pill.no),
+    .hero.red,.hero.amber,
+    .recall-widget:has(.tag[data-state=warning]) {
+      background:linear-gradient(120deg,#fff4f4 0%,#fffafa 60%,#ffffff 100%);
+      border-color:#f3dede;
+    }
     @media (prefers-reduced-motion: reduce) { .fab, .tab { transition:none; } .fab:active { transform:none; } .fab.just-saved svg { animation:none; } .fab .ring .seg { animation-duration:3s; } :host(.float) .box { animation:none !important; } .wait .mark, .skel, .typing i, .first li::before { animation:none; } }
   `;
 
@@ -776,24 +1039,26 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     // The exact fields that go to the API (the shop's own ids are removed before sending)
     const sent = { url: page.url, title: page.title, price: page.price, currency: page.currency, seller: page.seller, image_urls: page.image_urls, page_text: text };
     const pre = el("pre", { hidden: true, textContent: JSON.stringify(sent, null, 2) });
-    const more = el("button", { type: "button", className: "more", textContent: "More details" });
+    const moreText = el("span", { textContent: "More details" });
+    const more = el("button", { type: "button", className: "more" }, icon("external"), moreText);
     more.setAttribute("aria-expanded", "false");
     more.onclick = () => {
       pre.hidden = !pre.hidden;
-      more.textContent = pre.hidden ? "More details" : "Hide details";
+      moreText.textContent = pre.hidden ? "More details" : "Hide details";
       more.setAttribute("aria-expanded", String(!pre.hidden));
     };
-    const chip = (t) => el("span", { className: "chip", textContent: t });
+    const chip = (kind, t) => el("span", { className: "chip" }, icon(kind), el("span", { textContent: t }));
     const photo = el("img", { src: (page.image_urls || [])[0] || "", alt: "" });
-    photo.onerror = () => photo.remove();
-    return el("div", { className: "ctx" },
+    const card = el("div", { className: `ctx${n ? "" : " no-photo"}` },
       ...(n ? [photo] : []),
       el("div", { className: "body" },
         el("div", { className: "t", textContent: page.title || page.url }),
-        el("div", { className: "m" }, page.price != null ? `${money(page)} ` : "", ...(mrp ? [el("s", { textContent: mrp })] : []), page.seller ? ` · ${page.seller}` : ""),
-        el("div", { className: "chips" }, ...[page.seller && "seller", asin && `ASIN ${asin}`, `${n} photo link${n === 1 ? "" : "s"}`, `${text.length.toLocaleString()} characters of details`].filter(Boolean).map(chip)),
-        more, pre,
-      ));
+        el("div", { className: "m" }, ...(page.price != null ? [el("strong", { className: "listing-price", textContent: money(page) })] : []),
+          ...(mrp ? [el("s", { textContent: mrp })] : []), ...(page.seller ? [el("span", { className: "seller-name", textContent: page.seller })] : []))),
+      el("div", { className: "chips" }, ...[asin && ["package", `ASIN ${asin}`], ["image", `${n} photo${n === 1 ? "" : "s"}`]].filter(Boolean).map(([kind, t]) => chip(kind, t))),
+      more, pre);
+    photo.onerror = () => { photo.remove(); card.classList.add("no-photo"); };
+    return card;
   };
 
   // --- TEMP COST GUARD: shows an estimate in rupees and asks before a paid request. To remove: delete this block, the three `guard(` calls, and the cost rows in popup.html/popup.js. ---
@@ -1030,17 +1295,72 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   const todoBox = (plain) => plain && el("div", { className: "todo" },
     el("strong", { textContent: "What you can do" }), el("p", { textContent: plain.todo }),
     ...(plain.link?.url ? [el("a", { className: "btnlink", href: plain.link.url, target: "_blank", rel: "noopener", textContent: plain.link.label })] : []));
-  const placesBlock = (plain) => plain?.checked?.length ? el("div", { className: "places" },
-    el("strong", { textContent: "Where we checked official recall lists" }),
-    el("ul", {}, ...plain.checked.map((c) => el("li", { className: c.mark },
-      el("span", { className: "pm", ariaHidden: "true", textContent: MARKS[c.mark] || "–" }),
-      el("span", { className: "flag", ariaHidden: "true", textContent: c.flag }),
-      el("span", {}, el("b", { textContent: `${c.name}${c.yours ? " (you)" : ""}: ` }), c.status, globalThis.SafeShelfAftercare?.badge(el, c.badge))))),
-    el("p", { className: "note", textContent: plain.note })) : null;
+  const FLAG_COUNTRIES = new Set("in jp au sg us kr tw id eu nz my th ph vn".split(" "));
+  const countryFlag = (c) => {
+    const code = String(c.country || "").toLowerCase();
+    return FLAG_COUNTRIES.has(code) ? el("img", { className: "flag country-flag", src: chrome.runtime.getURL(`assets/flags/${code}.png`), alt: "", width: 28, height: 20 }) : el("span", { className: "flag" });
+  };
+  const recallSummary = (rows = []) => {
+    const count = (mark) => rows.filter((c) => c.mark === mark).length;
+    const countries = (n) => `${n} ${n === 1 ? "country" : "countries"}`;
+    if (count("warn")) return { text: `Recall found in ${countries(count("warn"))}`, state: "warning" };
+    if (count("maybe")) return { text: `Review needed in ${countries(count("maybe"))}`, state: "warning" };
+    if (count("ok")) return { text: `No recalls found in ${countries(count("ok"))}${count("skip") ? ` · ${count("skip")} unchecked` : ""}`, state: count("skip") ? "partial" : "done" };
+    return { text: "Recall checks unavailable", state: "partial" };
+  };
+  const placesBlock = (plain) => {
+    if (!plain?.checked?.length) return null;
+    const rows = plain.checked;
+    const detail = el("div", { className: "country-detail", ariaLive: "polite", hidden: true });
+    const buttons = rows.map((c) => el("button", { type: "button", className: `country-chip ${c.mark}${c.yours ? " your-country" : ""}`, ariaExpanded: "false",
+      ariaLabel: `${c.name}: ${c.status}` }, countryFlag(c),
+      el("span", { className: "country-name", textContent: `${c.name}${c.yours ? " (you)" : ""}` }),
+      el("span", { className: "country-state", ariaHidden: "true", textContent: MARKS[c.mark] || "–" })));
+    const select = (index) => {
+      buttons.forEach((button, i) => { button.ariaExpanded = String(i === index); });
+      const c = rows[index];
+      detail.className = `country-detail ${c.mark}`;
+      detail.replaceChildren(countryFlag(c), el("div", { className: "country-detail-copy" },
+        el("strong", { textContent: `${c.name}${c.yours ? " (you)" : ""}` }),
+        el("p", { className: "country-detail-status", textContent: c.status })));
+      detail.hidden = false;
+      const chipRect = buttons[index].getBoundingClientRect?.();
+      const parentRect = container.getBoundingClientRect?.();
+      if (chipRect && parentRect) {
+        const height = detail.getBoundingClientRect().height;
+        detail.style.top = `${chipRect.top - parentRect.top - height - 10}px`;
+      }
+    };
+    const hide = () => { detail.hidden = true; buttons.forEach((button) => { button.ariaExpanded = "false"; }); };
+    buttons.forEach((button, index) => {
+      button.onmouseenter = button.onfocus = () => select(index);
+      button.onmouseleave = button.onblur = hide;
+      button.onkeydown = (event) => { if (event.key === "Escape") hide(); };
+    });
+    const dropdown = el("details", { className: "country-dropdown" },
+      el("summary", { textContent: `View countries (${rows.length})` }),
+      el("div", { className: "country-chips", role: "group", ariaLabel: "Choose a country to view recall results" }, ...buttons),
+      el("p", { className: "note", textContent: plain.note }));
+    dropdown.ontoggle = () => { if (!dropdown.open) hide(); };
+    const container = el("div", { className: "places" },
+      el("strong", { textContent: "Recalls by country" }), detail, dropdown);
+    return container;
+  };
   const detailsBox = (...nodes) => el("details", { className: "more" }, el("summary", { textContent: "Show details" }), ...nodes.filter(Boolean));
 
   // Side-rail icons: plain stroked paths, one family, drawn in the button's text colour.
   const ICON_PATHS = {
+    external: "M14 3h7v7 M21 3l-11 11 M10 4H4v16h16v-6",
+    package: "M4 7l8-4 8 4v10l-8 4-8-4z M4 7l8 4 8-4 M12 11v10",
+    image: "M3 3h18v18H3z M3 17l6-6 4 4 3-3 5 5 M8 7h.01",
+    bulb: "M9 18h6 M9 21h6 M8 14a6 6 0 118 0c-1 1-1 2-1 3H9c0-1 0-2-1-3z M12 1v2 M3 5l2 2 M19 7l2-2",
+    record: "M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4",
+    thumb: "M7 10h-4v11h4z M7 20h10a2 2 0 002-1.6l2-8A2 2 0 0019 8h-5l1-4c0-2-3-2-3 0l-5 6z",
+    star: "M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z",
+    tag: "M3 4h9l9 9-8 8-10-10z M7.5 8h.01",
+    calendar: "M5 5h14v16H5z M8 3v4 M16 3v4 M5 10h14 M8 14h2 M8 17h5",
+    store: "M4 10v11h16V10 M3 10l2-7h14l2 7c-1 3-4 3-5 0-1 3-4 3-5 0-1 3-4 3-5 0z M10 21v-7h4v7",
+    chip: "M7 7h10v10H7z M9 3v4 M15 3v4 M9 17v4 M15 17v4 M3 9h4 M3 15h4 M17 9h4 M17 15h4",
     check: "M12 3l7 3v5c0 5-3.2 8.2-7 10-3.8-1.8-7-5-7-10V6z M9 12l2 2 4-4",
     save: "M7 3h10a1 1 0 011 1v17l-6-4-6 4V4a1 1 0 011-1z",
     tick: "M5 12.5l4.5 4.5L19 7",
@@ -1162,7 +1482,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
   // One chat thread: messages, suggestions and the question box. Used by the side chat on product pages and under the
   // result on results-page cards. getCheck() resolves to {r} (the check result to ask about) or {why} there is none.
-  const chatUI = ({ suggestions, hello, placeholder, what, getCheck, context, onAsk = () => {} }) => {
+  const chatUI = ({ suggestions, hello, placeholder, what, getCheck, context, onAsk = () => {}, local = () => null }) => {
     const convo = []; // this conversation so far: {role: "user" | "bot", text, evidence}
     const newSid = () => `SS-A-${Math.random().toString(36).slice(2, 10)}`;
     let sid = newSid();
@@ -1204,6 +1524,13 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         again.onclick = () => { mine.remove(); pending.remove(); ask(q); };
         done(rich(text), el("div", { className: "acts" }, again));
       };
+      // A question the cards already on this page answer (reviews, price, technology...) is answered from them: free, instant, and
+      // it shows that card. Anything else goes to the agent below.
+      const hit = local(q);
+      if (hit) {
+        convo.push({ role: "bot", text: hit.text });
+        return done(rich(hit.text), hit.node, el("div", { className: "muted", textContent: "From the checks already done on this page. Nothing was sent." }));
+      }
       if (!(await guard("chat", null, what))) { // TEMP cost guard
         convo.pop();
         return done(el("span", { className: "muted", textContent: "Cancelled. Nothing was sent and nothing was charged." }));
@@ -1420,7 +1747,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     };
 
     // Tabs under the result: one per SafeShelf API. Each loads when first opened, and only if the API serves it for real.
-    const panelTabs = (r, overviewNodes) => {
+    const panelTabs = (r, overviewNodes, historyBtn, historyPanel) => {
       const similar = !r.product_id && r.similar_product_id; // a look-alike match: similar, not the same product
       const pid = r.product_id || r.similar_product_id; // what the tabs look up
       const noMatch = () => el("div", { className: "notlive", textContent: "SafeShelf found no product in its catalog that matches this listing, so there is nothing to look up for it." });
@@ -1477,12 +1804,13 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           return d;
         },
       };
-      const names = [["overview", "Overview"], ["marks", "Marks"], ["copies", "Copies"], ["history", "History"], ["safer", "Safer options"], ["details", "Details"], ["report", "Report"]];
+      // Only Overview is shown for now. The other tabs (marks, copies, history, safer, details, report) stay in `build`, unlisted,
+      // so they make no API calls; add a [key, label] pair here to bring one back (the tab bar shows again with 2 or more).
+      const names = [["overview", "Overview"]];
       const bar = el("div", { className: "tabs", role: "tablist" });
       const area = el("div", { role: "tabpanel" });
       const made = {};
-      const buttons = names.map(([key, text]) => {
-        const b = el("button", { type: "button", className: "tab", textContent: text, role: "tab" });
+      const makeTab = (key, b) => {
         b.onclick = () => {
           buttons.forEach((x) => x.setAttribute("aria-selected", String(x === b)));
           made[key] ||= el("div", {}, ...(similar && ["marks", "copies", "history", "safer", "details"].includes(key) ? [similarBanner()] : []), build[key]());
@@ -1494,10 +1822,25 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           if (n !== null) { e.preventDefault(); buttons[(n + buttons.length) % buttons.length].focus(); }
         };
         return b;
-      });
+      };
+      const buttons = names.map(([key, text]) => makeTab(key, el("button", { type: "button", className: "tab", textContent: text, role: "tab" })));
+      // History is an icon button in the card header; its panel opens right under the header, and the button closes it again.
+      if (historyBtn && historyPanel) {
+        let loaded = false; // the history is fetched the first time the button is pressed
+        historyBtn.setAttribute("aria-expanded", "false");
+        historyBtn.onclick = () => {
+          const open = historyPanel.hidden;
+          historyPanel.hidden = !open;
+          historyBtn.setAttribute("aria-expanded", String(open));
+          historyBtn.setAttribute("aria-pressed", String(open));
+          if (open && !loaded) { loaded = true; historyPanel.append(el("h3", { className: "hist-title", textContent: "History" }),
+            ...(similar ? [similarBanner()] : []), build.history()); }
+          place();
+        };
+      }
       bar.append(...buttons);
       buttons[0].click();
-      return el("div", {}, bar, area);
+      return el("div", {}, ...(buttons.length > 1 ? [bar] : []), area);
     };
 
     // The report copilot pre-fills a regulator's incident report from stored evidence. Nothing is sent: the shopper
@@ -1542,7 +1885,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     // The verdict at the top of the card. `note` says when a first look changed it.
     let heroEl = null;
     const hero = (lvl, summary, note, title) => el("div", { className: `hero ${lvl}` }, el("div", { className: "ic" }, icon(VERDICT_ICON[lvl])),
-      el("h2", { className: `headline ${lvl}`, textContent: title || VERDICT_WORD[lvl] }), ...(summary ? [el("p", { className: "sum", textContent: summary })] : []),
+      el("div", { className: "hero-heading" }, el("span", { className: "widget-label", textContent: "Safety check" }), el("h2", { className: `headline ${lvl}`, textContent: title || VERDICT_WORD[lvl] })), ...(summary ? [el("p", { className: "sum", textContent: summary })] : []),
       ...(note ? [el("span", { className: "upd", textContent: note })] : []));
     // The plain answer leads, unless the seller check is the bigger worry (then that leads, in its own words).
     const plainHero = (r, lvl, note) => {
@@ -1559,16 +1902,30 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     let discoveryRun = 0; // a newer check or another product makes an older first look's answer stale
     const FIRST_LOOK = [["reviews", "Reading what buyers say"], ["real", "Checking the seller and price"],
       ["reference", "Finding the genuine product online"], ["sites", "Searching government recall lists"]];
+    const firstLookStep = (key, title, message, state = "") => {
+      const symbols = { reviews: "ask", real: "tag", reference: "search", sites: "record" };
+      return [el("span", { className: "first-step-icon", ariaHidden: "true" }, icon(state === "done" ? "tick" : symbols[key])),
+        el("div", { className: "first-step-copy" }, el("strong", { textContent: title }),
+          el("span", { className: "first-step-message", textContent: message }))];
+    };
     const firstLook = (r, fresh) => {
       const run = ++discoveryRun;
       const before = level(r);
-      const items = Object.fromEntries(FIRST_LOOK.map(([k, t]) => [k, el("li", {}, el("span", { textContent: `${t}…` }))]));
-      const tag = el("span", { className: "tag", textContent: "Working" });
+      const items = Object.fromEntries(FIRST_LOOK.map(([k, t]) => [k, el("li", {}, ...firstLookStep(k, t, "Checking…"))]));
+      const tag = el("span", { className: "tag", textContent: "Working", role: "status" });
       const lede = el("p", { className: "lede", textContent: "First time we've seen this product, so we're looking it up now. It takes about a minute – you can keep browsing." });
       const found = el("div");
-      const section = el("div", { className: "first" }, el("h3", {}, "Taking a closer look", tag), lede, el("ol", {}, ...Object.values(items)), found);
+      const progress = el("details", { className: "recall-progress" }, el("summary", { textContent: "Lookup details" }), lede, el("ol", {}, ...Object.values(items)));
+      progress.addEventListener("toggle", place);
+      const section = el("div", { className: "first recall-widget" },
+        el("h3", {}, el("span", { className: "first-title" }, el("span", { className: "first-search" }, icon("check")), "Recalls by country"), tag),
+        el("p", { className: "recall-intro", textContent: "Official recall checks for this product." }), found, progress);
       section.setAttribute("aria-live", "polite");
-      const tick = (k, text, cls = "done") => { items[k].className = cls; items[k].replaceChildren(el("span", { textContent: text })); };
+      const tick = (k, text, cls = "done") => {
+        items[k].className = cls;
+        items[k].hidden = cls === "skip";
+        items[k].replaceChildren(...firstLookStep(k, FIRST_LOOK.find(([key]) => key === k)[1], text, cls));
+      };
       // retrying: after a dropped connection or "Try again". Never forced fresh, so whatever the server already found
       // and saved for this model is reused instead of being paid for twice.
       const go = async (retrying) => {
@@ -1584,7 +1941,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             }
             if (e.type === "step" && e.agent === "is_it_real") tick("real", e.summary.replace(/^Is it real\? /, "Shop and price: "));
             if (e.type === "step" && e.agent === "reference") tick("reference", e.summary);
-            if (e.type === "start" && e.tool === "recall_sites") items.sites.firstChild.textContent = "Searching official recall sites (up to a minute)…";
+            if (e.type === "start" && e.tool === "recall_sites") tick("sites", "Searching official recall sites (up to a minute)…", "");
             if (e.type === "step" && e.agent === "research_agent" && e.tool === "recall_sites") {
               const WORDS = { not_found: "no notice", found: "searched", blocked: "blocked the check", captcha: "asked for a captcha", error: "could not be searched" };
               tick("sites", e.summary.replace(/^Research Agent: /, "Recall sites: ").replace(/\b(not_found|found|blocked|captcha|error)\b/g, (w) => WORDS[w]));
@@ -1595,26 +1952,35 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             }
           }, 280000);
           if (run !== discoveryRun) return;
-          for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") tick(k, `${t}: not available this time`, "skip");
+          for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") tick(k, "Not available this time.", "skip");
           const verdict = v.verdict || {};
           const lvl = ["red", "amber", "green", "unknown"].includes(verdict.overall) ? verdict.overall : "unknown";
           r.discovery = { overall: lvl, safe: verdict.safe, real: verdict.real, reasons: (verdict.reasons || []).map((x) => x.text),
             evidence_ids: verdict.evidence_ids || [], reference: v.reference || null, from_saved: !!v.discovery?.from_saved };
-          tag.textContent = "Done";
+          const summaryByCountry = recallSummary(verdict.plain?.checked);
+          tag.replaceChildren(icon(summaryByCountry.state === "done" ? "tick" : "help"), summaryByCountry.text);
+          tag.dataset.state = summaryByCountry.state;
           lede.textContent = v.discovery?.from_saved
             ? `This model was looked up ${v.discovery.saved_minutes_ago < 90 ? `${v.discovery.saved_minutes_ago} minutes` : `${Math.round(v.discovery.saved_minutes_ago / 60)} hours`} ago, so that lookup was reused with this page's own checks. What SafeShelf found:`
             : "What SafeShelf found:";
           const fp = verdict.plain;
           const technical = el("ul", { className: "found" }, ...(verdict.reasons || []).map((x) => el("li", { textContent: x.text })));
-          found.replaceChildren(...(fp ? [todoBox(fp), placesBlock(fp), detailsBox(technical, sourcesBlock(verdict.evidence_ids || []))]
-            : [technical, sourcesBlock(verdict.evidence_ids || [])]));
+          const countries = placesBlock(fp);
+          const supporting = detailsBox(...(fp ? [todoBox(fp)] : []), technical, sourcesBlock(verdict.evidence_ids || []));
+          supporting.querySelector("summary").textContent = "Advice & sources";
+          supporting.addEventListener("toggle", place);
+          found.replaceChildren(countries || el("p", { className: "recall-empty", textContent: "Country recall results are not available for this lookup." }), supporting);
+          progress.open = false;
+          found.querySelector(".todo > strong")?.prepend(icon("bulb"));
+          found.querySelector(".places > strong")?.prepend(icon("check"));
           const word = VERDICT_WORD[lvl];
-          fab.className = `fab ${lvl}`;
           label(fab, `SafeShelf: ${word}`, word);
+          paintFab(lvl);
+          board?.set("level", lvl); // the first look can change the verdict colour: the score follows it
           box.className = `box ${lvl}`;
           const changed = lvl !== before;
           if (globalThis.SafeShelfAftercare) SafeShelfAftercare.guardBuy({ ...r, outcome: { ...(r.outcome || {}), plain: fp || r.outcome?.plain } }, lvl); // the first look's colour guards the buy button
-          const summary = !changed ? r.summary : ["red", "amber"].includes(lvl) ? "The first look found warning signs: see First look below." : "The first look found no warning signs in what it checked.";
+          const summary = !changed ? r.summary : ["red", "amber"].includes(lvl) ? "The lookup found warning signs: see the recall widget below." : "The first look found no warning signs in what it checked.";
           const updated = fp ? hero(lvl, fp.why, changed ? `Updated after a closer look (was: ${VERDICT_WORD[before]})` : null, fp.title)
             : hero(lvl, summary, changed ? `Updated after the first look (was ${VERDICT_WORD[before]})` : null);
           heroEl?.replaceWith(updated);
@@ -1627,15 +1993,17 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             lede.textContent = "The connection dropped; picking up where SafeShelf left off…";
             return go(true);
           }
-          for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") tick(k, `${t}: stopped`, "skip");
+          for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") tick(k, "Check stopped.", "skip");
           tag.textContent = "Stopped";
+          tag.dataset.state = "stopped";
           lede.textContent = `The first look could not finish (${err.message}). The result above is from this page only.`;
           const again = el("button", { type: "button", className: "small", textContent: "Try again" });
           again.onclick = () => {
             tag.textContent = "Working";
+            tag.dataset.state = "working";
             lede.textContent = "Trying again; anything already found is reused…";
             found.replaceChildren();
-            for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") { items[k].className = ""; items[k].replaceChildren(el("span", { textContent: `${t}…` })); }
+            for (const [k, t] of FIRST_LOOK) if (items[k].className !== "done") { tick(k, "Checking…", ""); }
             go(true);
           };
           found.replaceChildren(el("div", { className: "tools" }, again));
@@ -1647,41 +2015,197 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
     // "Is it any good?": a small widget under the verdict. It fills in once the extra reviews are read, after the card is
     // shown, so the check itself is no slower. About quality only: it never changes the verdict above it.
+    // Render review evidence separately so the loaded and preview views share the same layout.
+    const reviewInsights = (vm) => {
+      const nodes = [el("span", { className: "widget-symbol" }, icon("star")),
+        el("div", { className: "rv-heading" }, el("span", { className: "widget-label", textContent: "Buyer reviews" }),
+          el("strong", { className: "rv-word", textContent: vm.word }),
+          el("div", { className: "rv-rating" }, el("span", { className: "rv-rating-star", ariaHidden: "true", textContent: "★" }),
+            ...(vm.stars.startsWith("★") ? [el("strong", { className: "rv-average", textContent: vm.stars.split(" · ")[0].replace(/^★\s*/, "") }), el("span", { textContent: vm.stars.includes(" · ") ? ` · ${vm.stars.split(" · ").slice(1).join(" · ")}` : "" })] : [el("span", { textContent: vm.stars })])),
+          ...(vm.note ? [el("div", { className: "rv-note", textContent: vm.note })] : []))];
+      if (vm.positiveShare != null) {
+        const positive = Math.round(vm.positiveShare * 100);
+        nodes.push(el("div", { className: "rv-sentiment" },
+          el("div", { className: "rv-positive" }, el("strong", { textContent: `${positive}%` }),
+            el("span", { textContent: "positive ratings", title: "Positive share supplied by the review analysis." })),
+          el("div", { className: "rv-distribution" },
+            el("div", { className: "rv-track", role: "img", ariaLabel: `${positive}% positive ratings, ${100 - positive}% others` },
+              el("span", { className: "rv-fill", style: `width:${positive}%` })),
+            el("div", { className: "rv-legend" }, el("span", {}, el("i", { className: "rv-key positive" }), `${positive}% Positive`),
+              el("span", {}, el("i", { className: "rv-key" }), `${100 - positive}% Others`)))));
+      }
+      nodes.push(el("h3", { className: "rv-feedback" }, "Buyer feedback", el("span", { textContent: ` · ${vm.complaints.length} concerns` })));
+      if (vm.liked.length) nodes.push(el("div", { className: "rv-themes" },
+        el("span", { className: "rv-theme-icon" }, icon("thumb")),
+        el("div", {}, el("div", { className: "rv-caption", textContent: "Positive themes" }),
+          el("div", { className: "rv-chips" }, ...vm.liked.map((t) => el("span", { className: "rv-chip" }, icon("tick"), t))))));
+      const maxShare = Math.max(...vm.complaints.map((c) => c.share ?? 0), 0);
+      const scale = Math.max(.1, Math.ceil(maxShare * 10) / 10);
+      const complaint = (c) => {
+        const share = c.share;
+        const summary = el("summary", { className: "rv-concern-row" }, el("span", { className: "rv-concern-name", textContent: c.text }),
+          ...(share != null ? [el("span", { className: "rv-concern-track", ariaHidden: "true" }, el("span", { style: `width:${share / scale * 100}%` })),
+            el("span", { className: "rv-concern-value", textContent: `${Math.max(share > 0 ? 1 : 0, Math.round(share * 100))}%`, title: c.sub })]
+            : [el("span", { className: "rv-concern-count", textContent: c.sub })]));
+        const reviews = el("ul", { className: "rv-revs" }, ...c.reviews.map((r) => el("li", {},
+          el("div", { className: "rv-meta", textContent: [r.stars, r.date].filter(Boolean).join(" · ") }),
+          ...(r.title ? [el("strong", { textContent: r.title })] : []), el("div", { textContent: r.text }))));
+        const d = el("details", { className: "rv-concern" }, summary, c.reviews.length ? reviews : el("p", { className: "rv-note", textContent: "Source reviews were not included in this answer." }));
+        d.addEventListener("toggle", place);
+        return d;
+      };
+      if (vm.complaints.length) {
+        const concerns = el("div", { className: "rv-concerns" },
+          el("div", { className: "rv-concern-heading" }, el("span", {}, icon("warn"), "Top concerns"),
+            el("span", { textContent: maxShare ? `% of buyers · 0–${Math.round(scale * 100)}%` : "Reviews" })),
+          ...vm.complaints.slice(0, 5).map(complaint));
+        if (vm.complaints.length > 5) {
+          const more = el("details", { className: "rv-remaining" }, el("summary", { textContent: `${vm.complaints.length - 5} more concerns` }), ...vm.complaints.slice(5).map(complaint));
+          more.addEventListener("toggle", place);
+          concerns.append(more);
+        }
+        nodes.push(concerns);
+      }
+      if (vm.warning) nodes.push(el("div", { className: "rv-flag", textContent: vm.warning }));
+      const why = el("details", { className: "rv-why" }, el("summary", { textContent: "Why this verdict" }), el("ul", {}, ...vm.reasons.map((t) => el("li", { textContent: t }))));
+      why.addEventListener("toggle", place);
+      nodes.push(why);
+      return nodes;
+    };
+
+    // The reviews are read and sent the moment the check starts (run), in parallel with the check itself, so the widget
+    // is not waiting for the check to finish before it begins. The widget below picks up that same job.
+    let reviewsJob = null;
+    // The score board: every card reports its result here (null = no result). The score and the order of the cards follow:
+    // the check hurting the score most comes first, a check with no result goes last. The maths is in check.js (safetyScore).
+    let board = null;
+    // The rail's check button shows the score, and its colour, once the board has one. Before that it shows the verdict's colour.
+    let scoreLook = null; // { n, cls, word }
+    const SCORE_FAB = { good: "green", ok: "green", careful: "amber", avoid: "red" };
+    const SCORE_COLOR = { good: "#16844a", ok: "#4d9a12", careful: "#b86e00", avoid: "#c23a32" }; // text and border colour of the number
+    const fabBadge = el("span", { className: "fab-score", hidden: true });
+    const paintFab = (lvl) => {
+      if (mode !== "float") { if (lvl) fab.className = `fab ${lvl}`; return; }
+      if (!scoreLook) { fabBadge.hidden = true; fab.classList.remove("scored"); fab.style.removeProperty("--sc"); if (lvl) fab.className = `fab ${lvl}`; return; }
+      // With a score, the number takes the shield's place: the number and the border are coloured by the score.
+      fab.className = `fab ${scoreLook.cls} scored`;
+      fab.style.setProperty("--sc", scoreLook.color);
+      fabBadge.textContent = String(scoreLook.n);
+      fabBadge.hidden = false;
+      if (!fab.contains(fabBadge)) fab.append(fabBadge);
+      const text = `SafeShelf score ${scoreLook.n} out of 100: ${scoreLook.word}`;
+      fab.setAttribute("aria-label", text);
+      const tip = fab.querySelector(".tip");
+      if (tip) tip.textContent = text;
+    };
+    // Which card answers which kind of question (used by the chat: answer(q) below).
+    const CARD_QUESTIONS = [["score", /\bscore\b|overall/i], ["reviews", /review|rating|stars?\b|buyers?|complain|feedback|positive|negative/i],
+      ["price", /price|cheap|expensive|cost|discount|\bmrp\b|worth|₹/i], ["tech", /technolog|claims?\b|specs?\b|watts?\b|battery|fast.?charg|possible/i],
+      ["age", /how old|listing age|how long.*listed|new listing|since when|first listed/i], ["seller", /seller|official (partner|seller|store)|sold by|authori[sz]ed/i]];
+    const makeBoard = (r) => {
+      let lastOut = null;
+      const inputs = { recall: r.outcome?.outcome ?? null };
+      const done = new Set(["recall"]);
+      const cards = {};
+      const number = el("strong", { className: "sc-num" }), outOf = el("span", { className: "sc-of", textContent: "/100" }), word = el("span", { className: "sc-word" });
+      const fill = el("span", { className: "sc-fill" }), track = el("div", { className: "sc-track", role: "img" }, fill);
+      const basis = el("div", { className: "sc-basis" });
+      const rows = el("ul", { className: "sc-rows" });
+      const more = el("details", { className: "sc-more" }, el("summary", { textContent: "How this score is made" }), rows,
+        el("p", { className: "sc-note", textContent: "Each check has a weight. A check with no result is left out and the others are rescaled. Worst checks are shown first." }));
+      more.addEventListener("toggle", place);
+      const card = el("div", { className: "sc loading", role: "group", ariaLabel: "SafeShelf score" }, el("span", { className: "widget-symbol" }, icon("check")),
+        el("span", { className: "widget-label", textContent: "SafeShelf score" }), el("div", { className: "sc-top" }, number, outOf, word), track, basis, more);
+      let seq = 0;
+      const paint = (out) => {
+        if (board && board.card !== card) return; // a newer check has its own board
+        lastOut = out;
+        const waiting = done.size < out.of;
+        card.className = `sc ${out.band?.key || "none"}${waiting ? " loading" : ""}`;
+        number.textContent = out.score != null && out.enough ? String(out.score) : "–";
+        outOf.hidden = !(out.score != null && out.enough);
+        word.textContent = out.score != null && out.enough ? out.band.word : waiting ? "Checking…" : "Not enough checked to score";
+        fill.style.width = out.score != null && out.enough ? `${out.score}%` : "0%";
+        track.setAttribute("aria-label", out.score != null && out.enough ? `Score ${out.score} out of 100` : "No score yet");
+        basis.textContent = `Based on ${out.used} of ${out.of} checks${waiting ? ` · ${out.of - done.size} still checking` : ""}${out.cap ? ` · capped by ${out.cap}` : ""}`;
+        rows.replaceChildren(...out.signals.map((x) => el("li", {}, el("span", { textContent: `${x.label} (${x.weight}%)` }), el("b", { textContent: x.points == null ? "no result" : String(x.points) }))));
+        for (const [key, node] of Object.entries(cards)) node.style.order = String(out.order[key] ?? 100);
+        scoreLook = out.score != null && out.enough ? { n: out.score, cls: SCORE_FAB[out.band.key], color: SCORE_COLOR[out.band.key], word: out.band.word } : null;
+        paintFab();
+        place();
+      };
+      const refresh = () => {
+        const mine = ++seq;
+        try { chrome.runtime.sendMessage({ type: "safeshelf:score", inputs }, (res) => { if (mine === seq && res?.ok) paint(res.result); }); } catch (_) { /* extension reloaded */ }
+      };
+      refresh();
+      // The words for one card, from its own result.
+      const said = (key) => {
+        const v = inputs[key];
+        if (key === "score") return lastOut?.score != null && lastOut.enough ? `SafeShelf score: ${lastOut.score} out of 100 (${lastOut.band.word}). ${basis.textContent}.` : null;
+        if (v == null) return null;
+        if (key === "reviews") { const top = v.complaints?.[0]; return `Buyer reviews: ${v.word}. ${v.stars}.${top ? ` Most common concern: ${top.text} (${top.sub}).` : ""}`; }
+        if (key === "price") return `Price: ${v.word}. ${v.answer?.text || v.line}`;
+        if (key === "tech") { const bad = (v.claims || []).filter((c) => c.result === "doubtful" || c.result === "not_possible"); return `Technology: ${v.word}.${bad.map((c) => ` ${c.claim}: ${c.why}`).join("")}`; }
+        if (key === "age") return `Listing age: ${v.word}. ${v.text}`;
+        if (key === "seller") return `Seller: ${v.word ? `${v.word}. ` : ""}${v.text}`;
+        return null;
+      };
+      return {
+        card, refresh,
+        // A question about one or two of the cards: their words, and a copy of each card. null when it is about something else,
+        // or when a card it needs has no result yet (the agent then answers).
+        answer(q) {
+          const keys = CARD_QUESTIONS.filter(([, re]) => re.test(q)).map(([key]) => key);
+          if (!keys.length || keys.length > 2) return null;
+          const texts = keys.map(said);
+          if (texts.some((t) => !t) || keys.some((key) => key !== "score" && !cards[key])) return null;
+          const copies = keys.map((key) => {
+            const c = (key === "score" ? card : cards[key]).cloneNode(true);
+            c.style.order = "0"; c.classList.remove("loading"); c.hidden = false;
+            return c;
+          });
+          return { text: texts.join(" "), node: el("div", { className: "widget-grid chat-cards" }, ...copies) };
+        },
+        register(key, node) { if (node) { cards[key] = node; node.style.order = "100"; } },
+        report(key, vm) { inputs[key] = vm ?? null; done.add(key); refresh(); },
+        set(key, vm) { inputs[key] = vm ?? null; refresh(); }, // an input that is not a card: the verdict colour, the price/technology answer
+      };
+    };
+    const fetchReviews = async () => {
+      const listing = await reviewsForVerdict(getPage());
+      return new Promise((resolve) => chrome.runtime.sendMessage({ type: "safeshelf:reviews", listing },
+        (res) => resolve(res ?? { ok: false, error: chrome.runtime.lastError?.message })));
+    };
+    const startReviews = () => {
+      const url = getPage().url;
+      reviewsJob = { url, promise: fetchReviews() };
+      reviewsJob.promise.catch(() => {}); // the widget reports the failure when it takes the job
+    };
+    const takeReviews = () => {
+      const job = reviewsJob;
+      reviewsJob = null; // used once: the next check starts its own
+      return job && job.url === getPage().url ? job.promise : fetchReviews();
+    };
     const reviewsWidget = () => {
       const top = (word, stars, note) => el("div", {}, el("div", { className: "rv-top" }, el("span", { className: "rv-word", textContent: word }),
         el("span", { className: "rv-stars", textContent: stars })), ...(note ? [el("span", { className: "rv-note", textContent: note })] : []));
-      const w = el("div", { className: "rv loading", role: "group", ariaLabel: "What buyers say" }, top("What buyers say", "Reading reviews…"));
+      const w = el("div", { className: "rv loading", role: "group", ariaLabel: "What buyers say" }, top("Reading…", ""));
       const fill = (vm) => {
-        const rows = [];
-        if (vm.liked.length) rows.push(el("div", { className: "rv-row up" }, icon("check"), el("span", { textContent: vm.liked.join(" · ") })));
-        // A complaint opens to the reviews counted for it (they come in the API answer itself). Review text is set as text only.
-        const row = (c) => {
-          const head = el("summary", { className: "rv-row down" }, icon("warn"), el("span", {}, el("span", { textContent: c.text }), el("span", { className: "rv-sub", textContent: ` · ${c.sub}` })));
-          const counted = c.reviews.map((r) => el("li", {}, el("div", { className: "rv-meta", textContent: [r.stars, r.date].filter(Boolean).join(" · ") }),
-            ...(r.title ? [el("strong", { textContent: r.title })] : []), el("div", { textContent: r.text })));
-          const d = el("details", { className: "rv-c" }, head, counted.length ? el("ul", { className: "rv-revs" }, ...counted) : el("div", { className: "rv-note", textContent: "These reviews are not in this answer." }));
-          d.addEventListener("toggle", place);
-          return d;
-        };
-        rows.push(...vm.complaints.map(row)); // every complaint (at most ten), none hidden
-        if (vm.warning) rows.push(el("div", { className: "rv-flag", textContent: vm.warning }));
-        const why = el("details", { className: "rv-why" }, el("summary", { textContent: "Why this verdict" }), el("ul", {}, ...vm.reasons.map((t) => el("li", { textContent: t }))));
-        why.addEventListener("toggle", place);
         w.className = `rv ${vm.tone}`;
-        w.replaceChildren(top(vm.word, vm.stars, vm.note), ...rows, why);
+        w.replaceChildren(...reviewInsights(vm));
         place();
       };
       const failed = (why) => { w.className = "rv"; w.replaceChildren(top("What buyers say", "Not available"), el("span", { className: "rv-note", textContent: why })); place(); };
       (async () => {
         try {
-          if (!(await guard("check", getPage().url, "Check this product", getPage()))) return w.remove(); // TEMP cost guard: approved with the check
-          const listing = await reviewsForVerdict(getPage());
-          chrome.runtime.sendMessage({ type: "safeshelf:reviews", listing }, (res) => {
-            if (!res?.ok) return failed(`Couldn't read the reviews this time (${res?.error || chrome.runtime.lastError?.message || "no answer"}).`);
-            if (!res.result) return w.remove();
-            fill(res.result);
-          });
-        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+          if (!(await guard("check", getPage().url, "Check this product", getPage()))) { board?.report("reviews", null); return w.remove(); } // TEMP cost guard: approved with the check
+          const res = await takeReviews();
+          if (!res?.ok) { board?.report("reviews", null); return failed(`Couldn't read the reviews this time (${res?.error || "no answer"}).`); }
+          if (!res.result) { board?.report("reviews", null); return w.remove(); }
+          fill(res.result);
+          board?.report("reviews", res.result);
+        } catch (_) { board?.report("reviews", null); w.remove(); } // the extension was reloaded; the new script takes over
       })();
       return w;
     };
@@ -1691,19 +2215,31 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     // Price and physics only: it never changes the verdict above it.
     const possibleWidget = () => {
       const w = el("div", { className: "ip loading", role: "group", ariaLabel: "Is it possible?" },
-        el("div", { className: "ip-q", textContent: "Is it possible?" }), el("div", { className: "ip-line", textContent: "Checking the technology…" }));
+        el("div", { className: "ip-q", textContent: "Price & claims" }), el("div", { className: "ip-line", textContent: "Checking the technology…" }));
+      const technology = el("div", { className: "technology-card", hidden: true, role: "group", ariaLabel: "Technology" });
+      const stack = el("div", { className: "possible-stack" }, w, technology);
+      const priceIcon = () => el("span", { className: "widget-symbol" }, icon("tag"));
+      w.prepend(priceIcon());
       const state = { claims: null, price: null, answer: null, demo: false, stage: "tech", priceError: null };
       const link = (u, t) => el("a", { href: u, target: "_blank", rel: "noopener", textContent: t });
       const claimLine = (x) => el("div", { className: `ip-claim ${x.mark}` }, icon(x.mark), el("span", {}, el("span", { textContent: x.text }), el("div", { className: "ip-why", textContent: x.why })));
-      const chart = (p) => el("div", { className: `ip-sec ${p.tone}` },
+      const chart = (p) => el("div", { className: `ip-sec price-comparison ${p.tone}` },
+        el("div", { className: "price-amount", textContent: p.line.split(" · ")[0] }),
         ...(p.chart ? [el("div", { className: "ip-chart", role: "img", ariaLabel: p.chart.label },
           el("div", { className: "ip-band", style: `left:${p.chart.band[0]}%;width:${Math.max(1, p.chart.band[1] - p.chart.band[0])}%` }),
           el("div", { className: "ip-median", style: `left:${p.chart.median}%` }),
           ...(p.chart.dot != null ? [el("div", { className: "ip-dot", style: `left:${p.chart.dot}%` })] : []))] : []),
-        el("div", { className: "ip-line", textContent: p.line }));
+        el("div", { className: "price-axis" }, el("span", { textContent: p.line.split(" · ")[0] }),
+          el("span", { textContent: p.line.split(": ").slice(1).join(": ") })),
+        el("div", { className: "ip-line", textContent: p.line.split(" · ")[1]?.split(": ")[0] || "Listing price" }));
       const draw = () => {
         const a = state.answer;
         const claims = state.claims?.claims || [];
+        technology.hidden = !state.claims;
+        if (state.claims) technology.replaceChildren(el("span", { className: "widget-symbol" }, icon("chip")),
+          el("span", { className: "widget-label", textContent: "Technology" }),
+          ...claims.map(claimLine),
+          ...(!claims.length ? [el("div", { className: "ip-line", textContent: "No specific claims could be assessed." })] : []));
         const problems = claims.filter((x) => x.result === "not_possible" || x.result === "doubtful");
         // Nothing wrong found and no price answer (the kind of product is not covered yet): one slim line, so it is
         // clear the check ran. No "can't tell" headline, no bare price, no "?" rows.
@@ -1711,7 +2247,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           const said = state.claims ? "Nothing impossible found in the technology the listing claims." : "The technology could not be checked this time.";
           const price = state.price || !state.claims ? "" : " The price check does not cover this kind of product yet.";
           w.className = "ip";
-          w.replaceChildren(el("div", { className: "ip-q", textContent: "Is it possible?" }), el("div", { className: "ip-line", textContent: said + price }));
+          w.replaceChildren(priceIcon(), el("div", { className: "ip-q", textContent: "Price & claims" }), el("div", { className: "ip-line", textContent: said + price }));
           return place();
         }
         const fine = claims.filter((x) => !problems.includes(x));
@@ -1726,13 +2262,8 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         kids.push(head);
         if (state.stage === "price" && a) kids.push(el("div", { className: "ip-line ip-wait", textContent: "Checking the price…" }));
         // The technology result, then the price chart (never for technology that cannot exist)
-        if (state.claims) {
-          if (problems.length) kids.push(el("div", { className: "ip-sec warn" }, el("div", { className: "ip-h", textContent: "Technology" }), ...problems.map(claimLine)));
-          else if (!stopped) kids.push(el("div", { className: "ip-sec ok" }, el("div", { className: "ip-h", textContent: "Technology" }),
-            fine.length ? claimLine(fine[0]) : el("div", { className: "ip-line", textContent: "Nothing impossible found in what the listing claims." })));
-        }
         if (stopped) kids.push(el("div", { className: "ip-line ip-wait", textContent: "The price was not checked: this technology cannot exist." }));
-        else if (state.price?.chart) kids.push(el("div", { className: "ip-h", textContent: "Price" }), chart(state.price));
+        else if (state.price?.chart) kids.push(el("div", { className: "ip-h", textContent: "Price comparison" }), chart(state.price));
         else if (state.priceError) kids.push(el("div", { className: "ip-line ip-wait", textContent: `The price could not be checked this time (${state.priceError}).` }));
         const reasons = [...(state.price?.reasons || []), ...(state.claims?.reasons || [])];
         const inside = [];
@@ -1747,27 +2278,30 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           kids.push(more);
         }
         w.className = state.stage === "done" ? "ip" : "ip loading";
-        w.replaceChildren(...kids);
+        w.replaceChildren(priceIcon(), ...kids);
         place();
       };
       const ask = (msg) => new Promise((resolve) => { try { chrome.runtime.sendMessage(msg, (res) => resolve(res)); } catch (_) { resolve(null); } });
       (async () => {
         try {
-          if (!(await guard("check", getPage().url, "Check this product", getPage()))) return w.remove(); // TEMP cost guard: approved with the check
+          if (!(await guard("check", getPage().url, "Check this product", getPage()))) { board?.report("tech", null); board?.report("price", null); return w.remove(); } // TEMP cost guard: approved with the check
           const { url, title, price, currency, seller, page_text } = getPage();
           const listing = { url, title, price, currency, seller, page_text };
           const t = await ask({ type: "safeshelf:tech", listing }); // 1. the technology
           if (t?.ok && t.result) { state.claims = t.result.claims; state.answer = t.result.answer; state.demo ||= t.result.demo; }
-          if (state.claims?.verdict === "not_possible") { state.stage = "done"; return draw(); } // cannot exist: forget the price
+          board?.report("tech", state.claims);
+          if (state.claims?.verdict === "not_possible") { state.stage = "done"; board?.report("price", null); return draw(); } // cannot exist: forget the price
           state.stage = "price"; draw();
           const p = await ask({ type: "safeshelf:price", listing, claims: state.claims }); // 2. the price, for technology that can exist
           if (p?.ok && p.result) { state.price = p.result.price; state.answer = p.result.answer; state.demo ||= p.result.demo; }
           else state.priceError = p?.error || chrome.runtime.lastError?.message || "no answer";
-          if (!state.claims && !state.price) { state.stage = "done"; w.className = "ip"; w.replaceChildren(el("div", { className: "ip-q", textContent: "Is it possible?" }), el("div", { className: "ip-line", textContent: `Not available this time (${state.priceError}).` })); return place(); }
+          board?.report("price", state.price);
+          board?.set("answer", state.answer);
+          if (!state.claims && !state.price) { state.stage = "done"; w.className = "ip"; w.replaceChildren(priceIcon(), el("div", { className: "ip-q", textContent: "Price & claims" }), el("div", { className: "ip-line", textContent: `Not available this time (${state.priceError}).` })); return place(); }
           state.stage = "done"; draw();
-        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+        } catch (_) { board?.report("tech", null); board?.report("price", null); w.remove(); } // the extension was reloaded; the new script takes over
       })();
-      return w;
+      return stack;
     };
 
     // sellerAge: how long has this product been listed? From the page's "Date First Available". The LISTING's age, not the
@@ -1775,16 +2309,19 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     const sellerAgeWidget = () => {
       const w = el("div", { className: "sa", role: "group", ariaLabel: "How long this product has been listed" });
       const fill = (vm) => {
-        const more = el("details", { className: "sa-more" }, el("summary", { textContent: "Why this verdict" }), el("ul", {}, ...vm.reasons.map((t) => el("li", { textContent: t }))));
+        const more = el("details", { className: "sa-more" }, el("summary", { textContent: "About this listing" }), el("p", { textContent: vm.text }), el("ul", {}, ...vm.reasons.map((t) => el("li", { textContent: t }))));
         more.addEventListener("toggle", place);
         w.className = `sa ${vm.tone}`;
         w.replaceChildren(...(vm.demo ? [el("span", { className: "ip-demo", textContent: "Demo data: example answer from the local API" })] : []),
-          el("div", { className: "sa-top" }, el("span", { className: "sa-word", textContent: vm.word }), ...(vm.band ? [el("span", { className: "sa-band", textContent: vm.band })] : [])),
-          el("div", { className: "sa-line", textContent: vm.text }), el("div", { className: "sa-sub", textContent: [vm.listed, vm.note].filter(Boolean).join(" · ") }),
+          el("span", { className: "widget-symbol" }, icon("calendar")), el("span", { className: "widget-label", textContent: "Listing age" }), el("div", { className: "sa-top" }, el("span", { className: "sa-word", textContent: vm.word }), ...(vm.band ? [el("span", { className: "sa-band", textContent: vm.band })] : [])),
+          ...(vm.ageDays != null ? [el("div", { className: "age-meter", role: "img", ariaLabel: `${vm.band}; scale zero to five years`, style: `--age-position:${Math.min(100, vm.ageDays / 1825 * 100)}%` },
+            el("div", { className: "age-fill" }), el("span", { className: "age-marker" })),
+            el("div", { className: "age-axis" }, el("span", { textContent: "New" }), el("span", { textContent: "5+ years" }))] : []),
+          el("div", { className: "sa-sub", textContent: [vm.listed, vm.note].filter(Boolean).join(" · ") }),
           ...(vm.brand ? [el("div", { className: "sa-brand", textContent: vm.brand })] : []), more);
         place();
       };
-      const note = (t) => { w.className = "sa"; w.replaceChildren(el("div", { className: "sa-sub", textContent: t })); place(); };
+      const note = (t) => { board?.report("age", null); w.className = "sa"; w.replaceChildren(el("div", { className: "sa-sub", textContent: t })); place(); };
       (async () => {
         try {
           const { url, page_text } = getPage();
@@ -1797,8 +2334,9 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
             if (!res?.ok) return note(`Listing age: couldn't be worked out (${res?.error || chrome.runtime.lastError?.message || "no answer"}).`);
             if (!res.result) return note("Listing age: this page does not show when the product was first listed, and its reviews cannot date it.");
             fill(res.result);
+            board?.report("age", res.result);
           });
-        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+        } catch (_) { board?.report("age", null); w.remove(); } // the extension was reloaded; the new script takes over
       })();
       return w;
     };
@@ -1815,7 +2353,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         more.addEventListener("toggle", place);
         w.className = `os ${vm.tone}`;
         w.replaceChildren(...(vm.demo ? [el("span", { className: "ip-demo", textContent: "Demo data: example answer from the local API" })] : []),
-          el("div", {}, el("span", { className: `os-pill ${vm.official === true ? "yes" : vm.official === false ? "no" : "maybe"}`, textContent: vm.word })),
+          el("span", { className: "widget-symbol" }, icon("store")), el("span", { className: "widget-label", textContent: "Seller status" }), el("div", {}, el("span", { className: `os-pill ${vm.official === true ? "yes" : vm.official === false ? "no" : "maybe"}`, textContent: vm.word })),
           el("div", { className: "os-line", textContent: vm.text }), more);
         place();
       };
@@ -1825,11 +2363,11 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
           // Amazon's own "Visit the Portronics Store" link under the title: only a brand's owner can open a brand store
           const brand_store = tidy(document.querySelector("#bylineInfo")?.textContent).match(/Visit the (.{1,60}?) Store/i)?.[1];
           chrome.runtime.sendMessage({ type: "safeshelf:official-seller", listing: { url, title, seller, ...(brand_store ? { brand_store } : {}) } }, (res) => {
-            if (!res?.ok) return w.remove(); // no answer (the API could not be reached): nothing to say
-            if (!res.result) return w.remove();
+            if (!res?.ok || !res.result) { board?.report("seller", null); return w.remove(); } // no answer (the API could not be reached): nothing to say
             fill(res.result);
+            board?.report("seller", res.result);
           });
-        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+        } catch (_) { board?.report("seller", null); w.remove(); } // the extension was reloaded; the new script takes over
       })();
       return w;
     };
@@ -1839,49 +2377,67 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       result = r;
       const lvl = level(r);
       const word = VERDICT_WORD[lvl];
-      fab.className = `fab ${lvl}`;
+      scoreLook = null; // the new check's board sets it again
       label(fab, `SafeShelf: ${word}`, word);
+      paintFab(lvl);
       box.className = `box ${lvl}`;
       const speakBtn = el("button", { type: "button", className: "small", textContent: "Read aloud" });
       speakBtn.onclick = () => speak(r);
-      const againBtn = el("button", { type: "button", className: "small", textContent: "Check again" });
+      const againBtn = el("button", { type: "button", className: "primary big" }, icon("refresh"), "Check again");
       againBtn.onclick = () => run(true);
       // Investigate (the Shopper Agent, investigate.js): only on a product page, never for a card on a results page.
       const investigateBtn = mode === "float" && window.__safeshelfInvestigate
         ? el("button", { type: "button", className: "small", textContent: "Investigate the page", title: "Let SafeShelf look through the photos, label, reviews and seller (read-only)" })
         : null;
       if (investigateBtn) investigateBtn.onclick = async () => { setOpen(false); window.__safeshelfInvestigate(await withMoreReviews(getPage())); };
-      const askBtn = chatBtn ? el("button", { type: "button", className: "primary" }, icon("ask"), "Ask a question about it") : null;
+      const askBtn = chatBtn ? el("button", { type: "button", className: "primary" }, icon("ask"), "Ask SafeShelf") : null;
       if (askBtn) askBtn.onclick = () => setChatOpen(true);
       // Only on a product page, for a product SafeShelf has no exact match for, and never for example data.
       const deeper = mode === "float" && !r.product_id && r.source !== "mock" ? firstLook(r, fresh) : null;
       heroEl = plainHero(r, lvl);
       const plain = r.outcome?.plain;
+      // History is hidden for now: its rows are mostly the engine's own match log, not recalls. To bring it back, create a
+      // header iconBtn("history") with class "hist" plus a .hist-panel div, put both in this card, and pass them to panelTabs.
+      const historyBtn = null, historyPanel = null;
+      // The cards, with the score on top. Each card reports to the board, which scores them and orders them (worst first).
+      let grid = null;
+      board = null;
+      // No recall, hazard or warning colour: the score leads, above the safety line. Otherwise the safety line stays on top.
+      const scoreFirst = !["confirmed_recall", "substantiated_hazard_signal", "potential_concern"].includes(r.outcome?.outcome) && !["red", "amber"].includes(lvl);
+      if (mode === "float" && r.source !== "mock") {
+        board = makeBoard(r);
+        board.set("level", lvl);
+        const rv = reviewsWidget(), possible = possibleWidget(), age = sellerAgeWidget(), seller = officialSellerWidget();
+        board.register("reviews", rv); board.register("price", possible.firstElementChild); board.register("tech", possible.lastElementChild);
+        board.register("age", age); board.register("seller", seller);
+        grid = el("div", { className: "widget-grid" }, ...(scoreFirst ? [] : [board.card]), rv, possible, age, seller);
+      }
       show(
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
         cardHead(r.host, closeX()),
+        contextCard(getPage()),
+        ...(scoreFirst && board ? [board.card] : []),
         heroEl,
-        ...(mode === "float" && r.source !== "mock" ? [reviewsWidget(), possibleWidget(), sellerAgeWidget(), officialSellerWidget()] : []), // product pages only, never for example data
+        ...(grid ? [grid] : []), // product pages only, never for example data
         panelTabs(r, [
-          ...(plain ? [todoBox(plain)] : []),
+          ...(plain && !deeper ? [todoBox(plain)] : []), // with a first look running, its own answer below carries this
           // Before purchase the buy button is guarded (below); after purchase: steps, refund and complaint drafts.
           ...(deeper ? [deeper] : []),
-          ...(plain ? [placesBlock(plain)] : [section("Is it safe?", r.safe)]),
-          section("Is the seller genuine?", r.real),
+          ...(plain ? (deeper ? [] : [placesBlock(plain)]) : [section("Is it safe?", r.safe)]),
           // After the two answers, in its own labelled block, so "I already bought it" never reads as part of the pre-purchase verdict.
           ...(globalThis.SafeShelfAftercare && r.source !== "mock" && mode === "float"
-            ? [el("div", { className: "aftercare-block" }, el("p", { className: "dividerlabel" }, "Already bought it?"), SafeShelfAftercare.afterPanel(el, r, getPage()))]
+            ? [el("div", { className: "aftercare-block" }, SafeShelfAftercare.afterPanel(el, r, getPage()))]
             : []),
-          detailsBox(...(plain ? [section("Safety check, in detail", r.safe)] : []), coverageBlock(r.outcome),
-            el("details", { className: "read" }, el("summary", { textContent: "What SafeShelf read from this page" }), contextCard(getPage()))),
+          // The "Show details" box under "Already bought it?" is hidden for now (detailsBox, coverageBlock and the "in detail" section stay defined).
           el("p", { className: "foot", textContent: `${r.label} · v${chrome.runtime.getManifest().version}` }),
           ...(mode === "inline" ? [inlineChat(r)] : []),
-        ]),
-        el("div", { className: "actions" }, ...(askBtn ? [askBtn] : []), el("div", { className: "more" }, ...[investigateBtn, speakBtn, againBtn].filter(Boolean)),
-          ...(globalThis.SafeShelfAftercare && r.outcome?.plain ? [SafeShelfAftercare.voiceToggle(el)] : [])),
+        ], historyBtn, historyPanel),
+        // Investigate is hidden for now (investigateBtn stays defined above); Check again is the big button.
+        // Read aloud and "Speak every answer" are hidden for now (speakBtn and SafeShelfAftercare.voiceToggle stay defined).
+        el("div", { className: "actions" }, againBtn, ...(askBtn ? [askBtn] : [])),
       );
       place();
-      if (mode === "float" && r.source !== "mock" && globalThis.SafeShelfAftercare) { SafeShelfAftercare.guardBuy(r, lvl); SafeShelfAftercare.autoSpeak(r); }
+      if (mode === "float" && r.source !== "mock" && globalThis.SafeShelfAftercare) { SafeShelfAftercare.guardBuy(r, lvl); } // autoSpeak(r) is off while the voice toggle is hidden
     };
 
     // While the check runs: what it covers and how long it has taken so far.
@@ -1914,6 +2470,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       box.className = "box";
       show(cardHead("Check", closeX()), waiting());
       place();
+      if (mode === "float") startReviews(); // the review read starts now, not after the check
       try {
         const page = mode === "float" ? await withMoreReviews(getPage()) : getPage();
         chrome.runtime.sendMessage({ type: "safeshelf:check", page, fresh }, (res) => {
@@ -2015,6 +2572,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       label(shelfBtn, "Save to My Shelf", "Save");
       shelfBtn.title = "";
       markIfSaved();
+      scoreLook = null;
       fab.className = "fab";
       label(fab, "Check with SafeShelf", "Check");
       setOpen(false);
@@ -2036,6 +2594,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       const chat = chatUI({ suggestions: ["Is this safe in a child's room?", "Is it genuine?", "Is there a safer option?", "Draft a refund request"],
         hello: "Answers come only from SafeShelf's evidence, with sources. Try one of these:", placeholder: "Ask about this product…",
         what: "Ask SafeShelf a question (your question, the check result and this page's product details are sent)", getCheck, context: chatContext,
+        local: (q) => board?.answer(q),
         onAsk: () => { showHistory(false); note.textContent = ""; } });
 
       // Moves the current conversation into Past chats, then starts a new one.
