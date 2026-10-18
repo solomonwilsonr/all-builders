@@ -11,7 +11,7 @@
 | `shopper_step` | Shopper Agent | Picks the next thing to open on the shopper's page; the extension (`extension/investigate.js`) does it |
 | `research` | Research Agent ([research/](../research/browser.py), own Cloud Run service) | Headless Chromium on CPSC, EU Safety Gate, ACCC; stops at blocks and captchas |
 
-Owned by Person B (Face). Built with Google's Agent Development Kit (ADK). See [MODULES.md](../docs/MODULES.md) M9.
+Owned by Person B (Face). Built with Google's Agent Development Kit (ADK).
 
 ## Shelf Chat
 Answers a shopper's question about one product, only from SafeShelf evidence, with evidence IDs, in English or Hindi. Says "I don't know" when the evidence doesn't answer.

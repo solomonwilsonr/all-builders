@@ -28,7 +28,7 @@ SafeShelf checks any product listing and answers two questions: **Is it safe?** 
 | [`contracts/`](contracts/) | OpenAPI contract and JSON schemas shared by every component |
 | [`data/`](data/) | Data loaders, database schema and migrations, source registry |
 | [`bench/`](bench/) | Backtest, SafeShelfBench and the other evaluations, with results |
-| [`docs/`](docs/) | Design document ([`SAFESHELF.md`](docs/SAFESHELF.md), [PDF](docs/SafeShelf_Global.pdf)), backtest method, modules, tools, privacy and source access notes |
+| [`docs/`](docs/) | Design document ([`SAFESHELF.md`](docs/SAFESHELF.md), [PDF](docs/SafeShelf_Global.pdf)), backtest method, tools, privacy and source access notes |
 
 ## Run it
 ```

@@ -20,3 +20,8 @@ browser/__pycache__/
 
 # Android Studio local settings
 android/.idea/
+
+# internal working notes, kept locally only
+checklist.md
+docs/plan.md
+docs/MODULES.md

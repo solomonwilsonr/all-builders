@@ -9,7 +9,7 @@ notices (raw/cpsc_backtest_candidates.jsonl). Gemini compares each shop result w
 shop pages (not news, video or the regulator) and caches every answer in raw/realworld/judged.jsonl.
 Output: raw/realworld/candidates.jsonl, results Gemini judged the same or possibly the same product; after confirm,
 raw/realworld/review_sheet.json: each lead page as captured today, with what a person must check. These are leads
-for a person to check, never findings by themselves (MODULES.md M16 rules).
+for a person to check, never findings by themselves.
 """
 import glob
 import json
