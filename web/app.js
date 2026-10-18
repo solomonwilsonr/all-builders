@@ -308,6 +308,29 @@ async function setUpSamples() {
     b.onclick = () => showSample(p, b);
     list.append(el("li", { role: "presentation" }, b));
   });
+  // the same seven as a lineup above the browser: name, shop, the answer it must get; a tap opens its tab
+  const lineup = document.getElementById("lineup");
+  if (lineup) {
+    const tabs = [...list.querySelectorAll("button")];
+    presets.forEach((p, i) => {
+      const tone = p.control ? "green" : p.expect.overall[0];
+      const card = el("button", { type: "button", className: `lu lu-${tone}`, title: p.what },
+        el("span", { className: "lu-n", "aria-hidden": "true", textContent: p.control ? "✓" : String(i + 1) }),
+        el("b", { textContent: p.name }),
+        el("small", { textContent: p.market }),
+        el("span", { className: "lu-exp", textContent: p.expect.label.replace(/^\P{L}+/u, "") }));
+      card.onclick = () => {
+        const panel = document.getElementById("shop-page");
+        if (panel.dataset.mode === "choose") document.getElementById("test-start")?.click();
+        tabs[i].click();
+        document.querySelector(".mac")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      lineup.append(el("li", {}, card));
+    });
+    // keep the lineup in step with whichever tab is open
+    new MutationObserver(() => tabs.forEach((t, i) => lineup.children[i].firstChild.setAttribute("aria-pressed", t.getAttribute("aria-selected"))))
+      .observe(list, { subtree: true, attributes: true, attributeFilter: ["aria-selected"] });
+  }
   list.querySelector("button")?.click();
 }
 
