@@ -445,7 +445,7 @@
     flag: "M5 21V4 M5 4h11l-2 4 2 4H5", swap: "M7 7h13 M16 3l4 4-4 4 M17 17H4 M8 13l-4 4 4 4", share: "M4 12v7h16v-7 M12 3v12 M7 8l5-5 5 5",
     search: "M11 4a7 7 0 100 14 7 7 0 000-14z M21 21l-5-5", download: "M12 4v12 M7 11l5 5 5-5 M4 20h16" };
   // Eddy, the mascot, as the bot's avatar
-  const logo = () => { const im = document.createElement("img"); im.src = "assets/eddy-face.png"; im.alt = ""; return im; };
+  const logo = () => { const im = document.createElement("img"); im.src = "assets/eddy-face.webp"; im.alt = ""; return im; };
   const icon = (name) => { const s = document.createElementNS(NS, "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true"); s.setAttribute("class", "i"); const p = document.createElementNS(NS, "path"); p.setAttribute("d", PATHS[name]); s.append(p); return s; };
   const typing = () => node("span", { className: "typing", ariaHidden: "true" }, node("i"), node("i"), node("i"));
   // replaceChildren with the empty parts left out (it would print "null")

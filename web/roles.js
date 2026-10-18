@@ -8,7 +8,7 @@ import { authFetch, quota } from "./auth.js?v=20261018u";
 
 const STORY = "recall_jp"; // the sample every view tells
 const KEY = "safeshelf-view";
-// Eddy, the mascot, in each person's pose (site/assets/eddy-<view>.png)
+// Eddy, the mascot, in each person's pose (site/assets/eddy-<view>.webp)
 const VIEWS = [
   { id: "shopper", label: "Shopper", who: "Rahul, about to buy a power bank", ask: "Is it safe to buy?" },
   { id: "marketplace", label: "Marketplace or seller", who: "Anjali, trust and safety at a marketplace", ask: "Which listings need action first?" },
@@ -544,7 +544,7 @@ function switcher(pick, cards) {
     el("p", { className: "fv-tag", textContent: "Switch view" }),
     ...VIEWS.map((v) => {
       const item = el("button", { type: "button", className: "fs-item", role: "menuitemradio", "data-view": v.id, "aria-checked": "false" },
-        el("span", { className: `fs-av fs-tint ${v.id}` }, el("img", { src: `site/assets/eddy-${v.id}.png`, alt: "", decoding: "async" })),
+        el("span", { className: `fs-av fs-tint ${v.id}` }, el("img", { src: `site/assets/eddy-${v.id}.webp`, alt: "", decoding: "async" })),
         el("span", { className: "fs-t" }, el("b", { textContent: v.label }), el("small", { textContent: v.ask })));
       item.onclick = () => { open(false); pick(v.id); };
       return item;
@@ -579,7 +579,7 @@ function switcher(pick, cards) {
   return {
     sync(id) {
       const v = VIEWS.find((x) => x.id === id);
-      face.src = `site/assets/eddy-${id}.png`;
+      face.src = `site/assets/eddy-${id}.webp`;
       face.className = `fs-face fs-tint ${id}`;
       name.textContent = v.label;
       for (const i of menu.querySelectorAll(".fs-item")) i.setAttribute("aria-checked", String(i.dataset.view === id));
@@ -651,7 +651,7 @@ export async function setUpRoles() {
 
   for (const view of VIEWS) {
     const b = el("button", { type: "button", className: "fv-pick", "data-view": view.id, "aria-pressed": "false" },
-      el("span", { className: `fv-art ${view.id}` }, el("img", { src: `site/assets/eddy-${view.id}.png`, alt: "", decoding: "async" })),
+      el("span", { className: `fv-art ${view.id}` }, el("img", { src: `site/assets/eddy-${view.id}.webp`, alt: "", decoding: "async" })),
       el("span", { className: "fv-check", "aria-hidden": "true", textContent: "✓" }),
       el("span", { className: "fv-t" }, el("b", { textContent: view.label }), el("small", { textContent: view.ask })));
     b.onclick = () => show(view.id, { scroll: matchMedia("(max-width: 640px)").matches });
