@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" class="auth-locked" data-gate-title="Sign in to the impact demo" data-gate-text="One sign-in for both demos. A guest gets 1 live check, an account 5 a day.">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SafeShelf — Social impact demo</title>
+<meta name="description" content="Recall notices are English web pages. SafeShelf brings them to shoppers on WhatsApp, as a text and a voice note in Hindi and 25 more languages.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z' fill='%230271E4'/><path d='m10.5 16 4 4 7-8' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20261018preview">
+<link rel="stylesheet" href="whatsapp.css?v=20261018c">
+<link rel="stylesheet" href="impact.css?v=20261018a">
+<script type="module" src="auth.js?v=20261018u"></script>
+<script type="module" src="impact.js?v=20261018a"></script>
+</head>
+<body class="impact">
+<a class="skip" href="#try">Skip to the live chat</a>
+<header class="top">
+  <nav class="nav brand-row" aria-label="Primary navigation">
+    <a class="logo" href="site/index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+    <div class="links" id="links"><a href="index.html">Full demo</a><a href="impact.html" aria-current="page">Social impact</a><a href="site/how.html">How it works</a><a href="site/results.html">Results</a><a href="site/team.html">Team</a></div>
+    <div class="nav-end"><a class="btn btn-ink btn-sm" href="site/get.html">Get SafeShelf</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
+  </nav>
+</header>
+
+<section class="ihero" aria-labelledby="hero-h">
+  <span class="jbadge"><i>S</i>Social impact demo · live on Cloud Run and Gemini</span>
+  <h1 id="hero-h">Recall notices are English web pages. <span>The people they miss shop on a phone.</span></h1>
+  <p class="lede">Picture a parent forwarding a power bank link before buying it. SafeShelf replies on WhatsApp in Hindi, as a text and a <strong>voice note</strong>, with the official record behind the answer.</p>
+  <div class="hero-btns"><a class="jbtn" href="#try">Try the WhatsApp chat</a><a class="jbtn line" href="#gap">Why it matters</a></div>
+  <ul class="istats" aria-label="What the demo runs on">
+    <li><b>26</b>answer languages<span>Hindi, Tamil, Bengali, Japanese, Thai…</span></li>
+    <li><b>13 s</b>to a spoken Hindi answer<span>measured through the live API</span></li>
+    <li><b>8,689</b>official recalls<span>US and 7 Asia-Pacific regulators</span></li>
+    <li><b>36</b>Indian safety notices<span>gathered from press releases; India has no recall database</span></li>
+  </ul>
+</section>
+
+<nav class="jump" aria-label="On this page" style="--n:5">
+  <a href="#try">Try it</a>
+  <a href="#gap">The gap</a>
+  <a href="#who">Who it helps</a>
+  <a href="#care">Done safely</a>
+  <a href="#next">What's next</a>
+</nav>
+
+<main id="main">
+
+  <section class="block" id="try" aria-labelledby="h-try">
+    <header class="block-head"><h2 id="h-try">Ask it like a family member would</h2><p>Forward a shop link or a photo of the label. Tap <b>हिन्दी में</b> for Hindi, or write the name of your language. This chat runs on the live API; the WhatsApp number itself is coming soon.</p></header>
+    <div id="wa"><p class="muted">Loading the chat…</p></div>
+  </section>
+
+  <section class="block" id="gap" aria-labelledby="h-gap">
+    <header class="block-head"><h2 id="h-gap">The gap</h2><p>Unsafe products are found and recalled. The warning just never reaches the person about to buy one.</p></header>
+    <div class="gap">
+      <article><b>87%</b><p>of banned or recalled products inspected were still for sale online.</p><a href="https://www.oecd.org/en/topics/sub-issues/product-safety.html" target="_blank" rel="noopener">OECD product safety sweep</a></article>
+      <article><b>3,500+</b><p>products without an ISI mark, or with a fake one, seized in a single raid on e-commerce warehouses in Delhi.</p><a href="https://www.pib.gov.in/PressReleasePage.aspx?PRID=2115618" target="_blank" rel="noopener">BIS via PIB, 27 Mar 2025</a></article>
+      <article><b>0</b><p>recall databases in India. Orders and raids are scattered across press releases, in English. We gathered 36 of them, 2021–2026.</p><a href="site/results.html">Our data</a></article>
+    </div>
+  </section>
+
+  <section class="block" id="who" aria-labelledby="h-who">
+    <header class="block-head"><h2 id="h-who">Who it helps</h2><p>The same check, reached the way each person already uses their phone.</p></header>
+    <div class="who">
+      <article><span class="pi" style="background:#1d9b52"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/></svg></span><h3>Shoppers who don't read English</h3><p>The answer comes in their language as text and a voice note: Hindi, Tamil, Bengali and 23 more.</p><a href="#try">Try it above</a></article>
+      <article><span class="pi" style="background:#f0a020"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><h3>Low-vision and older shoppers</h3><p>Point the camera at a label and ask out loud. Large text, and the answer is read aloud.</p><a href="index.html#ask-out-loud">Ask out loud</a></article>
+      <article><span class="pi" style="background:#0271e4"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></span><h3>Parents</h3><p>Chargers, heaters and toys are where a missed recall hurts. Ask the chat whether a product suits a home with young children.</p><a href="site/chat.html">Chat with Eddy</a></article>
+      <article><span class="pi" style="background:#7b5cd6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></span><h3>Consumer groups and regulators</h3><p>Each answer lists the official record and every source checked, country by country. No seller is called unsafe without a person's review.</p><a href="index.html#accuracy">See the accuracy test</a></article>
+    </div>
+  </section>
+
+  <section class="block" id="care" aria-labelledby="h-care">
+    <header class="block-head"><h2 id="h-care">Done safely</h2><p>A wrong "recalled" can hurt an honest seller, and a wrong "fine" can hurt a family. These rules are in the code, not the prompt.</p></header>
+    <ul class="care">
+      <li><b>Code picks the answer.</b> Plain rules turn the evidence into a colour; Gemini only explains it, in your language.</li>
+      <li><b>Exact model only.</b> A look-alike never inherits a recall. A possible rebrand goes to a person.</li>
+      <li><b>"Can't tell yet" is an answer.</b> When the evidence is thin, it says so instead of guessing.</li>
+      <li><b>No seller named as unsafe</b> without a person checking the evidence. No reporter identities stored.</li>
+      <li><b>Translations are marked.</b> Machine-translated replies say so, and fall back to English if translation fails.</li>
+    </ul>
+  </section>
+
+  <section class="block" id="next" aria-labelledby="h-next">
+    <header class="block-head"><h2 id="h-next">What's next</h2><p>Planned, not built yet. We will publish only numbers we have measured.</p></header>
+    <div class="next">
+      <article><span class="st soon">Planned</span><h3>"Still on sale" report</h3><p>How many products India ordered recalled are still listed today, each one checked by a person.</p></article>
+      <article><span class="st soon">Planned</span><h3>Check before you gift</h3><p>A Diwali campaign: send the link before you buy cheap lights, chargers or toys.</p></article>
+      <article><span class="st soon">Planned</span><h3>Free for good</h3><p>Free for shoppers, NGOs and researchers; marketplaces pay for Catalog scan.</p></article>
+      <article><span class="st soon">Planned</span><h3>Groups we plan to approach</h3><p>Consumer VOICE and CUTS (India), CHOICE (Australia). None is a partner yet.</p></article>
+    </div>
+    <div class="cta">
+      <h2>Send a link before you buy.</h2>
+      <p>The WhatsApp number is coming soon. Until then, the same check runs in the chat above and on the full demo.</p>
+      <div class="hero-btns"><a class="jbtn" href="#try">Try the chat</a><a class="jbtn line" href="index.html">See the full demo</a></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p class="foot-note">Verdicts are evidence for shoppers, not legal findings. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; recalls, reviews and registries are real data.</p>
+  <div class="foot-bar">
+    <span>Records from CPSC · ACCC · KATS · CAA · CCPA · BIS · BSMI · CPSO · ASEAN · OECD</span>
+    <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
+  </div>
+</footer>
+</body>
+</html>
