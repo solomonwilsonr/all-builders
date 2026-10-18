@@ -373,7 +373,7 @@ function setUpOmnibox() {
     if (e.origin !== location.origin || e.data?.type !== "safeshelf:page-read") return;
     const d = e.data;
     const how = d.via === "browser" ? "opened by a real browser" : "read directly";
-    const text = d.read === "full" ? `The real page, ${how}. Press Check on the page's right edge.`
+    const text = d.read === "full" ? `The real page, ${how}. Press the shield button on the page's right edge.`
       : d.read === "partial" ? `The shop showed only part of this page (${how}). Check still works on what it showed.`
       : d.read === "none" ? "The shop didn't show this page to SafeShelf's server." : `Couldn't open the page: ${d.error}`;
     note(el("b", { textContent: d.read === "full" ? "Live page" : d.read === "partial" ? "Part of the page" : "Not opened" }), el("span", { textContent: text }),

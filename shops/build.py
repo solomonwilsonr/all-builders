@@ -181,7 +181,7 @@ def guide(p, i, presets, ctx):
   <h2 id="g-h">How to test this page</h2>
   <ol class="g-steps">
     <li><b>Open it in Chrome with SafeShelf.</b> The judges' page's <a href="{JUDGES}/#shop-page" target="_blank" rel="noopener">real browser</a> already has it. In your own Chrome, <a href="{JUDGES}/site/get.html" target="_blank" rel="noopener">add the extension</a> and sign in.</li>
-    <li><b>Press <span class="g-check">Check</span></b> on the right edge of this page. <span class="g-point" aria-hidden="true">→</span></li>
+    <li><b>Press the shield <span class="g-check">Check with SafeShelf</span></b> on the right edge of this page. <span class="g-point" aria-hidden="true">→</span></li>
     <li><b>Read the answer</b> and open its evidence. It's a live check on SafeShelf's API, so it takes a few seconds and uses one check.</li>
   </ol>
   <div class="g-expect tone-{tone}"><span>A correct check says</span><b>{e(TONES[tone])}: {e(label)}</b></div>
@@ -302,7 +302,7 @@ def index_page(presets):
   <ol class="ways">
     <li><span class="w-n">1</span><div><h3>In the judges' page real browser</h3><p>On the <a href="{JUDGES}/#shop-page" target="_blank" rel="noopener">judges' page</a>, press <b>Start a real browser</b>. A real Chrome with SafeShelf opens on this page. Pick a product below, or tap <b>Real browser</b> on any product card there.</p></div></li>
     <li><span class="w-n">2</span><div><h3>In your own Chrome</h3><p><a href="{JUDGES}/site/get.html" target="_blank" rel="noopener">Add the SafeShelf extension</a> and sign in, then open any product below.</p></div></li>
-    <li><span class="w-n">3</span><div><h3>Press Check, read the answer</h3><p>On a product page, press <b>Check</b> on the right edge. Each page has a short guide saying what a correct answer is, so you can tell at once if SafeShelf got it right.</p></div></li>
+    <li><span class="w-n">3</span><div><h3>Press the shield, read the answer</h3><p>On a product page, press the shield button, <b>Check with SafeShelf</b>, on the right edge. Each page has a short guide saying what a correct answer is, so you can tell at once if SafeShelf got it right.</p></div></li>
   </ol>
   <p class="howto-note">These checks run live on SafeShelf's API and use one check each. For instant answers with no extension, use the <a href="{JUDGES}/#shop-page" target="_blank" rel="noopener">test pages</a> on the judges' page: the same seven listings.</p>
 </section>

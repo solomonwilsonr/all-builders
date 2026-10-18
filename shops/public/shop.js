@@ -14,7 +14,7 @@ document.querySelectorAll("[data-show]").forEach((b) => b.addEventListener("clic
 }));
 
 document.querySelectorAll("button[data-demo]").forEach((b) => b.addEventListener("click", () =>
-  toast("This is a SafeShelf test shop: nothing is for sale. Press Check on the right edge instead.")));
+  toast("This is a SafeShelf test shop: nothing is for sale. Press the shield button on the right edge instead.")));
 // the classic fake-shop pressure timer: it restarts on every visit
 const clock = document.querySelector("[data-countdown]");
 if (clock) {
