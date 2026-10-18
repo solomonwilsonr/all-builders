@@ -83,3 +83,13 @@ def test_family_notice_without_models_is_for_review_not_recalled(monkeypatch):
     assert page_safety.kind_words("OD-B7 Wall Charger Power Bank with 2 ports") == "wall charger power bank"
     # An LG fridge is not covered by an LG TV's "Free-Standing" recall (16 Oct)
     assert page_safety.kind_words("242 L 3 Star Frost-Free Smart Inverter Double Door Refrigerator") == "refrigerator"
+
+
+def test_the_same_review_read_twice_counts_once():
+    """The page showed one review twice: once with spaces and a "Read more" tail (17 Oct, Redmi 15C)."""
+    out = page_safety.page_reviews({"reviews": [
+        {"text": "Worst Purchase of 2026Rating: 1/5Purchased: 18 Jan 2026The Bad1. Lags like it is from 2016", "rating": 1},
+        {"text": "Worst Purchase of 2026 Rating: 1/5 Purchased: 18 Jan 2026 The Bad 1. Lags like it is from 2016 Read more", "rating": 1},
+        {"text": "Good phone", "rating": 5}, {"text": "good PHONE.", "rating": 5}, {"text": "Bahut accha phone", "rating": 4}]})
+    assert [r["text"] for r in out] == ["Worst Purchase of 2026Rating: 1/5Purchased: 18 Jan 2026The Bad1. Lags like it is from 2016",
+                                        "Good phone", "Bahut accha phone"]

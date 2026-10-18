@@ -1,0 +1,106 @@
+{
+  "_about": "Brands shoppers in each market actually buy, per product category: names only, never prices (prices go stale, so they are found live). The price benchmark (engine/price_benchmark.py) counts a reference price only when its brand is on this list or is the listing's own brand. Curated by hand: correct it, and add a market or a category without touching code.",
+  "_updated": "2026-10-17",
+  "IN": {
+    "name": "India",
+    "currency": "INR",
+    "retailers": [
+      "amazon.in",
+      "flipkart.com",
+      "croma.com",
+      "reliancedigital.in",
+      "vijaysales.com"
+    ],
+    "categories": {
+      "charger": {
+        "label": "chargers and adapters",
+        "keywords": [
+          "charger",
+          "charging adapter",
+          "power adapter",
+          "wall adapter",
+          "gan adapter"
+        ],
+        "spec": "power_watts",
+        "spec_tolerance": 0.25,
+        "brands": [
+          "Mi",
+          "Xiaomi",
+          "Realme",
+          "OnePlus",
+          "Samsung",
+          "Apple",
+          "Anker",
+          "Ambrane",
+          "Portronics",
+          "boAt",
+          "pTron",
+          "Belkin",
+          "Syska",
+          "URBN",
+          "Stuffcool",
+          "Baseus",
+          "UGREEN",
+          "Oraimo"
+        ],
+        "singular": "charger"
+      },
+      "power_bank": {
+        "label": "power banks",
+        "keywords": [
+          "power bank",
+          "powerbank"
+        ],
+        "spec": "capacity_mah",
+        "spec_tolerance": 0.3,
+        "brands": [
+          "Mi",
+          "Xiaomi",
+          "Realme",
+          "Anker",
+          "Ambrane",
+          "Portronics",
+          "boAt",
+          "Syska",
+          "URBN",
+          "Samsung",
+          "pTron",
+          "Stuffcool",
+          "Baseus",
+          "UGREEN",
+          "Oraimo"
+        ],
+        "singular": "power bank"
+      },
+      "cable": {
+        "label": "charging cables",
+        "keywords": [
+          "usb cable",
+          "charging cable",
+          "type-c cable",
+          "lightning cable",
+          "data cable"
+        ],
+        "spec": "power_watts",
+        "spec_tolerance": 0.5,
+        "brands": [
+          "Anker",
+          "Belkin",
+          "Ambrane",
+          "Portronics",
+          "boAt",
+          "Mi",
+          "pTron",
+          "Apple",
+          "Samsung",
+          "Syska",
+          "Stuffcool",
+          "Baseus",
+          "UGREEN",
+          "Oraimo"
+        ],
+        "singular": "cable"
+      }
+    }
+  }
+}

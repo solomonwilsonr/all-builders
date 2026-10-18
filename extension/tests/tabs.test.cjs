@@ -1,8 +1,8 @@
-// The card's tabs: which API calls each match type makes, and the banners that keep a look-alike honest.
+// The card shows only the Overview for now: no tab bar, and none of the other tabs' API calls (marks, safer options, details, report).
 const { read, el } = require("./helpers.cjs");
 const assert = require("assert");
 const src = read("content.js");
-const code = src.slice(src.indexOf("    const panelTabs = (r, overviewNodes) => {"), src.indexOf("    const render = (r, fresh = false) => {"));
+const code = src.slice(src.indexOf("    const panelTabs = (r, overviewNodes, historyBtn, historyPanel) => {"), src.indexOf("    const render = (r, fresh = false) => {"));
 
 function run(r) {
   const log = [];
@@ -11,21 +11,13 @@ function run(r) {
     costlyButton: (label) => el("button", { textContent: label }), chrome: { runtime: { sendMessage: (m, cb) => cb({ ok: true, result: [{ op: "report", live: true }] }) } } };
   const panelTabs = new Function(...Object.keys(ctx), `${code}; return panelTabs;`)(...Object.values(ctx));
   const root = panelTabs(r, [el("p", { textContent: "overview content" })]);
-  const area = root.kids[1], seen = {};
-  for (const b of root.kids[0].kids) { b.click(); seen[b.textContent] = area.text(); }
-  return { log, seen };
+  return { log, root };
 }
 
-let t = run({ product_id: "SS-P-EXACT" });
-assert.deepStrictEqual(t.log, ["certifications(SS-P-EXACT)", "relationships(SS-P-EXACT)", "history(SS-P-EXACT)", "alternatives(SS-P-EXACT)", "product(SS-P-EXACT)"]);
-assert.match(t.seen["Report"], /Send report/);
-
-t = run({ product_id: null, similar_product_id: "SS-P-IN-9F" }); // a look-alike match
-assert.strictEqual(t.log.length, 5, "a look-alike still gets its lookups");
-for (const tab of ["Marks", "Copies", "History", "Safer options", "Details"]) assert.match(t.seen[tab], /similar product \(SS-P-IN-9F\), not this exact listing/, `${tab} must carry the similar-product banner`);
-assert.match(t.seen["Report"], /needs an exact product match/, "a report about a different product must not be possible");
-
-t = run({ product_id: null, similar_product_id: null });
-assert.deepStrictEqual(t.log, [], "no match: no API calls");
-assert.match(t.seen["Marks"], /no product in its catalog/);
+for (const r of [{ product_id: "SS-P-EXACT" }, { product_id: null, similar_product_id: "SS-P-IN-9F" }, { product_id: null, similar_product_id: null }]) {
+  const { log, root } = run(r);
+  assert.strictEqual(root.kids.length, 1, "no tab bar: just the Overview panel");
+  assert.match(root.kids[0].text(), /overview content/);
+  assert.deepStrictEqual(log, [], "no tab makes an API call");
+}
 console.log("ok  tabs");

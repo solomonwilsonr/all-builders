@@ -1,0 +1,24 @@
+{
+  "verdict": "new",
+  "headline": "New listing",
+  "tone": "warn",
+  "listed_on": "2026-10-05",
+  "age_days": 12,
+  "text": "This product was first listed 12 days ago (5 October 2026). A brand-new listing has little track record.",
+  "basis": "date_first_available",
+  "reasons": [
+    "Date First Available: 5 October 2026 (12 days ago)",
+    "This is the listing's age, not the seller's: marketplaces do not publish when a seller joined"
+  ],
+  "policy_version": "listing-age-v1",
+  "label": "The age of this product listing (its \"Date First Available\"), not the seller's: marketplaces do not publish when a seller joined.",
+  "brand": {
+    "name": "Portronics",
+    "years_on_amazon": "10+",
+    "positive_ratings": {
+      "percent": 84,
+      "customers": "10K+"
+    },
+    "recent_orders": "100K+"
+  }
+}

@@ -1,27 +1,944 @@
 {
- "_note": "Who may sell each brand (engine/trust.py). Keys are normalised brand names; aliases are other names the brand sells under. Demo brands (kelvo, voltnova, viewmax) are fictional. Real brands come only from a list the brand itself published (source, source_url, as_of). A seller the brand named for any category counts for the whole brand. A seller named here matches the marketplace's full name by its start (Clicktech Retail matches Clicktech Retail Private Ltd).",
+ "_note": "Who may sell each brand (engine/trust.py). Keys are normalised brand names; aliases are other names the brand sells under, written the way engine.normalize.norm_brand writes them (lower case, no spaces or punctuation: 'cmfbynothing'). Demo brands (kelvo, voltnova, viewmax) are fictional. Real brands come ONLY from a list or statement the brand itself published, with the page (source_url) and the date it was read (retrieved) or published (as_of); nothing is added from memory, news posts or forums. A seller the brand named counts for the whole brand unless the entry has per-marketplace lists. Fields: domains (the brand's own sites: always authorised); sellers (flat list, any marketplace); marketplaces (per shop, keyed by its registrable domain: the sellers the brand named on that shop; when present this list is used for that shop); official_channels (where the brand says it sells online, by domain, when it names channels but not sellers); offline_partners (named stores, not online sellers); list_pending_url (a list the brand published that could not be read yet); notes (what the brand's own page says); list_kind (sellers | channels | own_store: the brand's own websites only, no marketplace list). A seller named here matches the marketplace's full name by its start (Clicktech Retail matches Clicktech Retail Private Ltd). seller_aliases ({listed name: [other names the same company trades under]}: SafeShelf's own additions, always labelled as such in answers); 'Display name / company' pairs on a brand's page are split into two names.",
  "brands": {
-  "kelvo": {"domains": ["demo.safeshelf.app", "kelvo.example"], "sellers": ["Kelvo Official Store", "Appario Retail"]},
-  "voltnova": {"domains": ["voltnova.example"], "sellers": ["VoltNova Store"]},
-  "viewmax": {"domains": ["viewmax.example"], "sellers": ["ViewMax India"]},
+  "kelvo": {
+   "domains": [
+    "demo.safeshelf.app",
+    "kelvo.example"
+   ],
+   "sellers": [
+    "Kelvo Official Store",
+    "Appario Retail"
+   ]
+  },
+  "voltnova": {
+   "domains": [
+    "voltnova.example"
+   ],
+   "sellers": [
+    "VoltNova Store"
+   ]
+  },
+  "viewmax": {
+   "domains": [
+    "viewmax.example"
+   ],
+   "sellers": [
+    "ViewMax India"
+   ]
+  },
   "samsung": {
-   "domains": ["samsung.com"],
-   "sellers": ["Clicktech Retail", "STPL Exclusive", "Darshita Etel",
-               "TrueCom Retail", "Mythanglory Retail", "BTPLD", "Flashstar Commerce",
-               "Buzz India", "SV Peripherals", "Unique Click", "India Flash Mart", "Retail Net"],
+   "domains": [
+    "samsung.com"
+   ],
+   "sellers": [
+    "Clicktech Retail",
+    "STPL Exclusive",
+    "Darshita Etel",
+    "TrueCom Retail",
+    "Mythanglory Retail",
+    "BTPLD",
+    "Flashstar Commerce",
+    "Buzz India",
+    "SV Peripherals",
+    "Unique Click",
+    "India Flash Mart",
+    "Retail Net"
+   ],
    "source": "Samsung India's list of official online marketplace sellers (Amazon: Clicktech Retail, STPL Exclusive, Darshita Etel; Flipkart: by category)",
    "source_url": "https://www.sammobile.com/news/here-are-samsung-india-official-sellers-amazon-flipkart/",
-   "as_of": "2025-09-08"
+   "as_of": "2025-09-08",
+   "seller_aliases": {
+    "Darshita Etel": [
+     "Dawntech Etel"
+    ]
+   },
+   "notes": "Alias is SafeShelf's own addition, not on Samsung's list: Samsung's Amazon.in list (Sept 2025) names 'Darshita Etel'; the Amazon seller 'Dawntech Electronics!' is recorded by sellerratings.com as previously named Darshita Electronics, and Amazon.in now shows it as 'Dawntech Etel!'. Same company renamed. Confirmed against the live Amazon.in page on 2026-10-18."
   },
   "xiaomi": {
-   "aliases": ["redmi", "mi"],
-   "domains": ["mi.com"],
-   "sellers": ["Darshita Mobiles", "Green Mobiles", "Clicktech Retail", "Dawntech Electronics", "Cocoblu Retail",
-               "Kay Kay Overseas", "RetailEZ",
-               "Mythanglory", "Akshnav", "Treasure EVERretailer", "RetailNet", "OmniTechRetail", "MTAILMODEECOM"],
+   "aliases": [
+    "redmi",
+    "mi"
+   ],
+   "domains": [
+    "mi.com"
+   ],
+   "sellers": [
+    "Darshita Mobiles",
+    "Green Mobiles",
+    "Clicktech Retail",
+    "Dawntech Electronics",
+    "Cocoblu Retail",
+    "Kay Kay Overseas",
+    "RetailEZ",
+    "Mythanglory",
+    "Akshnav",
+    "Treasure EVERretailer",
+    "RetailNet",
+    "OmniTechRetail",
+    "MTAILMODEECOM"
+   ],
    "source": "Xiaomi India's list of authorised Amazon and Flipkart sellers (Amazon smart TVs: Dawntech Electronics; phones: Darshita Mobiles, Green Mobiles)",
    "source_url": "https://www.gadgets360.com/mobiles/news/xiaomi-authorised-retailers-amazon-great-indian-festival-flipkart-big-billion-days-sale-9243063",
-   "as_of": "2025-09-09"
+   "as_of": "2025-09-09",
+   "seller_aliases": {
+    "Dawntech Electronics": [
+     "Dawntech Etel"
+    ]
+   },
+   "notes": "Trade-name aliases (seller_aliases) are SafeShelf's own additions, not on the brand's list: Amazon.in shows 'Dawntech Etel!' and 'Dawntech Electronics!' as sellers of Redmi phones, and the project owner confirmed on 2026-10-18 that 'Dawntech Etel' is the listed company Dawntech Electronics trading under another Amazon name. Xiaomi's list names only 'Dawntech Electronics'."
+  },
+  "boat": {
+   "aliases": [
+    "boatlifestyle",
+    "imaginemarketing"
+   ],
+   "domains": [
+    "boat-lifestyle.com"
+   ],
+   "list_kind": "sellers",
+   "official_channels": [
+    "boat-lifestyle.com",
+    "amazon.in",
+    "flipkart.com",
+    "cred.club",
+    "paytmmall.com",
+    "nykaa.com",
+    "myntra.com",
+    "udaan.com",
+    "tatacliq.com",
+    "snapdeal.com",
+    "zeptonow.com",
+    "afd.csdindia.gov.in",
+    "bigbasket.com",
+    "blinkit.com",
+    "croma.com",
+    "jiomart.com",
+    "relianceretail.com",
+    "jio.com",
+    "myg.in",
+    "reliancedigital.in",
+    "snapmint.com",
+    "swiggy.com",
+    "vijaysales.com"
+   ],
+   "marketplaces": {
+    "amazon.in": {
+     "sellers": [
+      "Appario Retail",
+      "Techretailer",
+      "Techvast Pvt. Ltd.",
+      "Click Buy",
+      "Rising India",
+      "Best Buy",
+      "Bayari Ventures",
+      "Evon Electronics",
+      "Cannycom",
+      "Vouch Ventures",
+      "Wave Tone"
+     ]
+    },
+    "flipkart.com": {
+     "sellers": [
+      "Techretailer",
+      "Techvast Pvt. Ltd.",
+      "Electrop Store",
+      "ATS Connect",
+      "Dee Horizon",
+      "Bounce Back",
+      "Just Shopping",
+      "SuperComNet",
+      "Corseca",
+      "Shreyash Retail",
+      "Creative Deals",
+      "Best Buy",
+      "Bayari Ventures",
+      "Damson Technologies Pvt. Ltd.",
+      "Tech-Connect Retails Pvt. Ltd.",
+      "Sports Lifestyle Private Limited"
+     ]
+    },
+    "paytmmall.com": {
+     "sellers": [
+      "E Planet",
+      "Just Shopping",
+      "Click Buy",
+      "Rising India",
+      "Whatnot Retail LLP",
+      "Electrop Store",
+      "ATS Connect",
+      "Techretailer",
+      "Techvast Pvt. Ltd.",
+      "Best Buy",
+      "Bayari Ventures"
+     ]
+    },
+    "nykaa.com": {
+     "sellers": [
+      "Whatnot Retail LLP"
+     ]
+    },
+    "myntra.com": {
+     "sellers": [
+      "Techretailer",
+      "Techvast Pvt. Ltd.",
+      "Electrop Store",
+      "ATS Connect",
+      "Dee Horizon",
+      "Bounce Back",
+      "Just Shopping",
+      "SuperComNet",
+      "Corseca",
+      "Shreyash Retail",
+      "Creative Deals",
+      "Best Buy",
+      "Bayari Ventures",
+      "Damson Technologies Pvt. Ltd.",
+      "Tech-Connect Retails Pvt. Ltd.",
+      "Sports Lifestyle Private Limited"
+     ]
+    },
+    "tatacliq.com": {
+     "sellers": [
+      "Techretailer",
+      "Techvast Pvt. Ltd.",
+      "Electrop Store",
+      "ATS Connect",
+      "Click Buy",
+      "Rising India"
+     ]
+    },
+    "snapdeal.com": {
+     "sellers": [
+      "Dee Horizon",
+      "Shri Sai Traders",
+      "Whatnot Retail LLP",
+      "Techretailer",
+      "Techvast Pvt. Ltd."
+     ]
+    },
+    "cred.club": {
+     "sellers": [
+      "Wave Tone"
+     ]
+    }
+   },
+   "source": "boAt's own warranty page: 'Authorised Sales Channels' and 'Authorised Sellers' (the page says new platforms and sellers are added from time to time; it has no publication date)",
+   "source_url": "https://www.boat-lifestyle.com/pages/warranty",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "nothing": {
+   "aliases": [
+    "cmf",
+    "cmfbynothing",
+    "nothingtechnology"
+   ],
+   "domains": [
+    "nothing.tech"
+   ],
+   "list_kind": "channels",
+   "official_channels": [
+    "flipkart.com",
+    "myntra.com"
+   ],
+   "channel_notes": {
+    "flipkart.com": "the primary online retailer for all Nothing phones, CMF products and audio devices",
+    "myntra.com": "an official online retailer for audio, accessories and wearable products"
+   },
+   "offline_partners": [
+    "Croma",
+    "Vijay Sales"
+   ],
+   "source": "Nothing's support article 'Where can I buy Nothing and CMF products in India?'",
+   "source_url": "https://support.nothing.tech/hc/en-us/articles/38494767092881-Where-can-I-buy-Nothing-and-CMF-products-in-India",
+   "as_of": "2025-08-28",
+   "retrieved": "2026-10-17"
+  },
+  "vivo": {
+   "aliases": [
+    "iqoo"
+   ],
+   "domains": [
+    "vivo.com"
+   ],
+   "list_kind": "own_store",
+   "source": "vivo India's official site and e-store (shop.vivo.com)",
+   "source_url": "https://www.vivo.com/in/where-to-buy",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "oneplus": {
+   "aliases": [],
+   "domains": [
+    "oneplus.in",
+    "oneplus.com"
+   ],
+   "list_kind": "own_store",
+   "source": "OnePlus India's 'Where to Buy' page",
+   "source_url": "https://www.oneplus.in/locations",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The page says OnePlus has partnered with 'select retailers' that are 'authorized retailers carefully selected', and names none online. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "motorola": {
+   "aliases": [
+    "moto"
+   ],
+   "domains": [
+    "motorola.in",
+    "motorola.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Motorola India's official store",
+   "source_url": "https://www.motorola.in/motorola-all-accessories",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "oppo": {
+   "aliases": [],
+   "domains": [
+    "oppo.com"
+   ],
+   "list_kind": "own_store",
+   "source": "OPPO India's official store",
+   "source_url": "https://www.oppo.com/in/store/contents/OPPOAffiliate/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "realme": {
+   "aliases": [],
+   "domains": [
+    "realme.com"
+   ],
+   "list_kind": "own_store",
+   "source": "realme India's official store",
+   "source_url": "https://www.realme.com/in/store",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded. Lists of 'official realme sellers' circulate in tech-news posts but were not published on realme.com, so they are not recorded."
+  },
+  "lenovo": {
+   "aliases": [],
+   "domains": [
+    "lenovo.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Lenovo India's official online store",
+   "source_url": "https://www.lenovo.com/in/en/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "hp": {
+   "aliases": [
+    "hpinc",
+    "hewlettpackard"
+   ],
+   "domains": [
+    "hp.com"
+   ],
+   "list_kind": "own_store",
+   "source": "HP India's official store and reseller finder",
+   "source_url": "https://www.hp.com/in-en/shop/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "HP's own festive-offer terms (1 Oct to 10 Nov 2026) say the offer is not applicable to purchases through 'Ecom Resellers, i.e. Amazon, TATA Cliq, Flipkart etc.'; it is valid at the HP Online store or an HP authorized reseller (https://www.hp.com/in-en/shop/media/facets_url/HP_Festive_Rush_2026_V3_Rev8.pdf). The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "lg": {
+   "aliases": [
+    "lgelectronics"
+   ],
+   "domains": [
+    "lg.com"
+   ],
+   "list_kind": "own_store",
+   "source": "LG India's official site",
+   "source_url": "https://www.lg.com/in/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "apple": {
+   "aliases": [],
+   "domains": [
+    "apple.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Apple India's official site",
+   "source_url": "https://www.apple.com/in/business/enterprise/how-to-buy/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Apple India's own pages name its stores and business partners, not marketplace sellers. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "sony": {
+   "aliases": [
+    "sonyindia"
+   ],
+   "domains": [
+    "sony.co.in",
+    "shopatsc.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Sony India's official site and its Sony Center online store",
+   "source_url": "https://www.sony.co.in/section/retailshops",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Sony India publishes 'Authorised Online Seller' lists as PDFs per product category (ecommerce portal, authorised partner, party name on invoice), but its server refuses automated downloads, so the names are not recorded yet.",
+   "list_pending_url": "https://www.sony.co.in/corporate/resources/en_IN/pdf/online-dealer/Authorized_Dealers_Headphones.pdf"
+  },
+  "jbl": {
+   "aliases": [
+    "harman",
+    "harmankardon",
+    "jblindia"
+   ],
+   "domains": [
+    "jbl.com",
+    "harmanaudio.in",
+    "harmanaudio.com"
+   ],
+   "list_kind": "own_store",
+   "source": "JBL / Harman India 'Buy Authentic' page",
+   "source_url": "https://in.jbl.com/buy-authentic.html",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "JBL says many marketplace resellers are not authorized dealers and tells shoppers to check the seller's name on its Authorized Online Dealer List (https://www.harmanaudio.in/authorized-dealers.html). That list loads dynamically and its names are not recorded yet.",
+   "list_pending_url": "https://www.harmanaudio.in/authorized-dealers.html"
+  },
+  "philips": {
+   "aliases": [],
+   "domains": [
+    "philips.co.in"
+   ],
+   "list_kind": "own_store",
+   "source": "Philips India's official site",
+   "source_url": "https://www.philips.co.in/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "noise": {
+   "aliases": [
+    "gonoise"
+   ],
+   "domains": [
+    "gonoise.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Noise's official store",
+   "source_url": "https://www.gonoise.com/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "portronics": {
+   "aliases": [
+    "portronicsdigital"
+   ],
+   "domains": [
+    "portronics.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Portronics' official store and store locator",
+   "source_url": "https://www.portronics.com/pages/store-locator",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "anker": {
+   "aliases": [
+    "ankerinnovations"
+   ],
+   "domains": [
+    "anker.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Anker's official site",
+   "source_url": "https://www.anker.com/wheretobuy",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Anker's where-to-buy page found was the US one; it names no Indian marketplace sellers. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "ptron": {
+   "aliases": [
+    "palredelectronics"
+   ],
+   "domains": [
+    "ptron.in"
+   ],
+   "list_kind": "sellers",
+   "official_channels": [
+    "ptron.in",
+    "amazon.in",
+    "flipkart.com",
+    "myntra.com",
+    "snapdeal.com",
+    "tatacliq.com",
+    "vijaysales.com",
+    "reliancedigital.in",
+    "croma.com",
+    "cred.club",
+    "jiomart.com",
+    "nykaa.com",
+    "firstcry.com",
+    "meesho.com",
+    "ajio.com",
+    "snapmint.com",
+    "swiggy.com"
+   ],
+   "marketplaces": {
+    "amazon.in": {
+     "sellers": [
+      "Appario Retail",
+      "Cocoblu Retail",
+      "ClickTech Retail",
+      "Etrade Marketing",
+      "Electronics Bazaar",
+      "Kay Kay Overseas"
+     ]
+    },
+    "flipkart.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "myntra.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "snapdeal.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "tatacliq.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "vijaysales.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "reliancedigital.in": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "croma.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "cred.club": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "jiomart.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "nykaa.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "firstcry.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "meesho.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "ajio.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "snapmint.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    },
+    "swiggy.com": {
+     "sellers": [
+      "Palred Electronics"
+     ]
+    }
+   },
+   "source": "pTron's own 'Repair & Service Warranty' page: 'pTron's authorized online sellers as mentioned below'. Amazon.in: Appario Retail Pvt. Ltd., Cocoblu Retail Ltd., ClickTech Retail Pvt. Ltd., Etrade Marketing Private Limited, Electronics Bazaar, Kay Kay Overseas Corporation. Palred Electronics Pvt. Ltd. (pTron's own company) sells on pTron.in, Flipkart, Myntra, Snapdeal, TataCliq, Vijay Sales, Reliance Digital, Croma, CRED, JioMart, Nykaa, FirstCry, Meesho, Swiggy Instamart, Ajio and Snapmint (the page also names Pop and Zop, not recorded here). Legal suffixes (Pvt. Ltd.) are left off so the marketplace's full company name matches by its start.",
+   "source_url": "https://ptron.in/pages/repair-service-warranty",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "asus": {
+   "aliases": [
+    "asustek",
+    "rog"
+   ],
+   "domains": [
+    "asus.com"
+   ],
+   "list_kind": "channels",
+   "official_channels": [
+    "flipkart.com",
+    "amazon.in"
+   ],
+   "source": "ASUS India's store-locator page, 'Authorized Online Dealers: Flipkart, Amazon. The sellers listed above are the only authorized sellers permitted to sell our products online' (read from the page's own search excerpt: its pop-up did not load for my reader, so the individual seller names under each are not recorded)",
+   "source_url": "https://www.asus.com/in/microsite/shop-near-me/",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "canon": {
+   "aliases": [
+    "canonindia",
+    "ciplindia"
+   ],
+   "domains": [
+    "in.canon",
+    "canon.co.in"
+   ],
+   "list_kind": "own_store",
+   "source": "Canon India's warranty terms: products are sold by CIPL 'either directly or through its Authorized Dealers / Authorized Resellers including Authorised Online Resellers'",
+   "source_url": "https://in.canon/en/consumer/web/warrantytermsandconditions",
+   "notes": "The terms say to refer to the Authorized Online Resellers list on the CIPL website (in.canon), but I could not find that list's page, so no names are recorded. The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "dyson": {
+   "aliases": [],
+   "domains": [
+    "dyson.in"
+   ],
+   "list_kind": "own_store",
+   "source": "Dyson India's 'Counterfeit Machines' page",
+   "source_url": "https://www.dyson.in/inside-dyson/counterfeit-machines",
+   "notes": "Dyson says the way to be sure is to buy from its website, a Dyson Demo Store, or 'an authorised retail partner', and warns that fake websites pose as authorised partners; it names no partners. The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "dell": {
+   "aliases": [
+    "delltechnologies"
+   ],
+   "domains": [
+    "dell.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Dell India's official store and support pages",
+   "source_url": "https://www.dell.com/en-in/shop/laptop-notebook-computers/dell-pro-14-laptop/spd/dell-pro-pc14250-laptop",
+   "notes": "Dell's registration guide treats a product 'Sold by Amazon' as a direct Amazon purchase, but Dell names no marketplace sellers. The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "fireboltt": {
+   "aliases": [
+    "boltt"
+   ],
+   "domains": [
+    "fireboltt.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Fire-Boltt India's official store",
+   "source_url": "https://www.fireboltt.com/pages/warranty-support",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "ambrane": {
+   "aliases": [
+    "ambraneindia"
+   ],
+   "domains": [
+    "ambraneindia.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Ambrane India's official store",
+   "source_url": "https://ambraneindia.com/",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "zebronics": {
+   "aliases": [
+    "zeb"
+   ],
+   "domains": [
+    "zebronics.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Zebronics' official store (shop.zebronics.com)",
+   "source_url": "https://shop.zebronics.com/",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "logitech": {
+   "aliases": [
+    "logi"
+   ],
+   "domains": [
+    "logitech.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Logitech India's 'Find a Reseller' directory (362 resellers and 219 distributors, loaded dynamically, so its names are not recorded yet)",
+   "source_url": "https://www.logitech.com/en-in/resellers/find-a-reseller.html",
+   "list_pending_url": "https://www.logitech.com/en-in/resellers/find-a-reseller.html",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "tplink": {
+   "aliases": [
+    "tapo"
+   ],
+   "domains": [
+    "tp-link.com"
+   ],
+   "list_kind": "own_store",
+   "source": "TP-Link India's warranty page",
+   "source_url": "https://www.tp-link.com/in/support/replacement-warranty/",
+   "notes": "TP-Link says its installation service is for products 'purchased from Authorized dealers in India only' and names none. The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "as_of": null,
+   "retrieved": "2026-10-17"
+  },
+  "whirlpool": {
+   "aliases": [
+    "whirlpoolindia"
+   ],
+   "domains": [
+    "whirlpoolindia.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Whirlpool of India's official store",
+   "source_url": "https://www.whirlpoolindia.com/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "havells": {
+   "aliases": [
+    "lloyd",
+    "reo"
+   ],
+   "domains": [
+    "havells.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Havells India's official site, its 'Find a Store' page and partner pages",
+   "source_url": "https://havells.com/store-locator",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Havells lists authorised partner stores (offline) on partners.havells.com. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "bajaj": {
+   "aliases": [
+    "bajajelectricals"
+   ],
+   "domains": [
+    "bajajelectricals.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Bajaj Electricals' official store",
+   "source_url": "https://www.bajajelectricals.com/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "prestige": {
+   "aliases": [
+    "ttkprestige"
+   ],
+   "domains": [
+    "ttkprestige.com"
+   ],
+   "list_kind": "own_store",
+   "source": "TTK Prestige's official store FAQ",
+   "source_url": "https://shop.ttkprestige.com/eighteenfaq/index/index/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Prestige's FAQ says its products can be bought from 'the official Prestige website and authorised Prestige retail stores across India'. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "voltas": {
+   "aliases": [
+    "voltasbeko"
+   ],
+   "domains": [
+    "voltas.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Voltas' installation page",
+   "source_url": "https://www.voltas.com/pages/installation-demo",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Voltas's page tells customers who bought via 'Amazon/Flipkart/Dealer' whom to contact for installation: it acknowledges those channels but does not say which sellers are authorised. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "haier": {
+   "aliases": [],
+   "domains": [
+    "haier.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Haier India's blog post",
+   "source_url": "https://www.haier.com/in/blogs/20230406_208369.shtml",
+   "as_of": "2023-04-06",
+   "retrieved": "2026-10-17",
+   "notes": "A 2023 Haier India post says its products can be bought from Haier's official website and are 'also available on multiple eCommerce platforms like Amazon, Flipkart, Croma': examples, not an exhaustive list of authorised sellers. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "panasonic": {
+   "aliases": [],
+   "domains": [
+    "panasonic.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Panasonic India's news release",
+   "source_url": "https://www.panasonic.com/in/corporate/news/articles/panasonic-launches-india-s-largest-range-of-connected-air-conditioners.html",
+   "as_of": "2020-02-20",
+   "retrieved": "2026-10-17",
+   "notes": "A 2020 Panasonic India release says its ACs are available at Panasonic brand shops, large retail outlets and 'online platforms such as Amazon and Flipkart': examples, not an exhaustive list. Its own online store is store.in.panasonic.com. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "ifb": {
+   "aliases": [
+    "ifbappliances"
+   ],
+   "domains": [
+    "ifbappliances.com"
+   ],
+   "list_kind": "own_store",
+   "source": "IFB Appliances' official site and store locator",
+   "source_url": "https://www.ifbappliances.com/storelocator",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "bosch": {
+   "aliases": [
+    "boschhome",
+    "boschhomeappliances"
+   ],
+   "domains": [
+    "bosch-home.in"
+   ],
+   "list_kind": "own_store",
+   "source": "Bosch Home India's official site",
+   "source_url": "https://www.bosch-home.in/en",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Home appliances only (bosch-home.in). Bosch says to 'reach out to our authorized dealers and brand stores across India' and names none online. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "belkin": {
+   "aliases": [
+    "belkinindia"
+   ],
+   "domains": [
+    "belkin.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Belkin India's 'Where to Buy' page (online and distributors)",
+   "source_url": "https://www.belkin.com/in/where-to-buy/?id=online",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Belkin has an online 'Where to Buy' list, but it loads dynamically and its names are not recorded yet. The brand's own pages name no marketplace sellers: only its own websites are recorded.",
+   "list_pending_url": "https://www.belkin.com/in/where-to-buy/?id=online"
+  },
+  "syska": {
+   "aliases": [],
+   "domains": [
+    "syska.co.in"
+   ],
+   "list_kind": "own_store",
+   "source": "Syska's official site",
+   "source_url": "https://syska.co.in/categories/accessories-1",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "urbn": {
+   "aliases": [
+    "urbnworld"
+   ],
+   "domains": [
+    "urbnworld.com"
+   ],
+   "list_kind": "own_store",
+   "source": "URBN's official store (urbnworld.com)",
+   "source_url": "https://urbnworld.com/collections/charging",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "A URBN Instagram post says the Blade power bank is available 'on Amazon, Flipkart, Zepto, and UrbnWorld.com': a promotion, not a list of authorised sellers. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "baseus": {
+   "aliases": [],
+   "domains": [
+    "baseus.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Baseus' official global site",
+   "source_url": "https://www.baseus.com/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "baseusindiaofficial.com says Baseus products are 'actively' sold 'on various E-commerce marketplaces such as Amazon, Flipkart, Meesho, etc.', but that site is not confirmed from baseus.com itself, so it is not recorded as an official domain. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "spigen": {
+   "aliases": [],
+   "domains": [
+    "spigen.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Spigen's support article 'Is my item a genuine Spigen product?'",
+   "source_url": "https://support.spigen.com/portal/en/kb/articles/is-my-item-a-genuine-spigen-product",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "Its search excerpt says items bought through 'an Official Spigen Store (Spigen.com, Spigen Amazon, Spigen Ebay) are genuine'; the page itself did not load for my reader, and the Amazon India seller name is not given, so no seller is recorded. The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "stuffcool": {
+   "aliases": [],
+   "domains": [
+    "stuffcool.com"
+   ],
+   "list_kind": "own_store",
+   "source": "Stuffcool's official store",
+   "source_url": "https://www.stuffcool.com/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "mivi": {
+   "aliases": [],
+   "domains": [
+    "mivi.in"
+   ],
+   "list_kind": "own_store",
+   "source": "Mivi's official store",
+   "source_url": "https://www.mivi.in/",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
+  },
+  "oraimo": {
+   "aliases": [
+    "oraimoindia"
+   ],
+   "domains": [
+    "oraimo.com"
+   ],
+   "list_kind": "own_store",
+   "source": "oraimo's official website",
+   "source_url": "https://www.oraimo.com/en",
+   "as_of": null,
+   "retrieved": "2026-10-17",
+   "notes": "The brand's own pages name no marketplace sellers: only its own websites are recorded."
   }
  }
 }

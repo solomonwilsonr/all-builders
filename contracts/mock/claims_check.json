@@ -1,0 +1,31 @@
+{
+  "verdict": "doubtful",
+  "headline": "Some claims look doubtful",
+  "category": "60W USB-C chargers",
+  "claims": [
+    {
+      "claim": "60W over USB-C",
+      "result": "possible",
+      "why": "60W is within what USB-C Power Delivery supports (up to 240W)",
+      "basis": "rule",
+      "sources": []
+    },
+    {
+      "claim": "Saves 30% electricity",
+      "result": "doubtful",
+      "why": "A phone charger passes on the power the phone asks for; it cannot save electricity",
+      "basis": "cited_source",
+      "sources": [
+        {
+          "title": "How phone chargers use power",
+          "url": "https://www.energy.gov/"
+        }
+      ]
+    }
+  ],
+  "reasons": [
+    "1 doubtful, 1 possible"
+  ],
+  "policy_version": "is-it-possible-v1",
+  "label": "Claims checked against physical limits and cited sources - AI collected the sources, code set the result."
+}

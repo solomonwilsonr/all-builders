@@ -1,0 +1,62 @@
+[
+  {
+    "id": "01",
+    "file": "01-shelly-bear.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "02",
+    "file": "02-shelly-fox.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "03",
+    "file": "03-shelly-rabbit.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "04",
+    "file": "04-shelly-panda.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "05",
+    "file": "05-shelly-elephant.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "06",
+    "file": "06-shelly-cat.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "07",
+    "file": "07-shelly-penguin.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "08",
+    "file": "08-shelly-owl.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "09",
+    "file": "09-shelly-koala.png",
+    "width": 1254,
+    "height": 1254
+  },
+  {
+    "id": "10",
+    "file": "10-shelly-lion.png",
+    "width": 1254,
+    "height": 1254
+  }
+]

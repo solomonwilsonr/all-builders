@@ -4,6 +4,7 @@ import json
 import os
 import re
 import threading
+import time
 
 import psycopg
 from psycopg.rows import dict_row
@@ -23,12 +24,23 @@ def connect_kwargs() -> dict:
     return {"conninfo": os.environ.get("DATABASE_URL", "postgresql://safeshelf:safeshelf@localhost:5442/safeshelf")}
 
 
+_last_used = 0.0
+IDLE_PING_S = 30  # a connection idle longer than this is tested before use: proxies and Cloud SQL drop quiet connections
+
+
 def conn() -> psycopg.Connection:
-    """One shared connection (psycopg 3 serialises use across threads), reopened if the server dropped it."""
-    global _conn
+    """One shared connection (psycopg 3 serialises use across threads), reopened if the server dropped it, including a
+    drop that happened while it sat idle (the first query after a quiet spell would otherwise fail)."""
+    global _conn, _last_used
     with _conn_lock:
+        if _conn is not None and not (_conn.closed or _conn.broken) and time.monotonic() - _last_used > IDLE_PING_S:
+            try:
+                _conn.execute("SELECT 1")
+            except psycopg.Error:
+                _conn = None
         if _conn is None or _conn.closed or _conn.broken:
             _conn = psycopg.connect(**connect_kwargs(), autocommit=True, row_factory=dict_row)
+        _last_used = time.monotonic()
         return _conn
 
 
