@@ -38,6 +38,7 @@
 .tg-card.in .tg-stage { animation: tg-up .4s ease .08s both; }
 .tg-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-top: 14px; }
 .tg-foot button.tg-back { justify-self: start; min-height: 44px; padding: 0 14px; background: none; box-shadow: none; color: var(--ink-2); font-size: 15px; }
+.tg-modal:not(.pin) .tg-foot button.tg-back[hidden] { display: block; visibility: hidden; } /* keeps the dots centred */
 .tg-foot button.tg-back:hover { background: var(--soft); color: var(--ink); }
 .tg-foot button.tg-next { justify-self: end; min-height: 46px; padding: 0 22px; background: var(--ink); color: #fff; box-shadow: none; font-size: 15px; }
 .tg-foot button.tg-next:hover { background: var(--blue); color: #fff; }
@@ -59,12 +60,17 @@
 .tg-modal.pin .tg-eddy, .tg-modal.pin .tg-art { display: none; }
 .tg-modal.pin .tg-card h2 { margin: 0; max-width: none; padding-right: 24px; font-size: 1.45rem; letter-spacing: -.025em; }
 .tg-modal.pin .tg-card > p:not(.tg-skip) { margin: 10px 0 0; max-width: none; color: var(--ink-2); font-size: 15.5px; }
-.tg-modal.pin .tg-foot { grid-template-columns: auto 1fr auto auto; gap: 6px; margin-top: 18px; }
+.tg-modal.pin .tg-foot { grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 4px; margin-top: 18px; }
 .tg-modal.pin .tg-mini { display: block; width: 52px; max-width: none; height: 52px; margin: -6px 0 -6px -6px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0, 17, 35, .16)); }
 .tg-modal.pin .tg-card.in .tg-mini { animation: tg-hop .5s ease both; }
 .tg-modal.pin .tg-dots { order: 1; justify-self: center; }
+.tg-modal.pin .tg-dots { gap: 0; min-width: 0; }
+.tg-modal.pin .tg-dots button { width: 12px; }
+.tg-modal.pin .tg-dots button::before { width: 6px; height: 6px; }
+.tg-modal.pin .tg-dots button[aria-selected="true"]::before { width: 14px; }
+.tg-modal.pin .tg-foot button { white-space: nowrap; }
 .tg-modal.pin .tg-foot button.tg-back { order: 2; min-height: 40px; padding: 0 10px; }
-.tg-modal.pin .tg-foot button.tg-next { order: 3; min-height: 40px; padding: 0 20px; background: var(--blue); }
+.tg-modal.pin .tg-foot button.tg-next { order: 3; min-height: 40px; padding: 0 16px; background: var(--blue); }
 .tg-modal.pin .tg-foot button.tg-next:hover { background: var(--ink); }
 .tg-modal.pin .tg-skip { text-align: right; }
 .tg-modal.pin .tg-arrow { display: block; position: absolute; width: 18px; height: 18px; background: #fff; transform: rotate(45deg); border-radius: 3px; }

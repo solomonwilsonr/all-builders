@@ -1,8 +1,9 @@
-// Eddy's tour of the judges' page, one step per part of the page, in the page's order. The first and last steps are a
-// centred card with Eddy (the mascot, cut from the brand sheet into site/assets/guide/) and a moving picture; every
-// step between is a coachmark: the page scrolls to the real part (opening its Try it tab), a spotlight dims the rest,
-// and a small card with an arrow points at it, with Eddy, the dots, Back / Next and "Seen this before? Skip the tour".
-// The last step takes a product name and puts it into Paste a listing for the real live check.
+// Eddy's tour of the judges' page, one step per part of the page, in the page's order. Every step is a coachmark: the
+// page scrolls to the real part (opening its Try it tab), a spotlight dims the rest, and a small card with an arrow
+// points at it, with Eddy (the mascot, site/assets/guide/) in a pose per step, the dots, Back / Next and "Seen this
+// before? Skip the tour".
+// The first step points at the seven-steps card; the last at Paste a listing, and Done puts the cursor in it. The
+// centred card (with a product box on the last step) is only the fallback when a step's part isn't on the page.
 // Navigation: Back / Next, clickable dots, arrow keys, swipe, Esc. It opens once by itself after sign-in (remembered
 // on this browser; ?notour turns that off) and any time from Eddy's button at the bottom right. Slides for parts the
 // chosen view hides (roles.js) are left out. Plain module, no build step; the pictures are fixed markup.
@@ -22,7 +23,7 @@ const openTab = (id) => { const t = $id(`tab-${id}`); if (t && t.getAttribute("a
 const setField = (form, name, value) => { const f = form?.elements[name]; if (f) { f.value = value; f.dispatchEvent(new Event("input", { bubbles: true })); } };
 
 const SLIDES = [
-  { id: "hello", pose: "hi", title: "Meet Eddy, your safety wingman", text: "Take a quick tour of SafeShelf: it tells you if a product is safe and real before you pay, with the proof.",
+  { id: "hello", pose: "hi", target: ".journey", title: "Meet Eddy, your safety wingman", text: "SafeShelf tells you if a product is safe and real before you pay, with the proof. The demo runs in these seven steps; I'll walk you through them.",
     art: `<div class="tm-hello">
       <div class="tm-win">${BAR("amazon.co.jp/dp/W5PRO")}
         <div class="tm-shop"><span class="tm-thumb"></span><span class="tm-lines"><b>HAIARA W5PRO 10000mAh</b><i>¥2,980</i><em>Add to cart</em></span></div>
@@ -64,7 +65,7 @@ const SLIDES = [
       <div class="tm-bars"><small>False alarms out of 40</small><div><span>SafeShelf</span><i class="me" style="--w:18%"></i><b>2</b></div><div><span>Gemini alone</span><i style="--w:55%"></i><b>6</b></div><div><span>Keyword rules</span><i style="--w:100%"></i><b>11</b></div></div>
       <ul class="tm-attacks"><li>Fake regulator page</li><li>Look-alike model number</li><li>Hidden text aimed at AI</li></ul>
     </div>` },
-  { id: "go", pose: "waving", title: "Your turn", text: "Name a product and Eddy will set up a live check, or close this and explore. Eddy is at the bottom right if you need him.",
+  { id: "go", pose: "waving", tab: "check-own", target: "#check-own", title: "Your turn", text: "Paste any product here and press Check it live for the real check. I'm at the bottom right if you need me.",
     art: `<form class="tm-try" autocomplete="off"><img src="${POSE("thumbs")}" alt=""><label class="sr" for="tg-product">A product to check</label><input id="tg-product" type="text" maxlength="200" placeholder="e.g. Anker PowerCore 10000 A1263"><button type="submit" class="primary">Set up the check</button></form>` },
 ];
 
@@ -141,9 +142,10 @@ export function setUpTour() {
     q("#tg-text").textContent = s.text;
     stage.innerHTML = s.art;
     stage.dataset.slide = s.id;
-    q(".tg-back").textContent = at === 0 ? "Skip" : "Back";
+    q(".tg-back").textContent = "Back";
+    q(".tg-back").hidden = at === 0; // the first step's way out is "Skip the tour" underneath
     q(".tg-next").textContent = at === 0 ? "Take the tour" : at === slides.length - 1 ? "Done" : "Next";
-    q(".tg-skip").hidden = at === 0 || at === slides.length - 1;
+    q(".tg-skip").hidden = at === slides.length - 1;
     q(".tg-dots").replaceChildren(...slides.map((sl, j) => {
       const d = document.createElement("button");
       d.type = "button";
@@ -257,7 +259,7 @@ export function setUpTour() {
   launch.addEventListener("click", open);
   q(".tg-x").addEventListener("click", () => close());
   q(".tg-back").addEventListener("click", () => (at === 0 ? close() : show(at - 1)));
-  q(".tg-next").addEventListener("click", () => (at < slides.length - 1 ? show(at + 1) : close()));
+  q(".tg-next").addEventListener("click", () => (at < slides.length - 1 ? show(at + 1) : slides[at].id === "go" && pinned ? tryProduct("") : close()));
   q(".tg-skip button").addEventListener("click", () => close());
   wrap.addEventListener("click", (e) => { if (e.target === wrap && !pinned) close(); }); // coachmarks close only on purpose
   wrap.addEventListener("keydown", (e) => {
