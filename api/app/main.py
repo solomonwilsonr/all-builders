@@ -41,7 +41,8 @@ DAILY_CAP = int(os.environ.get("SAFESHELF_DAILY_CAP", "3000"))
 UNMETERED = {"listRecalls", "getRecall", "getSourcesHealth", "getInvestigation", "getInvestigationSources",
              "getRadarCandidates", "getCrossBorderCandidates", "getBenchRuns", "getBenchEvidence", "listWatchlists",
              "deleteWatchlist", "getReviewQueue", "getCase", "getDeveloperUsage", "getTimeline",
-             "getIncidentSignals", "getRedteamRounds"}
+             "getIncidentSignals", "getRedteamRounds",
+             "addHouseholdItem", "listHouseholdItems", "deleteHouseholdItem"}
 
 log = logging.getLogger("safeshelf.api")
 logging.basicConfig(level=logging.INFO, format="%(message)s")

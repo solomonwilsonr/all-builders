@@ -5,7 +5,8 @@ import re
 
 # Real evidence IDs look like EV-1F3B0227 (letters and numbers), the examples like EV-201.
 EVIDENCE_ID = re.compile(r"\bEV-[A-Za-z0-9]+\b")
-BRACKETS = re.compile(r"\s*\[[^\]]*\]")  # citations are shown separately, so they are removed from the sentence
+# Citations are shown separately, so they are removed from the sentence; a markdown link's [text](url) is kept.
+BRACKETS = re.compile(r"\s*\[[^\]]*\](?!\()")
 # JAPAC languages a shopper can ask and be answered in (the extension's picker, the API, WhatsApp). Gemini writes the
 # answers, so a language needs only a line here; English stays the default.
 LANGUAGES = {

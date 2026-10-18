@@ -189,6 +189,7 @@
     .panel ol.do li { counter-increment:do; display:grid; grid-template-columns:24px 1fr; gap:8px; }
     .panel ol.do li::before { content:counter(do); display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--blue); color:#fff; font:700 .6875rem var(--sans); }
     .panel ol.do small { display:block; color:var(--muted); font-size:.8125rem; }
+    .assist { display:grid; gap:8px; margin-top:8px; }
     .draft { background:#fff; border-radius:8px; padding:12px; box-shadow:0 0 0 1px var(--line); display:grid; gap:8px; }
     .draft textarea, .panel textarea, .panel input[type=text], .panel input[type=date] { width:100%; border:0; border-radius:2px; box-shadow:inset 0 0 0 1px var(--line); background:#fff; padding:9px 10px; font:.8125rem/1.5 var(--sans); color:var(--ink); resize:vertical; }
     .draft textarea:focus, .panel textarea:focus, .panel input:focus { outline:none; box-shadow:inset 0 0 0 1.5px var(--blue); }
@@ -295,14 +296,14 @@
 
     <div class="composer">
       <div class="chips-wrap"><div class="chips" id="chips" hidden></div></div>
-      <div class="attached" id="attached" hidden><img id="thumb" alt="Attached image"><span>Image attached: SafeShelf reads it instead of visiting the shop.</span><button type="button" class="btn btn-ghost btn-sm" id="unattach">Remove</button></div>
+      <div class="attached" id="attached" hidden><img id="thumb" alt="Attached image"><span id="attachedText">Image attached: SafeShelf reads it instead of visiting the shop.</span><button type="button" class="btn btn-ghost btn-sm" id="unattach">Remove</button></div>
       <div class="ask-row">
         <button type="button" class="tools-btn" id="toolsBtn" title="Tools: API, other agents, trace" aria-label="Tools" aria-expanded="false" aria-controls="tools">
           <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
         <form class="qbox" id="ask">
-          <button type="button" class="icon" id="attach" title="Attach a screenshot or a photo of the product or its label" aria-label="Attach an image">
+          <button type="button" class="icon" id="attach" title="Attach a screenshot, a photo of the product, its label or a receipt, or the product's manual (PDF)" aria-label="Attach an image or a manual">
             <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12l-8.5 8.5a5 5 0 01-7-7L14 5a3.3 3.3 0 014.7 4.7l-8.5 8.5a1.7 1.7 0 01-2.4-2.4L16 8"/></svg></button>
-          <input type="file" id="shot" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" hidden>
+          <input type="file" id="shot" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,application/pdf" hidden>
           <button type="button" class="icon" id="scan" title="Scan a label: photograph the model number on the product or box" aria-label="Scan a product label">
             <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V6a2 2 0 012-2h2 M16 4h2a2 2 0 012 2v2 M20 16v2a2 2 0 01-2 2h-2 M8 20H6a2 2 0 01-2-2v-2 M8 9h8 M8 12h8 M8 15h5"/></svg></button>
           <input type="file" id="labelShot" accept="image/*" capture="environment" hidden>
@@ -432,7 +433,7 @@
 
   // Light formatting for an answer: paragraphs, "- " or "1." lists and **bold**. Built from text nodes, never as HTML.
   const rich = (text) => {
-    const inline = (s) => s.split(/(\*\*[^*]+\*\*)/).filter(Boolean).map((p) => (/^\*\*.+\*\*$/.test(p) ? node("strong", { textContent: p.slice(2, -2) }) : p));
+    const inline = (s) => s.split(/(\*\*[^*]+\*\*)/).filter(Boolean).flatMap((p) => (/^\*\*.+\*\*$/.test(p) ? [node("strong", { textContent: p.slice(2, -2) })] : linkify(p)));
     const out = [];
     let list = null;
     for (const line of String(text || "").split("\n").map((l) => l.trim())) {
@@ -795,6 +796,24 @@
         a.say ? node("button", { type: "button", className: "cbtn", onclick: () => speakText(a.say, "en") }, icon("speaker"), "Read it to me") : null),
       a.label ? node("div", { className: "meta", textContent: a.label }) : null);
   }
+  // Owner help: a support request or incident report to copy, and the manual pages an answer came from.
+  function assistPanel(json) {
+    const a = json.assist || {};
+    const parts = [];
+    for (const key of ["write_support_request", "write_incident_report"]) {
+      const d = a[key];
+      if (!d?.body) continue;
+      const subject = d.subject || d.title;
+      const ta = node("textarea", { rows: 9, value: d.body, ariaLabel: `${subject} (you can edit it)` });
+      const copy = node("button", { type: "button", className: "cbtn", onclick: async () => { try { await navigator.clipboard.writeText(`${subject}\n\n${ta.value}`); copy.lastChild.textContent = "Copied"; } catch (_) { ta.select(); } } }, icon("copy"), "Copy");
+      parts.push(node("div", { className: "draft" }, node("b", { textContent: subject }), ta,
+        d.send_to?.length ? node("ul", {}, ...d.send_to.map((t) => node("li", {}, node("b", { textContent: `${t.to}: ` }), ...linkify(t.how)))) : null,
+        node("div", { className: "row-btns" }, copy, node("span", { className: "meta", textContent: d.note || "A draft: SafeShelf has not sent anything." }))));
+    }
+    const refs = json.manual?.references || [];
+    if (refs.length) parts.push(node("div", { className: "meta" }, "From the manual: ", ...refs.map((r) => node("code", { textContent: `p. ${r.printed_page || r.page}${r.quote ? ` "${r.quote}"` : ""}` }))));
+    return parts.length ? node("div", { className: "assist" }, ...parts) : null;
+  }
   const linkify = (text) => String(text).split(/(https?:\/\/[^\s)]+)/).filter(Boolean).map((part) => (/^https?:\/\//.test(part) ? linkTo(part.replace(/[.,]$/, ""), part.replace(/^https?:\/\/(www\.)?/, "").replace(/[.,]$/, "")) : part));
   const download = (name, text) => {
     const a = node("a", { href: URL.createObjectURL(new Blob([text], { type: "text/markdown" })), download: name });
@@ -868,7 +887,7 @@
 
   async function callStream(body, timeoutMs, onEvent) {
     const started = performance.now();
-    const res = await fetch(`${api()}/v1/agent/sessions/stream`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
+    const res = await fetch(`${api()}/v1/agent/sessions/stream`, { method: "POST", headers: { "Content-Type": "application/json", "X-Owner-Ref": owner() }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
     if (res.status === 404 || res.status === 405) return callPlain(body, timeoutMs);
     if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(`${res.status}: ${typeof j.detail === "string" ? j.detail : JSON.stringify(j.detail || j)}`); }
     const reader = res.body.getReader();
@@ -896,7 +915,7 @@
 
   async function callPlain(body, timeoutMs = 150000) {
     const started = performance.now();
-    const res = await fetch(`${api()}/v1/agent/sessions`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
+    const res = await fetch(`${api()}/v1/agent/sessions`, { method: "POST", headers: { "Content-Type": "application/json", "X-Owner-Ref": owner() }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeoutMs) });
     const json = await res.json().catch(() => ({}));
     const seconds = ((performance.now() - started) / 1000).toFixed(1);
     if (!res.ok) throw new Error(`${res.status}: ${typeof json.detail === "string" ? json.detail : JSON.stringify(json.detail || json)}`);
@@ -926,15 +945,44 @@
     };
     reader.readAsDataURL(file);
   });
+  // A product manual (PDF) stays attached for every question until it is removed: the chat answers from it, with pages.
+  let manualDoc = null;
+  const MAX_MANUAL = 6_000_000;
+  const readFile = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("the file could not be read"));
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
   const attach = async (file) => {
+    if (file?.type === "application/pdf") {
+      if (file.size > MAX_MANUAL) { addNote("Manual not attached: it is bigger than 6 MB."); $("shot").value = ""; return; }
+      try { manualDoc = await readFile(file); } catch (err) { addNote(`Manual not attached: ${err.message}`); return; }
+      image = null;
+      $("thumb").hidden = true;
+      $("attachedText").textContent = `Manual attached (${file.name}): questions are answered from it, with page numbers.`;
+      $("attached").hidden = false;
+      $("q").placeholder = "Ask about installation, cleaning, maintenance or an error code…";
+      $("q").focus();
+      return;
+    }
     if (!file || !file.type.startsWith("image/")) return;
     try { image = await readImage(file); } catch (err) { addNote(`Image not attached: ${err.message}`); return; }
+    manualDoc = null;
+    $("thumb").hidden = false;
     $("thumb").src = image;
+    $("attachedText").textContent = "Image attached: SafeShelf reads it instead of visiting the shop.";
     $("attached").hidden = false;
     $("q").placeholder = "Ask about the image, or just press Enter…";
     $("q").focus();
   };
-  const unattach = () => { image = null; $("attached").hidden = true; $("shot").value = ""; $("q").placeholder = placeholder(); };
+  const unattach = (all = false) => {
+    image = null;
+    if (all) manualDoc = null;
+    $("attached").hidden = !manualDoc;
+    $("shot").value = "";
+    $("q").placeholder = manualDoc ? "Ask about the manual…" : placeholder();
+  };
 
   // ---- What the chat is about ----
   const narrow = () => innerWidth < 560;
@@ -995,6 +1043,7 @@
   async function ask(q) {
     q = q.trim();
     if ((!q && !image) || busy) return;
+    const manualFor = image ? null : manualDoc;
     const sent = image;
     const userRow = addUser(...[sent ? node("img", { className: "sent", src: sent, alt: "Image sent" }) : null, q || null].filter(Boolean));
     $("q").value = "";
@@ -1010,7 +1059,7 @@
       // A demo product's first answer also gets its answer card (GET /v1/products/{id}/safety), fetched alongside.
       const demoPid = !linked && !sent && !/https?:\/\//.test(q) ? product() : null;
       const safetyFor = demoPid && demoPid !== "unmatched" && !shownBar.has(demoPid) ? apiGet(`/v1/products/${encodeURIComponent(demoPid)}/safety`, {}, 30000).catch(() => null) : null;
-      const { json, seconds } = await call({ mode: "chat", ...about, message: q, ...(sent ? { image: sent } : {}), language: lang, session_id: sid,
+      const { json, seconds } = await call({ mode: "chat", ...about, message: q, ...(sent ? { image: sent } : {}), ...(manualFor ? { document: manualFor } : {}), language: lang, session_id: sid,
         history: keep ? thread.slice(-keep) : [] }, sent || /https?:\/\//.test(q) ? 200000 : 150000, live(pending, sent ? "Reading the image…" : "Working on it…"));
       const m = json.messages?.[0] || {};
       thread.push({ role: "user", text: q || "(sent an image)" }, { role: "assistant", text: m.text || "" });
@@ -1022,7 +1071,7 @@
         what_would_change: safety.what_would_change, limitations: safety.limitations } : null);
       const firstAbout = !shownBar.has(watchKey(ctx) + (ctx.url || ""));
       shownBar.add(watchKey(ctx) + (ctx.url || ""));
-      pending.replaceChildren(...[fresh ? verdictPanel(fresh, ctx) : null, rich(m.text || "(no answer)"), evidence(m.evidence_ids, !!fresh?.plain || !!(linked?.verdict && !sent)), steps(json.steps),
+      pending.replaceChildren(...[fresh ? verdictPanel(fresh, ctx) : null, rich(m.text || "(no answer)"), assistPanel(json), evidence(m.evidence_ids, !!fresh?.plain || !!(linked?.verdict && !sent)), steps(json.steps),
         actions(m.text, json.language || lang, ctx), fresh || firstAbout ? actionBar(ctx) : null, tech(json, seconds)].filter(Boolean));
       if (json.link) {
         const l = json.link;
@@ -1311,7 +1360,7 @@
   }
   $("attach").onclick = () => $("shot").click();
   $("shot").onchange = () => attach($("shot").files[0]);
-  $("unattach").onclick = unattach;
+  $("unattach").onclick = () => unattach(true);
   $("q").addEventListener("paste", (e) => { // a screenshot pasted straight into the question box
     const file = [...(e.clipboardData?.files || [])].find((f) => f.type.startsWith("image/"));
     if (file) { e.preventDefault(); attach(file); }
@@ -1326,7 +1375,7 @@
     document.body.classList.remove("drop");
     attach([...e.dataTransfer.files].find((f) => f.type.startsWith("image/")));
   });
-  $("clear").onclick = () => { unattach(); newSession(); $("q").focus(); };
+  $("clear").onclick = () => { unattach(true); newSession(); $("q").focus(); };
   $("loadTrace").onclick = loadTrace;
   document.querySelectorAll("[data-agent]").forEach((b) => { b.onclick = () => runAgent(b.dataset.agent, b); });
   $("api").value = store.get("ss-api", $("api").value);

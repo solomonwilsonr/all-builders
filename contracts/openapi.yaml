@@ -217,8 +217,14 @@ paths:
       description: >-
         One endpoint, one mode per ADK agent (engine/agents). Every step is returned in `steps` and written to the
         investigation trace under `investigation_id`. Colours are set by code, never by a model or by page text.
+        Shelf Chat is also owner help: charger compatibility, plug setups, household suitability, pressure
+        tactics on a shop screenshot, symptoms ("my charger gets hot"), incident reports, warranty and support
+        requests, repair or replace, safe disposal, a manual (document), and the household's products with warranty
+        and return dates and family sharing (X-Owner-Ref). Its owner-help results are in `assist`.
       operationId: startAgentSession
       x-mock: agent_session.json
+      parameters:
+        - {name: X-Owner-Ref, in: header, required: false, schema: {type: string}, description: 'chat: whose household the household tools use; stored only as a hash'}
       requestBody:
         required: true
         content:
@@ -235,6 +241,8 @@ paths:
                 session_id: {type: string}
                 context: {type: object, description: 'chat: the check result the shopper saw'}
                 history: {type: array, items: {type: object}, description: 'chat: earlier turns {role, text}'}
+                document: {type: string, description: 'chat: a product manual as a PDF data URL (data:application/pdf;base64,…, at most 6 MB). The question is answered only from it, with page numbers (manual.references); send it again with each question'}
+                market: {type: string, description: 'chat: the shopper''s market (in, jp, au, nz, sg, …) for owner help (mains voltage, emergency numbers, disposal); else from the check result, else in'}
                 listing: {type: object, description: 'investigate: url, title, price, currency, seller, page_text, image_urls, reviews'}
                 page_evidence: {type: object, description: 'investigate: {observations: [{kind, text, rating}]} read by the Shopper Agent'}
                 deep: {type: boolean, description: 'investigate: also run the Research Agent on official recall sites'}
@@ -484,6 +492,61 @@ paths:
       x-mock: watchlist_deleted.json
       parameters:
         - {name: watchlist_id, in: path, required: true, schema: {type: string}}
+        - {name: X-Owner-Ref, in: header, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Deleted, content: {application/json: {schema: {type: object, required: [deleted]}}}}
+
+  /v1/household/items:
+    post:
+      summary: Save a product the household owns, with its return and warranty dates (the household inventory)
+      description: >-
+        return_days and warranty_months become return_by and warranty_until from bought_on. Shelf Chat saves products
+        the same way (from the shopper's words or a receipt photo). A receipt photo is never stored.
+      operationId: addHouseholdItem
+      x-mock: household_item.json
+      parameters:
+        - {name: X-Owner-Ref, in: header, required: true, schema: {type: string}, description: The screen's user id; stored only as a hash}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {type: string}
+                brand: {type: string}
+                model: {type: string}
+                category: {type: string, example: charger}
+                product_id: {type: string}
+                bought_from: {type: string}
+                order_ref: {type: string}
+                bought_on: {type: string, format: date}
+                price: {type: number}
+                currency: {type: string}
+                return_days: {type: integer}
+                warranty_months: {type: integer}
+                return_by: {type: string, format: date}
+                warranty_until: {type: string, format: date}
+                notes: {type: string}
+      responses:
+        '200': {description: Saved, content: {application/json: {schema: {type: object, required: [item_id, name]}}}}
+    get:
+      summary: The household's products (own and shared by family), days left on returns and warranties, what is due soon
+      operationId: listHouseholdItems
+      x-mock: household_items.json
+      parameters:
+        - {name: X-Owner-Ref, in: header, required: true, schema: {type: string}}
+        - {name: search, in: query, required: false, schema: {type: string}}
+      responses:
+        '200': {description: Household products, content: {application/json: {schema: {type: object, required: [items, due_soon]}}}}
+
+  /v1/household/items/{item_id}:
+    delete:
+      summary: Remove a household product (its order number, notes and receipt hash are deleted)
+      operationId: deleteHouseholdItem
+      x-mock: household_item_deleted.json
+      parameters:
+        - {name: item_id, in: path, required: true, schema: {type: string}}
         - {name: X-Owner-Ref, in: header, required: true, schema: {type: string}}
       responses:
         '200': {description: Deleted, content: {application/json: {schema: {type: object, required: [deleted]}}}}

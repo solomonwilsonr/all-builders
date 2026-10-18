@@ -19,6 +19,7 @@ from engine import (
     evidence,
     gemini,
     hazard_discovery,
+    household,
     identity,
     incidents,
     investigation,
@@ -325,6 +326,25 @@ async def delete_watchlist(request: Request, params: dict[str, Any]) -> dict:
 
 
 @bad_request
+async def add_household_item(request: Request, params: dict[str, Any]) -> dict:
+    caller = owner_caller(request)
+    return await run_in_threadpool(household.add, caller.tenant_id, caller.owner_ref, await body_of(request))
+
+
+@bad_request
+async def list_household_items(request: Request, params: dict[str, Any]) -> dict:
+    caller = owner_caller(request)
+    return await run_in_threadpool(household.items, caller.tenant_id, caller.owner_ref,
+                                   request.query_params.get("search"))
+
+
+@bad_request
+async def delete_household_item(request: Request, params: dict[str, Any]) -> dict:
+    caller = owner_caller(request)
+    return await run_in_threadpool(household.delete, caller.tenant_id, caller.owner_ref, params["item_id"])
+
+
+@bad_request
 async def recheck_watchlists(request: Request, params: dict[str, Any]) -> dict:
     body = await body_of(request)
     token = os.environ.get("SAFESHELF_RECHECK_TOKEN")
@@ -494,6 +514,9 @@ HANDLERS = {
     "listWatchlists": list_watchlists,
     "deleteWatchlist": delete_watchlist,
     "recheckWatchlists": recheck_watchlists,
+    "addHouseholdItem": add_household_item,
+    "listHouseholdItems": list_household_items,
+    "deleteHouseholdItem": delete_household_item,
     "identityFeedback": identity_feedback,
     "reviewReport": review_report,
     "getReviewQueue": get_review_queue,

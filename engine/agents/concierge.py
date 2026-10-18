@@ -1,8 +1,11 @@
 """Shelf Chat (the Concierge) and the Safer Alternative Finder: ADK agents that read stored evidence through tools.
 
 The Concierge decides which evidence to read (safety, copies, marks, history, exact quotes) and, for "show me a
-safer one", hands over to the Safer Alternative Finder (an AgentTool). Answers may cite only evidence IDs some tool
-returned in this request. If every model fails, the one-call chat (engine/chat.py) answers instead.
+safer one", hands over to the Safer Alternative Finder (an AgentTool). The owner-help tools (owner_tools.py)
+cover before buying (charger compatibility, plug setups, household suitability, pressure tactics), while using it
+(the household's products, warranty and return dates, family sharing, the manual) and when something goes wrong
+(symptoms, incident report, support request, repair or replace, safe disposal). Answers may cite only evidence IDs
+some tool returned in this request. If every model fails, the one-call chat (engine/chat.py) answers instead.
 """
 import asyncio
 import json
@@ -13,8 +16,8 @@ from google.adk.agents import LlmAgent
 from google.adk.tools import ToolContext
 from google.adk.tools.agent_tool import AgentTool
 
-from engine import chat, chat_core, gemini, safety
-from engine.agents import cache, guard, links, pipeline, runtime, screenshot, tools
+from engine import assist, chat, chat_core, gemini, manual, region, safety
+from engine.agents import cache, guard, links, owner_tools, pipeline, runtime, screenshot, tools
 
 log = logging.getLogger(__name__)
 
@@ -31,10 +34,38 @@ How you work:
 - For "is there a safer one / what should I buy instead / which genuine twin is cheapest", call find_safer_alternative.
 - For "draft a refund request" or "what do I tell the seller", write a short message the shopper can copy and send
   themselves, citing only the evidence; you never send anything.
-- If product_id is "unmatched", there is no stored evidence: do not call tools, answer from the check result.
+- If product_id is "unmatched", there is no stored evidence: do not call the evidence tools (get_*), answer from the
+  check result. The owner-help tools below still work.
 - If the message contains a product link (http...), call check_link with it FIRST and answer about THAT product,
   not the product_id in the message. Say what it is (name, price), the two colours (safety, is it real) and the
-  main reasons, citing evidence IDs. If the link can't be read, say so."""
+  main reasons, citing evidence IDs. If the link can't be read, say so.
+
+Owner help (these tools are SafeShelf's code rules, so their results count as SafeShelf evidence,
+but add no outside facts to them). Fill a tool's arguments only with what the shopper said or the evidence shows;
+leave the rest empty and pass on what the tool says to read on the label. For these answers you may use up to 6
+short lines or numbered steps instead of 3 sentences.
+- Before buying: "will this charger work with my laptop" -> check_compatibility; an appliance with an extension
+  board, adapter or cable -> check_power_setup; children at home, allergies, pets or accessibility needs ->
+  check_suitability; a countdown, "only 2 left", pre-ticked extras or a subscription -> explain_pressure_tactics
+  (an image's pressure tactics are already in the check result as pressure_tactics: explain those).
+- Something is wrong (it smells, swells, leaks, sparks, gets hot): if you don't know what they noticed and which
+  product it is, ask first, in one short question. Then guide_symptoms and lead with its steps; if the urgency is
+  "emergency", say only the emergency steps first. Never suggest testing it, opening it or plugging it back in.
+  Then offer the next step: find_household_products for its warranty and return dates, repair_or_replace,
+  write_support_request (a warranty claim to copy) and write_incident_report (a report for SafeShelf, the brand
+  or the regulator). Example flow: "my charger gets hot" -> ask what they notice and the model -> guide_symptoms
+  -> find_household_products("charger") -> write_support_request with its household_item_id.
+- Old or broken products: find_disposal (official battery and e-waste collection), never household waste.
+- The household's products: add_household_product only when the shopper asks to save something (a receipt's
+  products are in the check result as receipt: offer to save them, and ask for the return period or warranty if
+  the receipt doesn't print it); find_household_products for "what do I own", "when does my warranty end",
+  "what's due"; log_service_request when they opened a claim or repair. Family sharing only on request:
+  share_household (give them the code and say what the relative will see), join_household with a code they
+  were given, household_sharing, stop_sharing. If a household tool says to sign in, say so.
+- A manual: if the shopper wants help with installation, cleaning, maintenance or an error code, ask them to send
+  the manual as a PDF; SafeShelf then answers from it with page numbers.
+- Drafts (reports, support requests) are for the shopper to copy and send; never say SafeShelf sent anything.
+- Write web addresses as plain URLs (https://...), never as markdown links."""
 
 ALTERNATIVE_INSTRUCTION = """You are SafeShelf's Safer Alternative Finder. Given a product_id, call get_alternatives,
 and when it helps, get_relationships, to recommend at most two products to buy instead.
@@ -131,12 +162,25 @@ async def check_image(image: str, language: str) -> dict:
                          "brand and model number."}
     listing = screenshot.to_listing(seen)
     runtime.step("shelf_chat", "read_image", screenshot.describe(seen, listing), time.monotonic() - started, calls)
+    receipt = screenshot.receipt(seen)
+    if receipt:  # a receipt is not a product to investigate: its products can go on the household list
+        runtime.current().results["receipt"] = receipt
+        return {"receipt": receipt, "note": "The image is a receipt. Say what it shows and offer to save its products "
+                                            "to the household list for warranty and return reminders."}
+    market = region.of(None, listing.get("currency") or seen.get("currency"))
+    tactics = assist.pressure(seen.get("pressure") or [], market)["tactics"]
+    if tactics:
+        runtime.current().results["pressure"] = tactics
     if not listing:
+        if tactics:
+            return {"pressure_tactics": tactics, "note": "No product could be identified, but the screen shows selling "
+                                                         "pressure: explain it."}
         return {"error": "The image shows no product SafeShelf can identify. Ask for a screenshot of the product "
                          "page, or a photo of the product's label."}
     observed = screenshot.label_observations(seen)
-    return await investigate_listing(listing, "screenshot", language,
-                                     {"source": "screenshot", "observations": observed} if observed else None)
+    found = await investigate_listing(listing, "screenshot", language,
+                                      {"source": "screenshot", "observations": observed} if observed else None)
+    return {**found, "pressure_tactics": tactics} if tactics else found
 
 
 def alternative_finder(model_name: str) -> LlmAgent:
@@ -159,7 +203,8 @@ def concierge(model_name: str) -> LlmAgent:
         name="shelf_chat",
         description="Answers a shopper's questions about one product, only from SafeShelf's stored evidence.",
         model=runtime.model(model_name), instruction=chat_core.INSTRUCTION + HOW_TO_WORK,
-        tools=[*tools.EVIDENCE_TOOLS, find_safer_alternative_tool(model_name), check_link],
+        tools=[*tools.EVIDENCE_TOOLS, find_safer_alternative_tool(model_name), check_link,
+               *owner_tools.OWNER_TOOLS],
         generate_content_config=runtime.config(),
         **runtime.callbacks(model_name))
 
@@ -171,6 +216,44 @@ def _answer(product_id, language, session_id, text: str, seen: set[str], mode: s
     out = chat_core.result(product_id, language, session_id, text, seen)
     out["mode"] = mode
     out["steps"] = runtime.current().steps
+    if runtime.current().results.get("assist"):  # owner-help results (drafts to copy, steps, dates) for the screen
+        out["assist"] = runtime.current().results["assist"]
+    return out
+
+
+async def manual_session(body: dict, message: str, product_id, language: str, session_id: str) -> dict:
+    """A question about the manual the shopper sent (a PDF): answered only from it, with page numbers."""
+    import time
+    try:
+        data, pages = manual.decode(body["document"])
+    except manual.BadDocument as problem:
+        raise HTTPException(status_code=422, detail=f"document: {problem}") from None
+    started = time.monotonic()
+
+    def read():
+        calls = gemini.track()
+        return manual.ask(data, pages, message, chat_core.LANGUAGES[language],
+                          chat_core.history_text(body.get("history"))), calls
+    try:
+        found, calls = await asyncio.to_thread(read)
+    except Exception as error:  # noqa: BLE001  every model failed: the chat says so
+        log.warning("manual not read: %s", type(error).__name__)
+        runtime.step("shelf_chat", "read_manual", "The manual could not be read", time.monotonic() - started)
+        return _answer(product_id, language, session_id, "SafeShelf couldn't read the manual just now. Please send "
+                       "it again in a minute.", set())
+    refs = manual.pages_text(found["references"])
+    runtime.step("shelf_chat", "read_manual", f"Read the manual ({pages or '?'} pages): "
+                 + (f"answered from {refs}" if found["answered"] and refs else "not covered"),
+                 time.monotonic() - started, calls, found)
+    if not found["answered"]:
+        text = found["answer"] or "The manual doesn't cover that."
+    else:
+        text = found["answer"] + (f" (Manual: {refs}.)" if refs else
+                                  " (SafeShelf couldn't match this to a page of the manual: check it there.)")
+        if found["safety_warning"]:
+            text += f" Caution from the manual: {found['safety_warning']}"
+    out = _answer(product_id, language, session_id, text, set())
+    out["manual"] = found
     return out
 
 
@@ -184,6 +267,8 @@ async def chat_session(body: dict) -> dict:
     language = chat_core.language(body.get("language"), message)  # a question typed in Tamil gets a Tamil answer
     session_id = body.get("session_id") or runtime.new_id("SS-A-")
     context = body.get("context")
+    if body.get("document"):  # a product manual (PDF): installation, cleaning, maintenance, error codes
+        return await manual_session(body, message, product_id, language, session_id)
     if image:  # a screenshot or photo (a phone has no extension): read it, then check that listing
         try:
             context = await check_image(image, language)
@@ -204,8 +289,12 @@ async def chat_session(body: dict) -> dict:
     if url:  # a pasted link is about that product, whatever product the screen had selected
         prompt = f"[The shopper pasted a product link: {url} - call check_link with it first.]\n" + prompt
     try:
-        text, _ = await runtime.run(concierge, prompt, {"language": language, "pasted": message[:1000]},
-                                    timeout_s=120 if url else 40)
+        # owner and tenant come from the request headers (engine/agents/handler.py), never from the message
+        state = {"language": language, "pasted": message[:1000], "owner": body.get("_owner"),
+                 "tenant": body.get("_tenant") or "public",
+                 "market": body.get("market") or region.of((context or {}).get("url"),
+                                                           (context or {}).get("currency")) or "in"}
+        text, _ = await runtime.run(concierge, prompt, state, timeout_s=120 if url else 40)
     except Exception as error:  # noqa: BLE001  every agent model failed: the one-call chat still answers
         log.warning("Concierge failed (%s); one-call chat answers", type(error).__name__)
         fallback = await asyncio.to_thread(chat.answer, {**body, "mode": "chat", "language": language,
