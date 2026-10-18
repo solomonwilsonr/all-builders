@@ -11,6 +11,7 @@ export async function idToken() {
   return SESSION.idToken;
 }
 export async function account() { return { email: SESSION.email, name: SESSION.name, role: "shopper" }; }
+export async function signedInUid() { return null; } // no shelf sync in a remote session (SHELF_SYNC is false)
 export async function signOut() {}
 export async function openSignIn() {}
 export async function acceptSession() { throw new Error("Sign-in is handled by the SafeShelf page here"); }
