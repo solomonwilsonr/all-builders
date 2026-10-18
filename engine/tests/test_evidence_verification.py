@@ -197,6 +197,13 @@ def test_foreign_recall_is_never_a_local_confirmed_recall():
     assert out["review_required"] and "Cross-border" in out["review_reasons"][0]
 
 
+def test_buyer_reports_never_hide_a_recall_abroad():
+    # Janod J04402 on Amazon.in: recalled by ACCC and CPSC, and four buyers report choking. Never "not recalled"
+    out = decide([match()], hazards=[{"severity": "high", "independent_groups": 4, "with_photos": 0}])
+    assert out["outcome"] == "substantiated_hazard_signal" and out["basis"] == "recalled_abroad_same_model"
+    assert out["lead_record"]["record_id"] == "cpsc:1" and "Cross-border" in out["review_reasons"][0]
+
+
 def test_local_recall_with_unknown_batch_is_not_confirmed():
     out = decide([match(local=True, scope="batch_unknown")])
     assert out["outcome"] == "potential_concern" and out["basis"] == "local_recall_batch_unknown"

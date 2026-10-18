@@ -85,6 +85,10 @@ def decide(market: str | None, market_name: str, product: dict, matches: list[di
         outcome, basis = "confirmed_recall", "confirmed_recall"
     elif substantiated or corroborated_notice:
         outcome, basis = "substantiated_hazard_signal", "substantiated_hazard_signal"
+        if abroad:  # buyers' reports back a recall abroad: lead with the regulator's decision, not "isn't recalled"
+            basis = "recalled_abroad_same_model"
+            review_reasons.append(f"Cross-border match: {abroad['authority']} recall {abroad['record_id']} names this "
+                                  f"model; a reviewer approves before it is shown as affecting {market_name}.")
     elif local_batch:
         outcome, basis = "potential_concern", "local_recall_batch_unknown"
     elif abroad:
