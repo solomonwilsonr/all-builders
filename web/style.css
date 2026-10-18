@@ -1106,33 +1106,41 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
    seven steps on a card over its edge; numbered step heads with the three-bar mark; three tabs per tool row;
    homepage-style cards with a status chip, a picture panel of rows and tags, and an "Ask Eddy" hand-off to the
    one chat; the persona content lives in its own step. Only the closing band keeps the pixel art. ---------- */
-.dhero { position: relative; display: flex; align-items: center; min-height: min(78vh, 680px); margin: clamp(6px, 1vw, 14px) clamp(8px, 1.1vw, 16px) 0; padding: clamp(56px, 7vw, 96px) calc(var(--gut) - clamp(8px, 1.1vw, 16px)) clamp(150px, 13vw, 190px); border-radius: clamp(18px, 2.2vw, 30px); background: #001123 url(site/assets/hero-metro-teen.webp) right center / auto 100% no-repeat; color: #fff; overflow: hidden; }
-.dhero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #001123 0%, #001123 max(4%, calc(100% - 1000px)), rgba(0, 17, 35, .82) max(44%, calc(100% - 800px)), rgba(0, 17, 35, .2) max(62%, calc(100% - 560px)), rgba(0, 17, 35, 0) max(76%, calc(100% - 420px))), linear-gradient(0deg, rgba(0, 17, 35, .45), transparent 30%); }
-.dhero-in { position: relative; max-width: 660px; }
-.dbadge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 6px; border-radius: 99px; background: rgba(255, 255, 255, .12); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); font-size: .8rem; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-.dbadge i { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 4px; background: var(--blue); font: 700 .68rem var(--display); font-style: normal; }
-.dhero h1 { margin: 22px 0 0; color: #fff; font: 500 clamp(2.3rem, 1.4rem + 3.4vw, 4.1rem)/1.03 var(--display); letter-spacing: -.04em; }
-.dhero h1 span { display: block; color: rgba(255, 255, 255, .62); }
-.dhero .lede { margin-top: 20px; max-width: 560px; color: rgba(255, 255, 255, .86); }
-.dhero .hero-btns { margin-top: 28px; }
-.dhero .jbtn.line { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .7); }
-.dhero .jbtn.line:hover { background: rgba(255, 255, 255, .12); color: #fff; box-shadow: inset 0 0 0 1.5px #fff; }
-.dnote { margin: 18px 0 0; font-size: 13px; color: rgba(255, 255, 255, .7); }
-.dnote b { color: #fff; font-weight: 600; }
+.dhero { position: relative; display: flex; align-items: center; min-height: min(74vh, 640px); margin: clamp(6px, 1vw, 14px) clamp(8px, 1.1vw, 16px) 0; padding: clamp(56px, 6vw, 88px) calc(var(--gut) - clamp(8px, 1.1vw, 16px)) clamp(150px, 13vw, 180px); border-radius: clamp(18px, 2.2vw, 30px); background: #001123; color: #fff; overflow: hidden; }
+/* the photo is its own panel to the right of the text, so Eddy never sits behind the words */
+.dhero::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: min(50%, calc(var(--gut) + 540px)); background: linear-gradient(90deg, #001123, rgba(0, 17, 35, .55) 14%, rgba(0, 17, 35, 0) 32%), linear-gradient(0deg, rgba(0, 17, 35, .5), transparent 28%), url(site/assets/hero-metro-teen.webp) 38% center / cover no-repeat; }
+.dhero-in { position: relative; max-width: 520px; }
+.dbadge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 5px; border-radius: 99px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); font-size: 12.5px; color: rgba(255, 255, 255, .86); }
+.dbadge i { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 99px; background: var(--blue); color: #fff; font: 700 .66rem var(--display); font-style: normal; }
+.dhero h1 { margin: 20px 0 0; color: #fff; font: 500 clamp(2.1rem, 1.3rem + 2.5vw, 3.4rem)/1.06 var(--display); letter-spacing: -.035em; text-wrap: balance; }
+.dhero h1 span { display: block; color: rgba(255, 255, 255, .55); }
+.dhero .lede { margin-top: 18px; max-width: 440px; color: rgba(255, 255, 255, .8); }
+.dhero .hero-btns { margin-top: 26px; }
+.dhero .jbtn.line { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .55); }
+.dhero .jbtn.line:hover { background: rgba(255, 255, 255, .1); color: #fff; box-shadow: inset 0 0 0 1.5px #fff; }
+.dstats { list-style: none; display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 0; margin: 30px 0 0; padding: 0; }
+.dstats li { display: grid; gap: 2px; padding: 0 20px; border-left: 1px solid rgba(255, 255, 255, .16); font-size: 12px; color: rgba(255, 255, 255, .6); }
+.dstats li:first-child { padding-left: 0; border-left: 0; }
+.dstats b { font: 500 1.15rem var(--display); color: #fff; letter-spacing: -.01em; }
 
-/* the seven steps, on a card over the hero's bottom edge */
-.journey { position: relative; z-index: 2; margin: calc(-1 * clamp(110px, 10vw, 140px)) var(--gut) 0; padding: 18px 18px 14px; border-radius: 16px; background: #fff; box-shadow: 0 24px 60px rgba(0, 17, 35, .16), 0 0 0 1px var(--line-2); }
-.journey-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; padding: 0 6px 12px; font-size: 13px; color: var(--muted); }
-.journey-head b { color: var(--ink); font: 500 1rem var(--display); }
-.journey ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
-.journey ol a { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; gap: 8px 10px; height: 100%; padding: 12px; border-radius: 11px; background: var(--soft); color: var(--ink-2); transition: background-color .15s, box-shadow .15s; }
-.journey ol a:hover, .journey ol a.on { background: #fff; text-decoration: none; box-shadow: 0 0 0 1.5px var(--blue); }
-.journey .jn { position: absolute; top: 10px; right: 12px; font: 600 .72rem var(--mono); color: var(--dim); }
-.journey .ji { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--blue-pale); color: var(--blue); }
-.journey .ji svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.journey .jt { grid-column: 1 / -1; display: grid; gap: 2px; }
-.journey .jt b { font: 500 .95rem/1.2 var(--display); color: var(--ink); }
-.journey .jt small { font-size: 12px; line-height: 1.35; color: var(--muted); }
+/* the seven steps, a numbered stepper on a card over the hero's bottom edge */
+.journey { position: relative; z-index: 2; margin: calc(-1 * clamp(110px, 10vw, 130px)) var(--gut) 0; padding: 20px 14px 12px; border-radius: 16px; background: #fff; box-shadow: 0 24px 60px rgba(0, 17, 35, .14), 0 0 0 1px var(--line-2); }
+.journey-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; padding: 0 10px 14px; font-size: 13px; color: var(--muted); }
+.journey-head b { color: var(--ink); font: 500 1.02rem var(--display); }
+.jroles { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.jroles a { padding: 4px 11px; border-radius: 99px; background: var(--soft); color: var(--ink-2); font-size: 12.5px; }
+.jroles a:hover { background: var(--blue-pale); color: var(--blue); text-decoration: none; }
+.journey ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.journey li { position: relative; }
+.journey li:not(:last-child)::after { content: ""; position: absolute; top: 25px; left: 46px; right: 4px; height: 1px; background: var(--line); }
+.journey ol a { display: grid; align-content: start; gap: 3px; height: 100%; padding: 12px 10px 14px; border-radius: 10px; color: var(--ink-2); transition: background-color .15s; }
+.journey ol a:hover { background: var(--soft); text-decoration: none; }
+.journey .jn { display: grid; place-items: center; width: 26px; height: 26px; margin-bottom: 9px; border-radius: 99px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line-2); font: 600 12px var(--display); color: var(--muted); transition: background-color .15s, color .15s, box-shadow .15s; }
+.journey ol a b { font: 500 .95rem/1.25 var(--display); color: var(--ink); }
+.journey ol a small { font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+.journey ol a:hover .jn { box-shadow: inset 0 0 0 1.5px var(--blue); color: var(--blue); }
+.journey ol a.on .jn { background: var(--blue); box-shadow: none; color: #fff; }
+.journey ol a.on b { color: var(--blue); }
 
 .jump a span { font: 600 11px var(--mono); }
 .jump a.on { background: #fff; color: var(--blue); box-shadow: 0 1px 3px rgba(0, 17, 35, .12), 0 0 0 1px var(--line); }
@@ -1233,12 +1241,13 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
 .end .cta { margin-top: clamp(64px, 8vw, 112px); }
 
 @media (max-width: 1100px) {
-  .journey ol { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .journey ol { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .journey ol li { flex: 0 0 168px; scroll-snap-align: start; }
   .dgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
-  .dhero { background-size: auto 70%; background-position: right bottom; }
-  .dhero::before { background: linear-gradient(180deg, #001123 45%, rgba(0, 17, 35, .55)); }
+  .dhero { align-items: flex-start; min-height: 0; padding-bottom: calc(150px + min(50vw, 380px)); }
+  .dhero::before { top: auto; left: 0; height: calc(126px + min(50vw, 380px)); background: linear-gradient(180deg, #001123, rgba(0, 17, 35, 0) 22%), url(site/assets/hero-metro-teen.webp) 42% 35% / cover no-repeat; }
   .covers ul, .rc-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .covers li:not(:nth-child(3n + 1)) { padding-left: 0; border-left: 0; }
   .covers li:nth-child(2n) { padding-left: 18px; border-left: 1px solid var(--line); }
@@ -1246,8 +1255,9 @@ a.codebadge:hover { text-decoration: none; background: var(--blue); color: #fff;
 }
 @media (max-width: 640px) {
   .journey { margin-left: 12px; margin-right: 12px; padding: 14px 10px 10px; }
-  .journey ol { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
-  .journey ol li { flex: 0 0 62%; scroll-snap-align: start; }
+  .journey ol li { flex-basis: 62%; }
+  .dstats { grid-template-columns: repeat(2, auto); gap: 14px 0; }
+  .dstats li:nth-child(3) { padding-left: 0; border-left: 0; }
   .gap, .dgrid, .covers ul, .rc-list { grid-template-columns: minmax(0, 1fr); }
   .covers li:nth-child(2n) { padding-left: 0; border-left: 0; }
   .trytabs [role=tab] { flex-basis: 100%; }
