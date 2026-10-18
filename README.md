@@ -10,7 +10,7 @@ Check any product listing before you pay: is it safe, and is it real? Every answ
   <a href="https://shops.safeshelf.online">Test shops</a> ·
   <a href="https://safeshelf-api-368488022657.asia-south1.run.app/docs">API docs</a> ·
   <a href="#results-measured-including-what-went-against-us">Results</a> ·
-  <a href="#architecture-and-decisions">Architecture</a>
+  <a href="#architecture-and-decisions">Architecture diagram</a>
 </p>
 <p align="center">
   <img alt="Live on Google Cloud" src="https://img.shields.io/badge/live%20on-Google%20Cloud-4285F4">
@@ -43,6 +43,8 @@ Check any product listing before you pay: is it safe, and is it real? Every answ
 | What broke and how we fixed it | [Debugging stories](#debugging-stories) |
 | How another AI agent can use it | [API: REST, MCP and A2A](#api-rest-mcp-and-a2a) |
 | Who would pay, and what's next | [Who it's for and the business model](#who-its-for-and-the-business-model) |
+
+<a href="#architecture-and-decisions"><img src="docs/architecture/architecture-overview.png" alt="SafeShelf architecture on Google Cloud (click for details)"></a>
 
 ## The gap
 
@@ -187,44 +189,7 @@ Plus about 27,800 products in the identity catalog, 29,379 real buyer reviews (m
 ### System overview
 Everything runs on Google Cloud. One FastAPI engine on Cloud Run (Mumbai, `asia-south1`) serves every channel; the agents call the same API as everyone else, so there is one source of truth.
 
-```mermaid
-flowchart TB
-  subgraph Channels["Where shoppers and agents are"]
-    EXT["Chrome extension<br/>(MV3)"]
-    WEB["Judges' page + website<br/>Firebase Hosting"]
-    AND["Android app"]
-    WA["WhatsApp bot<br/>Cloud Run"]
-    AG["Other AI agents<br/>MCP · A2A · REST"]
-  end
-  subgraph Run["Cloud Run · asia-south1"]
-    API["SafeShelf API + MCP server<br/>FastAPI"]
-    ADK["ADK agents<br/>Investigate · Shelf Chat · Safer alternative"]
-    RULES["Code verdict<br/>rules.py · source checks · guardrails"]
-    RES["Research Agent<br/>headless browser for registries"]
-    BR["Cloud Chrome<br/>for 'Try it'"]
-  end
-  subgraph AI["Vertex AI"]
-    GEM["Gemini 3.5 Flash / Flash-Lite<br/>reviews · labels · listings"]
-    LIVE["Gemini Live<br/>voice + camera"]
-    EMB["Embeddings + Search grounding"]
-  end
-  subgraph Data["Data"]
-    SQL[("Cloud SQL PostgreSQL + pgvector<br/>catalog · recalls · reviews · case files")]
-    FS[("Firestore<br/>roles · usage limits")]
-    SM["Secret Manager"]
-  end
-  SRC["Official sources<br/>CPSC · ACCC · KATS · CAA · CCPA/BIS · BSMI · CPSO · ASEAN · OECD"]
-  EXT & WEB & AND & WA & AG --> API
-  BR --> EXT
-  API --> ADK --> RULES
-  ADK --> GEM & EMB
-  WEB --> LIVE
-  API --> SQL
-  WEB --> FS
-  API --> RES --> SRC
-  API --> SRC
-  API --> SM
-```
+![SafeShelf architecture on Google Cloud: channels (Chrome extension, judges' page and website, Android app, WhatsApp bot, other AI agents) call the SafeShelf API and MCP server on Cloud Run in asia-south1; ADK agents (Investigate, Shelf Chat, Safer Alternative) feed the code verdict and the Research Agent; a cloud Chrome serves "Try it"; Vertex AI provides Gemini 3.5 Flash and Flash-Lite, Gemini Live, embeddings and Search grounding; data in Cloud SQL PostgreSQL with pgvector, Firestore and Secret Manager; records from CPSC, ACCC, KATS, CAA, CCPA/BIS, BSMI, CPSO, ASEAN and OECD](docs/architecture/architecture-overview.png)
 
 | Layer | Service | Why it's there |
 |---|---|---|
