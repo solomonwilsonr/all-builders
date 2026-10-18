@@ -51,13 +51,13 @@ demo-pages:     ## serve the demo shop pages on :8090 (the chat is now on the si
 	cd extension/demo && python3 -m http.server 8090
 
 api:            ## run the API locally on :8080 (MOCK=1 by default)
-	cd api && MOCK=$${MOCK:-1} PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --reload-dir . --reload-dir ../engine --port 8080
+	cd api && MOCK=$${MOCK:-1} PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --reload-dir . --reload-dir ../engine --reload-dir ../contracts --reload-dir ../data --reload-include "*.yaml" --reload-include "*.json" --port 8080
 
 api-real:       ## the API on :8080 with the real engine, nothing deployed: Gemini on Vertex AI + the live Cloud SQL through cloud-sql-proxy. Needs `gcloud auth application-default login`; costs Gemini credit; writes go to the live data
 	@cloud-sql-proxy --port 5433 $(SQL_INSTANCE) & proxy=$$!; trap "kill $$proxy" EXIT INT TERM; sleep 3; \
 	export GOOGLE_CLOUD_PROJECT=$(GCP_PROJECT) DATABASE_URL="host=127.0.0.1 port=5433 dbname=safeshelf user=safeshelf"; \
 	export PGPASSWORD="$$(gcloud secrets versions access latest --secret safeshelf-db-password --project $(GCP_PROJECT))"; \
-	cd api && MOCK=0 PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --reload-dir . --reload-dir ../engine --port 8080
+	cd api && MOCK=0 PYTHONPATH=.. uv run --python 3.12 uvicorn app.main:app --reload --reload-dir . --reload-dir ../engine --reload-dir ../contracts --reload-dir ../data --reload-include "*.yaml" --reload-include "*.json" --port 8080
 
 test:           ## contract tests: every endpoint has a mock and is served
 	cd api && uv run --python 3.12 pytest -q

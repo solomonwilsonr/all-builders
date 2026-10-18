@@ -80,11 +80,15 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   // Keeps personal details out of what is sent: delivery address, account name, emails, phone numbers.
   const PRIVATE_LINE = /^(deliver(ing)? to\b|hello,|hi,|your account|sign in|[A-Za-z .]+ [1-9]\d{5}$)/i;
   // Buttons and delivery noise that says nothing about the product.
+  // Tab labels, Rufus suggestions, protection-plan offers and short questions: page furniture that says nothing about the product.
+  const FURNITURE = /^(product information|features & specs|additional details|item details|measurements|feedback|from the brand|from the manufacturer|top|about this item|similar|questions|reviews|product description|rufus ai|looking for specific info\??|style|camera|battery|battery life|display|connectivity|video|navigation|user guide|see more|› see more product details|add a protection plan:?|gift options|available at checkout|visit the .{1,40} store|would you like to tell us about a lower price\??|click to play video|read more)$/i;
+  const OFFER_LINE = /(?:protection|warranty|screen protect|accidental|liquid damage|extended)[^\n]*₹\s?[\d,]+/i;
+  const QUESTION_LINE = /^[^.!]{4,70}\?$/;
   const NOISE_LINE = /^(add to cart|buy now|quantity:?\s*\d*|this will be a gift|add to wish list|add additional items|payment|secure transaction|details|price history|overnight|in stock|free delivery\b.*|link device to your amazon.*)$/i;
   // `seen` is shared between sections so a long line is sent once. Short lines are kept: they are labels paired with values.
   const scrub = (t, seen = new Set()) =>
     t.split("\n").map((l) => l.trim())
-      .filter((l) => l && (l.length > 2 || /[A-Za-z]/.test(l)) && !PRIVATE_LINE.test(l) && !NOISE_LINE.test(l))
+      .filter((l) => l && (l.length > 2 || /[A-Za-z]/.test(l)) && !PRIVATE_LINE.test(l) && !NOISE_LINE.test(l) && !FURNITURE.test(l) && !OFFER_LINE.test(l) && !QUESTION_LINE.test(l))
       .filter((l) => l.length < 25 || (!seen.has(l) && seen.add(l)))
       .join("\n")
       .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, "[email]")
@@ -192,7 +196,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       seller: sellerName() || main.match(/^Sold by\s*\n(.+)$/m)?.[1],
       image_urls: images.length ? images : [].concat(ld?.image || []).slice(0, 8),
       // Technical details first: they identify the product. Marketing text last, so the cap cuts that, not the specs.
-      page_text: [asin && `ASIN: ${asin}`, modelHint(), mrp && `M.R.P.: ${mrp}`, details.slice(0, 2500), area.slice(0, 1500) + hidden].filter(Boolean).join("\n").slice(0, 4200),
+      page_text: [asin && `ASIN: ${asin}`, modelHint(), mrp && `M.R.P.: ${mrp}`, details.slice(0, 1800), area.slice(0, 1000) + hidden].filter(Boolean).join("\n").slice(0, 3000),
       reviews: readReviews(),
       listing_id: document.body.dataset.safeshelfListingId || null,
       product_id: document.body.dataset.safeshelfProductId || null,
@@ -201,6 +205,10 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
 
   // Up to 30 reviews from the page: title, text, stars and date only. Emails and phone numbers are masked.
   // root: this page, or another page of the same shop read in the background (the critical-reviews page).
+  // A review is cut to its first REVIEW_CHARS: the complaint or the praise is up front, and long ones repeat themselves.
+  const REVIEW_CHARS = 700;
+  // The same review read twice differs in spacing and a trailing "Read more": letters and digits only, in any script.
+  const reviewKey = (x) => (x.text || "").toLowerCase().replace(/read more$/, "").replace(/[^\p{L}\p{N}]+/gu, "").slice(0, 160);
   const readReviews = (root = document) => {
     const r = site.reviews;
     if (!r) return [];
@@ -214,7 +222,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       const parsed = new Date(when?.getAttribute("datetime") || (when?.textContent || "").replace(/^.*\bon\s+/i, "").trim());
       return {
         title: mask(words(inside(el, r.title))).replace(/^[\d.]+ out of 5 stars\s*/, "").slice(0, 200) || null,
-        text: mask(words(inside(el, r.body))).slice(0, 1500),
+        text: mask(words(inside(el, r.body))).replace(/\s*Read more\s*$/i, "").slice(0, REVIEW_CHARS),
         rating,
         date: isNaN(parsed) ? null : parsed.toISOString().slice(0, 10),
         ...(r.verified ? { verified_purchase: !!inside(el, r.verified) } : {}),
@@ -250,15 +258,17 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
   const criticalCache = new Map();
   // filter: "critical" (1-3 stars), or one star level ("one_star" ... "five_star", for "Is it any good?").
   // sort: "recent", or "helpful" (the reviews other buyers found most useful: they explain a problem best).
+  // A page that could not be read is an empty list marked failed, so "no reviews" is never claimed from a failed fetch.
+  const failedPage = () => Object.assign([], { failed: true });
   const criticalPage = (asin, n, filter = "critical", sort = "recent") => {
     const key = `${asin}|${filter}|${sort}|${n}`;
     if (!criticalCache.has(key)) {
       criticalCache.set(key, (async () => {
         try {
           const res = await fetch(`/product-reviews/${asin}/?filterByStar=${filter}&sortBy=${sort}&reviewerType=all_reviews&pageNumber=${n}`, { credentials: "include" });
-          if (!res.ok || /\/ap\/signin/.test(res.url)) return [];
+          if (!res.ok || /\/ap\/signin/.test(res.url)) return failedPage();
           return readReviews(new DOMParser().parseFromString(await res.text(), "text/html"));
-        } catch (_) { return []; }
+        } catch (_) { return failedPage(); }
       })());
     }
     return criticalCache.get(key);
@@ -278,22 +288,57 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     const extra = await criticalReviews(pages);
     if (!extra.length) return page;
     const seen = new Set();
-    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(x.text) && seen.add(x.text)).slice(0, limit);
+    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(reviewKey(x)) && seen.add(reviewKey(x))).slice(0, limit);
     return { ...page, reviews };
   };
   window.__safeshelfMoreReviews = withMoreReviews;
+
+  // sellerAge: when the product was first listed, from the page's own "Date First Available" (no other page is opened).
+  // The product-details tables first; then the whole page text (the row sits in different places on different listings,
+  // and in collapsed sections). A date-shaped capture only, so nothing else is picked up.
+  const DATE_FIRST = /Date First Available\s*[:\-]?\s*(\d{1,2}\s+[A-Za-z]{3,9}\.?,?\s+\d{4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{4})/i;
+  const tidy = (t) => (t || "").replace(/[\u200e\u200f]/g, "").replace(/\s+/g, " ");
+  const readFirstAvailable = () => {
+    const rows = "#productDetails_detailBullets_sections1 tr, #productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, #productDetails_db_sections tr, #prodDetails tr, #detailBullets_feature_div li, #detailBulletsWrapper_feature_div li, [id^='productDetails'] tr";
+    for (const row of document.querySelectorAll(rows)) {
+      const found = tidy(row.textContent).match(DATE_FIRST);
+      if (found) return found[1].trim();
+    }
+    return tidy(document.body?.textContent).match(DATE_FIRST)?.[1].trim() || null;
+  };
 
   // "Is it any good?": one page (about 10 reviews) per star level, so every kind of buyer is heard, and the page's own
   // reviews, at most 60, plus the star summary that covers every rating. The server weights each star by its real
   // share of all ratings. 1-3 star pages are the most helpful first (they explain a problem best), 4-5 the newest.
   // Read after the card is shown, in the shopper's own browser.
   const STAR_PAGES = [["one_star", "helpful"], ["two_star", "helpful"], ["three_star", "helpful"], ["four_star", "recent"], ["five_star", "recent"]];
+  // sellerAge: Amazon's brand card ("Top Brand · Portronics · 84% positive ratings from 10K+ customers · 10+ years on Amazon"):
+  // a short slice of the page text around it. The server reads the numbers; this is the BRAND's tenure, not the seller's.
+  const readBrandText = () => {
+    const flat = tidy(document.body?.textContent);
+    const at = flat.search(/positive ratings from/i);
+    return at < 0 ? undefined : flat.slice(Math.max(0, at - 80), at + 260);
+  };
+  // sellerAge, for a page with no "Date First Available": what the product's reviews say about its age. The review pages are
+  // the ones already read for resultVerdict (cached, so no extra requests). complete is true only when every star level's
+  // first page held fewer than 10 reviews (there is no next page) and none failed: then the oldest review is the first one,
+  // and "no reviews" is true. null off Amazon.
+  const reviewCoverage = async () => {
+    const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
+    if (!asin || !/(^|\.)amazon\./.test(location.hostname)) return null;
+    const pages = await Promise.all(STAR_PAGES.map(([star, sort]) => criticalPage(asin, 1, star, sort)));
+    const seen = new Set();
+    const all = [...pages.flat(), ...readReviews()].filter((x) => !seen.has(reviewKey(x)) && seen.add(reviewKey(x)));
+    const dates = all.map((x) => x.date).filter(Boolean).sort();
+    return { oldest: dates[0] || null, read: all.length, complete: !pages.some((p) => p.failed) && pages.every((p) => p.length < 10),
+      ratings: readRatingSummary()?.count ?? null };
+  };
   const reviewsForVerdict = async (page) => {
     const asin = location.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})/)?.[1];
     const amazon = asin && /(^|\.)amazon\./.test(location.hostname);
     const extra = amazon ? (await Promise.all(STAR_PAGES.map(([star, sort]) => criticalPage(asin, 1, star, sort)))).flat() : [];
     const seen = new Set();
-    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(x.text) && seen.add(x.text)).slice(0, 60);
+    const reviews = [...extra, ...(page.reviews || [])].filter((x) => !seen.has(reviewKey(x)) && seen.add(reviewKey(x))).slice(0, 60);
     return { url: page.url, title: page.title, page_text: page.page_text, currency: page.currency, reviews, rating_summary: readRatingSummary() };
   };
 
@@ -561,6 +606,20 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
     .ip-more { margin-top:4px; } .ip-more summary { cursor:pointer; color:var(--link); font-size:12px; } .ip-more ul { margin:4px 0 0; padding-left:18px; }
     .ip.loading .ip-line { animation:ss-rv-pulse 1.2s ease-in-out infinite alternate; }
     @media (prefers-reduced-motion: reduce) { .ip.loading .ip-line { animation:none; } }
+    /* sellerAge: how long the seller has been around, from their rating history. Amber for new, never red. */
+    .sa { margin:10px 0 0; padding:9px 12px; border-radius:14px; background:var(--soft); font-size:13px; line-height:1.4; }
+    .sa-top { display:flex; align-items:baseline; justify-content:space-between; gap:8px; } .sa-word { font-weight:700; font-size:14px; }
+    .sa.ok .sa-word { color:var(--green); } .sa.warn .sa-word { color:var(--amber); } .sa-band { color:var(--muted); white-space:nowrap; font-size:12px; }
+    .sa-brand { margin-top:6px; padding-top:6px; border-top:1px solid var(--line); font-size:12px; color:var(--ink); }
+    .sa-line { margin-top:2px; } .sa-sub { color:var(--muted); font-size:12px; margin-top:2px; }
+    .sa-more { margin-top:4px; } .sa-more summary { cursor:pointer; color:var(--link); font-size:12px; } .sa-more ul { margin:4px 0 0; padding-left:18px; font-size:12px; }
+    /* officialSeller: is the seller the brand, an authorised seller, or a third party. Information only: green or neutral, never a warning colour. */
+    .os { margin:10px 0 0; padding:9px 12px; border-radius:14px; background:var(--soft); font-size:13px; line-height:1.4; }
+    .os-pill { display:inline-block; padding:3px 12px; border-radius:999px; font-weight:700; font-size:14px; background:var(--card); color:var(--ink); border:1px solid var(--line); }
+    .os-pill.yes { background:var(--green-bg); color:var(--green); border-color:var(--green); }
+    .os-pill.no { background:var(--ink); color:var(--card); border-color:var(--ink); }
+    .os-line { margin-top:6px; } .os-src { margin-top:6px; font-size:12px; color:var(--muted); } .os-src a { color:var(--link); }
+    .os-more { margin-top:4px; } .os-more summary { cursor:pointer; color:var(--link); font-size:12px; } .os-more ul { margin:4px 0 0; padding-left:18px; font-size:12px; }
     .rv-flag { margin-top:6px; padding:5px 8px; border-radius:10px; background:var(--amber-bg); color:var(--amber); font-size:12px; }
     .rv-why { margin-top:4px; } .rv-why summary { cursor:pointer; color:var(--link); font-size:12px; }
     .rv-why ul { margin:4px 0 0; padding-left:18px; }
@@ -1709,6 +1768,70 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
       return w;
     };
 
+    // sellerAge: how long has this product been listed? From the page's "Date First Available". The LISTING's age, not the
+    // seller's (marketplaces do not publish a join date), and the box says so. Nothing is shown when the page has no date.
+    const sellerAgeWidget = () => {
+      const w = el("div", { className: "sa", role: "group", ariaLabel: "How long this product has been listed" });
+      const fill = (vm) => {
+        const more = el("details", { className: "sa-more" }, el("summary", { textContent: "Why this verdict" }), el("ul", {}, ...vm.reasons.map((t) => el("li", { textContent: t }))));
+        more.addEventListener("toggle", place);
+        w.className = `sa ${vm.tone}`;
+        w.replaceChildren(...(vm.demo ? [el("span", { className: "ip-demo", textContent: "Demo data: example answer from the local API" })] : []),
+          el("div", { className: "sa-top" }, el("span", { className: "sa-word", textContent: vm.word }), ...(vm.band ? [el("span", { className: "sa-band", textContent: vm.band })] : [])),
+          el("div", { className: "sa-line", textContent: vm.text }), el("div", { className: "sa-sub", textContent: [vm.listed, vm.note].filter(Boolean).join(" · ") }),
+          ...(vm.brand ? [el("div", { className: "sa-brand", textContent: vm.brand })] : []), more);
+        place();
+      };
+      const note = (t) => { w.className = "sa"; w.replaceChildren(el("div", { className: "sa-sub", textContent: t })); place(); };
+      (async () => {
+        try {
+          const { url, page_text } = getPage();
+          const first = readFirstAvailable();
+          // No date on the page: its reviews are the next evidence (the oldest one; or "no reviews" when all were read)
+          const cov = first ? null : await reviewCoverage();
+          const listing = { url, first_available: first, page_text, oldest_review: cov?.oldest || undefined, reviews_read: cov?.read,
+            reviews_complete: cov?.complete, ratings_total: cov?.ratings ?? undefined, brand_text: readBrandText() };
+          chrome.runtime.sendMessage({ type: "safeshelf:listing-age", listing }, (res) => {
+            if (!res?.ok) return note(`Listing age: couldn't be worked out (${res?.error || chrome.runtime.lastError?.message || "no answer"}).`);
+            if (!res.result) return note("Listing age: this page does not show when the product was first listed, and its reviews cannot date it.");
+            fill(res.result);
+          });
+        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+      })();
+      return w;
+    };
+
+    // officialSeller: who is selling it, against the lists brands themselves published. It shows nothing for a brand that
+    // published nothing usable. Never a score and never a warning colour: a third-party seller can be genuine.
+    const officialSellerWidget = () => {
+      const w = el("div", { className: "os", role: "group", ariaLabel: "Who is selling this" });
+      const fill = (vm) => {
+        if (vm.quiet) { w.className = "os"; w.replaceChildren(...(vm.demo ? [el("span", { className: "ip-demo", textContent: "Demo data: example answer from the local API" })] : []), el("div", { className: "os-src", textContent: vm.text })); return place(); }
+        const src = vm.source ? el("div", { className: "os-src" }, "Source: ", ...(vm.source.url ? [el("a", { href: vm.source.url, target: "_blank", rel: "noopener", textContent: vm.source.text })] : [vm.source.text]), ...(vm.source.when ? [` · ${vm.source.when}`] : [])) : null;
+        // The source sits under "How this was decided", with the reasons: the answer itself stays short
+        const more = el("details", { className: "os-more" }, el("summary", { textContent: "How this was decided" }), ...(src ? [src] : []), el("ul", {}, ...vm.reasons.map((t) => el("li", { textContent: t }))));
+        more.addEventListener("toggle", place);
+        w.className = `os ${vm.tone}`;
+        w.replaceChildren(...(vm.demo ? [el("span", { className: "ip-demo", textContent: "Demo data: example answer from the local API" })] : []),
+          el("div", {}, el("span", { className: `os-pill ${vm.official === true ? "yes" : vm.official === false ? "no" : "maybe"}`, textContent: vm.word })),
+          el("div", { className: "os-line", textContent: vm.text }), more);
+        place();
+      };
+      (async () => {
+        try {
+          const { url, title, seller } = getPage();
+          // Amazon's own "Visit the Portronics Store" link under the title: only a brand's owner can open a brand store
+          const brand_store = tidy(document.querySelector("#bylineInfo")?.textContent).match(/Visit the (.{1,60}?) Store/i)?.[1];
+          chrome.runtime.sendMessage({ type: "safeshelf:official-seller", listing: { url, title, seller, ...(brand_store ? { brand_store } : {}) } }, (res) => {
+            if (!res?.ok) return w.remove(); // no answer (the API could not be reached): nothing to say
+            if (!res.result) return w.remove();
+            fill(res.result);
+          });
+        } catch (_) { w.remove(); } // the extension was reloaded; the new script takes over
+      })();
+      return w;
+    };
+
     const render = (r, fresh = false) => {
       stopTicker();
       result = r;
@@ -1736,7 +1859,7 @@ try { window.__safeshelf?.cleanup(); } catch (_) { /* old context is already dea
         ...(r.source === "mock" ? [el("div", { className: "demo", textContent: "Demo data: these are example results, not real findings about this product." })] : []),
         cardHead(r.host, closeX()),
         heroEl,
-        ...(mode === "float" && r.source !== "mock" ? [reviewsWidget(), possibleWidget()] : []), // product pages only, never for example data
+        ...(mode === "float" && r.source !== "mock" ? [reviewsWidget(), possibleWidget(), sellerAgeWidget(), officialSellerWidget()] : []), // product pages only, never for example data
         panelTabs(r, [
           ...(plain ? [todoBox(plain)] : []),
           // Before purchase the buy button is guarded (below); after purchase: steps, refund and complaint drafts.

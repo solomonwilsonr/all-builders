@@ -1,5 +1,5 @@
 import { identity, requireAdmin, adminStatus } from "./rbac.js";
-import { runCheck, reviewSummary, techCheck, priceCheck, saveToShelf, askAgent, getEvidence, agentSession, agentStream } from "./check.js";
+import { runCheck, reviewSummary, techCheck, priceCheck, listingAge, officialSeller, saveToShelf, askAgent, getEvidence, agentSession, agentStream } from "./check.js";
 import { API_BASE, SHELF_SYNC, SIGNIN_URL } from "./config.js";
 import { callOp, opsStatus } from "./ops.js";
 import { acceptSession, account, openSignIn, signOut, SIGNIN_ORIGINS } from "./session.js";
@@ -32,6 +32,8 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
   const jobs = {
     "safeshelf:check": async () => { await mustBeOn(); return runCheck(msg.page, Boolean(msg.fresh)); },
     "safeshelf:reviews": async () => { await mustBeOn(); return reviewSummary(msg.listing); }, // "Is it any good?" widget
+    "safeshelf:listing-age": async () => { await mustBeOn(); return listingAge(msg.listing); }, // sellerAge widget: the listing's age
+    "safeshelf:official-seller": async () => { await mustBeOn(); return officialSeller(msg.listing); }, // officialSeller widget
     "safeshelf:tech": async () => { await mustBeOn(); return techCheck(msg.listing); }, // "Is it possible?": the technology first
     "safeshelf:price": async () => { await mustBeOn(); return priceCheck(msg.listing, msg.claims || null); }, // then the price, if the technology can exist
     "safeshelf:cost-info": async () => ({ mockApi: /\/\/(localhost|127\.0\.0\.1)/.test(API_BASE) }), // TEMP cost guard

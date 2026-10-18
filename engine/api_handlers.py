@@ -26,6 +26,7 @@ from engine import (
     incidents,
     investigation,
     marks,
+    official_seller,
     owner,
     page_safety,
     passport,
@@ -43,6 +44,9 @@ from engine import (
     voice,
     watch,
     webhooks,
+)
+from engine import (
+    listing_age as listing_age_module,
 )
 from engine.agents import handler as agent_handler
 from engine.sources import health as source_health
@@ -105,6 +109,16 @@ async def listing_price_benchmark(request: Request, params: dict[str, Any]) -> d
         refs, kind = price_benchmark.references_for(listing, gemini.grounded)
         return price_benchmark.benchmark(listing, refs, kind)
     return await run_in_threadpool(run)
+
+
+async def listing_age(request: Request, params: dict[str, Any]) -> dict:
+    listing = await request.json()
+    return await run_in_threadpool(listing_age_module.assess, listing)  # plain rules on a date: no Gemini, no database
+
+
+async def listing_official_seller(request: Request, params: dict[str, Any]) -> dict:
+    listing = await request.json()
+    return await run_in_threadpool(official_seller.assess, listing)  # plain rules on the registry: no Gemini, no database
 
 
 async def listing_claims_check(request: Request, params: dict[str, Any]) -> dict:
@@ -527,6 +541,8 @@ HANDLERS = {
     "listingReviewVerdict": listing_review_verdict,
     "listingPriceBenchmark": listing_price_benchmark,
     "listingClaimsCheck": listing_claims_check,
+    "listingAge": listing_age,
+    "listingOfficialSeller": listing_official_seller,
     "getProduct": by_product(passport.product),
     "getHistory": by_product(passport.history),
     "getAlternatives": by_product(passport.alternatives),

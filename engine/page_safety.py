@@ -36,12 +36,14 @@ NOT_KINDS = NOT_BRANDS | {"with", "pack", "for", "and", "black", "white", "blue"
 
 def page_reviews(listing: dict) -> list[dict]:
     """The page's reviews in the Radar's shape. The text is required; rating and date are optional."""
-    out = []
+    out, seen = [], set()
     today = datetime.now(UTC).date().isoformat()
     for review in (listing.get("reviews") or [])[:MAX_REVIEWS]:
         text = str(review.get("text") or "").strip()
-        if not text:
+        key = "".join(c for c in text.lower().removesuffix("read more") if c.isalnum())[:160]
+        if not text or key in seen:  # the same review twice (spacing and a "Read more" tail differ) counts once
             continue
+        seen.add(key)
         date = str(review.get("date") or "")[:10]
         try:
             datetime.fromisoformat(date)

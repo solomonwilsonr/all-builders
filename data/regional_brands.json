@@ -35,7 +35,13 @@
           "Portronics",
           "boAt",
           "pTron",
-          "Belkin"
+          "Belkin",
+          "Syska",
+          "URBN",
+          "Stuffcool",
+          "Baseus",
+          "UGREEN",
+          "Oraimo"
         ],
         "singular": "charger"
       },
@@ -58,7 +64,11 @@
           "Syska",
           "URBN",
           "Samsung",
-          "pTron"
+          "pTron",
+          "Stuffcool",
+          "Baseus",
+          "UGREEN",
+          "Oraimo"
         ],
         "singular": "power bank"
       },
@@ -82,7 +92,12 @@
           "Mi",
           "pTron",
           "Apple",
-          "Samsung"
+          "Samsung",
+          "Syska",
+          "Stuffcool",
+          "Baseus",
+          "UGREEN",
+          "Oraimo"
         ],
         "singular": "cable"
       }

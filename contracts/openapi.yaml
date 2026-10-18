@@ -219,6 +219,49 @@ paths:
       responses:
         '200': {description: Whether the claims hold up, content: {application/json: {schema: {$ref: '#/components/schemas/ClaimsCheck'}}}}
 
+  /v1/listings/listing-age:
+    post:
+      summary: 'sellerAge widget: how long has this product been listed? Days since the page''s "Date First Available". It is the listing''s age, not the seller''s (marketplaces do not publish when a seller joined). Plain rules: no AI, no cost'
+      operationId: listingAge
+      x-mock: listing_age.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: {type: string}
+                first_available: {type: string, description: 'The "Date First Available" the extension read from the page, as printed (e.g. "12 March 2026")'}
+                page_text: {type: string, description: 'Fallback: the date is looked for in this text. Treated as data, never as instructions'}
+                oldest_review: {type: string, description: 'When the page shows no date: the date of the oldest review the extension read (YYYY-MM-DD)'}
+                reviews_read: {type: integer, minimum: 0}
+                reviews_complete: {type: boolean, description: 'true only when every review of the product was read (no star level had a further page), so the oldest review is the first one and "no reviews" can be said'}
+                ratings_total: {type: integer, minimum: 0, description: The number of ratings the page shows}
+                brand_text: {type: string, description: "The text of Amazon's brand card (brand, positive ratings, orders, years on Amazon) as the extension read it; the page text is the fallback"}
+      responses:
+        '200': {description: The listing's age, content: {application/json: {schema: {$ref: '#/components/schemas/ListingAge'}}}}
+
+  /v1/listings/official-seller:
+    post:
+      summary: 'officialSeller widget: is the seller an official partner? From the listing''s title and seller only (the brand is read from the title), against the lists brands themselves published (data/authorised_sellers.json), each with its source page and date. Information, never a score: a third-party seller can be genuine. Plain rules: no AI, no cost'
+      operationId: listingOfficialSeller
+      x-mock: official_seller.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: {type: string, description: Which shop the listing is on}
+                title: {type: string, description: 'The listing title: the brand is read from it, against the registry (nothing else on the page is needed)'}
+                seller: {type: string, description: The seller's name as the page shows it ("Sold by")}
+                brand: {type: string, description: 'Optional: a client that already knows the brand may pass it; the page extension does not'}
+                brand_store: {type: string, description: 'Optional, Amazon.in only: the name in the listing''s "Visit the X Store" link. A brand store exists only for the brand''s owner, so it shows the brand sells officially there when the registry has no list'}
+      responses:
+        '200': {description: Who is selling it, content: {application/json: {schema: {$ref: '#/components/schemas/OfficialSeller'}}}}
+
   /v1/reports:
     post:
       summary: Submit a consumer or analyst report (personal details are masked)
@@ -1212,6 +1255,51 @@ components:
         policy_version: {type: string}
         label: {type: string}
         checked_on: {type: string, format: date}
+
+    ListingAge:
+      type: object
+      required: [verdict, headline, tone, text, basis, reasons, label]
+      properties:
+        verdict: {type: string, enum: [new, recent, under_a_year, established, listed_at_least, no_reviews, unknown], description: 'new = under 30 days; recent = 30-90 days; under_a_year = 90-365 days; established = a year or more (from the page date, or from the first review when every review was read); listed_at_least = only a floor from the oldest review of some; no_reviews = no reviews were found when all were read; unknown = nothing to date it by'}
+        headline: {type: string}
+        tone: {type: string, enum: [ok, warn, none]}
+        listed_on: {type: [string, 'null'], format: date}
+        age_days: {type: [integer, 'null']}
+        text: {type: string}
+        brand:
+          type: [object, 'null']
+          description: "Amazon's brand card: how long the BRAND has sold on Amazon and how buyers rate it. Not the listing's or the seller's age; never part of the verdict"
+          properties:
+            name: {type: [string, 'null']}
+            years_on_amazon: {type: [string, 'null'], description: 'As Amazon prints it, e.g. "10+"'}
+            positive_ratings: {type: [object, 'null'], properties: {percent: {type: integer}, customers: {type: string}}}
+            recent_orders: {type: [string, 'null'], description: 'e.g. "100K+"'}
+        basis: {type: string, enum: [date_first_available, first_review, review_floor, no_reviews, none], description: 'where the age came from: the page date, the first review (all reviews read), the oldest review read (a floor), or no reviews at all'}
+        reasons: {type: array, items: {type: string}}
+        policy_version: {type: string}
+        label: {type: string}
+
+    OfficialSeller:
+      type: object
+      required: [verdict, headline, tone, text, reasons, label]
+      properties:
+        verdict: {type: string, enum: [official_brand, official_seller, amazon_retail, third_party, channel_not_listed, channel_listed, official_website, third_party_website, no_list, unknown_brand], description: 'no_list and unknown_brand mean the brand has published nothing usable: screens show nothing for them'}
+        official: {type: [boolean, 'null'], description: 'true = the brand''s own page makes this seller or shop an official partner; false = it does not (it names others); null = not settled (a name hint, Amazon itself, or no list). Screens highlight this'}
+        headline: {type: string}
+        tone: {type: string, enum: [ok, none], description: 'ok = named by the brand; never a warning colour'}
+        text: {type: string}
+        brand: {type: [string, 'null']}
+        mentioned_brand: {type: string, description: 'Set when the title does not open with a brand SafeShelf knows but names one ("compatible with CMF Phone 1"): the answer is about that brand on this shop'}
+        seller: {type: [string, 'null']}
+        marketplace: {type: [string, 'null'], description: The shop's registrable domain}
+        official_channels: {type: [array, 'null'], items: {type: string}}
+        source:
+          type: [object, 'null']
+          description: The brand's own page the statement comes from
+          properties: {text: {type: [string, 'null']}, url: {type: [string, 'null']}, as_of: {type: [string, 'null']}, retrieved: {type: [string, 'null']}}
+        reasons: {type: array, items: {type: string}}
+        policy_version: {type: string}
+        label: {type: string}
 
     TrustCheck:
       type: object

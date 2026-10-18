@@ -28,6 +28,8 @@ BODIES = {
                              "reviews": [{"text": "Fits well, clear after a month.", "rating": 5}]},
     "listingPriceBenchmark": {"url": "https://www.amazon.in/dp/B0DT3HZQ5K", "title": "60W USB-C Charger", "price": 299, "currency": "INR"},
     "listingClaimsCheck": {"url": "https://www.amazon.in/dp/B0DT3HZQ5K", "title": "60W USB-C Charger", "price": 299, "currency": "INR"},
+    "listingAge": {"url": "https://www.amazon.in/dp/B0DT3HZQ5K", "first_available": "5 October 2026"},
+    "listingOfficialSeller": {"url": "https://www.amazon.in/dp/B0DT3HZQ5K", "title": "boAt Airdopes", "seller": "Random Traders", "page_text": "Brand\tboAt"},
     "createReport": {"product_id": "SS-P-10291", "description": "Port melted"},
     "addShelfItem": {"product_id": "SS-P-10291"},
     "catalogScan": {"csv_url": "gs://safeshelf-demo/catalog.csv"},

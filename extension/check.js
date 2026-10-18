@@ -321,6 +321,71 @@ export async function priceCheck(listing, claims = null) {
   return { price, answer: possibleAnswer(price, claims), demo: source === "mock" };
 }
 
+// sellerAge widget: how long has this product been listed? From the page's "Date First Available", read in the shopper's
+// browser (no other page is opened). It is the LISTING's age, not the seller's: marketplaces do not publish a join date.
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const ageWords = (d) => (d <= 0 ? "listed today" : d < 60 ? `${d} day${d === 1 ? "" : "s"} old` : d < 730 ? `about ${Math.round(d / 30)} months old` : `about ${Math.floor(d / 365)} years old`);
+const FROM = { date_first_available: "First listed", first_review: "First review", review_floor: "Oldest review read" };
+// Amazon's brand card: how long the BRAND has sold on Amazon and how buyers rate it. Not the listing's or the seller's age.
+const brandLine = (b) => {
+  if (!b) return null;
+  const years = b.years_on_amazon ? `${b.years_on_amazon} year${/^1\+?$/.test(b.years_on_amazon) ? "" : "s"} on Amazon` : null;
+  const rating = b.positive_ratings ? `${b.positive_ratings.percent}% positive from ${b.positive_ratings.customers} customers` : null;
+  const parts = [b.name && `Brand: ${b.name}`, years, rating, b.recent_orders && `${b.recent_orders} recent orders`].filter(Boolean);
+  return parts.length ? parts.join(" · ") : null;
+};
+export function listingAgeWidget(v) {
+  if (!v) return null;
+  const brand = brandLine(v.brand);
+  const known = ["new", "recent", "under_a_year", "established", "listed_at_least", "no_reviews"].includes(v.verdict);
+  if (!known && !brand) return null; // nothing to show
+  if (!known) return { tone: "none", word: "Listing age not available", text: "This page shows no date for the listing.", band: null, listed: null, brand,
+    note: "The brand's time on Amazon is not the listing's age.", reasons: [...(v.reasons || []), v.label].filter(Boolean) };
+  const [y, m, d] = String(v.listed_on || "").split("-").map(Number);
+  return { tone: ["ok", "warn", "none"].includes(v.tone) ? v.tone : "none", word: v.headline, text: v.text,
+    band: v.age_days != null ? (v.verdict === "listed_at_least" ? `at least ${ageWords(v.age_days)}` : ageWords(v.age_days)) : null,
+    listed: y && m && d ? `${FROM[v.basis] || "First listed"} ${d} ${MONTH_NAMES[m - 1]} ${y}` : null, brand,
+    note: "This is the listing's age, not the seller's.", reasons: [...(v.reasons || []), v.label].filter(Boolean) };
+}
+
+// listing: {url, first_available, page_text}. null when the page shows no date (nothing is shown then).
+export async function listingAge(listing) {
+  const { url, first_available, page_text, oldest_review, reviews_read, reviews_complete, ratings_total, brand_text } = listing;
+  const { body, source } = await askPossible("/v1/listings/listing-age", { url, first_available, page_text, oldest_review, reviews_read, reviews_complete, ratings_total, brand_text });
+  const vm = listingAgeWidget(body);
+  return vm ? { ...vm, demo: source === "mock" } : null;
+}
+
+// officialSeller: is the seller the brand, one of its authorised sellers, or a third party? From the lists brands themselves
+// published (each answer cites its source). Information, never a score, never a warning colour. Nothing is shown for a brand
+// that published nothing usable (no_list, unknown_brand): there it shows one quiet line saying so.
+const OFFICIAL_SHOWN = ["official_brand", "official_seller", "amazon_retail", "third_party", "channel_not_listed", "channel_listed", "official_website", "third_party_website"];
+const safeHttp = (u) => (/^https?:\/\//i.test(u || "") ? u : null);
+export function officialSellerWidget(v) {
+  if (!v) return null;
+  // The brand published nothing usable: one quiet line saying so (and which brand and seller were seen), never a blank
+  if (!OFFICIAL_SHOWN.includes(v.verdict)) {
+    const seen = v.seller ? `seller: ${v.seller}` : "";
+    return { quiet: true, tone: "none", word: null, text: `Seller check: ${v.text}${seen ? ` (${seen})` : ""}`, seller: v.seller || null, marketplace: v.marketplace || null, source: null, reasons: [] };
+  }
+  const src = v.source || {};
+  const when = src.as_of || src.retrieved;
+  const [y, m, d] = String(when || "").split("-").map(Number);
+  // official: true = an official partner (green pill); false = not one (dark pill); null = not settled (plain). Never red.
+  return { tone: v.tone === "ok" ? "ok" : "none", official: v.official === true ? true : v.official === false ? false : null,
+    word: v.headline, text: v.text, seller: v.seller || null, marketplace: v.marketplace || null,
+    source: src.text ? { text: src.text, url: safeHttp(src.url), when: y && m && d ? `${src.as_of ? "published" : "read"} ${d} ${MONTH_NAMES[m - 1]} ${y}` : null } : null,
+    reasons: [...(v.reasons || []), v.label].filter(Boolean) };
+}
+
+// listing: {url, title, seller}.
+export async function officialSeller(listing) {
+  const { url, title, seller, brand_store } = listing; // only these: the brand is read from the title; brand_store is the "Visit the X Store" link's name
+  const { body, source } = await askPossible("/v1/listings/official-seller", { url, title, seller, ...(brand_store ? { brand_store } : {}) });
+  const vm = officialSellerWidget(body);
+  return vm ? { ...vm, demo: source === "mock" } : null;
+}
+
 // Remembered per page for 10 minutes, like the check. A mock answer is rejected by api(), so no example is ever shown.
 const verdicts = new Map();
 export function reviewSummary(listing) {
