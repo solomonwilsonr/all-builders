@@ -14,6 +14,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="theme.css?v=20261017e">
+  <script>
+    // ?embed=1: the chat inside the demo page (../index.html#chat). No site header; links open in the main window.
+    if (new URLSearchParams(location.search).has("embed")) {
+      document.documentElement.classList.add("embed");
+      document.head.append(Object.assign(document.createElement("base"), { target: "_top" }));
+    }
+  </script>
   <style>
     .chat-page { --card:#fff; --link:var(--blue); --green:var(--ok); --green-bg:var(--ok-bg); --unknown:#4a5560; --unknown-bg:#eceff3;
       --shadow:0 14px 32px rgba(0,17,35,.10), 0 0 0 1px rgba(0,17,35,.04);
@@ -21,6 +28,8 @@
     .chat-page .top { border-bottom-color:var(--line); }
     .chat-page svg.i { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; }
     .chat-page [hidden] { display:none !important; }
+    .embed .chat-page > .top { display:none; }
+    #checksLeft.ask-in { cursor:pointer; text-decoration:underline; text-underline-offset:2px; }
 
     /* the chat fills the rest of the window, edge to edge; content keeps the site's gutters */
     .chat { flex:1; min-height:0; display:flex; flex-direction:column; background:#fff; }
@@ -1431,11 +1440,27 @@
   newSession();
   health();
   refreshShelf();
+  { // a question handed over from the home page's Ask Eddy bar: chat.html?q=…&lang=…
+    const params = new URLSearchParams(location.search), handed = (params.get("q") || "").trim(), l = params.get("lang");
+    if (l && LANG_LIST.some(([c]) => c === l)) setLang(l);
+    if (handed) {
+      history.replaceState(null, "", location.pathname); // a reload must not ask it again
+      $("q").value = handed;
+      grow();
+      // asking needs an account, which loads after this script: ask once it is there, else leave it typed in the box
+      const send = () => { if (window.safeshelfAccount && $("q").value === handed) { removeEventListener("safeshelf:account", send); ask(handed); } };
+      if (window.safeshelfAccount) send(); else addEventListener("safeshelf:account", send);
+    }
+  }
   addEventListener("safeshelf:account", () => { watched.clear(); refreshShelf(); });
-  const showLeft = () => { $("checksLeft").textContent = window.safeshelfAccount ? window.safeshelfAccount.text() : "Sign in to ask"; };
+  const showLeft = () => {
+    $("checksLeft").textContent = window.safeshelfAccount ? window.safeshelfAccount.text() : "Sign in to ask";
+    $("checksLeft").classList.toggle("ask-in", !window.safeshelfAccount);
+  };
+  $("checksLeft").onclick = () => { if (!window.safeshelfAccount) window.safeshelfSignIn?.(); };
   addEventListener("safeshelf:account", showLeft);
   addEventListener("safeshelf:quota", showLeft);
-  $("q").focus();
+  if (!document.documentElement.classList.contains("embed")) $("q").focus(); // in the demo page, focus would scroll it
 })();
 </script>
 </body>

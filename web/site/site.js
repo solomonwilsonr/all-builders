@@ -103,13 +103,94 @@ GET ${API.replace("https://", "")}
   };
   const pre = document.getElementById("dev-code");
   const opts = [...document.querySelectorAll(".opt")];
-  const showCode = (k) => {
+  const terminal = pre?.closest(".tty");
+  const prompt = terminal?.querySelector(".tty-prompt");
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  let terminalRun = 0, currentCode = "mcp", terminalStarted = false;
+  let promptText, terminalStatus;
+  if (prompt) {
+    const text = [...prompt.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent).join("");
+    [...prompt.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE).forEach((node) => node.remove());
+    promptText = document.createElement("span");
+    promptText.className = "tty-prompt-text";
+    promptText.textContent = text;
+    prompt.append(promptText);
+    terminalStatus = document.createElement("div");
+    terminalStatus.className = "tty-status";
+    terminalStatus.setAttribute("role", "status");
+    prompt.after(terminalStatus);
+  }
+  const originalPrompt = promptText?.textContent;
+  const showCode = (key) => {
     if (!pre) return;
-    pre.innerHTML = CODE[k];
-    opts.forEach((o) => o.setAttribute("aria-selected", String(o.dataset.code === k)));
+    pre.innerHTML = CODE[key];
+    opts.forEach((option) => option.setAttribute("aria-selected", String(option.dataset.code === key)));
   };
-  opts.forEach((o) => o.addEventListener("click", () => showCode(o.dataset.code)));
+  const settleTerminal = () => {
+    ++terminalRun;
+    showCode(currentCode);
+    if (!terminal) return;
+    terminal.classList.remove("tty-composing", "tty-thinking", "tty-streaming");
+    pre.removeAttribute("aria-busy");
+    if (promptText) promptText.textContent = originalPrompt;
+    if (terminalStatus) terminalStatus.textContent = "Example ready · read-only tools";
+  };
+  const streamTerminal = async (element, token, duration) => {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push({ node: walker.currentNode, text: Array.from(walker.currentNode.textContent) });
+    const total = nodes.reduce((sum, item) => sum + item.text.length, 0);
+    nodes.forEach(({ node }) => node.textContent = "");
+    const start = performance.now();
+    while (token === terminalRun) {
+      let count = Math.ceil(Math.min(1, (performance.now() - start) / duration) * total);
+      nodes.forEach(({ node, text }) => {
+        node.textContent = text.slice(0, Math.max(0, count)).join("");
+        count -= text.length;
+      });
+      if (performance.now() - start >= duration) return;
+      await new Promise((resolve) => setTimeout(resolve, 30));
+    }
+  };
+  const playTerminal = async (key) => {
+    currentCode = key;
+    terminalStarted = true;
+    settleTerminal();
+    if (!terminal || !promptText || motion.matches || document.hidden) return;
+    const token = terminalRun;
+    // Keep the finished code's footprint as its highlighted text streams in.
+    pre.style.minHeight = `${Math.max(pre.getBoundingClientRect().height, parseFloat(pre.style.minHeight) || 0)}px`;
+    pre.setAttribute("aria-busy", "true");
+    terminal.classList.add("tty-composing");
+    terminalStatus.textContent = "Typing example prompt…";
+    await streamTerminal(promptText, token, 1200);
+    if (token !== terminalRun) return;
+    terminal.classList.remove("tty-composing");
+    terminal.classList.add("tty-thinking");
+    terminalStatus.textContent = "Preparing example response";
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    if (token !== terminalRun) return;
+    terminal.classList.remove("tty-thinking");
+    terminal.classList.add("tty-streaming");
+    terminalStatus.textContent = `Showing ${key.toUpperCase()} example…`;
+    await streamTerminal(pre, token, 2600);
+    if (token !== terminalRun) return;
+    settleTerminal();
+  };
+  opts.forEach((option) => option.addEventListener("click", () => playTerminal(option.dataset.code)));
   showCode("mcp");
+  if (terminalStatus) terminalStatus.textContent = "Example ready · read-only tools";
+  if (terminal && "IntersectionObserver" in window) {
+    const terminalObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      if (!terminalStarted) playTerminal(currentCode);
+      terminalObserver.disconnect();
+    }, { threshold: .3 });
+    terminalObserver.observe(terminal);
+  }
+  motion.addEventListener("change", () => { if (motion.matches) settleTerminal(); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) settleTerminal(); });
 
   document.querySelectorAll("[data-copy-from]").forEach((b) => b.addEventListener("click", async () => {
     const label = b.textContent;
