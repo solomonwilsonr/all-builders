@@ -29,6 +29,19 @@ SafeShelf checks any product listing and answers two questions: **Is it safe?** 
 | [`bench/`](bench/) | Backtest, SafeShelfBench and the other evaluations, with results |
 | [`docs/`](docs/) | Design document ([`SAFESHELF.md`](docs/SAFESHELF.md), [PDF](docs/SafeShelf_Global.pdf)), backtest method, tools, privacy and source access notes |
 
+## Engineering
+| Area | Where it is |
+|---|---|
+| Architecture and design | [`docs/plan.md`](docs/plan.md) (architecture diagram, module design, the decision table), [`docs/MODULES.md`](docs/MODULES.md), [`docs/SAFESHELF.md`](docs/SAFESHELF.md) |
+| API contract | [`contracts/openapi.yaml`](contracts/openapi.yaml), with mock answers in [`contracts/mock/`](contracts/mock/) so every screen runs with `MOCK=1` |
+| AI evaluations | [`bench/`](bench/): backtest on 25 past recalls and 40 controls, evidence red team, historical cutoff, cross-border lead time, JAPAC gate and agent evals. Each run is saved with its versions in `bench/runs/` and served at `GET /v1/bench/runs` |
+| Tests | Engine (`make test-engine`), sources, security (`make test-security`), integration, extension and WhatsApp |
+| Security | [`SECURITY.md`](SECURITY.md): threat model, the controls that stop false recall or safety answers, secrets, and known gaps |
+| Database | [`data/schema.sql`](data/schema.sql) plus numbered migrations in [`data/migrations/`](data/migrations/) (`make migrate`) |
+| Deployment | Cloud Run (API, research agent, real browser) and Firebase Hosting. Secrets come from Secret Manager. One `make deploy-*` target per service |
+| Observability | Cloud Trace on every agent, tool, model and source call (`SAFESHELF_TRACE_TO_CLOUD=1`). One JSON log line per request in Cloud Logging. Source health at `GET /v1/sources/health` |
+| Privacy and data sources | [`docs/privacy-regional.md`](docs/privacy-regional.md), [`docs/source-access.md`](docs/source-access.md) |
+
 ## Run it
 ```
 cp .env.example .env     # extension settings
