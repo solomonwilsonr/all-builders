@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Team Hashes</title>
-  <meta name="description" content="SafeShelf is built by Team Hashes, Seshu and Solomon, for the AI Builder Cup 2026.">
+  <title>Team Hashes · SafeShelf</title>
+  <meta name="description" content="Team Hashes built SafeShelf for the AI Builder Cup 2026.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="theme.css?v=20261017e">
+  <link rel="stylesheet" href="theme.css?v=20261018b">
+  <link rel="stylesheet" href="pages.css?v=20261018b">
 </head>
 <body>
 <div class="page">
@@ -21,56 +22,61 @@
   </header>
 
   <main>
-    <section class="inner-hero">
-      <div><p class="kicker">Team Hashes · AI Builder Cup 2026</p><h1 class="display">Two builders, one engine.</h1></div>
-      <div style="display:grid;gap:22px"><p class="lead">SafeShelf was built in a week for the Retail and Commerce theme of the AI Builder Cup 2026. We split the work into a brain and a face, agreed the shape of every API answer on day one, and built against it in parallel.</p></div>
+    <section class="h-hero inner" aria-labelledby="hero-h">
+      <div class="h-hero-grid">
+        <div>
+          <span class="backed"><i>S</i>Team Hashes · AI Builder Cup 2026</span>
+          <h1 class="display" id="hero-h">Two builders, <span>one engine.</span></h1>
+          <p class="lead">SafeShelf was built in a week for the Retail and Commerce theme of the AI Builder Cup 2026. We split the work into a brain and a face, agreed the shape of every API answer on day one, and built against it in parallel.</p>
+          <div class="btns"><a class="btn btn-blue" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a><a class="btn btn-line" href="results.html">See the results</a></div>
+          
+        </div>
+        <div class="h-eddy" aria-hidden="true"><img src="assets/guide/eddy-happy.webp" alt=""></div>
+      </div>
     </section>
-    <section class="section" style="padding-top:0">
-      <div class="team">
-        <article class="member">
-          <div class="member-art" style="background-image:url(assets/sea.png)"><span aria-hidden="true">S</span></div>
-          <div class="member-body"><h3>Solomon</h3><p class="role-line">The brain: engine, data and API</p><ul>
-            <li>Recall and notice data from 8 regions</li><li>Product identity and copy matching</li><li>Safety radar, recall and safety-mark checks</li><li>"Is it real?" listing checks</li><li>The API, the MCP server and the WhatsApp bot</li><li>SafeShelfBench and the backtest</li></ul></div>
+
+    <section class="h-stage short" aria-label="The team">
+      <div class="people">
+        <article class="person-c">
+          <div class="person-art" style="background-image:url(assets/sea.png)"><span aria-hidden="true">S</span></div>
+          <div class="person-body"><h3>Solomon</h3><p class="role-line">The brain: engine, data and API</p><ul><li>Recall and notice data from 8 regions</li><li>Product identity and copy matching</li><li>Safety radar, recall and safety-mark checks</li><li>"Is it real?" listing checks</li><li>The API, the MCP server and the WhatsApp bot</li><li>SafeShelfBench and the backtest</li></ul></div>
         </article>
-        <article class="member">
-          <div class="member-art" style="background-image:url(assets/field.png)"><span aria-hidden="true">S</span></div>
-          <div class="member-body"><h3>Seshu</h3><p class="role-line">The face: extension, agents and web</p><ul>
-            <li>Chrome extension and accessibility</li><li>Google ADK agents: Investigate, Shelf Chat, Safer Alternative</li><li>My Shelf, scan and report</li><li>The web page and Google sign-in</li><li>Voice answers</li><li>The judges' lab</li></ul></div>
+        <article class="person-c">
+          <div class="person-art" style="background-image:url(assets/field.png)"><span aria-hidden="true">S</span></div>
+          <div class="person-body"><h3>Seshu</h3><p class="role-line">The face: extension, agents and web</p><ul><li>Chrome extension and accessibility</li><li>Google ADK agents: Investigate, Shelf Chat, Safer Alternative</li><li>My Shelf, scan and report</li><li>The web page and Google sign-in</li><li>Voice answers</li><li>The judges' lab</li></ul></div>
         </article>
       </div>
     </section>
 
-    <section class="section" style="padding-top:0">
-      <div class="split-head"><div><p class="kicker">Built with</p><h2 class="display">Google Cloud,<br>End to End</h2></div>
-      <p class="lead">The same stack serves the extension, the web page, WhatsApp and other agents.</p></div>
-      <div class="tools">
-        <article class="tool"><code>Gemini on Vertex AI</code><p>Product matching, hazard reading and the plain-language explanation.</p></article>
-        <article class="tool"><code>Google ADK</code><p>The investigating and chat agents.</p></article>
-        <article class="tool"><code>Cloud Run</code><p>The API and MCP server, in Mumbai (asia-south1).</p></article>
-        <article class="tool"><code>Cloud SQL</code><p>The catalog, recalls and reviews.</p></article>
-        <article class="tool"><code>Firebase</code><p>Hosting, Google sign-in and roles in Firestore.</p></article>
-        <article class="tool"><code>Chrome MV3 · WhatsApp Cloud API</code><p>Where shoppers meet it.</p></article>
-      </div>
+    <section class="h-sec" aria-labelledby="stack-h">
+      <div class="h-head"><h2 class="display" id="stack-h"><span class="mark" aria-hidden="true"></span>Google Cloud, end to end.</h2><p class="lead">The same stack serves the extension, the web page, WhatsApp and other agents.</p></div>
+      <div class="tg"><article><code>Gemini on Vertex AI</code><p>Product matching, hazard reading and the plain-language explanation.</p></article><article><code>Google ADK</code><p>The investigating and chat agents.</p></article><article><code>Cloud Run</code><p>The API and MCP server, in Mumbai (asia-south1).</p></article><article><code>Cloud SQL</code><p>The catalog, recalls and reviews.</p></article><article><code>Firebase</code><p>Hosting, Google sign-in and roles in Firestore.</p></article><article><code>Chrome MV3 · WhatsApp Cloud API</code><p>Where shoppers meet it.</p></article></div>
     </section>
-    <section class="cta" style="margin-top:clamp(64px,8vw,112px)"><h2 class="display">Read the Code</h2><p class="lead">Everything on this site is in one repository.</p><div class="btns"><a class="btn btn-blue" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a><a class="btn btn-line" href="results.html">See the results</a></div></section>
+
+    <section class="h-cta" aria-labelledby="cta-h">
+      <h2 class="display" id="cta-h">Read the code. <span>All of it.</span></h2>
+      <p>Everything on this site is in one repository.</p>
+      <div class="btns"><a class="btn btn-white" href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a><a class="btn btn-ink" href="results.html">See the results</a></div>
+      <img class="fly" src="assets/guide/eddy-flying.webp" alt="" aria-hidden="true">
+    </section>
   </main>
 
   <footer class="foot">
-    <div class="cols">
+    <div class="cols home-cols">
+      <div class="brand-col"><a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a><p>Evidence-backed product checks for shoppers in India, Japan, Australia, Singapore and beyond.</p></div>
       <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="chat.html">Chat</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="get.html">Get SafeShelf</a></li><li><a href="how.html#where">WhatsApp (soon)</a></li></ul></div>
       <div><h4>Learn</h4><ul><li><a href="how.html">How it works</a></li><li><a href="results.html">Results</a></li><li><a href="results.html#backtest">SafeShelfBench</a></li><li><a href="index.html#faq">FAQs</a></li></ul></div>
       <div><h4>Builders</h4><ul><li><a href="agents.html">MCP server</a></li><li><a href="agents.html#rest">REST API</a></li><li><a href="../api-integration/index.html">API docs</a></li></ul></div>
       <div><h4>Project</h4><ul><li><a href="team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li><li><a href="../index.html">Judges' page</a></li></ul></div>
-      <div><h4>Records from</h4><ul><li>CPSC · ACCC · KATS</li><li>CAA · CCPA · BIS</li><li>BSMI · CPSO · ASEAN</li></ul></div>
     </div>
     <div class="foot-bar">
-      <a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <span>Records from CPSC · ACCC · KATS · CAA · CCPA · BIS · BSMI · CPSO · ASEAN · OECD</span>
       <span>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</span>
       <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
     </div>
   </footer>
 </div>
-<script src="site.js" defer></script>
+<script src="site.js?v=20261018b" defer></script>
 <script type="module" src="account.js?v=20261018u"></script>
 </body>
 </html>

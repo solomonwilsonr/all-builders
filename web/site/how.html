@@ -4,11 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How SafeShelf works</title>
-  <meta name="description" content="How SafeShelf reads a listing, matches the exact product, checks official records and listing signals, and sets a verdict in code.">
+  <meta name="description" content="How SafeShelf checks a listing: five steps, the product-identity rule, and where it runs.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="theme.css?v=20261017e">
+  <link rel="stylesheet" href="theme.css?v=20261018b">
+  <link rel="stylesheet" href="pages.css?v=20261018b">
 </head>
 <body>
 <div class="page">
@@ -21,64 +22,92 @@
   </header>
 
   <main>
-    <section class="inner-hero">
-      <div><p class="kicker">How it works</p><h1 class="display">Two questions: is it safe, and is it real?</h1></div>
-      <div style="display:grid;gap:22px"><p class="lead">Every check answers both, on one product-identity engine that recognises the same product under different brand names. The model writes the words; code decides the colour.</p><div class="btns"><a class="btn btn-blue" href="../index.html">Try it live</a></div></div>
-    </section>
-    <div class="banner" style="background-image:url(assets/band.png)" aria-hidden="true"></div>
-
-    <section class="section" id="steps">
-      <div class="split-head"><div><p class="kicker">Five steps</p><h2 class="display">From Product Page<br>to a Sourced Verdict</h2></div>
-      <p class="lead">Nothing leaves the page until you press Check. A typical check comes back in about 7 seconds, and the first colours arrive in about 3.</p></div>
-      <div class="band" style="margin:0"><ol class="flow" style="padding-top:clamp(32px,4vw,48px)">
-        <li class="step"><span class="n">01</span><svg viewBox="0 0 32 32"><rect x="5" y="6" width="22" height="20" rx="3"/><path d="M5 12h22"/></svg><h3>Read the page</h3><p>The extension reads only the product area: title, model, price, photos and seller. Names, addresses, pincodes, emails and phone numbers are filtered out before anything is sent.</p></li>
-        <li class="step"><span class="n">02</span><svg viewBox="0 0 32 32"><circle cx="14" cy="14" r="8"/><path d="m20 20 7 7"/></svg><h3>Find the product</h3><p>The engine on Cloud Run matches the listing in a catalog of about 27,800 products, with Gemini on Vertex AI, and finds its rebranded twins.</p></li>
-        <li class="step"><span class="n">03</span><svg viewBox="0 0 32 32"><path d="M16 4 6 8v7c0 6 4.2 10.4 10 12 5.8-1.6 10-6 10-12V8z"/></svg><h3>Check the records</h3><p>Official recalls and notices from 8 regions, buyer hazard reports, and safety marks checked against the registry.</p></li>
-        <li class="step"><span class="n">04</span><svg viewBox="0 0 32 32"><rect x="6" y="7" width="20" height="18" rx="2"/><path d="m6 21 6-6 5 5 3-3 6 6"/></svg><h3>Check the listing</h3><p>Copied photos, the price against the genuine product, how old the shop is, conflicting specs and hidden AI instructions.</p></li>
-        <li class="step"><span class="n">05</span><svg viewBox="0 0 32 32"><path d="m7 16 6 6 12-13"/></svg><h3>Set the verdict</h3><p>Rules set red, amber, green or grey. Gemini explains, and every sentence must cite an evidence id that exists.</p></li>
-      </ol></div>
-    </section>
-
-    <section class="section" id="identity" style="padding-top:0">
-      <div class="split-head"><div><p class="kicker">The identity rule</p><h2 class="display">A Look-alike's Recall Is Not<br>This Product's Recall</h2></div>
-      <p class="lead">Most false alarms come from matching the wrong product. SafeShelf sorts every match into one of three tiers before any recall is applied.</p></div>
-      <div class="tiers">
-        <article class="tier ok"><small>Exact model</small><h3>Inherits the recall</h3><p>Same model number, same maker. A recall of this model applies to this listing.</p></article>
-        <article class="tier warn"><small>Possible rebrand</small><h3>Goes to review</h3><p>The same product under another brand name. Shown as "needs review", never as recalled, until a person checks it.</p></article>
-        <article class="tier bad"><small>Look-alike</small><h3>Never inherits</h3><p>Similar photos or a similar name are not enough. A look-alike gets no safety claim at all.</p></article>
-      </div>
-      <p class="callout"><b>Recalled abroad is not recalled here.</b> A recall of the same model in another country is shown as "recalled abroad, same model", with the country and regulator named, so a shopper in India is never told a US recall is an Indian one.</p>
-    </section>
-
-    <section class="section" id="where" style="padding-top:0">
-      <div class="split-head"><div><p class="kicker">Where it runs</p><h2 class="display">One Engine,<br>Four Ways In</h2></div>
-      <p class="lead">The extension, the web page, the WhatsApp bot and other agents all call the same API and get the same answer.</p></div>
-      <div class="surfaces">
-        <article class="surface"><span class="state soon">Coming soon</span><h3>Chrome extension</h3><p>A rail on Amazon India, Japan, Australia, Singapore, the US and Flipkart. One chat with sources, Listen and Copy.</p></article>
-        <article class="surface"><span class="state">Live</span><h3>Web page</h3><p>Six sample listings with known answers, a live check of your own listing, and the bench results. Google sign-in.</p></article>
-        <article class="surface"><span class="state soon">Number pending</span><h3>WhatsApp</h3><p>Send a link or a photo of the label; get text and a voice note back in English or Hindi. Built and tested.</p></article>
-        <article class="surface"><span class="state">Live</span><h3>Your agent</h3><p>Ten read-only MCP tools, REST endpoints and an A2A agent card. <a href="agents.html" style="color:var(--blue)">Connect one</a>.</p></article>
+    <section class="h-hero inner" aria-labelledby="hero-h">
+      <div class="h-hero-grid">
+        <div>
+          <span class="backed"><i>S</i>How it works</span>
+          <h1 class="display" id="hero-h">Two questions: <span>is it safe, and is it real?</span></h1>
+          <p class="lead">Every check answers both, on one product-identity engine that recognises the same product under different brand names. The model writes the words; code decides the colour.</p>
+          <div class="btns"><a class="btn btn-blue" href="../index.html">Try it live</a><a class="btn btn-line" href="results.html">See the results</a></div>
+          <nav class="jump" aria-label="On this page"><a href="#steps">Five steps</a><a href="#identity">The identity rule</a><a href="#where">Where it runs</a><a href="#private">Privacy</a></nav>
+        </div>
+        <div class="h-eddy" aria-hidden="true"><img src="assets/guide/eddy-pointing.webp" alt=""></div>
       </div>
     </section>
-    <section class="cta" style="margin-top:clamp(64px,8vw,112px)"><h2 class="display">See It on a Real Listing</h2><p class="lead">Six sample listings with known right answers, and a live check of your own.</p><div class="btns"><a class="btn btn-blue" href="../index.html">Try it live</a><a class="btn btn-line" href="results.html">See the results</a></div></section>
+
+    <section class="h-stage" id="steps" aria-label="The five steps of a check">
+      <div class="h-win">
+        <div class="win-bar"><i></i><i></i><i></i><span>One check, from product page to a sourced verdict</span><b>about 7 s</b></div>
+        <div class="win-body">
+          <ol class="steps">
+            <li class="st"><small>01</small><svg viewBox="0 0 32 32"><rect x="5" y="6" width="22" height="20" rx="3"/><path d="M5 12h22"/></svg><h3>Read the page</h3><p>Only the product area: title, model, price, photos and seller. Names, addresses, pincodes, emails and phone numbers are filtered out first.</p></li>
+            <li class="st"><small>02</small><svg viewBox="0 0 32 32"><circle cx="14" cy="14" r="8"/><path d="m20 20 7 7"/></svg><h3>Find the product</h3><p>Matched in a catalog of about 27,800 products with Gemini on Vertex AI, with its rebranded twins.</p></li>
+            <li class="st"><small>03</small><svg viewBox="0 0 32 32"><path d="M16 4 6 8v7c0 6 4.2 10.4 10 12 5.8-1.6 10-6 10-12V8z"/></svg><h3>Check the records</h3><p>Official recalls and notices from 8 regions, buyer hazard reports, and safety marks checked against the registry.</p></li>
+            <li class="st"><small>04</small><svg viewBox="0 0 32 32"><rect x="6" y="7" width="20" height="18" rx="2"/><path d="m6 21 6-6 5 5 3-3 6 6"/></svg><h3>Check the listing</h3><p>Copied photos, the price against the genuine product, how old the shop is, conflicting specs, hidden AI instructions.</p></li>
+            <li class="st"><small>05</small><svg viewBox="0 0 32 32"><path d="m7 16 6 6 12-13"/></svg><h3>Set the verdict</h3><p>Rules set red, amber, green or grey. Gemini explains, and every sentence must cite an evidence id that exists.</p></li>
+          </ol>
+          <p class="win-foot"><span>Nothing leaves the page until you press <b>Check</b></span><span>First colours in <b>about 3 s</b></span><span>Median live check <b>6.6 s</b></span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="h-sec" id="identity" aria-labelledby="id-h">
+      <div class="h-head"><h2 class="display" id="id-h"><span class="mark" aria-hidden="true"></span>A look-alike's recall is not this product's recall.</h2><p class="lead">Most false alarms come from matching the wrong product. SafeShelf sorts every match into one of three tiers before any recall is applied.</p></div>
+      <div class="bento">
+        <article class="cell ok"><span class="cell-k">Exact model</span><h3>Inherits the recall</h3><p>Same model number, same maker. A recall of this model applies to this listing.</p>
+          <div class="cell-b"><div class="copies"><p><b>CX-65 · Appario Retail</b><small>same model number</small><span class="tag ok">EXACT</span></p></div></div></article>
+        <article class="cell warn"><span class="cell-k">Possible rebrand</span><h3>Goes to review</h3><p>The same product under another brand name. Shown as "needs review", never as recalled, until a person checks it.</p>
+          <div class="cell-b"><div class="copies"><p><b>65W Fast · QuickKart</b><small>sent to a person</small><span class="tag warn">REBRAND?</span></p></div></div></article>
+        <article class="cell bad"><span class="cell-k">Look-alike</span><h3>Never inherits</h3><p>Similar photos or a similar name are not enough. A look-alike gets no safety claim at all.</p>
+          <div class="cell-b"><div class="copies"><p><b>45W Type-C · Clicktech</b><small>similar photos only</small><span class="tag flag">LOOK-ALIKE</span></p></div></div></article>
+      </div>
+      <p class="h-callout"><img src="assets/guide/eddy-curious.webp" alt=""><span><b>Recalled abroad is not recalled here.</b> A recall of the same model in another country is shown as "recalled abroad, same model", with the country and regulator named, so a shopper in India is never told a US recall is an Indian one.</span></p>
+    </section>
+
+    <section class="h-sec" id="where" aria-labelledby="where-h">
+      <div class="h-head"><h2 class="display" id="where-h"><span class="mark" aria-hidden="true"></span>One engine, four ways in.</h2><p class="lead">The extension, the web page, the WhatsApp bot and other agents all call the same API and get the same answer.</p></div>
+      <div class="bento four">
+        <article class="cell flat"><span class="state">Live</span><h3>Web page</h3><p>Six sample listings with known answers, a live check of your own listing, and the bench results. Google sign-in.</p></article>
+        <article class="cell flat"><span class="state">Live</span><h3>Your agent</h3><p>Ten read-only MCP tools, REST endpoints and an A2A agent card. <a href="agents.html" style="color:var(--blue)">Connect one</a>.</p></article>
+        <article class="cell flat"><span class="state soon">Coming soon</span><h3>Chrome extension</h3><p>A rail on Amazon India, Japan, Australia, Singapore, the US and Flipkart. One chat with sources, Listen and Copy.</p></article>
+        <article class="cell flat"><span class="state soon">Number pending</span><h3>WhatsApp</h3><p>Send a link or a photo of the label; get text and a voice note back in English or Hindi. Built and tested.</p></article>
+      </div>
+    </section>
+
+    <section class="h-sec" id="private" aria-labelledby="priv-h">
+      <div class="h-head"><h2 class="display" id="priv-h"><span class="mark" aria-hidden="true"></span>Private and honest, by default.</h2><p class="lead">SafeShelf reads only the product, sends nothing until you press Check, and never lets a model decide the colour on its own.</p></div>
+      <div class="bento four">
+        <article class="cell flat"><h3>Personal details filtered</h3><p>Names, addresses, pincodes, emails and phone numbers removed before sending.</p></article>
+        <article class="cell flat"><h3>Nothing sent until you press Check</h3><p>The extension waits for you.</p></article>
+        <article class="cell flat"><h3>Read-only agent tools</h3><p>An agent can look, never buy, report or act.</p></article>
+        <article class="cell flat"><h3>Code sets the colour</h3><p>Every sentence must cite evidence that exists. Thin evidence is grey, never green.</p></article>
+      </div>
+    </section>
+
+    <section class="h-cta" aria-labelledby="cta-h">
+      <h2 class="display" id="cta-h">See it on a real listing. <span>Known answers first.</span></h2>
+      <p>Six sample listings with known right answers, and a live check of your own.</p>
+      <div class="btns"><a class="btn btn-white" href="../index.html">Try it live</a><a class="btn btn-ink" href="results.html">See the results</a></div>
+      <img class="fly" src="assets/guide/eddy-flying.webp" alt="" aria-hidden="true">
+    </section>
   </main>
 
   <footer class="foot">
-    <div class="cols">
+    <div class="cols home-cols">
+      <div class="brand-col"><a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a><p>Evidence-backed product checks for shoppers in India, Japan, Australia, Singapore and beyond.</p></div>
       <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="chat.html">Chat</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="get.html">Get SafeShelf</a></li><li><a href="how.html#where">WhatsApp (soon)</a></li></ul></div>
       <div><h4>Learn</h4><ul><li><a href="how.html">How it works</a></li><li><a href="results.html">Results</a></li><li><a href="results.html#backtest">SafeShelfBench</a></li><li><a href="index.html#faq">FAQs</a></li></ul></div>
       <div><h4>Builders</h4><ul><li><a href="agents.html">MCP server</a></li><li><a href="agents.html#rest">REST API</a></li><li><a href="../api-integration/index.html">API docs</a></li></ul></div>
       <div><h4>Project</h4><ul><li><a href="team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li><li><a href="../index.html">Judges' page</a></li></ul></div>
-      <div><h4>Records from</h4><ul><li>CPSC · ACCC · KATS</li><li>CAA · CCPA · BIS</li><li>BSMI · CPSO · ASEAN</li></ul></div>
     </div>
     <div class="foot-bar">
-      <a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <span>Records from CPSC · ACCC · KATS · CAA · CCPA · BIS · BSMI · CPSO · ASEAN · OECD</span>
       <span>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</span>
       <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
     </div>
   </footer>
 </div>
-<script src="site.js" defer></script>
+<script src="site.js?v=20261018b" defer></script>
 <script type="module" src="account.js?v=20261018u"></script>
 </body>
 </html>
