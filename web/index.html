@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261017y">
+<link rel="stylesheet" href="style.css?v=20261018r">
 <link rel="stylesheet" href="whatsapp.css?v=20261018c">
 <link rel="stylesheet" href="tour.css?v=20261018c">
 <script type="module" src="app.js?v=20261018zb"></script>
@@ -19,7 +19,7 @@
 <header class="top">
   <nav class="nav brand-row" aria-label="Primary navigation">
     <a class="logo" href="site/index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
-    <div class="links" id="links"><a href="site/index.html">Product</a><a href="site/how.html">How it works</a><a href="site/agents.html">For agents</a><a href="site/results.html">Results</a><a href="site/team.html">Team</a><a href="index.html" aria-current="page">Try it live</a></div>
+    <div class="links" id="links"><a href="site/index.html">Product</a><a href="site/chat.html">Chat</a><a href="site/how.html">How it works</a><a href="site/agents.html">For agents</a><a href="site/results.html">Results</a><a href="site/team.html">Team</a><a href="index.html" aria-current="page">Try it live</a></div>
     <div class="nav-end"><a class="btn btn-ink btn-sm" href="site/get.html">Get SafeShelf</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
   </nav>
 </header>
@@ -27,12 +27,14 @@
 <section class="jhero" aria-labelledby="hero-h">
   <div class="jhero-top">
     <div>
-      <div class="laurels"><span>Live API on Cloud Run</span><span>Gemini on Vertex AI</span></div>
-      <h1 id="hero-h">Is it safe? Is it real? Know before you pay.</h1>
-    </div>
-    <div class="hero-side">
+      <span class="jbadge"><i>S</i>Live demo · Cloud Run and Gemini on Vertex AI</span>
+      <h1 id="hero-h">Is it safe? Is it real? <span>Know before you pay.</span></h1>
       <p class="lede">SafeShelf checks a product listing against official recalls, buyer reports and the signs of a fake shop, then answers in plain words, <strong>with its proof</strong>.</p>
       <div class="hero-btns"><a class="jbtn" href="#for">Pick your view</a><a class="jbtn line" href="#try" data-say="hero-2">Try it now</a></div>
+    </div>
+    <div class="jeddy" aria-hidden="true">
+      <img src="site/assets/guide/eddy-waving.webp" alt="">
+      <span class="say">Pick who you are, then try a <b>real listing</b>.</span>
     </div>
   </div>
   <ul class="facts" aria-label="Real data behind every answer">
@@ -269,21 +271,22 @@
       <h2 data-say="cta-h">Want SafeShelf on your own shop pages?</h2>
       <p data-say="cta-p">The Chrome extension and the WhatsApp number are coming soon. Developers can use the API today.</p>
       <div class="hero-btns" data-say="cta-btns"><a class="jbtn" href="site/get.html">Get SafeShelf</a><a class="jbtn line" href="site/agents.html">For developers</a></div>
+      <img class="cta-eddy" src="site/assets/guide/eddy-flying.webp" alt="" aria-hidden="true">
     </div>
   </section>
 </main>
 
 <footer class="foot">
   <div class="cols">
+    <div class="brand-col"><a class="logo" href="site/index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a><p>Evidence-backed product checks for shoppers in India, Japan, Australia, Singapore and beyond.</p></div>
     <div><h4>Product</h4><ul><li><a href="site/index.html">Trust check</a></li><li><a href="site/how.html#identity">Product identity</a></li><li><a href="site/get.html">Get SafeShelf</a></li><li><a href="index.html">Try it live</a></li></ul></div>
     <div><h4>Learn</h4><ul><li><a href="site/how.html">How it works</a></li><li><a href="site/results.html">Results</a></li><li><a href="site/results.html#backtest">SafeShelfBench</a></li></ul></div>
     <div><h4>Builders</h4><ul><li><a href="site/agents.html">MCP server</a></li><li><a href="https://safeshelf-api-368488022657.asia-south1.run.app/docs" target="_blank" rel="noopener">API docs</a></li><li><a href="https://safeshelf-api-368488022657.asia-south1.run.app/.well-known/agent-card.json" target="_blank" rel="noopener">A2A agent card</a></li></ul></div>
     <div><h4>Project</h4><ul><li><a href="site/team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li></ul></div>
-    <div><h4>Records from</h4><ul><li>CPSC · ACCC · KATS</li><li>CAA · CCPA · BIS</li><li>BSMI · CPSO · ASEAN</li></ul></div>
   </div>
   <p class="foot-note">Colours are set by code from the evidence; AI findings marked "under review" are not regulatory determinations. Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24 are fictional demo products and shops; recalls, reviews and registries are real data.</p>
   <div class="foot-bar">
-    <a class="logo" href="site/index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+    <span>Records from CPSC · ACCC · KATS · CAA · CCPA · BIS · BSMI · CPSO · ASEAN · OECD</span>
     <span>Verdicts are evidence for shoppers, not legal findings.</span>
     <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
   </div>
