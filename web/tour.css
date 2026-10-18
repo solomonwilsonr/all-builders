@@ -1,117 +1,87 @@
-/* Page tour (tour.js): a spotlight ring over one part of the page and a card beside it, in the site theme:
-   white card on a dimmed page, grotesk title, dotted picture area, blue / mint / ink, near-square buttons. */
+/* Eddy, the page guide (tour.js): a spotlight ring over one part of the page, and Eddy beside a chat-style card,
+   in the site theme: white card, grotesk title, blue / mint / ink, near-square buttons. The page stays usable
+   while he talks (only the card takes clicks). */
 
-/* the Tour button, bottom right; a mint dot pulses until the tour has been opened once */
-.tg-launch { position: fixed; right: 20px; bottom: 20px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px; border-radius: 2px; background: var(--ink); color: #fff; box-shadow: 0 10px 24px rgba(0, 17, 35, .22); font-size: 14px; }
-.tg-launch:hover { background: #102538; color: #fff; box-shadow: 0 10px 24px rgba(0, 17, 35, .28); }
-.tg-launch svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.tg-launch.fresh::after { content: ""; position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 0 rgba(162, 241, 169, .7); animation: tg-pulse 1.8s ease-out infinite; }
-@keyframes tg-pulse { to { box-shadow: 0 0 0 12px rgba(162, 241, 169, 0); } }
+/* Eddy's button, bottom right; a "Need a hand?" bubble until he has been met */
+.tg-launch { position: fixed; right: 18px; bottom: 18px; z-index: 40; display: flex; align-items: flex-end; gap: 6px; min-height: 0; padding: 0; background: none; box-shadow: none; }
+.tg-launch:hover { box-shadow: none; }
+.tg-launch img { width: 68px; height: 68px; border-radius: 50%; object-fit: cover; object-position: center 20%; background: linear-gradient(180deg, #e8f2fd, #cfe3fb); box-shadow: 0 0 0 3px #fff, 0 10px 24px rgba(0, 17, 35, .22); transition: transform .2s ease; }
+.tg-launch:hover img { transform: translateY(-3px) rotate(-4deg); }
+.tg-hint { display: none; margin-bottom: 26px; padding: 9px 14px; border-radius: 14px 14px 2px 14px; background: #fff; box-shadow: 0 10px 24px rgba(0, 17, 35, .14), 0 0 0 1px var(--line); font: 500 14px var(--display); color: var(--ink); white-space: nowrap; }
+.tg-launch.fresh .tg-hint, .tg-launch:hover .tg-hint { display: block; animation: tg-pop .3s ease both; }
+.tg-launch.fresh img { animation: tg-wave 2.4s ease-in-out infinite; }
+@keyframes tg-wave { 0%, 60%, 100% { transform: none; } 70% { transform: rotate(-8deg); } 80% { transform: rotate(6deg); } 90% { transform: rotate(-4deg); } }
+@keyframes tg-pop { from { opacity: 0; transform: translateY(6px) scale(.96); } }
 
-/* the dimmed page, with a clear window over the part being explained */
-.tg-shade { position: fixed; inset: 0; z-index: 60; }
-.tg-ring { position: fixed; border-radius: 12px; box-shadow: 0 0 0 2px var(--blue), 0 0 0 9999px rgba(0, 17, 35, .48); pointer-events: none; transition: top .35s ease, left .35s ease, width .35s ease, height .35s ease; }
+/* the dimmed page, with a clear window over the part Eddy is talking about */
+.tg-shade { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+.tg-ring { position: fixed; border-radius: 12px; box-shadow: 0 0 0 2px var(--blue), 0 0 0 9999px rgba(0, 17, 35, .42); transition: top .4s ease, left .4s ease, width .4s ease, height .4s ease; }
+.tg-ring::after { content: ""; position: absolute; inset: -2px; border-radius: 12px; box-shadow: 0 0 0 0 rgba(2, 113, 228, .45); animation: tg-glow 2s ease-out infinite; }
+@keyframes tg-glow { to { box-shadow: 0 0 0 10px rgba(2, 113, 228, 0); } }
 
-/* the card */
-.tg-card { position: fixed; width: 340px; max-width: calc(100vw - 32px); overflow: hidden; border-radius: 14px; background: #fff; box-shadow: 0 24px 60px rgba(0, 17, 35, .28), 0 0 0 1px rgba(0, 17, 35, .06); transition: top .35s ease, left .35s ease; }
-.tg-card.in { animation: tg-in .3s ease both; }
-@keyframes tg-in { from { opacity: 0; transform: translateY(6px); } }
-.tg-card.docked { left: 12px !important; right: 12px; bottom: 12px; top: auto !important; width: auto; max-width: none; }
+/* Eddy and his card */
+.tg-guide { position: fixed; width: 370px; pointer-events: auto; transition: top .45s cubic-bezier(.4, 0, .2, 1), left .45s cubic-bezier(.4, 0, .2, 1); }
+.tg-eddy { position: absolute; left: -82px; bottom: 6px; width: 104px; height: auto; filter: drop-shadow(0 10px 12px rgba(0, 17, 35, .25)); animation: tg-bob 3s ease-in-out infinite; transform-origin: 50% 100%; pointer-events: none; }
+.tg-guide.moving .tg-eddy { animation: tg-fly .5s ease-in-out infinite alternate; }
+.tg-eddy.land { animation: tg-land .45s ease, tg-bob 3s ease-in-out .45s infinite; }
+@keyframes tg-bob { 50% { transform: translateY(-6px); } }
+@keyframes tg-fly { from { transform: translate(-4px, -10px) rotate(-6deg); } to { transform: translate(4px, -22px) rotate(4deg); } }
+@keyframes tg-land { 0% { transform: translateY(-18px) scale(.96); } 60% { transform: translateY(2px) scale(1.03, .97); } 100% { transform: none; } }
 
-.tg-art { position: relative; height: 150px; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle, #d3d8de 1px, transparent 1.4px) 0 0 / 14px 14px, var(--soft); border-bottom: 1px solid var(--line-2); }
-.tg-body { padding: 18px 22px 6px; }
-.tg-count { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--blue); }
-.tg-body h3 { margin: 6px 0 10px; font-size: 1.3rem; line-height: 1.2; }
-.tg-points { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
-.tg-points li::marker { color: var(--dim); }
-.tg-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 22px 20px; }
-.tg-dots { display: flex; gap: 6px; }
-.tg-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: background-color .2s ease, width .2s ease; }
-.tg-dots i.on { width: 18px; border-radius: 4px; background: var(--ink); }
-.tg-btns { display: flex; gap: 8px; }
-.tg-btns button { min-height: 38px; padding: 0 16px; font-size: 14px; }
-.tg-skip { background: var(--soft); box-shadow: none; color: var(--ink-2); }
-.tg-skip:hover { background: var(--line-2); box-shadow: none; color: var(--ink); }
+.tg-card { position: relative; overflow: hidden; border-radius: 14px; background: #fff; box-shadow: 0 24px 60px rgba(0, 17, 35, .28), 0 0 0 1px rgba(0, 17, 35, .06); }
+.tg-head { display: flex; align-items: center; gap: 10px; padding: 12px 12px 12px 16px; background: var(--ink); color: #fff; }
+.tg-head > img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center 25%; background: #e8f2fd; }
+.tg-who { display: grid; line-height: 1.2; margin-right: auto; }
+.tg-who b { font: 500 15px var(--display); letter-spacing: -.01em; }
+.tg-who small { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #b9c8d9; }
+.tg-who small i { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 3px rgba(162, 241, 169, .2); }
+.tg-count { font: 500 11px var(--mono); letter-spacing: .05em; color: #b9c8d9; }
+.tg-head button.tg-x { width: 30px; height: 30px; min-height: 0; padding: 0; border-radius: 2px; background: transparent; box-shadow: none; color: #b9c8d9; font-size: 20px; line-height: 1; }
+.tg-head button.tg-x:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+
+.tg-log { padding: 16px 18px 4px; min-height: 150px; }
+.tg-you { margin: 0 0 10px auto; width: fit-content; max-width: 90%; padding: 7px 12px; border-radius: 12px 12px 2px 12px; background: var(--blue); color: #fff; font-size: 13px; }
+.tg-log h3 { margin: 0 0 6px; font-size: 1.25rem; line-height: 1.2; }
+.tg-say { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); }
+.tg-typing { display: inline-flex; gap: 4px; padding: 10px 12px; border-radius: 12px 12px 12px 2px; background: var(--soft); }
+.tg-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--dim); animation: tg-dot 1s ease-in-out infinite; }
+.tg-typing i:nth-child(2) { animation-delay: .15s; } .tg-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes tg-dot { 30% { transform: translateY(-4px); background: var(--blue); } }
+.tg-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.tg-acts:empty { display: none; }
+.tg-acts button.tg-chip { min-height: 32px; padding: 0 12px; border-radius: 99px; font-size: 13px; background: var(--blue-pale); color: var(--blue-2); box-shadow: none; animation: tg-pop .25s ease both; }
+.tg-acts button.tg-chip:hover { background: var(--blue); color: #fff; }
+.tg-acts button.tg-chip.do { background: var(--mint); color: var(--mint-ink); font-weight: 600; }
+.tg-acts button.tg-chip.do::before { content: "✦"; margin-right: 6px; }
+.tg-acts button.tg-chip.do:hover { background: #8de596; color: var(--mint-ink); }
+
+.tg-ask { display: flex; gap: 6px; margin: 12px 18px 0; padding: 4px 4px 4px 12px; border-radius: 2px; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); }
+.tg-ask:focus-within { box-shadow: inset 0 0 0 1.5px var(--blue); background: #fff; }
+.tg-ask input { flex: 1; min-width: 0; border: 0; background: none; font-size: 14px; color: var(--ink); outline: none; }
+.tg-ask button { width: 34px; height: 34px; min-height: 0; padding: 0; display: grid; place-items: center; background: var(--blue); box-shadow: none; }
+.tg-ask button:hover { background: var(--blue-2); box-shadow: none; }
+.tg-ask svg { width: 16px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 16px; }
+.tg-bar { flex: 1; max-width: 90px; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.tg-bar i { display: block; height: 100%; width: 0; background: var(--ink); transition: width .4s ease; }
+.tg-btns { display: flex; gap: 6px; }
+.tg-btns button { min-height: 36px; padding: 0 14px; font-size: 14px; }
+.tg-btns .tg-skip { background: var(--soft); box-shadow: none; color: var(--ink-2); }
+.tg-btns .tg-skip:hover { background: var(--line-2); box-shadow: none; color: var(--ink); }
 .tg-btns .tg-next { background: var(--ink); color: #fff; box-shadow: none; }
 .tg-btns .tg-next:hover { background: var(--blue); color: #fff; }
 
-/* ---------- the little pictures ---------- */
-.tg-cursor { position: absolute; width: 18px; height: 22px; filter: drop-shadow(0 2px 3px rgba(0, 17, 35, .3)); }
-.tg-card.in .tg-cursor { animation: tg-cursor 1.6s ease .2s both; }
-@keyframes tg-cursor { from { transform: translate(60px, 50px); opacity: 0; } 60% { opacity: 1; } 80% { transform: translate(0, 0) scale(1); } 90% { transform: scale(.85); } to { transform: none; } }
-
-/* 1 · the four views */
-.tg-chips { display: grid; grid-template-columns: repeat(2, auto); gap: 8px; }
-.tg-chips span { padding: 8px 14px; border-radius: 2px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 4px 10px rgba(0, 17, 35, .05); font-size: 13px; color: var(--ink-2); }
-.tg-card.in .tg-chips .on { animation: tg-pick .3s ease 1.45s both; }
-@keyframes tg-pick { to { background: var(--blue); color: #fff; box-shadow: 0 0 0 1px var(--blue), 0 6px 14px rgba(2, 113, 228, .3); } }
-[data-step="0"] .tg-cursor { left: calc(50% + 60px); top: 58px; }
-
-/* 2 · four answers */
-.tg-ans { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; width: 210px; }
-.tg-ans li { padding: 5px 12px; border-left: 4px solid; border-radius: 6px; font-size: 13px; }
-.tg-ans b { font: 500 .95rem var(--display); letter-spacing: -.02em; }
-.tg-ans .red { border-color: var(--red); background: var(--red-bg); color: var(--red); }
-.tg-ans .amber { border-color: #f0a020; background: var(--amber-bg); color: var(--amber); }
-.tg-ans .green { border-color: #3bbf63; background: var(--green-bg); color: var(--green); }
-.tg-ans .grey { border-color: #9aa3ad; background: var(--unknown-bg); color: var(--unknown); }
-.tg-card.in .tg-ans li { animation: tg-in .3s ease both; }
-.tg-card.in .tg-ans li:nth-child(2) { animation-delay: .12s; } .tg-card.in .tg-ans li:nth-child(3) { animation-delay: .24s; } .tg-card.in .tg-ans li:nth-child(4) { animation-delay: .36s; }
-
-/* 3 · four ways to try */
-.tg-tabs { display: flex; gap: 10px; padding: 10px; border-radius: 12px; background: #fff; box-shadow: 0 8px 20px rgba(0, 17, 35, .08), 0 0 0 1px var(--line-2); }
-.tg-tabs i { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 8px; background: var(--soft); }
-.tg-tabs svg { width: 22px; fill: none; stroke: var(--ink-2); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.tg-card.in .tg-tabs .on { animation: tg-tab .3s ease 1.45s both; }
-@keyframes tg-tab { to { background: var(--blue-pale); box-shadow: inset 0 0 0 1.5px var(--blue); } }
-[data-step="2"] .tg-cursor { left: calc(50% - 80px); top: 70px; }
-
-/* 4 · the browser and its Check button */
-.tg-win { width: 250px; border-radius: 10px; background: #fff; box-shadow: 0 8px 20px rgba(0, 17, 35, .1), 0 0 0 1px var(--line); overflow: hidden; }
-.tg-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--soft); border-bottom: 1px solid var(--line-2); }
-.tg-lights { display: flex; gap: 4px; } .tg-lights i { width: 7px; height: 7px; border-radius: 50%; background: #d3d8de; }
-.tg-url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 8px; border-radius: 99px; background: #fff; font-size: 10.5px; color: var(--muted); }
-.tg-ext { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
-.tg-ext svg { width: 15px; height: 15px; }
-.tg-verdict { margin: 10px; padding: 8px 12px; border-left: 4px solid var(--red); border-radius: 6px; background: var(--red-bg); }
-.tg-verdict b { display: block; font: 500 .95rem var(--display); color: var(--red); }
-.tg-verdict small { font-size: 11.5px; color: var(--ink-2); }
-.tg-card.in .tg-verdict { animation: tg-in .3s ease 1.6s both; }
-[data-step="3"] .tg-cursor { left: calc(50% + 102px); top: 44px; }
-
-/* 5 · false alarms */
-.tg-bars { display: grid; gap: 7px; width: 240px; font-size: 12px; color: var(--ink-2); }
-.tg-bars div { display: grid; grid-template-columns: 82px 1fr 18px; align-items: center; gap: 8px; }
-.tg-bars i { height: 10px; width: var(--w); border-radius: 2px; background: var(--bar-other); }
-.tg-bars i.me { background: var(--blue); }
-.tg-bars b { font: 500 13px var(--display); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
-.tg-bars small { color: var(--dim); font-size: 11px; }
-.tg-card.in .tg-bars i { animation: tg-grow .7s ease .15s both; }
-@keyframes tg-grow { from { width: 0; } }
-
-/* 6 · attacks bounced off */
-.tg-attack { display: flex; align-items: center; gap: 16px; }
-.tg-shield svg { width: 52px; height: 52px; filter: drop-shadow(0 6px 12px rgba(2, 113, 228, .3)); }
-.tg-attack ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
-.tg-attack li { padding: 4px 10px; border-radius: 2px; background: #fff; box-shadow: 0 0 0 1px var(--line); font-size: 12px; color: var(--ink-2); text-decoration: line-through; text-decoration-color: transparent; }
-.tg-card.in .tg-attack li { animation: tg-strike .4s ease both; }
-.tg-card.in .tg-attack li:nth-child(1) { animation-delay: .4s; } .tg-card.in .tg-attack li:nth-child(2) { animation-delay: .7s; } .tg-card.in .tg-attack li:nth-child(3) { animation-delay: 1s; }
-@keyframes tg-strike { to { text-decoration-color: var(--red); color: var(--muted); } }
-
-/* 7 · five products */
-.tg-prods { display: flex; gap: 10px; }
-.tg-prods i { width: 40px; height: 40px; border-radius: 10px; background: var(--c); box-shadow: 0 6px 14px rgba(0, 17, 35, .15); }
-.tg-card.in .tg-prods i { animation: tg-in .35s ease both; }
-.tg-card.in .tg-prods i:nth-child(2) { animation-delay: .08s; } .tg-card.in .tg-prods i:nth-child(3) { animation-delay: .16s; } .tg-card.in .tg-prods i:nth-child(4) { animation-delay: .24s; } .tg-card.in .tg-prods i:nth-child(5) { animation-delay: .32s; }
-
+/* phones: the card docks to the bottom and Eddy perches on it */
+.tg-guide.docked { left: 10px !important; right: 10px; bottom: 10px; top: auto !important; width: auto; }
+.tg-guide.docked .tg-eddy { left: auto; right: 8px; bottom: calc(100% - 22px); width: 76px; }
+.tg-guide.docked .tg-log { min-height: 0; max-height: 38vh; overflow-y: auto; }
 @media (max-width: 639px) {
   .tg-launch { right: 12px; bottom: 12px; }
-  .tg-launch span { display: none; }
-  .tg-launch { padding: 0 12px; }
+  .tg-launch img { width: 58px; height: 58px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tg-card, .tg-ring { transition: none; }
-  .tg-card.in, .tg-card.in * { animation-duration: .01s !important; animation-delay: 0s !important; }
-  .tg-launch.fresh::after { animation: none; }
+  .tg-guide, .tg-ring, .tg-bar i { transition: none; }
+  .tg-eddy, .tg-eddy.land, .tg-guide.moving .tg-eddy, .tg-ring::after, .tg-launch.fresh img, .tg-typing i { animation: none; }
 }
 @media print { .tg-launch, .tg-shade { display: none !important; } }
