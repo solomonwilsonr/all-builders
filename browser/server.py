@@ -37,7 +37,7 @@ SHOPS_URL = os.environ.get("SHOPS_URL", "https://safeshelf-shops.web.app").rstri
 START_URL = os.environ.get("START_URL", SHOPS_URL + "/")
 SHOP_PAGE = re.compile(r"/[a-z0-9-]+/[a-z0-9-]+\.html")
 # Pages allowed to put the viewer in a frame and hand it a token (the judges' page, deployed and local)
-EMBEDDERS = [o for o in os.environ.get("EMBEDDERS", "https://shelf2026-3656b.web.app,https://shelf2026-3656b.firebaseapp.com,http://localhost:8095").split(",") if o]
+EMBEDDERS = [o for o in os.environ.get("EMBEDDERS", "https://shelf2026-3656b.web.app,https://shelf2026-3656b.firebaseapp.com,https://safeshelf.online,https://www.safeshelf.online,http://localhost:8095").split(",") if o]
 DEV_SKIP_AUTH = os.environ.get("DEV_SKIP_AUTH") == "1"  # local testing only; never set on Cloud Run
 HERE = Path(__file__).resolve().parent
 NOVNC = Path(os.environ.get("NOVNC_DIR", "/usr/share/novnc"))

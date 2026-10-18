@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SafeShelf",
-  "version": "2.12.0",
+  "version": "2.12.1",
   "description": "Is it safe? Is it real? Checks the product page you are on.",
   "permissions": [
     "storage"
@@ -30,6 +30,8 @@
     "matches": [
       "https://shelf2026-3656b.web.app/*",
       "https://shelf2026-3656b.firebaseapp.com/*",
+      "https://safeshelf.online/*",
+      "https://www.safeshelf.online/*",
       "http://localhost:8095/*"
     ]
   },
@@ -43,6 +45,7 @@
         "http://localhost:8090/*",
         "http://localhost:8091/*",
         "https://safeshelf-shops.web.app/*",
+        "https://shops.safeshelf.online/*",
         "https://safeshelf-shops.firebaseapp.com/*",
         "https://www.amazon.in/*",
         "https://www.amazon.com/*",

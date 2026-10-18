@@ -12,7 +12,7 @@ export class SignInNeeded extends Error {
 }
 
 // Pages that may hand over a session: the sign-in page, and the judges' page served locally (make web).
-export const SIGNIN_ORIGINS = [...new Set([new URL(SIGNIN_URL).origin, "https://shelf2026-3656b.web.app", "https://shelf2026-3656b.firebaseapp.com", "http://localhost:8095"])];
+export const SIGNIN_ORIGINS = [...new Set([new URL(SIGNIN_URL).origin, "https://shelf2026-3656b.web.app", "https://shelf2026-3656b.firebaseapp.com", "https://safeshelf.online", "https://www.safeshelf.online", "http://localhost:8095"])];
 
 const load = async () => (await chrome.storage.local.get("session")).session || null;
 const save = (session) => chrome.storage.local.set({ session });
