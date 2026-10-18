@@ -1,0 +1,943 @@
+{
+ "status": 200,
+ "body": {
+  "investigation_id": "INV-112C058B",
+  "status": "complete",
+  "job_status": "complete",
+  "tenant_id": "public",
+  "market": "JP",
+  "market_name": "Japan",
+  "depth": "quick",
+  "product": {
+   "product_id": null,
+   "brand": "HAIARA",
+   "model": "W5PRO",
+   "gtin": null,
+   "batch": null,
+   "category": "",
+   "title": "HAIARA モバイルバッテリー W5PRO 10000mAh",
+   "local_identifiers": {},
+   "key": "haiara|W5PRO|JP",
+   "market": "JP",
+   "identity_source": "listing text (code)",
+   "identity_agent": null
+  },
+  "outcome": "confirmed_recall",
+  "basis": "confirmed_recall",
+  "colour": "red",
+  "headline": "Recalled in Japan: this exact model is on an official recall list",
+  "safety_concern": {
+   "level": "high",
+   "text": "Recalled in Japan: this exact model is on an official recall list"
+  },
+  "evidence_strength": "moderate",
+  "identity_confidence": "exact",
+  "lead_record": {
+   "record_id": "jp_caa:00000035913",
+   "authority": "CAA",
+   "title": "平南商事「HAIARA モバイルバッテリー」 - 返金／回収",
+   "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+   "published": "2026-10-05",
+   "tier": "exact",
+   "scope": "in_scope",
+   "local": true,
+   "jurisdiction": "JP"
+  },
+  "review_required": false,
+  "review_reasons": [],
+  "limitations": [
+   "Only 0 review(s) read; hazard signals need at least 20."
+  ],
+  "policy_version": "2026-10-16.1",
+  "as_of": null,
+  "decided_by": "code (engine/evidence_verification/adjudicator.py); AI collected and explained the evidence",
+  "what_would_change": [],
+  "coverage": {
+   "countries": [
+    {
+     "country": "JP",
+     "name": "Japan",
+     "is_market": true,
+     "state": "checked_cache",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "jp_caa",
+       "authority": "CAA",
+       "state": "checked_cache",
+       "mode": "cache",
+       "freshness": "2026-10-05"
+      },
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "jp_nite",
+       "authority": "NITE",
+       "state": "not_supported",
+       "mode": null,
+       "freshness": null
+      },
+      {
+       "source": "jp_meti",
+       "authority": "METI",
+       "state": "not_supported",
+       "mode": null,
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 1,
+     "notes": []
+    },
+    {
+     "country": "IN",
+     "name": "India",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": [
+      "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
+     ]
+    },
+    {
+     "country": "AU",
+     "name": "Australia",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": []
+    },
+    {
+     "country": "SG",
+     "name": "Singapore",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": [
+      "Singapore notices in this feed stop in 2022",
+      "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
+     ]
+    },
+    {
+     "country": "US",
+     "name": "the United States",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "cpsc",
+       "authority": "CPSC",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "saferproducts",
+       "authority": "CPSC",
+       "state": "not_supported",
+       "mode": null,
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": []
+    },
+    {
+     "country": "EU",
+     "name": "the European Union",
+     "is_market": false,
+     "state": "not_supported",
+     "checked_at": null,
+     "sources": [
+      {
+       "source": "eu_safety_gate",
+       "authority": "EU Safety Gate",
+       "state": "not_supported",
+       "mode": null,
+       "freshness": null
+      }
+     ],
+     "matched": 0,
+     "notes": []
+    },
+    {
+     "country": "KR",
+     "name": "South Korea",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": []
+    },
+    {
+     "country": "TW",
+     "name": "Taiwan",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": []
+    },
+    {
+     "country": "ID",
+     "name": "Indonesia",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": [
+      "ASEAN notices in this feed stop in 2022"
+     ]
+    },
+    {
+     "country": "MY",
+     "name": "Malaysia",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": [
+      "ASEAN notices in this feed stop in 2022"
+     ]
+    },
+    {
+     "country": "PH",
+     "name": "the Philippines",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": [
+      "ASEAN notices in this feed stop in 2022"
+     ]
+    },
+    {
+     "country": "TH",
+     "name": "Thailand",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": [
+      "ASEAN notices in this feed stop in 2022"
+     ]
+    },
+    {
+     "country": "VN",
+     "name": "Vietnam",
+     "is_market": false,
+     "state": "no_matching_notice_found",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "sources": [
+      {
+       "source": "oecd_globalrecalls",
+       "authority": "OECD",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": null
+      },
+      {
+       "source": "stored_notices",
+       "authority": "SafeShelf store",
+       "state": "no_matching_notice_found",
+       "mode": "cache",
+       "freshness": "2026-10-13"
+      }
+     ],
+     "matched": 0,
+     "notes": [
+      "ASEAN notices in this feed stop in 2022"
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "source": "jp_caa",
+     "name": "Consumer Affairs Agency recall information site (Japan)",
+     "authority": "CAA",
+     "role": "local",
+     "jurisdiction": "JP",
+     "state": "checked_cache",
+     "mode": "cache",
+     "checked_at": "2026-10-18T13:33:19.176422+00:00",
+     "freshness": "2026-10-05",
+     "records_returned": 1,
+     "matched": 1,
+     "matched_by_country": {
+      "JP": 1
+     },
+     "detail": "1 notice(s) that may concern this product"
+    },
+    {
+     "source": "oecd_globalrecalls",
+     "name": "OECD GlobalRecalls portal (regulators' notices, incl. ACCC, CAA, KATS, CPSO, BSMI, ASEAN)",
+     "authority": "OECD",
+     "role": "local",
+     "jurisdiction": "MULTI",
+     "state": "no_matching_notice_found",
+     "mode": "cache",
+     "checked_at": "2026-10-18T13:33:16.996971+00:00",
+     "freshness": null,
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "searched the stored copy; no notice matched this product"
+    },
+    {
+     "source": "jp_nite",
+     "name": "NITE product accident information (Japan)",
+     "authority": "NITE",
+     "role": "local",
+     "jurisdiction": "JP",
+     "state": "not_supported",
+     "mode": null,
+     "checked_at": null,
+     "freshness": null,
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "access method and terms not verified yet, so SafeShelf does not query it"
+    },
+    {
+     "source": "jp_meti",
+     "name": "METI product safety recall notices (Japan)",
+     "authority": "METI",
+     "role": "local",
+     "jurisdiction": "JP",
+     "state": "not_supported",
+     "mode": null,
+     "checked_at": null,
+     "freshness": null,
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "the site refuses automated requests (checked 2026-10-16); a person needs to look"
+    },
+    {
+     "source": "cpsc",
+     "name": "U.S. Consumer Product Safety Commission recalls",
+     "authority": "CPSC",
+     "role": "global",
+     "jurisdiction": "US",
+     "state": "no_matching_notice_found",
+     "mode": "cache",
+     "checked_at": "2026-10-18T13:33:15.127925+00:00",
+     "freshness": null,
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "searched the stored copy; no notice matched this product"
+    },
+    {
+     "source": "eu_safety_gate",
+     "name": "EU Safety Gate alerts",
+     "authority": "EU Safety Gate",
+     "role": "global",
+     "jurisdiction": "EU",
+     "state": "not_supported",
+     "mode": null,
+     "checked_at": null,
+     "freshness": null,
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "searched only on a deep check (it needs a browser, about 30 s a site)"
+    },
+    {
+     "source": "saferproducts",
+     "name": "SaferProducts.gov incident reports (OData)",
+     "authority": "CPSC",
+     "role": "global",
+     "jurisdiction": "US",
+     "state": "not_supported",
+     "mode": null,
+     "checked_at": null,
+     "freshness": null,
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "needs an API key (SAFERPRODUCTS_API_KEY) that is not set up"
+    },
+    {
+     "source": "manufacturer",
+     "name": "Manufacturer-authorised recall feeds",
+     "authority": "Manufacturer",
+     "role": "global",
+     "jurisdiction": "MULTI",
+     "state": "not_supported",
+     "mode": null,
+     "checked_at": null,
+     "freshness": null,
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "no automated access exists; a person can check it by hand"
+    },
+    {
+     "source": "stored_notices",
+     "name": "SafeShelf's stored copy of official notices (CPSC, ACCC, CAA, KATS, CPSO, BSMI, ASEAN, CCPA, BIS)",
+     "authority": "SafeShelf store",
+     "role": "global",
+     "jurisdiction": "MULTI",
+     "state": "no_matching_notice_found",
+     "mode": "cache",
+     "checked_at": "2026-10-18T13:46:19.195493+00:00",
+     "freshness": "2026-10-13",
+     "records_returned": 0,
+     "matched": 0,
+     "matched_by_country": {},
+     "detail": "searched the stored copy; no notice matched this product"
+    }
+   ],
+   "summary": "Japan: notice found (stored copy) · India: no matching notice · Australia: no matching notice · Singapore: no matching notice · the United States: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+  },
+  "source_mode": "partial",
+  "rules": [
+   "Electrical products need a PSE mark. Japanese model strings and notice IDs are kept as published; translations are notes beside them."
+  ],
+  "plain": {
+   "title": "Recalled in Japan",
+   "tone": "red",
+   "why": "The official safety regulator in Japan has recalled this HAIARA W5PRO because of a fire risk.",
+   "todo": "Don't buy it. If you already have one, stop using it and follow the recall steps (refund, repair or replacement).",
+   "say": "Recalled in Japan, because of a fire risk. Don't buy it. If you have one, stop using it.",
+   "checked": [
+    {
+     "country": "JP",
+     "flag": "🇯🇵",
+     "name": "Japan",
+     "status": "Recall found for this model",
+     "mark": "warn",
+     "yours": true,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code",
+      "link": {
+       "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+       "label": "CAA jp_caa:00000035913"
+      }
+     }
+    },
+    {
+     "country": "IN",
+     "flag": "🇮🇳",
+     "name": "India",
+     "status": "No recall found (India has no public recall list; we checked government safety orders)",
+     "mark": "ok",
+     "yours": false,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code"
+     }
+    },
+    {
+     "country": "AU",
+     "flag": "🇦🇺",
+     "name": "Australia",
+     "status": "No recall found",
+     "mark": "ok",
+     "yours": false,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code",
+      "link": {
+       "url": "https://globalrecalls.oecd.org/",
+       "label": "OECD list"
+      }
+     }
+    },
+    {
+     "country": "SG",
+     "flag": "🇸🇬",
+     "name": "Singapore",
+     "status": "No recall found",
+     "mark": "ok",
+     "yours": false,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code",
+      "link": {
+       "url": "https://globalrecalls.oecd.org/",
+       "label": "OECD list"
+      }
+     }
+    },
+    {
+     "country": "US",
+     "flag": "🇺🇸",
+     "name": "the United States",
+     "status": "No recall found",
+     "mark": "ok",
+     "yours": false,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code",
+      "link": {
+       "url": "https://www.cpsc.gov/Recalls/CPSC-Recalls-Application-Program-Interface-API-Information",
+       "label": "CPSC list"
+      }
+     }
+    },
+    {
+     "country": "KR",
+     "flag": "🇰🇷",
+     "name": "South Korea",
+     "status": "No recall found",
+     "mark": "ok",
+     "yours": false,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code",
+      "link": {
+       "url": "https://globalrecalls.oecd.org/",
+       "label": "OECD list"
+      }
+     }
+    },
+    {
+     "country": "TW",
+     "flag": "🇹🇼",
+     "name": "Taiwan",
+     "status": "No recall found",
+     "mark": "ok",
+     "yours": false,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code",
+      "link": {
+       "url": "https://globalrecalls.oecd.org/",
+       "label": "OECD list"
+      }
+     }
+    },
+    {
+     "country": "ID",
+     "flag": "🇮🇩",
+     "name": "Indonesia",
+     "status": "No recall found",
+     "mark": "ok",
+     "yours": false,
+     "badge": {
+      "text": "Checked by code, not guessed",
+      "decided_by": "code",
+      "link": {
+       "url": "https://globalrecalls.oecd.org/",
+       "label": "OECD list"
+      }
+     }
+    }
+   ],
+   "link": {
+    "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+    "label": "See the official recall (CAA)"
+   },
+   "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+  },
+  "matches": [
+   {
+    "record_id": "jp_caa:00000035913",
+    "source": "jp_caa",
+    "authority": "CAA",
+    "title": "平南商事「HAIARA モバイルバッテリー」 - 返金／回収",
+    "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+    "jurisdiction": "JP",
+    "record_type": "recall_notice",
+    "published": "2026-10-05",
+    "retrieved_at": "2026-10-18T13:33:19.176422+00:00",
+    "mode": "cache",
+    "language": "ja",
+    "hazard": "当該製品及び周辺を焼損する火災が発生",
+    "remedy": "回収・返金",
+    "models_named": [
+     "W5PRO"
+    ],
+    "batch_limits": [],
+    "tier": "exact",
+    "scope": "in_scope",
+    "local": true,
+    "reasons": [
+     "the notice names model W5PRO and this brand"
+    ],
+    "would_change": [],
+    "authenticity": "official_domain",
+    "authenticity_reason": "official link and record ID; read from the stored copy or by browsing",
+    "support": "supported",
+    "retracted": false,
+    "excluded": false,
+    "attribution": "出典：消費者庁リコール情報サイト (Consumer Affairs Agency); fields extracted by SafeShelf",
+    "also_from": [],
+    "original_text": "平南商事「HAIARA モバイルバッテリー」 - 返金／回収\n当該製品及び周辺を焼損する火災が発生\n製品名　：リチウム電池内蔵充電器\n商品名　：HAIARA モバイルバッテリー\n型番　　：W5PRO\n販売期間：2025年2月～2025年9月\n対象台数：100台\n\nリコール事業者名：平南商事株式会社（法人番号：6120001181425）\nリコール実施の理由：\n　当該製品を使用中に発熱・発火事故が発生し、電池セル内部に不具合が存在する可能性があるため。\n\n［消費者庁からのお知らせ］\n　令和8年10月16日 消費生活用製品の重大製品事故に係るお知らせ\n　消費生活用製品の重大製品事故:リコール製品で火災等(ポータブル電源(リチウムイオン)、リチウム電池内蔵充電器、イヤホン(コードレス式、マイク付、リチウムイオンバッテリー内蔵))\n　https://www.caa.go.jp/notice/entry/047814/",
+    "excerpt": "平南商事「HAIARA モバイルバッテリー」 - 返金／回収\n当該製品及び周辺を焼損する火災が発生\n製品名　：リチウム電池内蔵充電器\n商品名　：HAIARA モバイルバッテリー\n型番　　：W5PRO\n販売期間：2025年2月～2025年9月\n対象台数：100台\n\nリコール事業者名：平南商事株式会社（法人番号：6120001181425）\nリコール実施の理由：\n　当該製品を使用中に発熱・発火事故が発生し、電池セル内部に不具合が存在する可能性があるため。\n\n［消費者庁からのお知らせ］\n　令和8年10月16日 消費生活用製品の重大製品事故に係るお知らせ\n　消費生活用製品の重大製品事故:リコール製品で火災等(ポータブル電源(リチウムイオン)、リチウム電池内蔵充電器、イヤホン(コードレス式、マイク付、リチウムイオンバッテリー内蔵))\n　https://www.caa.go.jp/notice/entry/047814/",
+    "places": {
+     "market_country": "JP",
+     "source_jurisdiction": "JP",
+     "manufacturing_country": null,
+     "recall_affected_country": [
+      "JP"
+     ]
+    }
+   }
+  ],
+  "claims": [
+   {
+    "claim_id": "CL-76597A0A8D45",
+    "claim_type": "recall",
+    "claim_text": "平南商事「HAIARA モバイルバッテリー」 - 返金／回収",
+    "product_id": null,
+    "model": "W5PRO",
+    "variant": null,
+    "batch_scope": [],
+    "jurisdiction": "JP",
+    "source_registry_id": "jp_caa",
+    "source_record_id": "jp_caa:00000035913",
+    "source_url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+    "source_type": "recall_notice",
+    "source_document_hash": "75ae3aabd20eb3b8793e2438ed817c3d94962803ee4101fbb4ae2a56b9e4c0a6",
+    "source_excerpt": "平南商事「HAIARA モバイルバッテリー」 - 返金／回収",
+    "source_language": "ja",
+    "license_policy_id": "jp_caa",
+    "attribution": "出典：消費者庁リコール情報サイト (Consumer Affairs Agency); fields extracted by SafeShelf",
+    "event_at": null,
+    "source_published_at": "2026-10-05T00:00:00Z",
+    "source_updated_at": null,
+    "retrieved_at": "2026-10-18T13:33:19.176422Z",
+    "ingested_at": null,
+    "extraction_method": "code (engine/sources/normalizer.py)",
+    "model_version": null,
+    "tool_version": "engine.sources/0.2",
+    "prompt_version": null,
+    "raw_artifact_pointer": null,
+    "source_authenticity_status": "official_domain",
+    "claim_support_status": "supported",
+    "product_match_tier": "exact",
+    "identity_scope_status": "in_scope",
+    "independence_group_id": null,
+    "verification_status": "verified",
+    "review_status": "not_required",
+    "is_local": true,
+    "supersedes_claim_id": null,
+    "retraction_reason": null,
+    "contradicting_claim_ids": [],
+    "reviewed_at": null,
+    "review_rationale": null
+   },
+   {
+    "claim_id": "CL-4982F9688AD2",
+    "claim_type": "hazard",
+    "claim_text": "当該製品及び周辺を焼損する火災が発生",
+    "product_id": null,
+    "model": "W5PRO",
+    "variant": null,
+    "batch_scope": [],
+    "jurisdiction": "JP",
+    "source_registry_id": "jp_caa",
+    "source_record_id": "jp_caa:00000035913",
+    "source_url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+    "source_type": "recall_notice",
+    "source_document_hash": "75ae3aabd20eb3b8793e2438ed817c3d94962803ee4101fbb4ae2a56b9e4c0a6",
+    "source_excerpt": "当該製品及び周辺を焼損する火災が発生",
+    "source_language": "ja",
+    "license_policy_id": "jp_caa",
+    "attribution": "出典：消費者庁リコール情報サイト (Consumer Affairs Agency); fields extracted by SafeShelf",
+    "event_at": null,
+    "source_published_at": "2026-10-05T00:00:00Z",
+    "source_updated_at": null,
+    "retrieved_at": "2026-10-18T13:33:19.176422Z",
+    "ingested_at": null,
+    "extraction_method": "code (engine/sources/normalizer.py)",
+    "model_version": null,
+    "tool_version": "engine.sources/0.2",
+    "prompt_version": null,
+    "raw_artifact_pointer": null,
+    "source_authenticity_status": "official_domain",
+    "claim_support_status": "supported",
+    "product_match_tier": "exact",
+    "identity_scope_status": "in_scope",
+    "independence_group_id": null,
+    "verification_status": "verified",
+    "review_status": "not_required",
+    "is_local": true,
+    "supersedes_claim_id": null,
+    "retraction_reason": null,
+    "contradicting_claim_ids": [],
+    "reviewed_at": null,
+    "review_rationale": null
+   },
+   {
+    "claim_id": "CL-724A11C46E95",
+    "claim_type": "affected_models",
+    "claim_text": "W5PRO",
+    "product_id": null,
+    "model": "W5PRO",
+    "variant": null,
+    "batch_scope": [],
+    "jurisdiction": "JP",
+    "source_registry_id": "jp_caa",
+    "source_record_id": "jp_caa:00000035913",
+    "source_url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+    "source_type": "recall_notice",
+    "source_document_hash": "75ae3aabd20eb3b8793e2438ed817c3d94962803ee4101fbb4ae2a56b9e4c0a6",
+    "source_excerpt": "焼損する火災が発生 製品名 ：リチウム電池内蔵充電器 商品名 ：HAIARA モバイルバッテリー 型番 ：W5PRO 販売期間：2025年2月～2025年9月 対象台数：100台 リコール事業者名：平南商事株式会社（法人番号：6120001181425） リコール実施の理由： 当該製品を使用中に発熱・発火事故が発生し、",
+    "source_language": "ja",
+    "license_policy_id": "jp_caa",
+    "attribution": "出典：消費者庁リコール情報サイト (Consumer Affairs Agency); fields extracted by SafeShelf",
+    "event_at": null,
+    "source_published_at": "2026-10-05T00:00:00Z",
+    "source_updated_at": null,
+    "retrieved_at": "2026-10-18T13:33:19.176422Z",
+    "ingested_at": null,
+    "extraction_method": "code (engine/sources/normalizer.py)",
+    "model_version": null,
+    "tool_version": "engine.sources/0.2",
+    "prompt_version": null,
+    "raw_artifact_pointer": null,
+    "source_authenticity_status": "official_domain",
+    "claim_support_status": "supported",
+    "product_match_tier": "exact",
+    "identity_scope_status": "in_scope",
+    "independence_group_id": null,
+    "verification_status": "verified",
+    "review_status": "not_required",
+    "is_local": true,
+    "supersedes_claim_id": null,
+    "retraction_reason": null,
+    "contradicting_claim_ids": [],
+    "reviewed_at": null,
+    "review_rationale": null
+   },
+   {
+    "claim_id": "CL-3900CA60697C",
+    "claim_type": "remedy",
+    "claim_text": "回収・返金",
+    "product_id": null,
+    "model": "W5PRO",
+    "variant": null,
+    "batch_scope": [],
+    "jurisdiction": "JP",
+    "source_registry_id": "jp_caa",
+    "source_record_id": "jp_caa:00000035913",
+    "source_url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+    "source_type": "recall_notice",
+    "source_document_hash": "75ae3aabd20eb3b8793e2438ed817c3d94962803ee4101fbb4ae2a56b9e4c0a6",
+    "source_excerpt": "回収・返金",
+    "source_language": "ja",
+    "license_policy_id": "jp_caa",
+    "attribution": "出典：消費者庁リコール情報サイト (Consumer Affairs Agency); fields extracted by SafeShelf",
+    "event_at": null,
+    "source_published_at": "2026-10-05T00:00:00Z",
+    "source_updated_at": null,
+    "retrieved_at": "2026-10-18T13:33:19.176422Z",
+    "ingested_at": null,
+    "extraction_method": "code (engine/sources/normalizer.py)",
+    "model_version": null,
+    "tool_version": "engine.sources/0.2",
+    "prompt_version": null,
+    "raw_artifact_pointer": null,
+    "source_authenticity_status": "official_domain",
+    "claim_support_status": "supported",
+    "product_match_tier": "exact",
+    "identity_scope_status": "in_scope",
+    "independence_group_id": null,
+    "verification_status": "verified",
+    "review_status": "not_required",
+    "is_local": true,
+    "supersedes_claim_id": null,
+    "retraction_reason": null,
+    "contradicting_claim_ids": [],
+    "reviewed_at": null,
+    "review_rationale": null
+   }
+  ],
+  "contradictions": [],
+  "critiques": [],
+  "hazards": [],
+  "observation_groups": [],
+  "reviews_checked": 0,
+  "retrieved_at": "2026-10-18T13:46:19.265048+00:00",
+  "seconds": 1.16,
+  "evidence_ids": [],
+  "source_links": [
+   {
+    "record_id": "jp_caa:00000035913",
+    "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000035913&screenkbn=06",
+    "authority": "CAA"
+   }
+  ],
+  "query": {
+   "brand": "HAIARA",
+   "model": "W5PRO",
+   "gtin": null,
+   "market": "JP",
+   "depth": "quick",
+   "as_of": null
+  },
+  "query_keys": [
+   "f9206207dc461d5d464c1539"
+  ],
+  "model_versions": {
+   "policy": "2026-10-16.1",
+   "sources": "engine.sources/0.2"
+  },
+  "label": "Outcome set by code from official sources; AI only read and explained them. Not a regulator's determination.",
+  "snapshot_id": "AS-DDB57293"
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "status": 200,
+ "body": {
+  "verdict": "unknown_brand",
+  "official": null,
+  "headline": "No official seller information",
+  "tone": "none",
+  "text": "No brand with a published seller list is named in the title.",
+  "brand": null,
+  "seller": null,
+  "marketplace": "amazon.co.jp",
+  "official_channels": null,
+  "source": null,
+  "reasons": [],
+  "policy_version": "official-seller-v1",
+  "label": "From the brand's own published page, not a regulator's finding. A seller that is not named can still be genuine: lists change, and a seller may trade under another name."
+ }
+}

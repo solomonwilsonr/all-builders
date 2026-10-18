@@ -1,0 +1,15 @@
+{
+ "status": 200,
+ "body": {
+  "verdict": "cant_tell",
+  "headline": "Can't tell if the claims hold",
+  "category": null,
+  "claims": [],
+  "reasons": [
+   "No technical claim on this page could be checked"
+  ],
+  "policy_version": "is-it-possible-v1",
+  "label": "Claims checked against physical limits and cited sources - AI collected the sources, code set the result.",
+  "checked_on": "2026-10-18"
+ }
+}

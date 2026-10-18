@@ -1,18 +1,18 @@
 {
- "recorded_at": "2026-10-16 16:38 IST",
+ "recorded_at": "2026-10-18 20:48 IST",
  "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
  "events": [
   {
    "type": "open",
    "mode": "investigate",
-   "investigation_id": "SS-I-DDA61B00",
-   "_ms": 117
+   "investigation_id": "SS-I-AA871D6D",
+   "_ms": 204
   },
   {
    "type": "start",
    "agent": "page_reader",
    "tool": "page",
-   "_ms": 117
+   "_ms": 205
   },
   {
    "type": "step",
@@ -22,49 +22,49 @@
    "summary": "Matched the listing to SS-P-30118 (by url)",
    "model": null,
    "seconds": 0.07,
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "start",
    "agent": "is_it_real",
    "tool": "is_it_real",
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "start",
    "agent": "safety_radar",
    "tool": "safety_radar",
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "start",
    "agent": "twin_finder",
    "tool": "twin_finder",
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "start",
    "agent": "recall_checker",
    "tool": "recall_checker",
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "start",
    "agent": "cert_verifier",
    "tool": "cert_verifier",
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "start",
    "agent": "official_sources",
    "tool": "official_sources",
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "start",
    "agent": "research_agent",
    "tool": "research_agent",
-   "_ms": 204
+   "_ms": 312
   },
   {
    "type": "step",
@@ -73,8 +73,8 @@
    "tool": "twin_finder",
    "summary": "No related products on file",
    "model": null,
-   "seconds": 0.96,
-   "_ms": 1764
+   "seconds": 1.56,
+   "_ms": 2010
   },
   {
    "type": "step",
@@ -83,8 +83,8 @@
    "tool": "research_agent",
    "summary": "Skipped: nothing to check this with",
    "model": null,
-   "seconds": 1.46,
-   "_ms": 1764
+   "seconds": 1.66,
+   "_ms": 2010
   },
   {
    "type": "step",
@@ -93,54 +93,54 @@
    "tool": "cert_verifier",
    "summary": "Safety marks: BIS mismatch",
    "model": null,
-   "seconds": 1.49,
-   "_ms": 1813
+   "seconds": 1.68,
+   "_ms": 2039
   },
   {
    "type": "step",
    "n": 5,
-   "agent": "recall_checker",
-   "tool": "recall_checker",
-   "summary": "No recall notice linked",
-   "model": null,
-   "seconds": 1.55,
-   "_ms": 1814
-  },
-  {
-   "type": "step",
-   "n": 6,
-   "agent": "is_it_real",
-   "tool": "is_it_real",
-   "summary": "Is it real? no warning signs",
-   "model": null,
-   "seconds": 1.57,
-   "_ms": 1814
-  },
-  {
-   "type": "step",
-   "n": 7,
    "agent": "official_sources",
    "tool": "official_sources",
    "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
    "model": null,
-   "seconds": 1.58,
-   "_ms": 1814
+   "seconds": 1.7,
+   "_ms": 2039
   },
   {
    "type": "step",
-   "n": 8,
+   "n": 6,
    "agent": "safety_radar",
    "tool": "safety_radar",
    "summary": "Safety: verdict not_enough_evidence from 0 reviews",
    "model": null,
-   "seconds": 1.59,
-   "_ms": 1814
+   "seconds": 1.71,
+   "_ms": 2039
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "No recall notice linked",
+   "model": null,
+   "seconds": 1.72,
+   "_ms": 2039
+  },
+  {
+   "type": "step",
+   "n": 8,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": null,
+   "seconds": 1.83,
+   "_ms": 2213
   },
   {
    "type": "start",
    "agent": "verdict",
    "tool": "verdict",
-   "_ms": 1814
+   "_ms": 2213
   },
   {
    "type": "step",
@@ -150,7 +150,7 @@
    "summary": "Code set the verdict: safety unknown, is it real amber, overall amber",
    "model": null,
    "seconds": 0.0,
-   "_ms": 1827
+   "_ms": 2214
   },
   {
    "type": "verdict",
@@ -160,15 +160,15 @@
     "overall": "amber",
     "reasons": [
      {
-      "text": "No matching notice found in the sources checked (this is not proof of safety)",
+      "text": "We checked official safety recall lists in 12 countries and found no recall for this VoltNova VN-65PD.",
       "evidence_ids": []
      },
      {
-      "text": "Checked: India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
+      "text": "Where we checked: India: no recall found; Japan: no recall found; Australia: no recall found; Singapore: no recall found; the United States: no recall found; South Korea: no recall found",
       "evidence_ids": []
      },
      {
-      "text": "Only 0 review(s) read: too few to call it safe",
+      "text": "We read 0 buyer reviews: too few to judge from reviews alone",
       "evidence_ids": []
      },
      {
@@ -194,7 +194,7 @@
        "name": "India",
        "is_market": true,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:54.034859+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "india_notices",
@@ -228,7 +228,7 @@
        "name": "Japan",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -246,7 +246,7 @@
        "name": "Australia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -264,7 +264,7 @@
        "name": "Singapore",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -280,47 +280,11 @@
        ]
       },
       {
-       "country": "KR",
-       "name": "South Korea",
-       "is_market": false,
-       "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
-       "sources": [
-        {
-         "source": "stored_notices",
-         "authority": "SafeShelf store",
-         "state": "no_matching_notice_found",
-         "mode": "cache",
-         "freshness": "2026-10-13"
-        }
-       ],
-       "matched": 0,
-       "notes": []
-      },
-      {
-       "country": "TW",
-       "name": "Taiwan",
-       "is_market": false,
-       "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
-       "sources": [
-        {
-         "source": "stored_notices",
-         "authority": "SafeShelf store",
-         "state": "no_matching_notice_found",
-         "mode": "cache",
-         "freshness": "2026-10-13"
-        }
-       ],
-       "matched": 0,
-       "notes": []
-      },
-      {
        "country": "US",
        "name": "the United States",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:54.063590+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "cpsc",
@@ -366,11 +330,47 @@
        "notes": []
       },
       {
+       "country": "KR",
+       "name": "South Korea",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "TW",
+       "name": "Taiwan",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
        "country": "ID",
        "name": "Indonesia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -388,7 +388,7 @@
        "name": "Malaysia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -406,7 +406,7 @@
        "name": "the Philippines",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -424,7 +424,7 @@
        "name": "Thailand",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -442,7 +442,7 @@
        "name": "Vietnam",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -465,7 +465,7 @@
        "jurisdiction": "IN",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-16T11:08:54.034859+00:00",
+       "checked_at": "2026-10-18T15:18:27.022292+00:00",
        "freshness": "2026-09-09",
        "records_returned": 0,
        "matched": 0,
@@ -495,7 +495,7 @@
        "jurisdiction": "US",
        "state": "no_matching_notice_found",
        "mode": "live",
-       "checked_at": "2026-10-16T11:08:54.063590+00:00",
+       "checked_at": "2026-10-18T15:18:26.442592+00:00",
        "freshness": null,
        "records_returned": 0,
        "matched": 0,
@@ -555,7 +555,7 @@
        "jurisdiction": "MULTI",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-16T11:08:53.594355+00:00",
+       "checked_at": "2026-10-18T15:18:27.086612+00:00",
        "freshness": "2026-10-13",
        "records_returned": 0,
        "matched": 0,
@@ -563,7 +563,7 @@
        "detail": "searched the stored copy; no notice matched this product"
       }
      ],
-     "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+     "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · the United States: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
     },
     "limitations": [
      "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand.",
@@ -600,9 +600,124 @@
     "rules": [
      "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
     ],
+    "plain": {
+     "title": "No recalls found",
+     "tone": "green",
+     "why": "We checked official safety recall lists in 12 countries and found no recall for this VoltNova VN-65PD.",
+     "todo": "That's a good sign, but not a guarantee. Read recent reviews and buy from the brand's official store if you can.",
+     "say": "No recall found in 12 countries. Not a guarantee, but a good sign.",
+     "checked": [
+      {
+       "country": "IN",
+       "flag": "🇮🇳",
+       "name": "India",
+       "status": "No recall found (India has no public recall list; we checked government safety orders)",
+       "mark": "ok",
+       "yours": true,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.pib.gov.in/",
+         "label": "CCPA / BIS list"
+        }
+       }
+      },
+      {
+       "country": "JP",
+       "flag": "🇯🇵",
+       "name": "Japan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "AU",
+       "flag": "🇦🇺",
+       "name": "Australia",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "SG",
+       "flag": "🇸🇬",
+       "name": "Singapore",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "US",
+       "flag": "🇺🇸",
+       "name": "the United States",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.cpsc.gov/Recalls/CPSC-Recalls-Application-Program-Interface-API-Information",
+         "label": "CPSC list"
+        }
+       }
+      },
+      {
+       "country": "KR",
+       "flag": "🇰🇷",
+       "name": "South Korea",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "TW",
+       "flag": "🇹🇼",
+       "name": "Taiwan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "ID",
+       "flag": "🇮🇩",
+       "name": "Indonesia",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      }
+     ],
+     "link": null,
+     "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+    },
     "matches": []
    },
-   "_ms": 1828
+   "_ms": 2214
   },
   {
    "type": "step",
@@ -611,14 +726,14 @@
    "tool": "gemini",
    "summary": "Wrote the answer",
    "model": "gemini-3.5-flash-lite",
-   "seconds": 0.87,
-   "_ms": 2713
+   "seconds": 1.04,
+   "_ms": 3262
   },
   {
    "type": "done",
    "result": {
-    "session_id": "SS-I-DDA61B00",
-    "investigation_id": "SS-I-DDA61B00",
+    "session_id": "SS-I-AA871D6D",
+    "investigation_id": "SS-I-AA871D6D",
     "mode": "investigate",
     "product_id": "SS-P-30118",
     "language": "en",
@@ -628,15 +743,15 @@
      "overall": "amber",
      "reasons": [
       {
-       "text": "No matching notice found in the sources checked (this is not proof of safety)",
+       "text": "We checked official safety recall lists in 12 countries and found no recall for this VoltNova VN-65PD.",
        "evidence_ids": []
       },
       {
-       "text": "Checked: India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
+       "text": "Where we checked: India: no recall found; Japan: no recall found; Australia: no recall found; Singapore: no recall found; the United States: no recall found; South Korea: no recall found",
        "evidence_ids": []
       },
       {
-       "text": "Only 0 review(s) read: too few to call it safe",
+       "text": "We read 0 buyer reviews: too few to judge from reviews alone",
        "evidence_ids": []
       },
       {
@@ -662,7 +777,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -696,7 +811,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -714,7 +829,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -732,7 +847,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -748,47 +863,11 @@
         ]
        },
        {
-        "country": "KR",
-        "name": "South Korea",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
-        "country": "TW",
-        "name": "Taiwan",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
         "country": "US",
         "name": "the United States",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -834,11 +913,47 @@
         "notes": []
        },
        {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
         "country": "ID",
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -856,7 +971,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -874,7 +989,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -892,7 +1007,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -910,7 +1025,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -933,7 +1048,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "checked_at": "2026-10-18T15:18:27.022292+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -963,7 +1078,7 @@
         "jurisdiction": "US",
         "state": "no_matching_notice_found",
         "mode": "live",
-        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "checked_at": "2026-10-18T15:18:26.442592+00:00",
         "freshness": null,
         "records_returned": 0,
         "matched": 0,
@@ -1023,7 +1138,7 @@
         "jurisdiction": "MULTI",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "freshness": "2026-10-13",
         "records_returned": 0,
         "matched": 0,
@@ -1031,7 +1146,7 @@
         "detail": "searched the stored copy; no notice matched this product"
        }
       ],
-      "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+      "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · the United States: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
      },
      "limitations": [
       "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand.",
@@ -1068,12 +1183,127 @@
      "rules": [
       "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
      ],
+     "plain": {
+      "title": "No recalls found",
+      "tone": "green",
+      "why": "We checked official safety recall lists in 12 countries and found no recall for this VoltNova VN-65PD.",
+      "todo": "That's a good sign, but not a guarantee. Read recent reviews and buy from the brand's official store if you can.",
+      "say": "No recall found in 12 countries. Not a guarantee, but a good sign.",
+      "checked": [
+       {
+        "country": "IN",
+        "flag": "🇮🇳",
+        "name": "India",
+        "status": "No recall found (India has no public recall list; we checked government safety orders)",
+        "mark": "ok",
+        "yours": true,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.pib.gov.in/",
+          "label": "CCPA / BIS list"
+         }
+        }
+       },
+       {
+        "country": "JP",
+        "flag": "🇯🇵",
+        "name": "Japan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "AU",
+        "flag": "🇦🇺",
+        "name": "Australia",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "SG",
+        "flag": "🇸🇬",
+        "name": "Singapore",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "US",
+        "flag": "🇺🇸",
+        "name": "the United States",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.cpsc.gov/Recalls/CPSC-Recalls-Application-Program-Interface-API-Information",
+          "label": "CPSC list"
+         }
+        }
+       },
+       {
+        "country": "KR",
+        "flag": "🇰🇷",
+        "name": "South Korea",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "TW",
+        "flag": "🇹🇼",
+        "name": "Taiwan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "ID",
+        "flag": "🇮🇩",
+        "name": "Indonesia",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       }
+      ],
+      "link": null,
+      "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+     },
      "matches": []
     },
     "messages": [
      {
       "role": "assistant",
-      "text": "This product has no matching recall notice found in the sources checked, though this is not proof of safety. The listing's BIS licence belongs to another brand, and this AI finding is under review and not a regulator's decision. There are also too few reviews read to call it safe.",
+      "text": "Official recall lists in 12 countries show no matching notice found in the sources checked (this is not proof of safety). The product's safety is currently unknown, and its authenticity is an AI finding under review, not a regulator's decision, because the BIS licence belongs to another brand (mock registry) with the listing saying VoltNova and the registry saying Kelvo. We read 0 buyer reviews, which is too few to judge from reviews alone.",
       "evidence_ids": []
      }
     ],
@@ -1146,7 +1376,7 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "VoltNova",
-        "checked_at": "2026-10-16T11:08:54+00:00",
+        "checked_at": "2026-10-18T15:18:27+00:00",
         "result": "mismatch",
         "field": "brand",
         "registry_value": "Kelvo",
@@ -1175,7 +1405,7 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "VoltNova",
-        "checked_at": "2026-10-16T11:08:52+00:00",
+        "checked_at": "2026-10-18T15:18:25+00:00",
         "result": "mismatch",
         "field": "brand",
         "registry_value": "Kelvo",
@@ -1205,7 +1435,9 @@
         ]
        },
        "key": "voltnova|VN65PD|IN",
-       "market": "IN"
+       "market": "IN",
+       "identity_source": "listing text (code)",
+       "identity_agent": null
       },
       "matches": [],
       "contradictions": [],
@@ -1218,7 +1450,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "checked_at": "2026-10-18T15:18:27.022292+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -1248,7 +1480,7 @@
         "jurisdiction": "US",
         "state": "no_matching_notice_found",
         "mode": "live",
-        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "checked_at": "2026-10-18T15:18:26.442592+00:00",
         "freshness": null,
         "records_returned": 0,
         "matched": 0,
@@ -1308,7 +1540,7 @@
         "jurisdiction": "MULTI",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "freshness": "2026-10-13",
         "records_returned": 0,
         "matched": 0,
@@ -1322,7 +1554,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:54.034859+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -1356,7 +1588,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1374,7 +1606,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1392,7 +1624,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1408,47 +1640,11 @@
         ]
        },
        {
-        "country": "KR",
-        "name": "South Korea",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
-        "country": "TW",
-        "name": "Taiwan",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
         "country": "US",
         "name": "the United States",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:54.063590+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -1494,11 +1690,47 @@
         "notes": []
        },
        {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
         "country": "ID",
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1516,7 +1748,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1534,7 +1766,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1552,7 +1784,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1570,7 +1802,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:53.594355+00:00",
+        "checked_at": "2026-10-18T15:18:27.086612+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1586,6 +1818,7 @@
       ],
       "source_mode": "partial",
       "depth": "quick",
+      "critiques": [],
       "query_keys": [
        "28c6deb7eb9377859cf68f80"
       ],
@@ -1617,7 +1850,7 @@
       "tool": "twin_finder",
       "summary": "No related products on file",
       "model": null,
-      "seconds": 0.96
+      "seconds": 1.56
      },
      {
       "n": 3,
@@ -1625,7 +1858,7 @@
       "tool": "research_agent",
       "summary": "Skipped: nothing to check this with",
       "model": null,
-      "seconds": 1.46
+      "seconds": 1.66
      },
      {
       "n": 4,
@@ -1633,39 +1866,39 @@
       "tool": "cert_verifier",
       "summary": "Safety marks: BIS mismatch",
       "model": null,
-      "seconds": 1.49
+      "seconds": 1.68
      },
      {
       "n": 5,
-      "agent": "recall_checker",
-      "tool": "recall_checker",
-      "summary": "No recall notice linked",
-      "model": null,
-      "seconds": 1.55
-     },
-     {
-      "n": 6,
-      "agent": "is_it_real",
-      "tool": "is_it_real",
-      "summary": "Is it real? no warning signs",
-      "model": null,
-      "seconds": 1.57
-     },
-     {
-      "n": 7,
       "agent": "official_sources",
       "tool": "official_sources",
       "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
       "model": null,
-      "seconds": 1.58
+      "seconds": 1.7
      },
      {
-      "n": 8,
+      "n": 6,
       "agent": "safety_radar",
       "tool": "safety_radar",
       "summary": "Safety: verdict not_enough_evidence from 0 reviews",
       "model": null,
-      "seconds": 1.59
+      "seconds": 1.71
+     },
+     {
+      "n": 7,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "No recall notice linked",
+      "model": null,
+      "seconds": 1.72
+     },
+     {
+      "n": 8,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": null,
+      "seconds": 1.83
      },
      {
       "n": 9,
@@ -1681,13 +1914,13 @@
       "tool": "gemini",
       "summary": "Wrote the answer",
       "model": "gemini-3.5-flash-lite",
-      "seconds": 0.87
+      "seconds": 1.04
      }
     ],
     "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
-    "checked_at": 1792148935.0835695
+    "checked_at": 1792336708.342341
    },
-   "_ms": 2723
+   "_ms": 3264
   }
  ]
 }

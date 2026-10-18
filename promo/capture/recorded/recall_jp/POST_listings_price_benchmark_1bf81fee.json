@@ -1,0 +1,27 @@
+{
+ "status": 200,
+ "body": {
+  "verdict": "not_enough_data",
+  "headline": "Not enough price data to compare",
+  "listing_price": 2980,
+  "currency": "JPY",
+  "mrp": null,
+  "category": null,
+  "specs": {},
+  "genuine_range": null,
+  "position": null,
+  "value": null,
+  "comparables": [],
+  "reasons": [
+   "No regional price data for this shop's market yet"
+  ],
+  "answer": {
+   "verdict": "cant_tell",
+   "subject": null,
+   "text": "Price checks do not cover this shop's market yet."
+  },
+  "basis": "curated_brands",
+  "policy_version": "is-it-possible-v1",
+  "label": "Prices found online from brand and retailer pages - check the links. Not a statement about this seller."
+ }
+}

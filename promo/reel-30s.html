@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SafeShelf Product Film</title>
+<!-- A 30-second product film made from the real extension: every screen inside the browser window is a still of the
+     actual SafeShelf widget (capture/film.mjs), running on an Amazon.co.jp-layout page against the API's recorded live
+     answers for the recall_jp listing (capture/stub-api.mjs, capture/recorded/). The motion is drawn here: a Chrome
+     window, camera moves, captions in the site font. Same contract as the other reels for render.mjs. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #001123; --navy-2: #06203d; --blue: #0271e4; --mint: #a2f1a9; --cyan: #5ff0ef; --red: #ff5a4e;
+  --fg: #f5f7fa; --grey: #93a1b2;
+  --display: "Schibsted Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+body { font: 24px/1.4 var(--display); color: var(--fg); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0;
+  background: radial-gradient(120% 90% at 50% 110%, #0a3a73 0%, var(--navy-2) 42%, var(--navy) 75%); perspective: 2400px; }
+.abs { position: absolute; }
+.blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; }
+#grain { inset: 0; opacity: .07; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+#vignette { inset: 0; background: radial-gradient(90% 80% at 50% 50%, transparent 55%, rgba(0, 0, 0, .55)); pointer-events: none; }
+
+/* the browser window: 1440 wide, 86 of chrome above an 1440×810 page */
+#win { left: 0; top: 0; width: 1440px; height: 896px; border-radius: 14px; overflow: hidden; transform-origin: 0 0; background: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 50px 120px rgba(0, 0, 0, .55), 0 18px 40px rgba(0, 0, 0, .35); }
+.tabs { height: 42px; background: #dee1e6; display: flex; align-items: flex-end; padding: 0 12px; gap: 8px; position: relative; }
+.lights { display: flex; gap: 8px; padding: 0 14px 14px 4px; }
+.lights i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .15); }
+.lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+.tab { height: 34px; width: 250px; background: #fff; border-radius: 10px 10px 0 0; display: flex; align-items: center; gap: 9px; padding: 0 12px; font: 12.5px var(--ui); color: #202124; }
+.tab .fav { width: 16px; height: 16px; border-radius: 4px; background: #232f3e; color: #ff9900; font: 700 11px/16px Arial; text-align: center; }
+.tab span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tab.off { background: transparent; color: #5f6368; width: 200px; }
+.plus { color: #5f6368; font: 20px var(--ui); padding: 0 6px 8px; }
+.bar { height: 44px; background: #fff; display: flex; align-items: center; gap: 14px; padding: 0 14px; border-bottom: 1px solid #dadce0; }
+.bar .nav { display: flex; gap: 16px; color: #5f6368; }
+.bar .nav svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.omni { flex: 1; height: 32px; border-radius: 16px; background: #f1f3f4; display: flex; align-items: center; gap: 10px; padding: 0 14px; font: 14px var(--ui); color: #202124; }
+.omni svg { width: 14px; height: 14px; fill: none; stroke: #5f6368; stroke-width: 2; }
+.omni em { font-style: normal; color: #5f6368; }
+.exts { display: flex; align-items: center; gap: 14px; }
+.exts img { width: 20px; height: 20px; border-radius: 4px; }
+.exts svg { width: 18px; height: 18px; fill: #5f6368; }
+.avatar { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #0271e4, #5ff0ef); }
+#page { position: absolute; left: 0; top: 86px; width: 1440px; height: 810px; overflow: hidden; background: #fff; }
+#page img { position: absolute; inset: 0; width: 1440px; height: 810px; }
+#ring { border: 4px solid var(--red); border-radius: 22px; box-shadow: 0 0 0 10px rgba(255, 90, 78, .18), 0 0 60px rgba(255, 90, 78, .45); }
+#ripple { width: 44px; height: 44px; margin: -22px; border-radius: 50%; border: 3px solid var(--blue); background: rgba(2, 113, 228, .15); }
+#cursor { width: 30px; height: 30px; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .35)); }
+#glare { inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .45) 48%, transparent 60%); mix-blend-mode: soft-light; pointer-events: none; }
+#dim { inset: 0; background: var(--navy); pointer-events: none; }
+
+/* floating real UI */
+.float { border-radius: 26px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12), 0 60px 120px rgba(0, 0, 0, .55), 0 0 90px rgba(2, 113, 228, .25); background: #fff; transform-style: preserve-3d; }
+#card { left: 1150px; top: 120px; width: 520px; height: 840px; }
+#card img { position: absolute; left: 0; top: 0; width: 520px; }
+#chat { left: 1110px; top: 290px; width: 580px; }
+#chat img { display: block; width: 580px; }
+#langsel { left: 360px; top: 437px; width: 120px; height: 30px; background: #fff; font: 600 15.5px var(--ui); color: #001123; line-height: 30px; padding-left: 12px; overflow: hidden; }
+.hello { font: 600 30px var(--ui); color: #fff; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .16); padding: 10px 22px; border-radius: 40px; backdrop-filter: blur(8px); white-space: nowrap; }
+
+/* type */
+#scrim { inset: 0; background: linear-gradient(90deg, rgba(0, 17, 35, .95) 0%, rgba(0, 17, 35, .88) 40%, rgba(0, 17, 35, 0) 64%); pointer-events: none; }
+.cap { left: 130px; width: 760px; }
+.kick { font: 600 20px var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--mint); display: flex; align-items: center; gap: 14px; }
+.kick i { display: inline-block; height: 2px; width: 48px; background: var(--mint); }
+.head { margin-top: 18px; font: 600 84px/1.0 var(--display); letter-spacing: -.035em; }
+.head .red { color: var(--red); } .head .grad { background: linear-gradient(95deg, #fff 10%, var(--cyan) 60%, var(--mint)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.subl { margin-top: 22px; font: 400 28px/1.4 var(--display); color: var(--grey); max-width: 680px; }
+.line { display: block; overflow: hidden; padding-bottom: .08em; }
+.line > span { display: inline-block; }
+#intro { left: 0; right: 0; top: 380px; text-align: center; }
+#intro .head { font-size: 120px; margin: 0; }
+#intro .subl { margin: 26px auto 0; max-width: none; font-size: 38px; }
+.stat { top: 360px; width: 520px; text-align: center; }
+.stat b { display: block; font: 600 156px/1 var(--display); letter-spacing: -.04em;
+  background: linear-gradient(180deg, #fff 30%, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat span { display: block; margin-top: 20px; font-size: 32px; color: var(--grey); }
+#endlogo { left: 0; right: 0; top: 250px; display: flex; justify-content: center; }
+#endlogo img { width: 132px; height: 132px; filter: drop-shadow(0 0 50px rgba(2, 113, 228, .7)); }
+.center { left: 0; right: 0; text-align: center; }
+.plat { display: inline-flex; gap: 14px; }
+.plat span { font: 500 24px var(--display); padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, .22); color: #dbe4ee; }
+#hud { position: fixed; left: 12px; bottom: 10px; font: 12px ui-monospace, Menlo, monospace; color: #666; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="blob" id="b1" style="width:900px;height:900px;left:-200px;top:-300px;background:#0271e4"></div>
+  <div class="blob" id="b2" style="width:700px;height:700px;left:1300px;top:500px;background:#12b5a6"></div>
+  <div class="blob" id="b3" style="width:600px;height:600px;left:900px;top:-250px;background:#3b2fd6;opacity:.35"></div>
+
+  <!-- intro -->
+  <div class="abs" id="intro">
+    <div class="head"><span class="line"><span id="i1">¥2,980. 4.1 stars.</span></span></div>
+    <div class="subl"><span class="line"><span id="i2">Ships tomorrow. Looks like a good buy.</span></span></div>
+  </div>
+
+  <!-- the browser window -->
+  <div class="abs" id="win">
+    <div class="tabs">
+      <div class="lights"><i></i><i></i><i></i></div>
+      <div class="tab"><div class="fav">a</div><span>HAIARA モバイルバッテリー W5PRO 10000mAh</span>×</div>
+      <div class="tab off"><span>Gmail</span></div>
+      <div class="plus">+</div>
+    </div>
+    <div class="bar">
+      <div class="nav"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></div>
+      <div class="omni"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>amazon.co.jp<em>/dp/SAFESHELF-W5PRO</em></span></div>
+      <div class="exts">
+        <img src="../extension/icons/icon-32.png" alt="">
+        <svg viewBox="0 0 24 24"><path d="M10.5 3a2 2 0 0 1 2 2v1H16a1 1 0 0 1 1 1v3.5h1a2 2 0 0 1 0 4h-1V18a1 1 0 0 1-1 1h-3.5v-1a2 2 0 0 0-4 0v1H5a1 1 0 0 1-1-1v-3.5h1a2 2 0 0 0 0-4H4V7a1 1 0 0 1 1-1h3.5V5a2 2 0 0 1 2-2z"/></svg>
+        <div class="avatar"></div>
+      </div>
+    </div>
+    <div id="page">
+      <img id="sh1" src="capture/shots/01-page.png" alt="">
+      <img id="sh2" src="capture/shots/02-hover.png" alt="">
+      <img id="sh3" src="capture/shots/03-checking.png" alt="">
+      <img id="sh4" src="capture/shots/04-result.png" alt="">
+    </div>
+    <div class="abs" id="ring"></div>
+    <div class="abs" id="ripple"></div>
+    <svg class="abs" id="cursor" viewBox="0 0 24 24"><path d="M5 2.5l13.5 10.3-6 1 3.6 7.1-2.8 1.4-3.5-7.2L5 19.4z" fill="#000" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <div class="abs" id="glare"></div>
+    <div class="abs" id="dim"></div>
+  </div>
+
+  <!-- the real card and chat, lifted out of the window -->
+  <div class="abs float" id="card"><img id="cardimg" src="capture/shots/05-card.png" alt=""></div>
+  <div class="abs float" id="chat"><img src="capture/shots/07-chat-card.png" alt=""><div class="abs" id="langsel">English</div></div>
+  <div class="abs hello" id="g0" lang="ja">こんにちは</div>
+  <div class="abs hello" id="g1" lang="hi">नमस्ते</div>
+  <div class="abs hello" id="g2" lang="ta">வணக்கம்</div>
+  <div class="abs hello" id="g3" lang="ko">안녕하세요</div>
+  <div class="abs hello" id="g4" lang="th">สวัสดี</div>
+  <div class="abs hello" id="g5" lang="vi">Xin chào</div>
+
+  <div class="abs" id="scrim"></div>
+
+  <!-- captions -->
+  <div class="abs cap" id="capA" style="top:330px"><div class="kick"><i></i>On any product page</div><div class="head"><span class="line"><span>One click</span></span><span class="line"><span>on the shield.</span></span></div><div class="subl">SafeShelf sits on the side of the shop you already use.</div></div>
+  <div class="abs cap" id="capB" style="top:330px"><div class="kick"><i></i>Official sources, live</div><div class="head"><span class="line"><span>It reads Japan’s</span></span><span class="line"><span>recall list now.</span></span></div><div class="subl">Not a cached guess: the regulator’s own notices, checked while you shop.</div></div>
+  <div class="abs cap" id="capC" style="top:310px"><div class="kick"><i></i>The answer</div><div class="head"><span class="line"><span class="red">Recalled</span></span><span class="line"><span class="red">in Japan.</span></span></div><div class="subl">Fire risk. Consumer Affairs Agency notice, 5 Oct 2026. The exact model, W5PRO.</div></div>
+  <div class="abs cap" id="capD" style="top:330px"><div class="kick"><i></i>Show your work</div><div class="head"><span class="line"><span>Every line has</span></span><span class="line"><span class="grad">a source.</span></span></div><div class="subl">Recalls by country, reviews, price, seller and what to do if you already bought it. In one card.</div></div>
+  <div class="abs cap" id="capE" style="top:330px"><div class="kick"><i></i>Ask SafeShelf</div><div class="head"><span class="line"><span>In your</span></span><span class="line"><span class="grad">language.</span></span></div><div class="subl">26 languages. Answers come only from the evidence, with sources.</div></div>
+
+  <!-- stats -->
+  <div class="abs stat" id="st0" style="left:150px"><b id="n0">0</b><span>official recalls</span></div>
+  <div class="abs stat" id="st1" style="left:700px"><b id="n1">0</b><span>languages</span></div>
+  <div class="abs stat" id="st2" style="left:1250px"><b id="n2">0</b><span>click to check</span></div>
+
+  <!-- end -->
+  <div class="abs" id="endlogo"><img src="../extension/icons/icon-128.png" alt=""></div>
+  <div class="abs center" id="e1" style="top:420px"><div class="head" style="font-size:128px;margin:0">SafeShelf</div></div>
+  <div class="abs center" id="e2" style="top:570px"><div class="head grad-wrap" style="font-size:60px;margin:0"><span class="grad" style="background:linear-gradient(95deg,#fff 10%,var(--cyan) 60%,var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent">Check before you pay.</span></div></div>
+  <div class="abs center" id="e3" style="top:690px"><div class="plat"><span>Chrome extension</span><span>Web</span><span>Android</span></div></div>
+  <div class="abs center" id="e4" style="top:800px;font-size:26px;color:var(--grey)">shelf2026-3656b.web.app · Built for JAPAC</div>
+
+  <div class="abs" id="vignette"></div>
+  <div class="abs" id="grain"></div>
+</div>
+<div id="hud"></div>
+
+<script>
+const DURATION = 30;
+const CHROME = 86;                     // px of window chrome above the page
+const SHIELD = [1411, 486];            // the rail's shield, page coordinates (film.mjs prints it)
+const VERDICT = [927, 220, 1350, 358]; // the Safety check box in 04-result, page coordinates
+const LANGS = ["English", "日本語", "हिन्दी", "தமிழ்", "한국어", "ไทย", "Tiếng Việt", "简体中文"];
+
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, x) => a + (b - a) * x;
+const expo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const ioExpo = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x < .5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, -20 * x + 10)) / 2);
+const ioCubic = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+function put(el, { o = 1, x = 0, y = 0, s = 1, rx = 0, ry = 0, blur = 0 } = {}) {
+  el.style.opacity = o;
+  el.style.transform = `translate(${x}px, ${y}px) scale(${s}) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  el.style.filter = blur > .05 ? `blur(${blur}px)` : "";
+  el.style.visibility = o <= .001 ? "hidden" : "visible";
+}
+
+// ---------- camera: keyframes of [time, scale, focus x, focus y (window coords), offset x, offset y, tilt x, tilt y] ----------
+const CAM = [
+  [2.3,  .66, 720, 448,    0, 320, 24,  0],
+  [4.1,  .86, 720, 448,    0,  30,  0,  0],
+  [4.9,  .87, 720, 448,    0,  30,  0,  0],
+  [6.5, 1.75, SHIELD[0], SHIELD[1] + CHROME, 420, 30, 0, 0],
+  [7.5, 1.78, SHIELD[0], SHIELD[1] + CHROME, 420, 30, 0, 0],
+  [8.5, 1.5, 1139, 491, 330, 10, 0, 0],
+  [9.7, 1.52, 1139, 491, 330, 10, 0, 0],
+  [10.9, 2.05, (VERDICT[0] + VERDICT[2]) / 2, (VERDICT[1] + VERDICT[3]) / 2 + CHROME, 370, -20, 0, 0],
+  [13.3, 2.12, (VERDICT[0] + VERDICT[2]) / 2, (VERDICT[1] + VERDICT[3]) / 2 + CHROME, 370, -20, 0, 0],
+  [14.5, .58, 720, 448, -380, 30, 0, 16],
+  [21.2, .54, 720, 448, -400, 30, 0, 18],
+  [22.4, .42, 720, 448, -400, 80, 0, 22],
+];
+function camAt(t) {
+  if (t <= CAM[0][0]) return CAM[0].slice(1);
+  for (let i = 1; i < CAM.length; i++) {
+    const [ta, ...a] = CAM[i - 1], [tb, ...b] = CAM[i];
+    if (t <= tb) { const x = ioExpo(prog(t, ta, tb)); return a.map((v, k) => lerp(v, b[k], x)); }
+  }
+  return CAM[CAM.length - 1].slice(1);
+}
+function placeWindow(t, opacity) {
+  const [s, fx, fy, ox, oy, rx, ry] = camAt(t);
+  // speed of the move, for a touch of motion blur
+  const [s2, fx2, fy2, ox2, oy2] = camAt(t - 1 / 30);
+  const speed = Math.hypot((960 + ox - fx * s) - (960 + ox2 - fx2 * s2), (540 + oy - fy * s) - (540 + oy2 - fy2 * s2)) + Math.abs(s - s2) * 900;
+  const win = $("win");
+  win.style.transform = `translate(${960 + ox - fx * s}px, ${540 + oy - fy * s}px) scale(${s}) translate(720px, 448px) rotateX(${rx}deg) rotateY(${ry}deg) translate(-720px, -448px)`;
+  win.style.opacity = opacity;
+  win.style.visibility = opacity <= .001 ? "hidden" : "visible";
+  win.style.filter = speed > 12 ? `blur(${Math.min(2.2, (speed - 12) / 30)}px)` : "";
+}
+
+// a caption: kicker slides in, lines rise out of their masks, sub fades; leaves by rising and fading
+function caption(el, t, a, b) {
+  const o = 1 - prog(t, b - .45, b), vis = prog(t, a, a + .2) * o;
+  el.style.visibility = vis <= .001 ? "hidden" : "visible";
+  el.style.opacity = o;
+  const kick = el.querySelector(".kick");
+  const k = expo(prog(t, a, a + .7));
+  kick.style.opacity = k; kick.style.transform = `translateX(${(1 - k) * -30}px)`;
+  kick.querySelector("i").style.width = `${48 * k}px`;
+  el.querySelectorAll(".line > span").forEach((s, i) => {
+    const e = expo(prog(t, a + .12 + i * .1, a + .95 + i * .1));
+    s.style.transform = `translateY(${(1 - e) * 110}%)`;
+  });
+  const sub = el.querySelector(".subl");
+  const e = expo(prog(t, a + .45, a + 1.2));
+  sub.style.opacity = e; sub.style.transform = `translateY(${(1 - e) * 16}px)`;
+  el.style.transform = `translateY(${-prog(t, b - .45, b) * 30}px)`;
+}
+
+function render(t) {
+  // background drift
+  put($("b1"), { x: Math.sin(t * .25) * 120, y: Math.cos(t * .2) * 80 });
+  put($("b2"), { x: Math.cos(t * .22) * -140, y: Math.sin(t * .27) * 90, o: .55 });
+  put($("b3"), { x: Math.sin(t * .3 + 1) * 100, o: .35 });
+
+  // intro (0–3)
+  const i1 = expo(prog(t, .25, 1.2)), i2 = expo(prog(t, .8, 1.7)), io = ioCubic(prog(t, 2.4, 3.1));
+  $("i1").style.transform = `translateY(${(1 - i1) * 110}%)`;
+  $("i2").style.transform = `translateY(${(1 - i2) * 110}%)`;
+  put($("intro"), { o: 1 - io, y: -io * 160, s: 1 - io * .06, blur: io * 8 });
+
+  // window
+  const winIn = prog(t, 2.3, 3.0), winOut = prog(t, 21.6, 22.6);
+  placeWindow(t, Math.min(winIn, 1 - winOut));
+  const g = prog(t, 2.6, 4.0);
+  $("glare").style.opacity = g > 0 && g < 1 ? Math.sin(g * Math.PI) * .9 : 0;
+  $("glare").style.transform = `translateX(${lerp(-900, 900, g)}px)`;
+  $("dim").style.opacity = .55 * ioCubic(prog(t, 13.6, 14.6));
+
+  // screens inside the page: page → hover (6.2) → checking (7.05) → answer (9.6)
+  $("sh2").style.opacity = prog(t, 6.15, 6.35);
+  $("sh3").style.opacity = prog(t, 7.0, 7.12);
+  $("sh4").style.opacity = prog(t, 9.55, 9.85);
+
+  // cursor glides to the shield and clicks
+  const cm = ioCubic(prog(t, 4.9, 6.4));
+  const cx = lerp(820, SHIELD[0] - 2, cm), cy = lerp(560, SHIELD[1] + CHROME - 4, cm) + Math.sin(cm * Math.PI) * -50;
+  const press = t > 6.85 && t < 7.05 ? .85 : 1;
+  put($("cursor"), { o: Math.min(prog(t, 4.6, 5.0), 1 - prog(t, 8.2, 8.6)), x: cx, y: cy, s: press });
+  const rp = prog(t, 6.9, 7.6);
+  put($("ripple"), { o: rp > 0 && rp < 1 ? (1 - rp) : 0, x: SHIELD[0], y: SHIELD[1] + CHROME, s: .6 + rp * 2.6 });
+
+  // the red ring around the verdict
+  const ri = expo(prog(t, 10.6, 11.3)), ro = prog(t, 13.3, 13.7);
+  const pad = 10;
+  Object.assign($("ring").style, { left: `${VERDICT[0] - pad}px`, top: `${VERDICT[1] + CHROME - pad}px`, width: `${VERDICT[2] - VERDICT[0] + 2 * pad}px`, height: `${VERDICT[3] - VERDICT[1] + 2 * pad}px` });
+  put($("ring"), { o: Math.min(ri, 1 - ro), s: lerp(1.12, 1, ri) * (1 + .012 * Math.sin(t * 6) * (1 - ro)) });
+
+  // scrim behind the captions (the window fills the frame, or sits behind them)
+  $("scrim").style.opacity = Math.min(prog(t, 4.4, 5.2), 1 - prog(t, 21.4, 22.2));
+
+  caption($("capA"), t, 4.6, 7.0);
+  caption($("capB"), t, 7.3, 9.9);
+  caption($("capC"), t, 10.4, 13.6);
+  caption($("capD"), t, 14.4, 17.9);
+  caption($("capE"), t, 18.2, 21.7);
+
+  // the real card lifts out and scrolls (13.8–18)
+  const ci = expo(prog(t, 13.8, 14.9)), co = ioCubic(prog(t, 17.5, 18.2));
+  put($("card"), { o: Math.min(prog(t, 13.8, 14.2), 1 - co), x: (1 - ci) * 160 - co * 80, y: co * -40, s: lerp(.9, 1, ci) * (1 - co * .06), ry: (1 - ci) * -24 - 6 + co * -10, blur: co * 10 });
+  const cardH = 520 * 3344 / 916, scroll = ioCubic(prog(t, 15.0, 17.6)) * (cardH * .52);
+  $("cardimg").style.transform = `translateY(${-scroll}px)`;
+
+  // the real chat (17.9–21.8): the language picker steps through the list
+  const hi = expo(prog(t, 17.9, 18.9)), ho = ioCubic(prog(t, 21.3, 21.9));
+  put($("chat"), { o: Math.min(prog(t, 17.9, 18.3), 1 - ho), x: (1 - hi) * 140, s: lerp(.9, 1, hi) * (1 - ho * .05), ry: (1 - hi) * -20 - 5, blur: ho * 10 });
+  const li = clamp(Math.floor((t - 18.9) / .32), 0, LANGS.length - 1);
+  $("langsel").textContent = LANGS[t < 18.9 ? 0 : li];
+  const spots = [[1010, 210], [1600, 240], [1720, 520], [1040, 860], [1560, 880], [1760, 760]];
+  for (let i = 0; i < 6; i++) {
+    const a = 18.6 + i * .28, e = expo(prog(t, a, a + .8));
+    put($(`g${i}`), { o: Math.min(e, 1 - ho) * .95, x: spots[i][0], y: spots[i][1] + (1 - e) * 40 - (t - a) * 8, s: lerp(.8, 1, e) });
+  }
+
+  // stats (22–25.8)
+  [[8689, 0], [26, 0], [1, 0]].forEach(([n, dp], i) => {
+    const a = 22.3 + i * .22, e = expo(prog(t, a, a + .9)), o = prog(t, 25.3, 25.8);
+    put($(`st${i}`), { o: Math.min(e, 1 - o), y: (1 - e) * 60 - o * 30, blur: (1 - e) * 10 + o * 10 });
+    $(`n${i}`).textContent = Math.round(n * ioCubic(prog(t, a, a + 1.4))).toLocaleString("en-IN");
+  });
+
+  // end (25.9–30)
+  const l = expo(prog(t, 25.9, 26.8));
+  put($("endlogo"), { o: l, s: lerp(.7, 1, l), blur: (1 - l) * 12 });
+  [["e1", 26.2], ["e2", 26.6], ["e3", 27.0], ["e4", 27.3]].forEach(([id, a]) => {
+    const e = expo(prog(t, a, a + .9));
+    put($(id), { o: e, y: (1 - e) * 30, blur: (1 - e) * 8 });
+  });
+}
+
+// ---------- playback ----------
+const params = new URLSearchParams(location.search);
+const stage = $("stage");
+function fit() {
+  if (params.has("render")) return;
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `scale(${k})`;
+  stage.style.left = `${(innerWidth - 1920 * k) / 2}px`;
+  stage.style.top = `${(innerHeight - 1080 * k) / 2}px`;
+}
+addEventListener("resize", fit); fit();
+
+window.DURATION = DURATION;
+window.seek = (t) => render(t);
+window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map((im) => im.decode().catch(() => {}))));
+
+if (!params.has("render")) {
+  const loop = params.get("loop") !== "0";
+  let start = performance.now() - (parseFloat(params.get("t")) || 0) * 1000, paused = null;
+  addEventListener("keydown", (e) => {
+    if (e.code !== "Space") return;
+    if (paused === null) paused = performance.now();
+    else { start += performance.now() - paused; paused = null; }
+  });
+  window.ready.then(() => requestAnimationFrame(function tick(now) {
+    let t = ((paused ?? now) - start) / 1000;
+    if (t >= DURATION) { if (loop) { start = now; t = 0; } else t = DURATION; }
+    render(t);
+    $("hud").textContent = `${t.toFixed(2)} s · space to pause`;
+    requestAnimationFrame(tick);
+  }));
+} else {
+  $("hud").remove();
+  render(0);
+}
+</script>
+</body>
+</html>

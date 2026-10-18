@@ -19,7 +19,10 @@ TOOLS = {"identifyProduct": "identify", "findDuplicates": "duplicates", "getRela
          "getSafety": "safety", "getCertifications": "certifications", "trustCheck": "trust-check",
          "getProduct": "product", "getHistory": "history", "getAlternatives": "alternatives",
          "createReport": "report", "getBenchResults": "bench", "listingSafetyCheck": "listing safety",
-         "startAgentSession": "agent session", "getEvidence": "evidence", "catalogScan": "catalog scan"}
+         "startAgentSession": "agent session", "getEvidence": "evidence", "catalogScan": "catalog scan",
+         "listingReviewVerdict": "review verdict", "listingClaimsCheck": "claims check",
+         "listingPriceBenchmark": "price benchmark", "listingAge": "listing age",
+         "listingOfficialSeller": "official seller"}
 
 def cost(calls: list[dict]) -> float | None:
     if not calls:

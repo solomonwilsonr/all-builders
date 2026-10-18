@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /opt/safeshelf
 COPY ext ./ext
 COPY remote ./remote
+# Pins the SafeShelf icon to the toolbar (the extension's ID is fixed by remote/extension-key.txt)
+COPY remote/policy.json /etc/chromium/policies/managed/safeshelf.json
 COPY server.py view.html ./
 ENV PORT=8080 PYTHONUNBUFFERED=1
 CMD ["python3", "/opt/safeshelf/server.py"]

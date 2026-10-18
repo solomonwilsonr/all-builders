@@ -98,6 +98,7 @@ label.wa-ico:focus-within { outline: 2px solid var(--wa-green); outline-offset: 
 .wa-field:focus-within { box-shadow: 0 0 0 2px rgba(0, 128, 105, .35); }
 .wa-send { display: grid; place-items: center; width: 46px; height: 46px; min-height: 0; padding: 0; flex: none; border-radius: 50%; background: #00a884; color: #fff; box-shadow: 0 1px 2px rgba(11, 20, 26, .2); }
 .wa-send:hover { background: var(--wa-green); color: #fff; box-shadow: 0 1px 2px rgba(11, 20, 26, .2); }
+.wa-send.rec, .wa-send.rec:hover { background: #e53935; }
 .wa-send svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .wa-toast { position: absolute; left: 50%; bottom: 76px; z-index: 2; max-width: 86%; padding: 8px 14px; border-radius: 8px; background: rgba(11, 20, 26, .86); color: #fff; font-size: 13px; text-align: center; opacity: 0; transform: translate(-50%, 8px); transition: opacity .2s, transform .2s; pointer-events: none; }
 .wa-toast.on { opacity: 1; transform: translate(-50%, 0); }
@@ -140,7 +141,7 @@ label.wa-ico:focus-within { outline: 2px solid var(--wa-green); outline-offset: 
 .wa-steps:empty { display: none; }
 .wa-steps li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--line); color: var(--ink-2); }
 .wa-steps li::before { content: "•"; color: var(--dim); }
-.wa-steps li.run::before { content: "◌"; color: var(--blue); animation: wa-spin 1s linear infinite; display: inline-block; }
+.wa-steps li.wa-pending::before { content: "◌"; color: var(--blue); animation: wa-spin 1s linear infinite; display: inline-block; }
 .wa-steps li.ok::before { content: "✓"; color: var(--green); }
 .wa-steps li.bad::before { content: "✗"; color: var(--red); }
 .wa-steps .wa-t { color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -163,4 +164,4 @@ label.wa-ico:focus-within { outline: 2px solid var(--wa-green); outline-offset: 
   .wa-cards.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .wa-card.photo .wa-tag { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .wa-msg, .wa-btns, .wa-typing i, .wa-steps li.run::before { animation: none; } .wa-card:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .wa-msg, .wa-btns, .wa-typing i, .wa-steps li.wa-pending::before { animation: none; } .wa-card:hover { transform: none; } }

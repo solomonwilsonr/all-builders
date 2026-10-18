@@ -12,5 +12,6 @@ export async function idToken(fresh = false) {
 }
 export async function account() { return page()?.who() || null; }
 export async function signOut() {}
+export async function signedInUid() { return null; } // no shelf sync inside the judges' page (SHELF_SYNC is false)
 export async function openSignIn() { page()?.notice?.("You are already signed in on this page."); }
 export async function acceptSession() { throw new Error("Sign-in is handled by the judges' page here"); }

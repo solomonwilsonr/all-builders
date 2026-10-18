@@ -1,0 +1,28 @@
+{
+ "status": 200,
+ "body": {
+  "listing_url": "https://www.amazon.co.jp/dp/SAFESHELF-W5PRO",
+  "verdict": "not_enough_reviews",
+  "headline": "Not enough reviews yet",
+  "confidence": "low",
+  "rating": {
+   "average": null,
+   "count": null,
+   "source": "none",
+   "positive_share": null
+  },
+  "reviews_read": 0,
+  "reviews_labelled": 0,
+  "liked": [],
+  "complaints": [],
+  "trust": {
+   "may_be_inflated": false,
+   "flags": []
+  },
+  "reasons": [
+   "Only 0 ratings: at least 30 are needed for a verdict"
+  ],
+  "policy_version": "review-verdict-v1",
+  "label": "AI summary of buyer reviews - about quality, not safety"
+ }
+}

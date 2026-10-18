@@ -1,130 +1,130 @@
 {
- "recorded_at": "2026-10-16 16:38 IST",
+ "recorded_at": "2026-10-18 20:48 IST",
  "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
  "events": [
   {
    "type": "open",
    "mode": "investigate",
-   "investigation_id": "SS-I-70313D99",
-   "_ms": 132
+   "investigation_id": "SS-I-8C3E9F91",
+   "_ms": 133
   },
   {
    "type": "start",
    "agent": "page_reader",
    "tool": "page",
-   "_ms": 132
+   "_ms": 133
   },
   {
    "type": "step",
    "n": 1,
    "agent": "page_reader",
    "tool": "page",
-   "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by model number)",
+   "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by url)",
    "model": null,
-   "seconds": 0.58,
-   "_ms": 785
+   "seconds": 0.25,
+   "_ms": 406
   },
   {
    "type": "start",
    "agent": "is_it_real",
    "tool": "is_it_real",
-   "_ms": 785
+   "_ms": 406
   },
   {
    "type": "start",
    "agent": "safety_radar",
    "tool": "safety_radar",
-   "_ms": 785
+   "_ms": 406
   },
   {
    "type": "start",
    "agent": "twin_finder",
    "tool": "twin_finder",
-   "_ms": 785
+   "_ms": 406
   },
   {
    "type": "start",
    "agent": "recall_checker",
    "tool": "recall_checker",
-   "_ms": 785
+   "_ms": 406
   },
   {
    "type": "start",
    "agent": "cert_verifier",
    "tool": "cert_verifier",
-   "_ms": 785
+   "_ms": 408
   },
   {
    "type": "start",
    "agent": "official_sources",
    "tool": "official_sources",
-   "_ms": 785
+   "_ms": 408
   },
   {
    "type": "start",
    "agent": "research_agent",
    "tool": "research_agent",
-   "_ms": 785
+   "_ms": 408
   },
   {
    "type": "step",
    "n": 2,
-   "agent": "twin_finder",
-   "tool": "twin_finder",
-   "summary": "No related products on file",
-   "model": null,
-   "seconds": 0.55,
-   "_ms": 2762
-  },
-  {
-   "type": "step",
-   "n": 3,
    "agent": "cert_verifier",
    "tool": "cert_verifier",
    "summary": "Safety marks: no marks claimed",
    "model": null,
-   "seconds": 1.87,
-   "_ms": 2762
+   "seconds": 1.41,
+   "_ms": 2209
   },
   {
    "type": "step",
-   "n": 4,
+   "n": 3,
    "agent": "research_agent",
    "tool": "research_agent",
    "summary": "Skipped: nothing to check this with",
    "model": null,
-   "seconds": 2.02,
-   "_ms": 2762
+   "seconds": 1.6,
+   "_ms": 2210
   },
   {
    "type": "step",
-   "n": 5,
-   "agent": "is_it_real",
-   "tool": "is_it_real",
-   "summary": "Is it real? no warning signs",
-   "model": null,
-   "seconds": 2.09,
-   "_ms": 2967
-  },
-  {
-   "type": "step",
-   "n": 6,
-   "agent": "official_sources",
-   "tool": "official_sources",
-   "summary": "Official sources (partial): 4 notice(s) may concern this product; India no matching notice found, the United States checked live, Japan no matching notice found",
-   "model": null,
-   "seconds": 2.19,
-   "_ms": 3005
-  },
-  {
-   "type": "step",
-   "n": 7,
+   "n": 4,
    "agent": "recall_checker",
    "tool": "recall_checker",
    "summary": "3 linked recall notice(s)",
    "model": null,
-   "seconds": 2.24,
-   "_ms": 3005
+   "seconds": 1.69,
+   "_ms": 2286
+  },
+  {
+   "type": "step",
+   "n": 5,
+   "agent": "twin_finder",
+   "tool": "twin_finder",
+   "summary": "No related products on file",
+   "model": null,
+   "seconds": 1.77,
+   "_ms": 2286
+  },
+  {
+   "type": "step",
+   "n": 6,
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
+   "model": null,
+   "seconds": 1.81,
+   "_ms": 2286
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "official_sources",
+   "tool": "official_sources",
+   "summary": "Official sources (partial): 1 notice(s) may concern this product; India no matching notice found, the United States checked live, Japan no matching notice found",
+   "model": null,
+   "seconds": 1.84,
+   "_ms": 2286
   },
   {
    "type": "step",
@@ -132,15 +132,15 @@
    "agent": "safety_radar",
    "tool": "safety_radar",
    "summary": "Safety: officially recalled; verdict red from 0 reviews",
-   "model": "gemini-3-flash-preview",
-   "seconds": 17.76,
-   "_ms": 18614
+   "model": "gemini-3.5-flash",
+   "seconds": 6.73,
+   "_ms": 7155
   },
   {
    "type": "start",
    "agent": "verdict",
    "tool": "verdict",
-   "_ms": 18614
+   "_ms": 7155
   },
   {
    "type": "step",
@@ -150,7 +150,7 @@
    "summary": "Code set the verdict: safety amber, is it real unknown, overall amber",
    "model": null,
    "seconds": 0.0,
-   "_ms": 18614
+   "_ms": 7164
   },
   {
    "type": "verdict",
@@ -160,11 +160,11 @@
     "overall": "amber",
     "reasons": [
      {
-      "text": "Recalled abroad, same model number; not confirmed for India (CPSC cpsc:25338, 2025-06-12)",
+      "text": "The safety regulator in the US recalled this Anker A1263 because of a fire risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
       "evidence_ids": []
      },
      {
-      "text": "Checked: India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice",
+      "text": "Where we checked: India: no recall found; the United States: recall found for this model; Japan: no recall found; Australia: no recall found; Singapore: no recall found; South Korea: no recall found",
       "evidence_ids": []
      }
     ],
@@ -196,7 +196,7 @@
        "name": "India",
        "is_market": true,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "india_notices",
@@ -230,7 +230,7 @@
        "name": "the United States",
        "is_market": false,
        "state": "checked_live",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "cpsc",
@@ -254,7 +254,7 @@
          "freshness": "2026-10-13"
         }
        ],
-       "matched": 8,
+       "matched": 2,
        "notes": []
       },
       {
@@ -262,7 +262,7 @@
        "name": "Japan",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -280,7 +280,7 @@
        "name": "Australia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -298,7 +298,7 @@
        "name": "Singapore",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -312,42 +312,6 @@
        "notes": [
         "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
        ]
-      },
-      {
-       "country": "KR",
-       "name": "South Korea",
-       "is_market": false,
-       "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
-       "sources": [
-        {
-         "source": "stored_notices",
-         "authority": "SafeShelf store",
-         "state": "no_matching_notice_found",
-         "mode": "cache",
-         "freshness": "2026-10-13"
-        }
-       ],
-       "matched": 0,
-       "notes": []
-      },
-      {
-       "country": "TW",
-       "name": "Taiwan",
-       "is_market": false,
-       "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
-       "sources": [
-        {
-         "source": "stored_notices",
-         "authority": "SafeShelf store",
-         "state": "no_matching_notice_found",
-         "mode": "cache",
-         "freshness": "2026-10-13"
-        }
-       ],
-       "matched": 0,
-       "notes": []
       },
       {
        "country": "EU",
@@ -368,11 +332,47 @@
        "notes": []
       },
       {
+       "country": "KR",
+       "name": "South Korea",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "TW",
+       "name": "Taiwan",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
        "country": "ID",
        "name": "Indonesia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -390,7 +390,7 @@
        "name": "Malaysia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -408,7 +408,7 @@
        "name": "the Philippines",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -426,7 +426,7 @@
        "name": "Thailand",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -444,7 +444,7 @@
        "name": "Vietnam",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -467,7 +467,7 @@
        "jurisdiction": "IN",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-16T11:08:29.369081+00:00",
+       "checked_at": "2026-10-18T15:18:12.608143+00:00",
        "freshness": "2026-09-09",
        "records_returned": 0,
        "matched": 0,
@@ -497,14 +497,14 @@
        "jurisdiction": "US",
        "state": "checked_live",
        "mode": "live",
-       "checked_at": "2026-10-16T11:08:29.573503+00:00",
+       "checked_at": "2026-10-18T15:18:11.500129+00:00",
        "freshness": "2026-02-26",
        "records_returned": 9,
-       "matched": 4,
+       "matched": 1,
        "matched_by_country": {
-        "US": 4
+        "US": 1
        },
-       "detail": "4 notice(s) that may concern this product"
+       "detail": "1 notice(s) that may concern this product"
       },
       {
        "source": "eu_safety_gate",
@@ -559,17 +559,17 @@
        "jurisdiction": "MULTI",
        "state": "checked_cache",
        "mode": "cache",
-       "checked_at": "2026-10-16T11:08:30.735779+00:00",
+       "checked_at": "2026-10-18T15:18:12.726192+00:00",
        "freshness": "2026-10-13",
        "records_returned": 26,
-       "matched": 4,
+       "matched": 1,
        "matched_by_country": {
-        "US": 4
+        "US": 1
        },
-       "detail": "4 notice(s) that may concern this product"
+       "detail": "1 notice(s) that may concern this product"
       }
      ],
-     "summary": "India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice"
+     "summary": "India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
     },
     "limitations": [
      "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand.",
@@ -614,6 +614,124 @@
     "rules": [
      "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
     ],
+    "plain": {
+     "title": "Recalled in the US",
+     "tone": "amber",
+     "why": "The safety regulator in the US recalled this Anker A1263 because of a fire risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+     "todo": "Check that the model number on the box or label is exactly A1263. If it is, avoid buying it, or don't charge or use it unattended until the seller confirms it's safe.",
+     "say": "Recalled in the US, because of a fire risk. Not recalled in India yet. Check the model number before you buy.",
+     "checked": [
+      {
+       "country": "IN",
+       "flag": "🇮🇳",
+       "name": "India",
+       "status": "No recall found (India has no public recall list; we checked government safety orders)",
+       "mark": "ok",
+       "yours": true,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.pib.gov.in/",
+         "label": "CCPA / BIS list"
+        }
+       }
+      },
+      {
+       "country": "US",
+       "flag": "🇺🇸",
+       "name": "the United States",
+       "status": "Recall found for this model",
+       "mark": "warn",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.cpsc.gov/Recalls/2025/More-than-One-Million-Anker-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Manufactured-by-Anker-Innovations",
+         "label": "CPSC cpsc:25338"
+        }
+       }
+      },
+      {
+       "country": "JP",
+       "flag": "🇯🇵",
+       "name": "Japan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "AU",
+       "flag": "🇦🇺",
+       "name": "Australia",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "SG",
+       "flag": "🇸🇬",
+       "name": "Singapore",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "KR",
+       "flag": "🇰🇷",
+       "name": "South Korea",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "TW",
+       "flag": "🇹🇼",
+       "name": "Taiwan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "ID",
+       "flag": "🇮🇩",
+       "name": "Indonesia",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      }
+     ],
+     "link": {
+      "url": "https://www.cpsc.gov/Recalls/2025/More-than-One-Million-Anker-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Manufactured-by-Anker-Innovations",
+      "label": "See the official recall (CPSC)"
+     },
+     "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+    },
     "matches": [
      {
       "record_id": "cpsc:25338",
@@ -635,51 +753,6 @@
        "serial numbers are included in the recall",
        "serial number at https://www"
       ]
-     },
-     {
-      "record_id": "cpsc:21083",
-      "authority": "CPSC",
-      "title": "Anker Play Products Recalls 10-in-1 Incredible Inventions Science Kit Due to Violation of the Federal Lead Paint Ban",
-      "url": "https://www.cpsc.gov/Recalls/2021/Anker-Play-Products-Recalls-10-in-1-Incredible-Inventions-Science-Kit-Due-to-Violation-of-the-Federal-Lead-Paint-Ban",
-      "published": "2021-02-17",
-      "jurisdiction": "US",
-      "tier": "family_named",
-      "scope": "in_scope",
-      "local": false,
-      "authenticity": "authentic",
-      "support": "supported",
-      "models_named": [],
-      "batch_limits": []
-     },
-     {
-      "record_id": "cpsc:23031",
-      "authority": "CPSC",
-      "title": "Anker Play Products Recalls Bolt Foldable Children's Scooters Due to Violation of Federal Lead Paint Ban; Lead Poisoning Hazard",
-      "url": "https://www.cpsc.gov/Recalls/2023/Anker-Play-Products-Recalls-Bolt-Foldable-Childrens-Scooters-Due-to-Violation-of-Federal-Lead-Paint-Ban-Lead-Poisoning-Hazard",
-      "published": "2022-11-03",
-      "jurisdiction": "US",
-      "tier": "family_named",
-      "scope": "in_scope",
-      "local": false,
-      "authenticity": "authentic",
-      "support": "supported",
-      "models_named": [],
-      "batch_limits": []
-     },
-     {
-      "record_id": "cpsc:24146",
-      "authority": "CPSC",
-      "title": "Anker EverFrost Lithium-Ion Battery Powered Coolers Recalled Due to Battery Fire Hazard; Manufactured by Anker Innovations",
-      "url": "https://www.cpsc.gov/Recalls/2024/Anker-EverFrost-Lithium-Ion-Battery-Powered-Coolers-Recalled-Due-to-Battery-Fire-Hazard-Manufactured-by-Anker-Innovations",
-      "published": "2024-03-07",
-      "jurisdiction": "US",
-      "tier": "family_named",
-      "scope": "in_scope",
-      "local": false,
-      "authenticity": "authentic",
-      "support": "supported",
-      "models_named": [],
-      "batch_limits": []
      },
      {
       "record_id": "oecd:JP:E0000023822",
@@ -714,10 +787,72 @@
        "A1270"
       ],
       "batch_limits": []
+     },
+     {
+      "record_id": "oecd:JP:E0000030413",
+      "authority": "CAA",
+      "title": "Lithium-ion battery built-in charger, Anker 535 Power Bank (PowerCore 20000)",
+      "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000030413&screenkbn=06",
+      "published": "2023-02-07",
+      "jurisdiction": "JP",
+      "tier": "lookalike",
+      "scope": "not_applicable",
+      "local": false,
+      "authenticity": "official_domain",
+      "support": "supported",
+      "models_named": [
+       "A1366"
+      ],
+      "batch_limits": []
+     },
+     {
+      "record_id": "cpsc:23147",
+      "authority": "CPSC",
+      "title": "Fantasia Trading Recalls Anker Power Banks Due to Fire Hazard",
+      "url": "https://www.cpsc.gov/Recalls/2023/Fantasia-Trading-Recalls-Anker-Power-Banks-Due-to-Fire-Hazard",
+      "published": "2023-03-09",
+      "jurisdiction": "US",
+      "tier": "lookalike",
+      "scope": "not_applicable",
+      "local": false,
+      "authenticity": "authentic",
+      "support": "supported",
+      "models_named": [
+       "A1366",
+       "535"
+      ],
+      "batch_limits": []
+     },
+     {
+      "record_id": "oecd:JP:E0000031155",
+      "authority": "CAA",
+      "title": "Robot vacuum cleaner (self running type)",
+      "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000031155&screenkbn=03",
+      "published": "2023-08-22",
+      "jurisdiction": "JP",
+      "tier": "lookalike",
+      "scope": "not_applicable",
+      "local": false,
+      "authenticity": "official_domain",
+      "support": "supported",
+      "models_named": [
+       "EUFYCLEANG40HYBRIDT2256",
+       "EUFYCLEANG40HYBRIDT2273",
+       "EUFYCLEANG40T2272",
+       "EUFYCLEANINTERCHANGEABLEBATTERYFORX9PROT2908",
+       "EUFYCLEANX9PROWITHAUTOCLEANSTATIONT2320",
+       "EUFYROBOVAC15CT2120",
+       "EUFYROBOVACG30HYBRIDT2253",
+       "EUFYROBOVACG30T2250",
+       "EUFYROBOVACINTERCHANGEABLEBATTERYEXCLUDINGX8ORX9PROT2908",
+       "EUFYROBOVACINTERCHANGEABLEBATTERYFORX8SERIEST2937",
+       "EUFYROBOVACX8HYBRIDT2261"
+      ],
+      "batch_limits": []
      }
     ]
    },
-   "_ms": 18619
+   "_ms": 7166
   },
   {
    "type": "step",
@@ -726,14 +861,14 @@
    "tool": "gemini",
    "summary": "Wrote the answer",
    "model": "gemini-3.5-flash-lite",
-   "seconds": 0.96,
-   "_ms": 19516
+   "seconds": 0.89,
+   "_ms": 8065
   },
   {
    "type": "done",
    "result": {
-    "session_id": "SS-I-70313D99",
-    "investigation_id": "SS-I-70313D99",
+    "session_id": "SS-I-8C3E9F91",
+    "investigation_id": "SS-I-8C3E9F91",
     "mode": "investigate",
     "product_id": "SS-P-AMZ-B01B14ANLY",
     "language": "en",
@@ -743,11 +878,11 @@
      "overall": "amber",
      "reasons": [
       {
-       "text": "Recalled abroad, same model number; not confirmed for India (CPSC cpsc:25338, 2025-06-12)",
+       "text": "The safety regulator in the US recalled this Anker A1263 because of a fire risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
        "evidence_ids": []
       },
       {
-       "text": "Checked: India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice",
+       "text": "Where we checked: India: no recall found; the United States: recall found for this model; Japan: no recall found; Australia: no recall found; Singapore: no recall found; South Korea: no recall found",
        "evidence_ids": []
       }
      ],
@@ -779,7 +914,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -813,7 +948,7 @@
         "name": "the United States",
         "is_market": false,
         "state": "checked_live",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -837,7 +972,7 @@
           "freshness": "2026-10-13"
          }
         ],
-        "matched": 8,
+        "matched": 2,
         "notes": []
        },
        {
@@ -845,7 +980,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -863,7 +998,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -881,7 +1016,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -895,42 +1030,6 @@
         "notes": [
          "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
         ]
-       },
-       {
-        "country": "KR",
-        "name": "South Korea",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
-        "country": "TW",
-        "name": "Taiwan",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
        },
        {
         "country": "EU",
@@ -951,11 +1050,47 @@
         "notes": []
        },
        {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
         "country": "ID",
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -973,7 +1108,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -991,7 +1126,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1009,7 +1144,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1027,7 +1162,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1050,7 +1185,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:29.369081+00:00",
+        "checked_at": "2026-10-18T15:18:12.608143+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -1080,14 +1215,14 @@
         "jurisdiction": "US",
         "state": "checked_live",
         "mode": "live",
-        "checked_at": "2026-10-16T11:08:29.573503+00:00",
+        "checked_at": "2026-10-18T15:18:11.500129+00:00",
         "freshness": "2026-02-26",
         "records_returned": 9,
-        "matched": 4,
+        "matched": 1,
         "matched_by_country": {
-         "US": 4
+         "US": 1
         },
-        "detail": "4 notice(s) that may concern this product"
+        "detail": "1 notice(s) that may concern this product"
        },
        {
         "source": "eu_safety_gate",
@@ -1142,17 +1277,17 @@
         "jurisdiction": "MULTI",
         "state": "checked_cache",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "freshness": "2026-10-13",
         "records_returned": 26,
-        "matched": 4,
+        "matched": 1,
         "matched_by_country": {
-         "US": 4
+         "US": 1
         },
-        "detail": "4 notice(s) that may concern this product"
+        "detail": "1 notice(s) that may concern this product"
        }
       ],
-      "summary": "India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice"
+      "summary": "India: no matching notice · the United States: notice found (live) · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
      },
      "limitations": [
       "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand.",
@@ -1197,6 +1332,124 @@
      "rules": [
       "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
      ],
+     "plain": {
+      "title": "Recalled in the US",
+      "tone": "amber",
+      "why": "The safety regulator in the US recalled this Anker A1263 because of a fire risk. It hasn't been recalled in India yet, so the version sold here may or may not be affected.",
+      "todo": "Check that the model number on the box or label is exactly A1263. If it is, avoid buying it, or don't charge or use it unattended until the seller confirms it's safe.",
+      "say": "Recalled in the US, because of a fire risk. Not recalled in India yet. Check the model number before you buy.",
+      "checked": [
+       {
+        "country": "IN",
+        "flag": "🇮🇳",
+        "name": "India",
+        "status": "No recall found (India has no public recall list; we checked government safety orders)",
+        "mark": "ok",
+        "yours": true,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.pib.gov.in/",
+          "label": "CCPA / BIS list"
+         }
+        }
+       },
+       {
+        "country": "US",
+        "flag": "🇺🇸",
+        "name": "the United States",
+        "status": "Recall found for this model",
+        "mark": "warn",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.cpsc.gov/Recalls/2025/More-than-One-Million-Anker-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Manufactured-by-Anker-Innovations",
+          "label": "CPSC cpsc:25338"
+         }
+        }
+       },
+       {
+        "country": "JP",
+        "flag": "🇯🇵",
+        "name": "Japan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "AU",
+        "flag": "🇦🇺",
+        "name": "Australia",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "SG",
+        "flag": "🇸🇬",
+        "name": "Singapore",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "KR",
+        "flag": "🇰🇷",
+        "name": "South Korea",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "TW",
+        "flag": "🇹🇼",
+        "name": "Taiwan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "ID",
+        "flag": "🇮🇩",
+        "name": "Indonesia",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       }
+      ],
+      "link": {
+       "url": "https://www.cpsc.gov/Recalls/2025/More-than-One-Million-Anker-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Manufactured-by-Anker-Innovations",
+       "label": "See the official recall (CPSC)"
+      },
+      "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+     },
      "matches": [
       {
        "record_id": "cpsc:25338",
@@ -1218,51 +1471,6 @@
         "serial numbers are included in the recall",
         "serial number at https://www"
        ]
-      },
-      {
-       "record_id": "cpsc:21083",
-       "authority": "CPSC",
-       "title": "Anker Play Products Recalls 10-in-1 Incredible Inventions Science Kit Due to Violation of the Federal Lead Paint Ban",
-       "url": "https://www.cpsc.gov/Recalls/2021/Anker-Play-Products-Recalls-10-in-1-Incredible-Inventions-Science-Kit-Due-to-Violation-of-the-Federal-Lead-Paint-Ban",
-       "published": "2021-02-17",
-       "jurisdiction": "US",
-       "tier": "family_named",
-       "scope": "in_scope",
-       "local": false,
-       "authenticity": "authentic",
-       "support": "supported",
-       "models_named": [],
-       "batch_limits": []
-      },
-      {
-       "record_id": "cpsc:23031",
-       "authority": "CPSC",
-       "title": "Anker Play Products Recalls Bolt Foldable Children's Scooters Due to Violation of Federal Lead Paint Ban; Lead Poisoning Hazard",
-       "url": "https://www.cpsc.gov/Recalls/2023/Anker-Play-Products-Recalls-Bolt-Foldable-Childrens-Scooters-Due-to-Violation-of-Federal-Lead-Paint-Ban-Lead-Poisoning-Hazard",
-       "published": "2022-11-03",
-       "jurisdiction": "US",
-       "tier": "family_named",
-       "scope": "in_scope",
-       "local": false,
-       "authenticity": "authentic",
-       "support": "supported",
-       "models_named": [],
-       "batch_limits": []
-      },
-      {
-       "record_id": "cpsc:24146",
-       "authority": "CPSC",
-       "title": "Anker EverFrost Lithium-Ion Battery Powered Coolers Recalled Due to Battery Fire Hazard; Manufactured by Anker Innovations",
-       "url": "https://www.cpsc.gov/Recalls/2024/Anker-EverFrost-Lithium-Ion-Battery-Powered-Coolers-Recalled-Due-to-Battery-Fire-Hazard-Manufactured-by-Anker-Innovations",
-       "published": "2024-03-07",
-       "jurisdiction": "US",
-       "tier": "family_named",
-       "scope": "in_scope",
-       "local": false,
-       "authenticity": "authentic",
-       "support": "supported",
-       "models_named": [],
-       "batch_limits": []
       },
       {
        "record_id": "oecd:JP:E0000023822",
@@ -1297,26 +1505,88 @@
         "A1270"
        ],
        "batch_limits": []
+      },
+      {
+       "record_id": "oecd:JP:E0000030413",
+       "authority": "CAA",
+       "title": "Lithium-ion battery built-in charger, Anker 535 Power Bank (PowerCore 20000)",
+       "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000030413&screenkbn=06",
+       "published": "2023-02-07",
+       "jurisdiction": "JP",
+       "tier": "lookalike",
+       "scope": "not_applicable",
+       "local": false,
+       "authenticity": "official_domain",
+       "support": "supported",
+       "models_named": [
+        "A1366"
+       ],
+       "batch_limits": []
+      },
+      {
+       "record_id": "cpsc:23147",
+       "authority": "CPSC",
+       "title": "Fantasia Trading Recalls Anker Power Banks Due to Fire Hazard",
+       "url": "https://www.cpsc.gov/Recalls/2023/Fantasia-Trading-Recalls-Anker-Power-Banks-Due-to-Fire-Hazard",
+       "published": "2023-03-09",
+       "jurisdiction": "US",
+       "tier": "lookalike",
+       "scope": "not_applicable",
+       "local": false,
+       "authenticity": "authentic",
+       "support": "supported",
+       "models_named": [
+        "A1366",
+        "535"
+       ],
+       "batch_limits": []
+      },
+      {
+       "record_id": "oecd:JP:E0000031155",
+       "authority": "CAA",
+       "title": "Robot vacuum cleaner (self running type)",
+       "url": "https://www.recall.caa.go.jp/result/detail.php?rcl=00000031155&screenkbn=03",
+       "published": "2023-08-22",
+       "jurisdiction": "JP",
+       "tier": "lookalike",
+       "scope": "not_applicable",
+       "local": false,
+       "authenticity": "official_domain",
+       "support": "supported",
+       "models_named": [
+        "EUFYCLEANG40HYBRIDT2256",
+        "EUFYCLEANG40HYBRIDT2273",
+        "EUFYCLEANG40T2272",
+        "EUFYCLEANINTERCHANGEABLEBATTERYFORX9PROT2908",
+        "EUFYCLEANX9PROWITHAUTOCLEANSTATIONT2320",
+        "EUFYROBOVAC15CT2120",
+        "EUFYROBOVACG30HYBRIDT2253",
+        "EUFYROBOVACG30T2250",
+        "EUFYROBOVACINTERCHANGEABLEBATTERYEXCLUDINGX8ORX9PROT2908",
+        "EUFYROBOVACINTERCHANGEABLEBATTERYFORX8SERIEST2937",
+        "EUFYROBOVACX8HYBRIDT2261"
+       ],
+       "batch_limits": []
       }
      ]
     },
     "messages": [
      {
       "role": "assistant",
-      "text": "This product is an AI finding under review, not a regulator's decision. It shares a model number with an item recalled in the United States, though this recall is not confirmed for India.",
+      "text": "This product has a recall in the United States for a fire risk, but there is no matching notice in India yet so the version sold here may or may not be affected. This amber status is an AI finding under review, not a regulator's decision.",
       "evidence_ids": []
      }
     ],
     "checks": {
      "page": {
       "product_id": "SS-P-AMZ-B01B14ANLY",
-      "matched_by": "model_number",
+      "matched_by": "url",
       "similar_product_id": null
      },
      "is_it_real": {
       "listing_url": "https://www.flipkart.com/anker-powercore-10000-a1263/p/itm0001",
       "matched_product_id": "SS-P-AMZ-B01B14ANLY",
-      "matched_by": "model_number",
+      "matched_by": "url",
       "checks": {
        "copied_photos": {
         "result": "unknown",
@@ -1346,7 +1616,7 @@
       "safety_of_genuine_model": "no hazard findings, recalled",
       "label": "Evidence for the shopper - not a legal finding",
       "evidence_ids": [
-       "EV-FA010A73"
+       "EV-E8624F6A"
       ]
      },
      "safety_radar": {
@@ -1431,7 +1701,9 @@
        "title": "Anker PowerCore 10000 Power Bank A1263",
        "local_identifiers": {},
        "key": "anker|A1263|IN",
-       "market": "IN"
+       "market": "IN",
+       "identity_source": "listing text (code)",
+       "identity_agent": null
       },
       "matches": [
        {
@@ -1443,7 +1715,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2025-06-12",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
+        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion battery in the power bank can overheat, posing fire and burn hazards to consumers.",
@@ -1477,138 +1749,7 @@
          "stored_notices"
         ],
         "original_text": null,
-        "places": {
-         "market_country": "IN",
-         "source_jurisdiction": "US",
-         "manufacturing_country": null,
-         "recall_affected_country": [
-          "US"
-         ]
-        }
-       },
-       {
-        "record_id": "cpsc:21083",
-        "source": "cpsc",
-        "authority": "CPSC",
-        "title": "Anker Play Products Recalls 10-in-1 Incredible Inventions Science Kit Due to Violation of the Federal Lead Paint Ban",
-        "url": "https://www.cpsc.gov/Recalls/2021/Anker-Play-Products-Recalls-10-in-1-Incredible-Inventions-Science-Kit-Due-to-Violation-of-the-Federal-Lead-Paint-Ban",
-        "jurisdiction": "US",
-        "record_type": "recall_notice",
-        "published": "2021-02-17",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
-        "mode": "live",
-        "language": "en",
-        "hazard": "Paint on the red and blue magnet contains levels of lead that exceed the federal lead paint ban. Lead is toxic if ingested by young children and can cause adverse health issues. In addition, the product packaging lacks the required warning labels for magnets and balloons.",
-        "remedy": "Consumers should immediately stop using the recalled science kit, take the included red and blue magnet away from children, and contact Anker Play Products to receive a full refund.",
-        "models_named": [],
-        "batch_limits": [],
-        "tier": "family_named",
-        "scope": "in_scope",
-        "local": false,
-        "reasons": [
-         "the notice names this brand and product type but no model numbers"
-        ],
-        "would_change": [
-         "a person comparing the exact model code and photos with the notice"
-        ],
-        "authenticity": "authentic",
-        "authenticity_reason": "read live from the official source by SafeShelf",
-        "support": "supported",
-        "retracted": false,
-        "excluded": false,
-        "attribution": "Source: U.S. CPSC recalls API",
-        "also_from": [
-         "stored_notices"
-        ],
-        "original_text": null,
-        "places": {
-         "market_country": "IN",
-         "source_jurisdiction": "US",
-         "manufacturing_country": null,
-         "recall_affected_country": [
-          "US"
-         ]
-        }
-       },
-       {
-        "record_id": "cpsc:23031",
-        "source": "cpsc",
-        "authority": "CPSC",
-        "title": "Anker Play Products Recalls Bolt Foldable Children's Scooters Due to Violation of Federal Lead Paint Ban; Lead Poisoning Hazard",
-        "url": "https://www.cpsc.gov/Recalls/2023/Anker-Play-Products-Recalls-Bolt-Foldable-Childrens-Scooters-Due-to-Violation-of-Federal-Lead-Paint-Ban-Lead-Poisoning-Hazard",
-        "jurisdiction": "US",
-        "record_type": "recall_notice",
-        "published": "2022-11-03",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
-        "mode": "live",
-        "language": "en",
-        "hazard": "The paint on the recalled scooters contains levels of lead that exceed the federal lead paint ban, posing a lead poisoning hazard. Lead is toxic if ingested by young children and can cause adverse health issues.",
-        "remedy": "Consumers should immediately take the recalled scooters away from children, stop using them and contact Anker Play Products for a full refund.",
-        "models_named": [],
-        "batch_limits": [],
-        "tier": "family_named",
-        "scope": "in_scope",
-        "local": false,
-        "reasons": [
-         "the notice names this brand and product type but no model numbers"
-        ],
-        "would_change": [
-         "a person comparing the exact model code and photos with the notice"
-        ],
-        "authenticity": "authentic",
-        "authenticity_reason": "read live from the official source by SafeShelf",
-        "support": "supported",
-        "retracted": false,
-        "excluded": false,
-        "attribution": "Source: U.S. CPSC recalls API",
-        "also_from": [
-         "stored_notices"
-        ],
-        "original_text": null,
-        "places": {
-         "market_country": "IN",
-         "source_jurisdiction": "US",
-         "manufacturing_country": null,
-         "recall_affected_country": [
-          "US"
-         ]
-        }
-       },
-       {
-        "record_id": "cpsc:24146",
-        "source": "cpsc",
-        "authority": "CPSC",
-        "title": "Anker EverFrost Lithium-Ion Battery Powered Coolers Recalled Due to Battery Fire Hazard; Manufactured by Anker Innovations",
-        "url": "https://www.cpsc.gov/Recalls/2024/Anker-EverFrost-Lithium-Ion-Battery-Powered-Coolers-Recalled-Due-to-Battery-Fire-Hazard-Manufactured-by-Anker-Innovations",
-        "jurisdiction": "US",
-        "record_type": "recall_notice",
-        "published": "2024-03-07",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
-        "mode": "live",
-        "language": "en",
-        "hazard": "The lithium-ion batteries in the Anker EverFrost Coolers can overheat, posing a fire hazard.",
-        "remedy": "Consumers should immediately stop using the recalled coolers, and contact Anker for a free replacement lithium-ion battery pack. Visit https://www.anker.com/anker-solix/cooler-battery-recall-pps to file a claim, and for instructions on how to replace the battery pack. Recalled lithium-ion batteries ",
-        "models_named": [],
-        "batch_limits": [],
-        "tier": "family_named",
-        "scope": "in_scope",
-        "local": false,
-        "reasons": [
-         "the notice names this brand and product type but no model numbers"
-        ],
-        "would_change": [
-         "a person comparing the exact model code and photos with the notice"
-        ],
-        "authenticity": "authentic",
-        "authenticity_reason": "read live from the official source by SafeShelf",
-        "support": "supported",
-        "retracted": false,
-        "excluded": false,
-        "attribution": "Source: U.S. CPSC recalls API",
-        "also_from": [
-         "stored_notices"
-        ],
-        "original_text": null,
+        "excerpt": "This recall involves Anker PowerCore 10000 power banks with model number A1263. The brand name \"Anker\" is engraved on the front of the product. The model number \"A1263\" and serial number \"SN\" are printed on the bottom. Only model number A1263 power banks sold in the U.S. with qualifying serial numbers are included in the recall. Consumers should check their serial number at https://www.anker.com/product-recalls to determine whether their power bank is included in the recall. Note: Do not throw this recalled lithium-ion battery or device in the trash, in the general recycling stream (e.g., street-level or curbside recycling bins), or in used battery recycling boxes found at various retail and home improvement stores. Recalled lithium-ion batteries must be disposed of differently than other batteries, because they present a greater risk of fire. Your municipal household hazardous waste (HHW) collection center may accept this recalled lithium-ion battery or device for disposal. Before taking your battery or device to a HHW collection center, contact it ahead of time and ask whether it accepts recalled lithium-ion batteries. If it does not, contact your municipality for further guidanc",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "US",
@@ -1627,7 +1768,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2019-07-08",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "It is found that that defective products (40 pieces in the initial lot) generated in the manufacturing process were shipped mixed with normal products.",
@@ -1651,6 +1792,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "USB Charger USB Charger Product name: Anker PowerPort Atom PD 4 Model number: A2041121 (JAN:4571411190094) USB chargers are sold from April 23, 2019 to June 2019.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -1669,7 +1811,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2021-07-02",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "It is found that two burning accidents have occurred.",
@@ -1693,6 +1835,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Charger with built-in lithium battery Monsterball mobile battery Anker 10000mAh Charger with built-in lithium battery Monsterball mobile battery Anker 10000mAh Product name: Charger with built-in lithium battery Brand name: Monsterball mobile battery Anker 10000mAh Model number: A1270 JAN code: 4521329207759 Chargers with built-in lithium battery are manufactured from April, 2017 to August, 2017.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -1711,7 +1854,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2023-02-07",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The occurrence of an overseas incident has been confirmed in which this product ignited.",
@@ -1735,6 +1878,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Lithium-ion battery built-in charger, Anker 535 Power Bank (PowerCore 20000) Lithium-ion battery built-in charger, Anker 535 Power Bank (PowerCore 20000) Model number: A1366, JAN code: 4571411201844, 4571411201851, 4571411201868, 4571411201875, 4571411201882 Lithium-ion built-in battery chargers are sold from November 17, 2022 to January 12, 2023.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -1753,7 +1897,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2023-03-09",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
+        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion batteries in the recalled power banks can overheat, posing a fire hazard.",
@@ -1780,6 +1924,7 @@
          "stored_notices"
         ],
         "original_text": null,
+        "excerpt": "This recall involves Anker 535 Mobile Power Banks (PowerCore 20k) with model number A1366. The power bank can be used to charge multiple devices from laptops, tablets or phones with a 30W maximum output. The mobile power bank comes with two USB cables and in a variety of colors. The power bank measures about 3 inches wide, 6 inches long and 1 inch deep. Anker is engraved on the front and the model number A1366 is on the back of the power bank.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "US",
@@ -1798,7 +1943,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2023-08-22",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "A serious product accident has occurred due to a defect in the battery installed in the product, and similar accidents may occur with some of the products.",
@@ -1832,6 +1977,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Robot vacuum cleaner (self running type) Robot vacuum cleaner (self running type) Product name/Model number: Eufy RoboVac15C T2120, Eufy RoboVacG30 T2250, Eufy RoboVacG30Hybrid T2253, Eufy CleanG40Hybrid T2256, Eufy CleanG40+ T2272, Eufy CleanG40Hybrid+ T2273, Eufy RoboVacX8Hybrid T2261, Eufy CleanX9Prowith Auto-CleanStation T2320, Eufy RoboVac interchangeable battery(excluding X8 or X9 Pro) T2908, Eufy Clean interchangeable battery (for X9 Pro) T2908, Eufy RoboVac interchangeable battery (for X8 series) T2937 Robot vacuum cleaners are sold from April 1, 2023 to August 21, 2023.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -1850,7 +1996,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2023-10-16",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "There has been a serious product accident due to the defectiveness of the battery built in the product, and it is anticipated that a similar accident may occur with other products.",
@@ -1877,6 +2023,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Portable electric refrigerator (rechargeable) Portable electric refrigerator (rechargeable) Model number: A17A0, A17A1, A17A2, A17B0 Portable electric refrigerators are sold from April 19, 2023 to October 15, 2023.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -1895,7 +2042,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2024-04-04",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "Due to the discovery of deficiencies in some lot management and there is a possibility of accidents.",
@@ -1922,6 +2069,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Speakerphone Anker PowerConf S3 grey Anker PowerConf S3 navy Speakerphone Anker PowerConf S3 grey Anker PowerConf S3 navy JAN codes : 4571411192883 (grey), 4571411192951 (navy). Model numbers : A3302011 (grey), A3302031 (navy), The serial number can be found on a sticker on the bottom of the product itself, a 16-digit number starting with A. The speakerphones come in grey and navy, which were sold from April 1, 2023 to March 15, 2024.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -1940,7 +2088,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2024-04-04",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "Due to the discovery of deficiencies in some lot management and there is a possibility of accidents.",
@@ -1966,6 +2114,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Speaker Anker SoundCore Black Speaker Anker SoundCore Black JAN code: 4571411205989, Model number : A3102016. The serial number can be found on the bottom of the product itself, a 16-digit number starting with A following \"SN:.\" The speakers were sold from April 1 to September 30, 2023.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -1984,7 +2133,7 @@
         "jurisdiction": "KR",
         "record_type": "recall_notice",
         "published": "2024-06-25",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The lithium-ion battery, which is used in the portable battery, poses a risk of overheating. ◇ The lithium-ion battery, which is used in the portable battery, poses a risk of overheating.",
@@ -2008,6 +2157,7 @@
         "attribution": "Stored copy of the KATS notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Anker 321 Power Bank (PowerCore 5K) Anker 321 Power Bank (PowerCore 5K) A1112011 Brand name: 40-1370697/ Certification number: YU101253-22001",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "KR",
@@ -2026,7 +2176,7 @@
         "jurisdiction": "AU",
         "record_type": "recall_notice",
         "published": "2024-07-15",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "A short circuit in the battery can cause the speaker to overheat.\rThere is a risk of a serious injury and/or property damage if the speaker overheats and catches fire.\rA fire has occurred resulting in burn injuries and property damage.",
@@ -2050,6 +2200,7 @@
         "attribution": "Stored copy of the ACCC notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Anker SoundCore Bluetooth speaker (updated) Anker SoundCore Bluetooth speaker (updated) A3102 Updated recall notice: 31 July 2024 - incident has occurred involving product. Anker SoundCore v1 Portable wireless Bluetooth speaker. Compatible with iPhone, Samsung and other phone brands.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "AU",
@@ -2068,7 +2219,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2024-09-17",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "There were reports that the product in question caught fire outside Japan, and as a result of an investigation, it was found that there were deficiencies in the manufacturing process, and there is a possibility of an accident.",
@@ -2098,6 +2249,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Lithium battery charger Anker 334 MagGo Battery (PowerCore 10000) Anker Power Bank (20000mAh, 22.5W,Built-In USB-C Cable) Lithium battery charger Anker 334 MagGo Battery (PowerCore 10000) Anker Power Bank (20000mAh, 22.5W,Built-In USB-C Cable) Product name: Lithium battery charger. Trade name: Anker 334 MagGo Battery (PowerCore 10000). Colors, JAN codes, model numbers: Black, 4571411209604, A1642N11, White, 4571411209611, A1642N21, Purple, 4571411212888, A16420V1. Trade name: Anker Power Bank (20000mAh, 22.5W, Built-In USB-C Cable). Colors, JAN codes, model numbers: Black, 4571411212819, A1647N11, White, 4571411212826, A1647N21, Pink 4571411212833 A1647051, Purple 4571411212857 A16470V1. The Anker 334 MagGo Battery (PowerCore 10000) were sold from February 1 to September 17, 2024, and the Anker Power Bank (20000mAh, 22.5W, Built-In USB-C Cable) were sold from January 12 to September 17, 2024.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -2116,7 +2268,7 @@
         "jurisdiction": "AU",
         "record_type": "recall_notice",
         "published": "2024-10-02",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The battery in the power bank can overheat and catch fire.\rThere is a risk of serious injury from burns and/or property damage if the power bank overheats and melts or catches fire.\rTwo incidents have caused injuries and property damage, which occurred overseas.",
@@ -2142,6 +2294,7 @@
         "attribution": "Stored copy of the ACCC notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Anker power bank A1647 Anker power bank A1647 Anker brand portable power bank with built-in USB-C cable. The power bank is available in 5 colours: white, black, pink, purple and green. Model: A1647 Power: 20,000mAh, 22.5W output Affected serial numbers: • AHJ67T1D50600675 • AHJ4KR1D51304904 • AHJ4KQ1E08203097 • AHJ4KR1D51304760 • AHJ4KR1D51304896 • AHJ4KR1D51304920 • AHJ4KQ1E08203968 • AHJ4KQ1E08203643 • AHJ4KQ1E08202143 • AHJ4KQ1E08200800 • AHJ4KQ1E08203354 • AHJ4KQ1E08203746",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "AU",
@@ -2160,7 +2313,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2024-10-17",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
+        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion battery in the power banks can overheat, posing fire and burn hazards.",
@@ -2188,6 +2341,7 @@
          "stored_notices"
         ],
         "original_text": null,
+        "excerpt": "This recall involves Anker Power Banks with model numbers A1642, A1647 and A1652. The power bank can be used as a portable electronic charging device for smartphones, tablets, and laptops with a 12W (A1642), 15W(A1647), 20W(A1652) maximum output. Anker is engraved on the front, and the model numbers A1642, A1647 and A1652 are located on the back of the power bank.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "US",
@@ -2206,7 +2360,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2024-12-05",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
+        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion batteries in the recalled A3102 Anker Soundcore (black) and A3302 PowerConf S3 Bluetooth Speakers can overheat, posing a fire hazard.",
@@ -2233,6 +2387,7 @@
          "stored_notices"
         ],
         "original_text": null,
+        "excerpt": "This recall involves the lithium-ion battery packs in Anker Soundcore Bluetooth Speakers sold exclusively on Amazon in 2023. Only lithium-ion battery packs in Anker Soundcore Bluetooth Speakers with models A3102016, A3302011 and A3302031 are included in this recall. The recalled speakers can be identified by the unit's \"SN Code\" which is visible on the underside of the Bluetooth Speakers. Consumers can type in the \"SN Code\" on Anker's website https://www.anker.com/product-recalls to see if their product is recalled. Anker and Amazon have contacted all known purchasers.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "US",
@@ -2251,7 +2406,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2025-06-26",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "Because it was found that the cell manufacturing supplier had used improper materials, which may lead to potential accidents.",
@@ -2282,6 +2437,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Rechargeable battery charger with built-in lithium battery Anker Power Bank (10000mAh, 22.5W) Anker MagGo Power Bank (10000mAh, 7.5W, Stand) Rechargeable battery charger with built-in lithium battery Anker Power Bank (10000mAh, 22.5W) Anker MagGo Power Bank (10000mAh, 7.5W, Stand) Product name: Rechargeable battery charger with built-in lithium battery, Trade name: Anker Power Bank (10000mAh, 22.5W), Colors/ JAN codes/ Model types: Black/ 4571411219498/ A1257011, Purple/ 4571411219511/ A12570V1, White/ 4571411219504/ A1257021, Pink/ 4571411227592/ A1257051, Blue/ 4571411227585/ A1257031. Trade name: Anker MagGo Power Bank (10000mAh, 7.5W, Stand), Colors/ JAN codes/ Model types: Black/ 4571411212772/ A1652N11, White/ 4571411212789/ A1652N21, Purple/ 4571411212796/ A1652NV1. The Anker Power Bank (10000mAh, 22.5W) and the Anker MagGo Power Bank (10000mAh, 7.5W, Stand) were sold from May 16, 2024 to June 6, 2025.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -2300,7 +2456,7 @@
         "jurisdiction": "TW",
         "record_type": "recall_notice",
         "published": "2025-06-27",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "In severe cases, battery malfunction may lead to internal short circuits and thermal runaway in a certain proportion of the batteries.",
@@ -2324,6 +2480,7 @@
         "attribution": "Stored copy of the BSMI notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Anker PowerCore 10000 power banks Anker PowerCore 10000 power banks Between November and December 2023, fluctuations in the welding power of the winding machines used in the battery pack manufacturing equipment led to poor welding of the negative tabs, resulting in a tendency for battery packs to overheat after prolonged use. Additionally, the battery pack manufacturer had deficiencies in the management of battery packs and production processes, including inadequate control over key raw materials such as cathode materials and separators, which may shorten the battery pack's lifespan and reduce its reliability. In May 2025, the manufacturer of the recalled product, Anker Innovations Limited (hereinafter referred to as \"Anker\"), analyzed batteries returned and reported by consumers as damaged. The analysis revealed a defect at the negative terminal of the inner winding core, which was identified as the initiation point of internal short circuits. Simultaneously, an investigation into the production data and equipment anomalies at the battery pack factory showed that the newly installed winding machines experienced welding power fluctuations during November and December 2023, leading ",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "TW",
@@ -2342,7 +2499,7 @@
         "jurisdiction": "AU",
         "record_type": "recall_notice",
         "published": "2025-07-08",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The power bank may overheat and catch fire.\rRisk of serious burn injuries and/or property damage if the power bank overheats and catches fire.\rIncidents have occurred overseas, resulting in property damage and injuries.",
@@ -2371,6 +2528,7 @@
         "attribution": "Stored copy of the ACCC notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Anker Power Bank Model: A1257, A1647, A1681, A1689 (updated) Anker Power Bank Model: A1257, A1647, A1681, A1689 (updated) Recall updated on 29 August 2025: Injuries added to consumer hazards. Anker power banks for charging portable electronic devices. The device’s model number is located on the bottom of the device. Models: • A1257 - Anker Power Bank (10K, 22.5W) • A1647 - Anker Power Bank (20,000mAh, 22.5W, built in USB-C cable) • A1681 - Anker Zolo Power Bank (20K, 30W, built USB-C and Lightning cable) • A1689 - Anker Zolo Power Bank (20K, 30W, built in USB-C cable) Each device has a unique serial number located on the bottom of the device.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "AU",
@@ -2389,7 +2547,7 @@
         "jurisdiction": "KR",
         "record_type": "recall_notice",
         "published": "2025-07-31",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "- It was confirmed that the supplier used inappropriate components. It was found that inappropriate components were used within the cell, and there are products that may have a risk of internal short circuit. - Concerns about the risk of overheating during customer usage may arise.",
@@ -2413,6 +2571,7 @@
         "attribution": "Stored copy of the KATS notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Anker 334 MagGo 10000mAh 15W Portable Charger A1642 Anker 334 MagGo 10000mAh 15W Portable Charger A1642 A1642 Brand name: Anker, Certification number: XU100306-23017A",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "KR",
@@ -2431,7 +2590,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2025-10-21",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "In certain products, incidents of ignition occurred in Japan. As a result of an investigation by the business operator, it was found that some products shipped within Japan, in which the battery cell manufacturing was outsourced to a supplier, may have contained foreign matter during specific period",
@@ -2466,6 +2625,7 @@
         "attribution": "Stored copy of the CAA notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Lithium-ion Battery Built-in Charger Speakers Anker PowerCore 10000 Soundcore 3 Anker PowerConf S500 Soundcore Motion X600 Lithium-ion Battery Built-in Charger Speakers Anker PowerCore 10000 Soundcore 3 Anker PowerConf S500 Soundcore Motion X600 1. Lithium-ion Battery Built-in Charger, Product name: Anker PowerCore 10000, Colors/ JAN (EAN) codes/ Model numbers: Black/ 4571411204692/ A1263N12, 4571411205163/ A1263016, White/ 4571411204708/ A1263N22, 4571411205170/ A1263026, Blue/ 4571411205187/ A1263036, Red/ 4571411205194/ A1263096. 2. Speakers, Product name: Soundcore 3, Colors/ JAN (EAN) codes/ Model numbers: Black/ 4571411193170/ A3117011, Navy/ 4571411196218/ A3117031, Red/ 4571411196225/ A3117091, Gray/ 4571411205187/ A31170A1. Product name: Anker PowerConf S500, Colors/ JAN (EAN) codes/ Model numbers: Black/ 4571411194924/ A3305011. Product name: Soundcore Motion X600, Colors/ JAN (EAN) codes/ Model numbers: Space Gray/ 4571411209314/ A3130011, Blue/ 4571411209987/ A3130031, Green/ 4571411209994/ A3130061. (1) Lithium-ion Battery Built-in Charger: Anker PowerCore 10000 were sold from December 25, 2022 to October 21, 2025. (2) Speakers: Soundcore 3 were sold from December 16, ",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "JP",
@@ -2484,7 +2644,7 @@
         "jurisdiction": "KR",
         "record_type": "recall_notice",
         "published": "2025-11-03",
-        "retrieved_at": "2026-10-16T11:08:30.735779+00:00",
+        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "* Foreign matter may be mixed inside the battery cell, which could cause an internal short circuit. * There may be a risk of overheating due to an internal short circuit.",
@@ -2510,6 +2670,7 @@
         "attribution": "Stored copy of the KATS notice",
         "also_from": [],
         "original_text": null,
+        "excerpt": "Anker Soundcore Bluetooth Speaker 3 Models Anker Soundcore Bluetooth Speaker 3 Models A3117, A3130, A3305/Bluetooth Speaker Brand name: Anker, Certification number: N/A",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "KR",
@@ -2528,7 +2689,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2026-02-26",
-        "retrieved_at": "2026-10-16T11:08:29.573503+00:00",
+        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The recalled bath seats violate the mandatory standard for infant bath seats because they are unstable and can tip over while in use, posing a risk of serious injury or death due to drowning.",
@@ -2554,6 +2715,7 @@
          "stored_notices"
         ],
         "original_text": null,
+        "excerpt": "This recall involves Trankerloop-branded baby bath seats sold in blue, gray, pink and yellow. The bath seats have two detachable arms that serve as a restraint, four suction cups on the bottom, and come with a cup and a sponge. \"PLASTIC STOOL\" and \"Model: YD-1958\" are printed on a tracking label located on the back of the bath seat.",
         "places": {
          "market_country": "IN",
          "source_jurisdiction": "US",
@@ -2574,7 +2736,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:29.369081+00:00",
+        "checked_at": "2026-10-18T15:18:12.608143+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -2604,14 +2766,14 @@
         "jurisdiction": "US",
         "state": "checked_live",
         "mode": "live",
-        "checked_at": "2026-10-16T11:08:29.573503+00:00",
+        "checked_at": "2026-10-18T15:18:11.500129+00:00",
         "freshness": "2026-02-26",
         "records_returned": 9,
-        "matched": 4,
+        "matched": 1,
         "matched_by_country": {
-         "US": 4
+         "US": 1
         },
-        "detail": "4 notice(s) that may concern this product"
+        "detail": "1 notice(s) that may concern this product"
        },
        {
         "source": "eu_safety_gate",
@@ -2666,14 +2828,14 @@
         "jurisdiction": "MULTI",
         "state": "checked_cache",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "freshness": "2026-10-13",
         "records_returned": 26,
-        "matched": 4,
+        "matched": 1,
         "matched_by_country": {
-         "US": 4
+         "US": 1
         },
-        "detail": "4 notice(s) that may concern this product"
+        "detail": "1 notice(s) that may concern this product"
        }
       ],
       "country_rows": [
@@ -2682,7 +2844,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -2716,7 +2878,7 @@
         "name": "the United States",
         "is_market": false,
         "state": "checked_live",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -2740,7 +2902,7 @@
           "freshness": "2026-10-13"
          }
         ],
-        "matched": 8,
+        "matched": 2,
         "notes": []
        },
        {
@@ -2748,7 +2910,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2766,7 +2928,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2784,7 +2946,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2798,42 +2960,6 @@
         "notes": [
          "Singapore's CPSO site refuses automated requests; newer notices need a person to look."
         ]
-       },
-       {
-        "country": "KR",
-        "name": "South Korea",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
-        "country": "TW",
-        "name": "Taiwan",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
        },
        {
         "country": "EU",
@@ -2854,11 +2980,47 @@
         "notes": []
        },
        {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
         "country": "ID",
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2876,7 +3038,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2894,7 +3056,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2912,7 +3074,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2930,7 +3092,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:30.735779+00:00",
+        "checked_at": "2026-10-18T15:18:12.726192+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2946,6 +3108,7 @@
       ],
       "source_mode": "partial",
       "depth": "quick",
+      "critiques": [],
       "query_keys": [
        "26f64d5be01f6378ce6f8aa9"
       ],
@@ -2967,65 +3130,65 @@
       "n": 1,
       "agent": "page_reader",
       "tool": "page",
-      "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by model number)",
+      "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by url)",
       "model": null,
-      "seconds": 0.58
+      "seconds": 0.25
      },
      {
       "n": 2,
-      "agent": "twin_finder",
-      "tool": "twin_finder",
-      "summary": "No related products on file",
-      "model": null,
-      "seconds": 0.55
-     },
-     {
-      "n": 3,
       "agent": "cert_verifier",
       "tool": "cert_verifier",
       "summary": "Safety marks: no marks claimed",
       "model": null,
-      "seconds": 1.87
+      "seconds": 1.41
      },
      {
-      "n": 4,
+      "n": 3,
       "agent": "research_agent",
       "tool": "research_agent",
       "summary": "Skipped: nothing to check this with",
       "model": null,
-      "seconds": 2.02
+      "seconds": 1.6
      },
      {
-      "n": 5,
-      "agent": "is_it_real",
-      "tool": "is_it_real",
-      "summary": "Is it real? no warning signs",
-      "model": null,
-      "seconds": 2.09
-     },
-     {
-      "n": 6,
-      "agent": "official_sources",
-      "tool": "official_sources",
-      "summary": "Official sources (partial): 4 notice(s) may concern this product; India no matching notice found, the United States checked live, Japan no matching notice found",
-      "model": null,
-      "seconds": 2.19
-     },
-     {
-      "n": 7,
+      "n": 4,
       "agent": "recall_checker",
       "tool": "recall_checker",
       "summary": "3 linked recall notice(s)",
       "model": null,
-      "seconds": 2.24
+      "seconds": 1.69
+     },
+     {
+      "n": 5,
+      "agent": "twin_finder",
+      "tool": "twin_finder",
+      "summary": "No related products on file",
+      "model": null,
+      "seconds": 1.77
+     },
+     {
+      "n": 6,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": null,
+      "seconds": 1.81
+     },
+     {
+      "n": 7,
+      "agent": "official_sources",
+      "tool": "official_sources",
+      "summary": "Official sources (partial): 1 notice(s) may concern this product; India no matching notice found, the United States checked live, Japan no matching notice found",
+      "model": null,
+      "seconds": 1.84
      },
      {
       "n": 8,
       "agent": "safety_radar",
       "tool": "safety_radar",
       "summary": "Safety: officially recalled; verdict red from 0 reviews",
-      "model": "gemini-3-flash-preview",
-      "seconds": 17.76
+      "model": "gemini-3.5-flash",
+      "seconds": 6.73
      },
      {
       "n": 9,
@@ -3041,13 +3204,13 @@
       "tool": "gemini",
       "summary": "Wrote the answer",
       "model": "gemini-3.5-flash-lite",
-      "seconds": 0.96
+      "seconds": 0.89
      }
     ],
     "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
-    "checked_at": 1792148927.4806113
+    "checked_at": 1792336698.8065288
    },
-   "_ms": 19537
+   "_ms": 8095
   }
  ]
 }

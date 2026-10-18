@@ -69,6 +69,11 @@ def write_extension(base: Path, token: str, claims: dict) -> Path:
         f"export const SIGNIN_URL = {json.dumps(EMBEDDERS[0] + '/signin.html' if EMBEDDERS else '')};\nexport const FIREBASE_API_KEY = \"\";\n")
     session = {"idToken": token, "email": claims.get("email") or "", "name": claims.get("name") or "",
                "expiresAt": int(claims.get("exp", 0)) * 1000 or 0}
+    # A fixed public key gives the extension a fixed ID, so the policy in remote/policy.json can pin its icon to the
+    # toolbar (Chromium hides it in the puzzle menu otherwise, and the shops' home page shows no shield).
+    manifest = json.loads((ext / "manifest.json").read_text())
+    manifest["key"] = (HERE / "remote" / "extension-key.txt").read_text().strip()
+    (ext / "manifest.json").write_text(json.dumps(manifest, indent=2))
     template = (HERE / "remote" / "session.js").read_text()
     (ext / "session.js").write_text(template.replace("__SESSION__", json.dumps(session)))
     shutil.copy(HERE / "remote" / "rbac.js", ext / "rbac.js")
@@ -106,8 +111,8 @@ async def start_browser(base: Path, ext: Path, url: str = START_URL) -> list[asy
     procs.append(await asyncio.create_subprocess_exec(
         "x11vnc", "-display", DISPLAY, "-rfbport", str(VNC_PORT), "-localhost", "-nopw", "-forever", "-noxdamage", "-quiet",
         env=env, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL))
-    if not await port_open(VNC_PORT, 20):
-        raise RuntimeError("the screen did not start")
+    if not await port_open(VNC_PORT, 45):
+        raise RuntimeError("the screen did not start")  # 45 s: a cold instance (14:03 on 18 Oct) missed 20 s
     return procs
 
 

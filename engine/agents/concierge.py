@@ -17,7 +17,8 @@ from google.adk.tools import ToolContext
 from google.adk.tools.agent_tool import AgentTool
 
 from engine import assist, chat, chat_core, chat_memory, gemini, manual, region, safety
-from engine.agents import cache, guard, links, listen, owner_tools, pipeline, runtime, screenshot, tools
+from engine.agents import (cache, guard, links, listen, listing_tools, owner_tools, pipeline, runtime, screenshot,
+                           tools)
 
 log = logging.getLogger(__name__)
 
@@ -39,6 +40,14 @@ How you work:
 - If the message contains a product link (http...), call check_link with it FIRST and answer about THAT product,
   not the product_id in the message. Say what it is (name, price), the two colours (safety, is it real) and the
   main reasons, citing evidence IDs. If the link can't be read, say so.
+- The shop page's own checks, on the link pasted this turn or earlier in the chat (leave url empty for it, or pass
+  another link): "is it any good / what do buyers say" -> check_reviews; "can it really do that / is 30000mAh
+  real" -> check_claims; "is the price right / why so cheap" -> compare_price; "how new is this listing" ->
+  check_listing_age; "is this the official store / authorised seller" -> check_official_seller; "how did you
+  know which product this is" -> identify_listing. For "is it genuine / is it real" after a link, call
+  compare_price, check_official_seller and check_listing_age together. "Find copies / is it a rebrand" ->
+  get_relationships, then find_copies if none are on file. These need a link or a stored product: without
+  either, ask for the link or a screenshot.
 
 Owner help (these tools are SafeShelf's code rules, so their results count as SafeShelf evidence,
 but add no outside facts to them). Fill a tool's arguments only with what the shopper said or the evidence shows;
@@ -214,7 +223,7 @@ def concierge(model_name: str) -> LlmAgent:
         description="Answers a shopper's questions about one product, only from SafeShelf's stored evidence.",
         model=runtime.model(model_name), instruction=chat_core.INSTRUCTION + HOW_TO_WORK,
         tools=[*tools.EVIDENCE_TOOLS, find_safer_alternative_tool(model_name), check_link,
-               *owner_tools.OWNER_TOOLS],
+               *listing_tools.LISTING_TOOLS, *owner_tools.OWNER_TOOLS],
         generate_content_config=runtime.config(),
         **runtime.callbacks(model_name))
 
@@ -355,11 +364,15 @@ async def _chat(body: dict, document: str | None = None) -> dict:
         prompt = "[The shopper sent a product manual earlier in this chat: ask_manual answers from it.]\n" + prompt
     if url:  # a pasted link is about that product, whatever product the screen had selected
         prompt = f"[The shopper pasted a product link: {url} - call check_link with it first.]\n" + prompt
+    shown = (context or {}).get("pasted_link") or context or {}  # the screen's link, or the one remembered
+    shown = shown if isinstance(shown, dict) else {}
     try:
         # owner and tenant come from the request headers (engine/agents/handler.py), never from the message
         state = {"language": language, "language_name": chat_core.LANGUAGES[language], "document": document,
                  "pasted": message[:1000], "owner": body.get("_owner"),
                  "tenant": body.get("_tenant") or "public",
+                 # the shop page this chat is about, for the listing checks on a follow-up question
+                 "link_url": shown.get("url") or "", "link_title": shown.get("title") or "",
                  "market": body.get("market") or region.of((context or {}).get("url"),
                                                            (context or {}).get("currency")) or "in"}
         text, _ = await runtime.run(concierge, prompt, state, timeout_s=120 if url else 40)

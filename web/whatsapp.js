@@ -37,7 +37,7 @@ const HAZARD_WORDS = {
 };
 const TEXT = {
   en: {
-    help: "Send me a product link or a photo of the product or its label. I'll check: Is it safe? Is it real?\nWrite in your language, or reply with its name to switch: HINDI, TAMIL, BANGLA, 日本語, 한국어, 中文, BAHASA, ไทย, TIẾNG VIỆT, FILIPINO…",
+    help: "Send me a product link or a photo of the product or its label. I'll check: Is it safe? Is it real?\nOr just ask, by text or voice note: \"my charger gets hot\", \"will this charger work with my laptop?\", \"when does my warranty end?\". Send a manual as a PDF and ask about it.\nWrite in your language, or reply with its name to switch: HINDI, TAMIL, BANGLA, 日本語, 한국어, 中文, BAHASA, ไทย, TIẾNG VIỆT, FILIPINO…",
     working: "Checking this product. One moment…",
     unknown: "I couldn't tell which product this is. Try a clearer photo of the label (brand and model number), or send the shop link.",
     red: "⛔ RECALLED. {name} is on an official recall list ({recalls}). Stop using it and follow the recall instructions.",
@@ -56,7 +56,7 @@ const TEXT = {
     photo: "From your photo: {name}.",
   },
   hi: {
-    help: "मुझे किसी प्रोडक्ट का लिंक या उसकी या उसके लेबल की फ़ोटो भेजें। मैं जाँचूँगा: क्या यह सुरक्षित है? क्या यह असली है?\nEnglish के लिए ENGLISH लिखें, या अपनी भाषा का नाम लिखें (TAMIL, BANGLA, 日本語…)।",
+    help: "मुझे किसी प्रोडक्ट का लिंक या उसकी या उसके लेबल की फ़ोटो भेजें। मैं जाँचूँगा: क्या यह सुरक्षित है? क्या यह असली है?\nया बस लिखकर या वॉइस नोट से पूछें: \"मेरा चार्जर गरम हो रहा है\", \"मेरी वारंटी कब खत्म होगी?\"। मैनुअल PDF भेजकर उसके बारे में पूछें।\nEnglish के लिए ENGLISH लिखें, या अपनी भाषा का नाम लिखें (TAMIL, BANGLA, 日本語…)।",
     working: "इस प्रोडक्ट की जाँच कर रहा हूँ। एक पल…",
     unknown: "मैं पहचान नहीं पाया कि यह कौन सा प्रोडक्ट है। लेबल (ब्रांड और मॉडल नंबर) की साफ़ फ़ोटो या दुकान का लिंक भेजें।",
     red: "⛔ रिकॉल हुआ है। {name} आधिकारिक रिकॉल सूची में है ({recalls})। इसका इस्तेमाल बंद करें और रिकॉल के निर्देश मानें।",
@@ -93,13 +93,41 @@ function language(text, current = "en") {
   return current;
 }
 
+const GREETINGS = new Set(["", "hi", "hii", "hello", "hey", "help", "start", "menu", "namaste", "नमस्ते", "हेलो", "हाय", "?"]);
+
+// {kind: link|photo|voice|manual|chat|help|switch}. A question (typed, a voice note or a tapped reply button) goes to
+// Shelf Chat; a link or a photo gets the product check.
 function parse(msg) {
   if (msg.type === "image") return { kind: "photo", image: msg.image, caption: msg.caption || "" };
+  if (msg.type === "audio") return { kind: "voice", audio: msg.audio };
+  if (msg.type === "document") return { kind: "manual", document: msg.document, caption: msg.caption || "", filename: msg.filename };
+  if (msg.type === "interactive") return { kind: "chat", text: msg.text || "" };
   const text = msg.text || "";
   const found = text.match(URL_RE);
-  if (found) return { kind: "link", url: found[0].replace(/[).,]+$/, ""), text };
+  if (found && text.match(new RegExp(URL_RE.source, "g")).length === 1) return { kind: "link", url: found[0].replace(/[).,]+$/, ""), text };
   if (NAMES[text.trim().toLowerCase()]) return { kind: "switch", text };
-  return { kind: "help", text };
+  if (GREETINGS.has(text.trim().toLowerCase().replace(/^[!.]+|[!.]+$/g, ""))) return { kind: "help", text };
+  return { kind: "chat", text }; // two links ("which is safer?") also go to the chat
+}
+
+// WhatsApp reply buttons for the chat's tappable answers (2 or 3, titles up to 20 characters), or null
+function buttons(quick) {
+  const options = ((quick || {}).options || []).filter(Boolean);
+  return options.length >= 2 && options.length <= 3 && options.every((o) => o.length <= 20) ? options : null;
+}
+
+// Shelf Chat's answer as WhatsApp text, plus drafts to send as their own messages. Tappable answers that don't fit
+// WhatsApp's buttons are listed in the text.
+function chatReply(answer) {
+  let text = (((answer.messages || [{}])[0] || {}).text || "").trim().replace(/\*\*(.+?)\*\*/g, "*$1*");
+  const quick = answer.quick_replies || {};
+  if ((quick.options || []).length && !buttons(quick)) text += `\n\nReply with: ${quick.options.join(" / ")}`;
+  const drafts = [];
+  for (const key of ["write_support_request", "write_incident_report"]) {
+    const d = (answer.assist || {})[key];
+    if (d && d.body) drafts.push(`📋 ${d.subject || d.title}\n\n${d.body}`.slice(0, 4096));
+  }
+  return [text, drafts];
 }
 
 const productName = (identity, lang = "en") => [identity.brand, identity.model].filter(Boolean).join(" ") || (lang === "hi" ? "यह प्रोडक्ट" : "this product");
@@ -160,9 +188,9 @@ const voiceText = (text) => text.replace(/[⛔⚠️✅ℹ️]/gu, "").replaceAl
 
 // ---------- the live API, as whatsapp/app.py calls it ----------
 
-async function call(path, body, timeout = 120000) {
-  const res = await fetch(`${API}${path}`, body === undefined ? { signal: AbortSignal.timeout(timeout) }
-    : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeout) });
+async function call(path, body, timeout = 120000, headers = {}) {
+  const res = await fetch(`${API}${path}`, body === undefined ? { headers, signal: AbortSignal.timeout(timeout) }
+    : { method: "POST", headers: { "Content-Type": "application/json", ...headers }, body: JSON.stringify(body), signal: AbortSignal.timeout(timeout) });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw Object.assign(new Error(typeof data.detail === "string" ? data.detail : `the API answered ${res.status}`), { status: res.status });
   return data;
@@ -183,6 +211,24 @@ async function translate(text, lang) {
   } catch (_) { return text; }
 }
 const fixed = (lang, key) => (TEXT[lang] ? Promise.resolve(TEXT[lang][key]) : translate(TEXT.en[key], lang));
+
+// Shelf Chat as this chat's sender: the bot sends X-Owner-Ref "wa:<number>" (hashed by the API) and a session id from
+// the number. Here the "number" is this browser's own id, so the household list and the conversation are its own.
+const waOwner = (() => {
+  let id = "";
+  try { id = localStorage.getItem("safeshelf-wa-owner") || ""; } catch (_) { /* storage off */ }
+  if (!id) {
+    id = `web-${crypto.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36)}`;
+    try { localStorage.setItem("safeshelf-wa-owner", id); } catch (_) { /* storage off */ }
+  }
+  return id;
+})();
+async function waSession() {
+  const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(waOwner)));
+  return `WA-${[...hash].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 12)}`;
+}
+const MANUAL_QUESTION = "What is this manual for? List its main safety warnings.";
+const dataUrl = (blob) => new Promise((ok, fail) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = () => fail(r.error); r.readAsDataURL(blob); });
 
 // ---------- the phone ----------
 
@@ -228,13 +274,17 @@ function richText(text, { boldLead = false } = {}) {
     const lead = rest.match(/^(?:From your photo: [^\n]*\n\n|आपकी फ़ोटो से: [^\n]*\n\n)?[⛔⚠✅ℹ]️?\s*[^.。।\n]{2,80}[.。।]/u);
     if (lead) { p.append(el("b", { textContent: lead[0] })); rest = rest.slice(lead[0].length); }
   }
-  for (let m = rest.match(URL_RE); m; m = rest.match(URL_RE)) {
-    p.append(rest.slice(0, m.index));
-    const url = m[0].replace(/[).,]+$/, "");
-    p.append(/^https:/.test(url) ? el("a", { href: url, target: "_blank", rel: "noopener", textContent: url }) : url);
-    rest = rest.slice(m.index + url.length);
-  }
-  p.append(rest);
+  // WhatsApp's *bold* (the chat's answers use it), then links in each piece
+  rest.split(/\*([^*\n]+)\*/).forEach((piece, i) => {
+    if (i % 2) { p.append(el("b", { textContent: piece })); return; }
+    for (let m = piece.match(URL_RE); m; m = piece.match(URL_RE)) {
+      p.append(piece.slice(0, m.index));
+      const url = m[0].replace(/[).,]+$/, "");
+      p.append(/^https:/.test(url) ? el("a", { href: url, target: "_blank", rel: "noopener", textContent: url }) : url);
+      piece = piece.slice(m.index + url.length);
+    }
+    p.append(piece);
+  });
   return p;
 }
 
@@ -265,6 +315,8 @@ const PHOTOS = [
   { label: "Charger label", tag: "Kelvo CX-65", tone: "amber",
     draw: { tint: "#eef3f8", lines: [["Kelvo 65W GaN Fast Charger", 32, 700], ["Model: CX-65", 30, 700], ["Input: 100-240V~ 50/60Hz 1.5A", 22], ["Output: USB-C 5V⎓3A / 20V⎓3.25A", 22], ["Made in China", 20]], marks: ["CE"] } },
 ];
+// as in the bot's help text
+const QUESTIONS = ["My charger gets hot", "Will this charger work with my laptop?", "When does my warranty end?"];
 const LANG_PICKS = [["English", "ENGLISH", "en"], ["हिन्दी", "हिन्दी", "hi"], ["தமிழ்", "TAMIL", "ta"], ["বাংলা", "BANGLA", "bn"], ["日本語", "日本語", "ja"], ["Bahasa", "BAHASA", "id"], ["ไทย", "ไทย", "th"]];
 
 export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
@@ -284,12 +336,12 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
     el("div", { className: "wa-day", textContent: "Today" }),
     el("div", { className: "wa-sys", textContent: "🔒 Demo chat: answers come from the live SafeShelf API. Nothing is sent to WhatsApp." }));
   const input = el("textarea", { className: "wa-input", rows: 1, placeholder: "Message", "aria-label": "Message to SafeShelf", maxLength: 1000 });
-  const photo = el("input", { type: "file", accept: "image/*", className: "sr", "aria-label": "Send a photo of the product or its label" });
+  const photo = el("input", { type: "file", accept: "image/*,application/pdf", className: "sr", "aria-label": "Send a photo of the product or its label, or a manual as a PDF" });
   const camera = el("input", { type: "file", accept: "image/*", capture: "environment", className: "sr", "aria-label": "Take a photo of the label" });
   const sendBtn = el("button", { type: "submit", className: "wa-send", "aria-label": "Send" }, svg(ICON.mic));
   const form = el("form", { className: "wa-compose" },
     el("div", { className: "wa-field" }, el("span", { className: "wa-ico dim" }, svg(ICON.smile)), input,
-      el("label", { className: "wa-ico dim", title: "Send a photo" }, svg(ICON.clip), photo),
+      el("label", { className: "wa-ico dim", title: "Send a photo or a PDF manual" }, svg(ICON.clip), photo),
       el("label", { className: "wa-ico dim", title: "Take a photo" }, svg(ICON.camera), camera)),
     sendBtn);
   const time = el("b", { textContent: clock() });
@@ -310,6 +362,11 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
       el("span", { className: "wa-card-t" }, el("b", { textContent: p.label }), el("small", { textContent: p.tag })),
       el("span", { className: "wa-tag send", textContent: "Send photo" })], () => send({ type: "image", image, caption: "" }), `Send this ${p.label.toLowerCase()} as a photo`);
   }));
+  const askRow = el("div", { className: "wa-langs", role: "group", "aria-label": "Questions to ask" }, ...QUESTIONS.map((q) => {
+    const b = el("button", { type: "button", className: "wa-lang", textContent: q, onclick: () => send({ type: "text", text: q }) });
+    busyEls.push(b);
+    return b;
+  }));
   const langRow = el("div", { className: "wa-langs", role: "group", "aria-label": "Reply language" }, ...LANG_PICKS.map(([name, word, code]) => {
     const b = el("button", { type: "button", className: "wa-lang", textContent: name, "data-lang": code, onclick: () => send({ type: "text", text: word }) });
     b.lang = code;
@@ -326,19 +383,23 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
       el("h3", {}, el("span", { className: "wa-n", textContent: "2" }), "Or a photo of the label"),
       el("p", { className: "muted", textContent: "Use a sample, or send your own with 📎 or 📷." }), photoCards),
     el("section", { className: "wa-sec" },
-      el("h3", {}, el("span", { className: "wa-n", textContent: "3" }), "Get the answer in your language"),
+      el("h3", {}, el("span", { className: "wa-n", textContent: "3" }), "Or just ask"),
+      el("p", { className: "muted", textContent: "Type a question, hold a voice note with 🎤, or send a manual as a PDF with 📎. After a check, questions are about that product." }), askRow),
+    el("section", { className: "wa-sec" },
+      el("h3", {}, el("span", { className: "wa-n", textContent: "4" }), "Get the answer in your language"),
       langRow),
     el("section", { className: "wa-sec wa-behind" },
       el("h3", { textContent: "Behind the chat" }),
-      el("p", { className: "muted", textContent: "The live API calls the WhatsApp bot makes, in the same order. Code sets the answer; Gemini only reads labels and translates." }),
+      el("p", { className: "muted", textContent: "The live API calls the WhatsApp bot makes, in the same order. For a link or photo, code sets the answer; Gemini only reads labels and translates. Questions go to Shelf Chat." }),
       runHead, steps,
       el("details", { className: "wa-diff" }, el("summary", { textContent: "How this differs from the real number" }),
         el("ul", {},
           el("li", { textContent: "Same words and steps as the bot (whatsapp/bot.py and app.py). The WhatsApp number is waiting on Meta's test-number approval." }),
-          el("li", { textContent: "The voice note uses this device's voice. On WhatsApp it's a Gemini voice recording." }),
-          el("li", { textContent: "The buttons under the bot's messages are WhatsApp reply buttons; the bot doesn't send them yet." }),
+          el("li", { textContent: "The bot's voice note uses this device's voice. On WhatsApp it's a Gemini voice recording. Your own voice notes are written down by Gemini, as on WhatsApp." }),
+          el("li", { textContent: "The bot sends reply buttons when the chat offers two or three short answers. The buttons under the greeting and the verdicts are this page's shortcuts." }),
           el("li", { textContent: "The sample links use the page each test was written for. Other links are read live by the API when it can open them." }),
-          el("li", { textContent: "Each link or photo uses one check. Hi and language changes are free." })))));
+          el("li", { textContent: "Your household list and the conversation belong to this browser, as they belong to a phone number on WhatsApp." }),
+          el("li", { textContent: "Each link, photo, question, voice note or manual uses one check. Hi and language changes are free." })))));
   root.replaceChildren(el("div", { className: "wa-wrap" }, phone, side));
 
   const setBusy = (on) => { busyEls.forEach((b) => { b.disabled = on; }); root.classList.toggle("wa-busy", on); };
@@ -350,7 +411,7 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
 
   // --- the run log ---
   let runStart = 0;
-  const step = (text, state = "run") => {
+  const step = (text, state = "wa-pending") => {
     const t = el("small", { className: "wa-t" });
     const li = el("li", { className: state }, el("span", { textContent: text }), t);
     steps.append(li);
@@ -387,7 +448,9 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
     const b = bubble(false, ...kids);
     if (buttons.length) {
       b.classList.add("has-btns");
-      const row = el("div", { className: "wa-btns" }, ...buttons.map(([label, msg]) => el("button", { type: "button", onclick: () => send({ type: "text", text: label, act: msg }) }, svg(ICON.reply), label)));
+      // [label, message] is this page's shortcut; [label] alone is a WhatsApp reply button the bot sent (its title comes back)
+      const row = el("div", { className: "wa-btns" }, ...buttons.map(([label, msg]) => el("button", { type: "button",
+        onclick: () => send(msg ? { type: "text", text: label, act: msg } : { type: "interactive", text: label }) }, svg(ICON.reply), label)));
       b.after(row);
       scroll();
     }
@@ -446,6 +509,30 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
   const otherLang = () => (lang === "hi" ? ["English", "ENGLISH"] : ["हिन्दी में", "हिन्दी"]);
   const startButtons = () => [["Try a recalled product", LINKS[0].text], ["Try a fake deal", LINKS.find((l) => l.tag === "Fake-shop signs").text], otherLang()];
 
+  // --- a question, voice note or manual, as whatsapp/app.py chat_turn() answers it: Shelf Chat writes the answer ---
+  let lastProduct = null; // the product last checked by link or photo, for follow-ups (app.py _product)
+  async function chatTurn(asked) {
+    const body = { mode: "chat", language: lang, session_id: await waSession() };
+    if (asked.kind === "voice") body.audio = asked.audio;
+    else if (asked.kind === "manual") { body.document = asked.document; body.message = asked.caption || MANUAL_QUESTION; }
+    else body.message = asked.text;
+    if (lastProduct) body.product_id = lastProduct;
+    const answer = await timed("Shelf Chat · POST /agent/sessions", () => call("/v1/agent/sessions", body, 180000, { "X-Owner-Ref": `wa:${waOwner}` }));
+    for (const s of answer.steps || []) if (s.tool) step(`Tool: ${s.tool}`, "ok");
+    let [text, drafts] = chatReply(answer);
+    const spoken = voiceText(text.replaceAll("*", "")); // the answer only, not the transcript or the bold marks
+    if (answer.transcript) text = `🎙️ “${answer.transcript}”\n\n${text}`;
+    setTyping(null);
+    const options = buttons(answer.quick_replies);
+    botText(text, { buttons: options ? options.map((o) => [o]) : [] });
+    for (const d of drafts) botText(d);
+    setTyping("recording audio…");
+    await wait(900);
+    setTyping(null);
+    voiceNote(spoken, localeOf(answer.language || lang));
+    endRun();
+  }
+
   // --- one message, as whatsapp/app.py handle() answers it ---
   async function handle(msg, mine) {
     const asked = parse(msg.act ? { type: "text", text: msg.act } : msg);
@@ -455,7 +542,8 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
     mine.querySelector(".wa-ticks").textContent = "✓✓";
     await wait(250);
     mine.querySelector(".wa-ticks").classList.add("read");
-    newRun(`${asked.kind === "photo" ? "A photo" : asked.kind === "link" ? `A link to ${host(asked.url)}` : asked.kind === "switch" ? "A language change" : "A message"} · reply in ${LANGUAGES[lang][0]}`);
+    const what = { photo: "A photo", link: `A link to ${host(asked.url)}`, switch: "A language change", chat: "A question", voice: "A voice note", manual: "A manual" }[asked.kind] || "A message";
+    newRun(`${what} · reply in ${LANGUAGES[lang][0]}`);
     setTyping("typing…");
     try {
       if (asked.kind === "help" || asked.kind === "switch") {
@@ -471,6 +559,7 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
       setTyping(null);
       botText(working);
       setTyping("typing…");
+      if (["chat", "voice", "manual"].includes(asked.kind)) { await chatTurn(asked); return; }
       let identity, safety, trust = null, alts, text;
       if (asked.kind === "link") {
         const preset = presets.find((p) => p.request.listing.url === asked.url);
@@ -490,6 +579,7 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
           timed("Is it real? · POST /trust-check", () => call("/v1/listings/trust-check", listing)),
           timed("Safer options · GET /alternatives", () => call(`/v1/products/${encodeURIComponent(identity.product_id)}/alternatives`))]);
         text = reply(identity, safety, lang, { trust, alternatives: alts });
+        lastProduct = identity.product_id;
       } else {
         const read = await timed("Read the label · POST /camera/label", () => call("/v1/camera/label", { image: asked.image }, 90000));
         const seen = read.read || {};
@@ -501,6 +591,7 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
           timed(`Is it safe? · GET /safety`, () => call(`/v1/products/${encodeURIComponent(identity.product_id)}/safety`)),
           timed("Safer options · GET /alternatives", () => call(`/v1/products/${encodeURIComponent(identity.product_id)}/alternatives`))]);
         text = reply(identity, safety, lang, { alternatives: alts, fromPhoto: true });
+        lastProduct = identity.product_id;
       }
       const tone = (safety.plain || {}).tone || { red: "red", amber: "amber", green: "green" }[safety.verdict] || "grey";
       step(`${productName(identity)} · answer set by code: ${safety.verdict}`, "ok");
@@ -540,7 +631,9 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
     showPhone();
     let mine;
     if (msg.type === "image") mine = bubble(true, el("img", { className: "wa-img", src: msg.image, alt: "Your photo" }), ...(msg.caption ? [richText(msg.caption)] : []));
-    else {
+    else if (msg.type === "audio") mine = bubble(true, el("span", { className: "wa-text", textContent: `🎤 Voice message · 0:${String(msg.seconds || 1).padStart(2, "0")}` }));
+    else if (msg.type === "document") mine = bubble(true, el("span", { className: "wa-text", textContent: `📄 ${msg.filename || "Manual.pdf"}` }), ...(msg.caption ? [richText(msg.caption)] : []));
+    else if (msg.type === "interactive") { mine = bubble(true, richText(msg.text)); mine.classList.add("btn-reply"); } else {
       const url = (msg.act || msg.text).match(URL_RE)?.[0];
       const preset = url && presets.find((p) => p.request.listing.url === url.replace(/[).,]+$/, ""));
       const preview = url && !msg.act ? el("div", { className: "wa-preview" }, el("span", { className: "wa-pv-ico" }, svg(ICON.link)),
@@ -556,10 +649,36 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
   const sync = () => { sendBtn.replaceChildren(svg(input.value.trim() ? ICON.send : ICON.mic)); sendBtn.setAttribute("aria-label", input.value.trim() ? "Send" : "Voice message"); input.style.height = "auto"; input.style.height = `${Math.min(input.scrollHeight, 110)}px`; };
   input.addEventListener("input", sync);
   input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+  // An empty message box makes the send button a mic: press to record a voice note, press again to send it
+  let recorder = null;
+  async function record() {
+    if (recorder) { recorder.stop(); return; }
+    if (!window.MediaRecorder || !navigator.mediaDevices?.getUserMedia) { say("This browser can't record. Type your question."); return; }
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (_) { say("Allow the microphone to send a voice note, or type your question."); return; }
+    const chunks = [], t0 = performance.now();
+    recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = (e) => chunks.push(e.data);
+    recorder.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunks, { type: (recorder.mimeType || "audio/webm").split(";")[0] });
+      recorder = null;
+      sendBtn.classList.remove("rec");
+      input.placeholder = "Message";
+      sync();
+      if (!blob.size) return;
+      send({ type: "audio", audio: await dataUrl(blob), seconds: Math.max(1, Math.round((performance.now() - t0) / 1000)) });
+    };
+    recorder.start();
+    sendBtn.classList.add("rec");
+    sendBtn.replaceChildren(svg(ICON.send));
+    sendBtn.setAttribute("aria-label", "Send the voice note");
+    input.placeholder = "Recording… press send to stop";
+  }
   form.onsubmit = (e) => {
     e.preventDefault();
     const text = input.value.trim();
-    if (!text) { say("Voice questions aren't in the bot yet. Send a link or a photo."); input.focus(); return; }
+    if (!text || recorder) { record(); return; }
     input.value = "";
     sync();
     send({ type: "text", text });
@@ -568,6 +687,12 @@ export function setUpWhatsApp(takeQuota = () => true, usedUpText = () => "") {
     const file = pick.files[0];
     pick.value = "";
     if (!file) return;
+    if (file.type === "application/pdf") {
+      if (file.size > 6_000_000) { say("That PDF is too big. Send one under 6 MB."); return; }
+      send({ type: "document", document: await dataUrl(file).then((u) => u.replace(/^data:[^;]*;/, "data:application/pdf;")), filename: file.name, caption: input.value.trim() });
+      input.value = ""; sync();
+      return;
+    }
     try { send({ type: "image", image: await shrink(file), caption: input.value.trim() }); input.value = ""; sync(); } catch (_) { say("Couldn't open that photo. Try a JPEG or PNG."); }
   };
   setInterval(() => { time.textContent = clock(); }, 30000);

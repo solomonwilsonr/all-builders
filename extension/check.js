@@ -429,8 +429,11 @@ async function runCheckNow(page) {
   const safety = pid && pid !== product_id ? (await api(`/v1/products/${pid}/safety`)).body : await earlySafety;
 
   // A stored product's safety answer carries the outcome itself; a listing gets it from the live investigation.
-  const inv = safety?.outcome ? null : await invCall;
-  const outcome = safety?.outcome ? safety : inv;
+  // A recall the live investigation confirmed for this listing still wins: a "url" match can be a look-alike
+  // (the HAIARA W5PRO 10000 mAh listing matched a 5000 mAh product with no notice, hiding a CAA recall).
+  const live = await invCall;
+  const inv = !safety?.outcome || live?.outcome === "confirmed_recall" ? live : null;
+  const outcome = safety?.outcome && inv?.outcome !== "confirmed_recall" ? safety : inv;
   const radarLevel = !safety ? "unknown" : safety.verdict === "not_enough_evidence" ? "unknown" : safety.verdict;
   const safeLevel = outcome ? outcomeLevel(outcome.outcome, safety?.outcome ? radarLevel : (safety?.verdict === "not_enough_evidence" ? "unknown" : safety?.verdict)) : radarLevel;
   const findingLines = (safety?.ai_findings || []).map((f) => `${f.independent_reports} buyer report${f.independent_reports === 1 ? "" : "s"} of ${f.mechanism} (AI finding, under review)`);

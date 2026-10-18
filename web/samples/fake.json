@@ -1,18 +1,18 @@
 {
- "recorded_at": "2026-10-16 16:38 IST",
+ "recorded_at": "2026-10-18 20:48 IST",
  "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
  "events": [
   {
    "type": "open",
    "mode": "investigate",
-   "investigation_id": "SS-I-34CC5303",
-   "_ms": 168
+   "investigation_id": "SS-I-3C220883",
+   "_ms": 192
   },
   {
    "type": "start",
    "agent": "page_reader",
    "tool": "page",
-   "_ms": 168
+   "_ms": 192
   },
   {
    "type": "step",
@@ -21,50 +21,50 @@
    "tool": "page",
    "summary": "Matched the listing to SS-P-10291 (by model number)",
    "model": null,
-   "seconds": 0.67,
-   "_ms": 856
+   "seconds": 0.53,
+   "_ms": 742
   },
   {
    "type": "start",
    "agent": "is_it_real",
    "tool": "is_it_real",
-   "_ms": 856
+   "_ms": 742
   },
   {
    "type": "start",
    "agent": "safety_radar",
    "tool": "safety_radar",
-   "_ms": 856
+   "_ms": 742
   },
   {
    "type": "start",
    "agent": "twin_finder",
    "tool": "twin_finder",
-   "_ms": 856
+   "_ms": 742
   },
   {
    "type": "start",
    "agent": "recall_checker",
    "tool": "recall_checker",
-   "_ms": 856
+   "_ms": 742
   },
   {
    "type": "start",
    "agent": "cert_verifier",
    "tool": "cert_verifier",
-   "_ms": 856
+   "_ms": 742
   },
   {
    "type": "start",
    "agent": "official_sources",
    "tool": "official_sources",
-   "_ms": 857
+   "_ms": 743
   },
   {
    "type": "start",
    "agent": "research_agent",
    "tool": "research_agent",
-   "_ms": 857
+   "_ms": 743
   },
   {
    "type": "step",
@@ -73,8 +73,8 @@
    "tool": "twin_finder",
    "summary": "3 related product(s): exact model SS-P-20019, rebranded equivalent SS-P-30118, visually similar SS-P-40007",
    "model": null,
-   "seconds": 0.44,
-   "_ms": 2318
+   "seconds": 0.06,
+   "_ms": 3490
   },
   {
    "type": "step",
@@ -83,8 +83,8 @@
    "tool": "research_agent",
    "summary": "Skipped: nothing to check this with",
    "model": null,
-   "seconds": 1.34,
-   "_ms": 2318
+   "seconds": 1.97,
+   "_ms": 3490
   },
   {
    "type": "step",
@@ -93,8 +93,8 @@
    "tool": "cert_verifier",
    "summary": "Safety marks: BIS verified",
    "model": null,
-   "seconds": 1.45,
-   "_ms": 2318
+   "seconds": 2.02,
+   "_ms": 3500
   },
   {
    "type": "step",
@@ -103,8 +103,8 @@
    "tool": "recall_checker",
    "summary": "No recall notice linked",
    "model": null,
-   "seconds": 1.87,
-   "_ms": 3265
+   "seconds": 2.75,
+   "_ms": 3500
   },
   {
    "type": "step",
@@ -113,8 +113,8 @@
    "tool": "official_sources",
    "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
    "model": null,
-   "seconds": 1.91,
-   "_ms": 3533
+   "seconds": 2.76,
+   "_ms": 3513
   },
   {
    "type": "step",
@@ -123,8 +123,8 @@
    "tool": "is_it_real",
    "summary": "Is it real? 2 warning sign(s): price, website age; hidden AI instructions found on the page",
    "model": null,
-   "seconds": 2.3,
-   "_ms": 3534
+   "seconds": 4.13,
+   "_ms": 4894
   },
   {
    "type": "step",
@@ -133,14 +133,14 @@
    "tool": "safety_radar",
    "summary": "Safety: verdict amber from 24 reviews (6 fire/burn, 1 electric/shock reports)",
    "model": null,
-   "seconds": 2.71,
-   "_ms": 3570
+   "seconds": 4.17,
+   "_ms": 4913
   },
   {
    "type": "start",
    "agent": "verdict",
    "tool": "verdict",
-   "_ms": 3570
+   "_ms": 4913
   },
   {
    "type": "step",
@@ -150,7 +150,7 @@
    "summary": "Code set the verdict: safety amber, is it real red, overall red",
    "model": null,
    "seconds": 0.03,
-   "_ms": 3613
+   "_ms": 4950
   },
   {
    "type": "verdict",
@@ -160,15 +160,15 @@
     "overall": "red",
     "reasons": [
      {
-      "text": "Several independent owners report a serious hazard (not a regulator's decision)",
+      "text": "Several different buyers say this Kelvo CX-65 caused a safety risk. It isn't officially recalled.",
       "evidence_ids": []
      },
      {
-      "text": "Checked: India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
+      "text": "Where we checked: India: no recall found; Japan: no recall found; Australia: no recall found; Singapore: no recall found; the United States: no recall found; South Korea: no recall found",
       "evidence_ids": []
      },
      {
-      "text": "6 buyer report(s) of melted on first day, plastic black and smelled of burning (AI finding, under review; 0 with photos)",
+      "text": "6 buyers reported melted on first day, plastic black and smelled of burning (from reviews, not checked by a regulator)",
       "evidence_ids": [
        "EV-37A71FB5",
        "EV-08E9C38D",
@@ -177,7 +177,7 @@
       ]
      },
      {
-      "text": "1 buyer report(s) of sparks from the USB-C port when plugging in cable (AI finding, under review; 0 with photos)",
+      "text": "1 buyer reported sparks from the USB-C port when plugging in cable (from reviews, not checked by a regulator)",
       "evidence_ids": [
        "EV-2BF949BA"
       ]
@@ -185,19 +185,19 @@
      {
       "text": "Price Rs 299 is far below the genuine Rs 1,399",
       "evidence_ids": [
-       "EV-2727A875"
+       "EV-02C6C4D9"
       ]
      },
      {
-      "text": "Website registered only 21 days ago",
+      "text": "Website registered only 23 days ago",
       "evidence_ids": [
-       "EV-2727A875"
+       "EV-02C6C4D9"
       ]
      },
      {
       "text": "The page hides text that tries to instruct AI tools; SafeShelf ignored it and treats it as a warning sign",
       "evidence_ids": [
-       "EV-2727A875"
+       "EV-02C6C4D9"
       ]
      },
      {
@@ -219,7 +219,7 @@
      "EV-97A8AA0D",
      "EV-E822ECF0",
      "EV-2BF949BA",
-     "EV-2727A875",
+     "EV-02C6C4D9",
      "EV-86530811",
      "EV-5A43E936"
     ],
@@ -240,7 +240,7 @@
        "name": "India",
        "is_market": true,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "india_notices",
@@ -274,7 +274,7 @@
        "name": "Japan",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -292,7 +292,7 @@
        "name": "Australia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -310,7 +310,7 @@
        "name": "Singapore",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -326,47 +326,11 @@
        ]
       },
       {
-       "country": "KR",
-       "name": "South Korea",
-       "is_market": false,
-       "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
-       "sources": [
-        {
-         "source": "stored_notices",
-         "authority": "SafeShelf store",
-         "state": "no_matching_notice_found",
-         "mode": "cache",
-         "freshness": "2026-10-13"
-        }
-       ],
-       "matched": 0,
-       "notes": []
-      },
-      {
-       "country": "TW",
-       "name": "Taiwan",
-       "is_market": false,
-       "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
-       "sources": [
-        {
-         "source": "stored_notices",
-         "authority": "SafeShelf store",
-         "state": "no_matching_notice_found",
-         "mode": "cache",
-         "freshness": "2026-10-13"
-        }
-       ],
-       "matched": 0,
-       "notes": []
-      },
-      {
        "country": "US",
        "name": "the United States",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "cpsc",
@@ -412,11 +376,47 @@
        "notes": []
       },
       {
+       "country": "KR",
+       "name": "South Korea",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
+       "country": "TW",
+       "name": "Taiwan",
+       "is_market": false,
+       "state": "no_matching_notice_found",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
+       "sources": [
+        {
+         "source": "stored_notices",
+         "authority": "SafeShelf store",
+         "state": "no_matching_notice_found",
+         "mode": "cache",
+         "freshness": "2026-10-13"
+        }
+       ],
+       "matched": 0,
+       "notes": []
+      },
+      {
        "country": "ID",
        "name": "Indonesia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -434,7 +434,7 @@
        "name": "Malaysia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -452,7 +452,7 @@
        "name": "the Philippines",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -470,7 +470,7 @@
        "name": "Thailand",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -488,7 +488,7 @@
        "name": "Vietnam",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -511,7 +511,7 @@
        "jurisdiction": "IN",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-16T11:08:49.681991+00:00",
+       "checked_at": "2026-10-18T15:18:21.565221+00:00",
        "freshness": "2026-09-09",
        "records_returned": 0,
        "matched": 0,
@@ -541,7 +541,7 @@
        "jurisdiction": "US",
        "state": "no_matching_notice_found",
        "mode": "live",
-       "checked_at": "2026-10-16T11:08:49.036178+00:00",
+       "checked_at": "2026-10-18T15:18:19.666555+00:00",
        "freshness": null,
        "records_returned": 0,
        "matched": 0,
@@ -601,7 +601,7 @@
        "jurisdiction": "MULTI",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-16T11:08:49.739242+00:00",
+       "checked_at": "2026-10-18T15:18:22.282967+00:00",
        "freshness": "2026-10-13",
        "records_returned": 0,
        "matched": 0,
@@ -609,7 +609,7 @@
        "detail": "searched the stored copy; no notice matched this product"
       }
      ],
-     "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+     "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · the United States: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
     },
     "limitations": [
      "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
@@ -644,9 +644,124 @@
     "rules": [
      "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
     ],
+    "plain": {
+     "title": "Buyers report safety problems",
+     "tone": "amber",
+     "why": "Several different buyers say this Kelvo CX-65 caused a safety risk. It isn't officially recalled.",
+     "todo": "Read what the buyers say below before you buy, and consider a safer alternative.",
+     "say": "Several buyers report a safety risk. Not recalled. Think twice before buying.",
+     "checked": [
+      {
+       "country": "IN",
+       "flag": "🇮🇳",
+       "name": "India",
+       "status": "No recall found (India has no public recall list; we checked government safety orders)",
+       "mark": "ok",
+       "yours": true,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.pib.gov.in/",
+         "label": "CCPA / BIS list"
+        }
+       }
+      },
+      {
+       "country": "JP",
+       "flag": "🇯🇵",
+       "name": "Japan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "AU",
+       "flag": "🇦🇺",
+       "name": "Australia",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "SG",
+       "flag": "🇸🇬",
+       "name": "Singapore",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "US",
+       "flag": "🇺🇸",
+       "name": "the United States",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code",
+        "link": {
+         "url": "https://www.cpsc.gov/Recalls/CPSC-Recalls-Application-Program-Interface-API-Information",
+         "label": "CPSC list"
+        }
+       }
+      },
+      {
+       "country": "KR",
+       "flag": "🇰🇷",
+       "name": "South Korea",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "TW",
+       "flag": "🇹🇼",
+       "name": "Taiwan",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      },
+      {
+       "country": "ID",
+       "flag": "🇮🇩",
+       "name": "Indonesia",
+       "status": "No recall found",
+       "mark": "ok",
+       "yours": false,
+       "badge": {
+        "text": "Checked by code, not guessed",
+        "decided_by": "code"
+       }
+      }
+     ],
+     "link": null,
+     "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+    },
     "matches": []
    },
-   "_ms": 3616
+   "_ms": 4955
   },
   {
    "type": "step",
@@ -655,14 +770,14 @@
    "tool": "gemini",
    "summary": "Wrote the answer",
    "model": "gemini-3.5-flash-lite",
-   "seconds": 1.08,
-   "_ms": 4841
+   "seconds": 1.29,
+   "_ms": 6252
   },
   {
    "type": "done",
    "result": {
-    "session_id": "SS-I-34CC5303",
-    "investigation_id": "SS-I-34CC5303",
+    "session_id": "SS-I-3C220883",
+    "investigation_id": "SS-I-3C220883",
     "mode": "investigate",
     "product_id": "SS-P-10291",
     "language": "en",
@@ -672,15 +787,15 @@
      "overall": "red",
      "reasons": [
       {
-       "text": "Several independent owners report a serious hazard (not a regulator's decision)",
+       "text": "Several different buyers say this Kelvo CX-65 caused a safety risk. It isn't officially recalled.",
        "evidence_ids": []
       },
       {
-       "text": "Checked: India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice",
+       "text": "Where we checked: India: no recall found; Japan: no recall found; Australia: no recall found; Singapore: no recall found; the United States: no recall found; South Korea: no recall found",
        "evidence_ids": []
       },
       {
-       "text": "6 buyer report(s) of melted on first day, plastic black and smelled of burning (AI finding, under review; 0 with photos)",
+       "text": "6 buyers reported melted on first day, plastic black and smelled of burning (from reviews, not checked by a regulator)",
        "evidence_ids": [
         "EV-37A71FB5",
         "EV-08E9C38D",
@@ -689,7 +804,7 @@
        ]
       },
       {
-       "text": "1 buyer report(s) of sparks from the USB-C port when plugging in cable (AI finding, under review; 0 with photos)",
+       "text": "1 buyer reported sparks from the USB-C port when plugging in cable (from reviews, not checked by a regulator)",
        "evidence_ids": [
         "EV-2BF949BA"
        ]
@@ -697,19 +812,19 @@
       {
        "text": "Price Rs 299 is far below the genuine Rs 1,399",
        "evidence_ids": [
-        "EV-2727A875"
+        "EV-02C6C4D9"
        ]
       },
       {
-       "text": "Website registered only 21 days ago",
+       "text": "Website registered only 23 days ago",
        "evidence_ids": [
-        "EV-2727A875"
+        "EV-02C6C4D9"
        ]
       },
       {
        "text": "The page hides text that tries to instruct AI tools; SafeShelf ignored it and treats it as a warning sign",
        "evidence_ids": [
-        "EV-2727A875"
+        "EV-02C6C4D9"
        ]
       },
       {
@@ -731,7 +846,7 @@
       "EV-97A8AA0D",
       "EV-E822ECF0",
       "EV-2BF949BA",
-      "EV-2727A875",
+      "EV-02C6C4D9",
       "EV-86530811",
       "EV-5A43E936"
      ],
@@ -752,7 +867,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -786,7 +901,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -804,7 +919,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -822,7 +937,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -838,47 +953,11 @@
         ]
        },
        {
-        "country": "KR",
-        "name": "South Korea",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
-        "country": "TW",
-        "name": "Taiwan",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
         "country": "US",
         "name": "the United States",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -924,11 +1003,47 @@
         "notes": []
        },
        {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
         "country": "ID",
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -946,7 +1061,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -964,7 +1079,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -982,7 +1097,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1000,7 +1115,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1023,7 +1138,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:49.681991+00:00",
+        "checked_at": "2026-10-18T15:18:21.565221+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -1053,7 +1168,7 @@
         "jurisdiction": "US",
         "state": "no_matching_notice_found",
         "mode": "live",
-        "checked_at": "2026-10-16T11:08:49.036178+00:00",
+        "checked_at": "2026-10-18T15:18:19.666555+00:00",
         "freshness": null,
         "records_returned": 0,
         "matched": 0,
@@ -1113,7 +1228,7 @@
         "jurisdiction": "MULTI",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "freshness": "2026-10-13",
         "records_returned": 0,
         "matched": 0,
@@ -1121,7 +1236,7 @@
         "detail": "searched the stored copy; no notice matched this product"
        }
       ],
-      "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
+      "summary": "India: no matching notice · Japan: no matching notice · Australia: no matching notice · Singapore: no matching notice · the United States: no matching notice · South Korea: no matching notice · Taiwan: no matching notice"
      },
      "limitations": [
       "India has no public recall database: CCPA recall orders, safety notices and BIS raids are checked instead, and BIS certificates can only be verified by hand."
@@ -1156,14 +1271,131 @@
      "rules": [
       "A valid BIS mark (R-number or ISI licence) is required for many electrical goods; a valid mark is not proof of safety, and SafeShelf cannot check it automatically (BIS has no automation API)."
      ],
+     "plain": {
+      "title": "Buyers report safety problems",
+      "tone": "amber",
+      "why": "Several different buyers say this Kelvo CX-65 caused a safety risk. It isn't officially recalled.",
+      "todo": "Read what the buyers say below before you buy, and consider a safer alternative.",
+      "say": "Several buyers report a safety risk. Not recalled. Think twice before buying.",
+      "checked": [
+       {
+        "country": "IN",
+        "flag": "🇮🇳",
+        "name": "India",
+        "status": "No recall found (India has no public recall list; we checked government safety orders)",
+        "mark": "ok",
+        "yours": true,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.pib.gov.in/",
+          "label": "CCPA / BIS list"
+         }
+        }
+       },
+       {
+        "country": "JP",
+        "flag": "🇯🇵",
+        "name": "Japan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "AU",
+        "flag": "🇦🇺",
+        "name": "Australia",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "SG",
+        "flag": "🇸🇬",
+        "name": "Singapore",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "US",
+        "flag": "🇺🇸",
+        "name": "the United States",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code",
+         "link": {
+          "url": "https://www.cpsc.gov/Recalls/CPSC-Recalls-Application-Program-Interface-API-Information",
+          "label": "CPSC list"
+         }
+        }
+       },
+       {
+        "country": "KR",
+        "flag": "🇰🇷",
+        "name": "South Korea",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "TW",
+        "flag": "🇹🇼",
+        "name": "Taiwan",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       },
+       {
+        "country": "ID",
+        "flag": "🇮🇩",
+        "name": "Indonesia",
+        "status": "No recall found",
+        "mark": "ok",
+        "yours": false,
+        "badge": {
+         "text": "Checked by code, not guessed",
+         "decided_by": "code"
+        }
+       }
+      ],
+      "link": null,
+      "note": "Checked by SafeShelf using official government safety lists. This is guidance for shoppers, not an official ruling."
+     },
      "matches": []
     },
     "messages": [
      {
       "role": "assistant",
-      "text": "Several independent owners report a serious hazard, including reports of melting, burning smells, and sparks from the USB-C port, though this is an AI finding under review and not a regulator's decision. There is no matching recall notice in India, Japan, Australia, Singapore, South Korea, or Taiwan. The website was registered only 21 days ago, and the price is far below the genuine item.",
+      "text": "Several independent buyers report a serious hazard with this product, including melting parts on the first day and sparks from the USB-C port. This safety finding is an AI finding under review and not a regulator's decision, and no official recall has been found. Additionally, signs indicate this is not a real offering, as the website was registered only 23 days ago and the price is far below the genuine amount.",
       "evidence_ids": [
-       "EV-2727A875"
+       "EV-37A71FB5",
+       "EV-2BF949BA",
+       "EV-02C6C4D9"
       ]
      }
     ],
@@ -1194,7 +1426,7 @@
        "website_age": {
         "result": "flag",
         "domain": "example-deals-store.test",
-        "domain_registered_days_ago": 21,
+        "domain_registered_days_ago": 23,
         "source": "demo data (fictional shop)"
        },
        "spec": {
@@ -1203,12 +1435,12 @@
        }
       },
       "hidden_instructions_found": true,
-      "summary": "Be careful: price is 21% of the genuine product's lowest price from an authorised seller; website registered only 21 days ago; the page hides instructions aimed at AI assistants.",
+      "summary": "Be careful: price is 21% of the genuine product's lowest price from an authorised seller; website registered only 23 days ago; the page hides instructions aimed at AI assistants.",
       "good_signs": [],
       "safety_of_genuine_model": "2 hazard findings under review, no recall",
       "label": "Evidence for the shopper - not a legal finding",
       "evidence_ids": [
-       "EV-2727A875"
+       "EV-02C6C4D9"
       ]
      },
      "safety_radar": {
@@ -1272,7 +1504,7 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "Kelvo",
-        "checked_at": "2026-10-16T11:08:51+00:00",
+        "checked_at": "2026-10-18T15:18:23+00:00",
         "result": "verified",
         "field": null,
         "registry_value": "Kelvo",
@@ -1329,7 +1561,7 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "Kelvo",
-        "checked_at": "2026-10-16T11:08:48+00:00",
+        "checked_at": "2026-10-18T15:18:19+00:00",
         "result": "verified",
         "field": null,
         "registry_value": "Kelvo",
@@ -1355,7 +1587,9 @@
        "title": "65W Super Fast Charger - Kelvo CX-65 Original",
        "local_identifiers": {},
        "key": "kelvo|CX65|IN",
-       "market": "IN"
+       "market": "IN",
+       "identity_source": "listing text (code)",
+       "identity_agent": null
       },
       "matches": [],
       "contradictions": [],
@@ -1368,7 +1602,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:49.681991+00:00",
+        "checked_at": "2026-10-18T15:18:21.565221+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -1398,7 +1632,7 @@
         "jurisdiction": "US",
         "state": "no_matching_notice_found",
         "mode": "live",
-        "checked_at": "2026-10-16T11:08:49.036178+00:00",
+        "checked_at": "2026-10-18T15:18:19.666555+00:00",
         "freshness": null,
         "records_returned": 0,
         "matched": 0,
@@ -1458,7 +1692,7 @@
         "jurisdiction": "MULTI",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "freshness": "2026-10-13",
         "records_returned": 0,
         "matched": 0,
@@ -1472,7 +1706,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -1506,7 +1740,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1524,7 +1758,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1542,7 +1776,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1558,47 +1792,11 @@
         ]
        },
        {
-        "country": "KR",
-        "name": "South Korea",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
-        "country": "TW",
-        "name": "Taiwan",
-        "is_market": false,
-        "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
-        "sources": [
-         {
-          "source": "stored_notices",
-          "authority": "SafeShelf store",
-          "state": "no_matching_notice_found",
-          "mode": "cache",
-          "freshness": "2026-10-13"
-         }
-        ],
-        "matched": 0,
-        "notes": []
-       },
-       {
         "country": "US",
         "name": "the United States",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -1644,11 +1842,47 @@
         "notes": []
        },
        {
+        "country": "KR",
+        "name": "South Korea",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
+        "country": "TW",
+        "name": "Taiwan",
+        "is_market": false,
+        "state": "no_matching_notice_found",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
+        "sources": [
+         {
+          "source": "stored_notices",
+          "authority": "SafeShelf store",
+          "state": "no_matching_notice_found",
+          "mode": "cache",
+          "freshness": "2026-10-13"
+         }
+        ],
+        "matched": 0,
+        "notes": []
+       },
+       {
         "country": "ID",
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1666,7 +1900,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1684,7 +1918,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1702,7 +1936,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1720,7 +1954,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-16T11:08:49.739242+00:00",
+        "checked_at": "2026-10-18T15:18:22.282967+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1736,6 +1970,7 @@
       ],
       "source_mode": "partial",
       "depth": "quick",
+      "critiques": [],
       "query_keys": [
        "ae4ea7b96fd51f93b4c9dd9d"
       ],
@@ -1759,7 +1994,7 @@
       "tool": "page",
       "summary": "Matched the listing to SS-P-10291 (by model number)",
       "model": null,
-      "seconds": 0.67
+      "seconds": 0.53
      },
      {
       "n": 2,
@@ -1767,7 +2002,7 @@
       "tool": "twin_finder",
       "summary": "3 related product(s): exact model SS-P-20019, rebranded equivalent SS-P-30118, visually similar SS-P-40007",
       "model": null,
-      "seconds": 0.44
+      "seconds": 0.06
      },
      {
       "n": 3,
@@ -1775,7 +2010,7 @@
       "tool": "research_agent",
       "summary": "Skipped: nothing to check this with",
       "model": null,
-      "seconds": 1.34
+      "seconds": 1.97
      },
      {
       "n": 4,
@@ -1783,7 +2018,7 @@
       "tool": "cert_verifier",
       "summary": "Safety marks: BIS verified",
       "model": null,
-      "seconds": 1.45
+      "seconds": 2.02
      },
      {
       "n": 5,
@@ -1791,7 +2026,7 @@
       "tool": "recall_checker",
       "summary": "No recall notice linked",
       "model": null,
-      "seconds": 1.87
+      "seconds": 2.75
      },
      {
       "n": 6,
@@ -1799,7 +2034,7 @@
       "tool": "official_sources",
       "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
       "model": null,
-      "seconds": 1.91
+      "seconds": 2.76
      },
      {
       "n": 7,
@@ -1807,7 +2042,7 @@
       "tool": "is_it_real",
       "summary": "Is it real? 2 warning sign(s): price, website age; hidden AI instructions found on the page",
       "model": null,
-      "seconds": 2.3
+      "seconds": 4.13
      },
      {
       "n": 8,
@@ -1815,7 +2050,7 @@
       "tool": "safety_radar",
       "summary": "Safety: verdict amber from 24 reviews (6 fire/burn, 1 electric/shock reports)",
       "model": null,
-      "seconds": 2.71
+      "seconds": 4.17
      },
      {
       "n": 9,
@@ -1831,13 +2066,13 @@
       "tool": "gemini",
       "summary": "Wrote the answer",
       "model": "gemini-3.5-flash-lite",
-      "seconds": 1.08
+      "seconds": 1.29
      }
     ],
     "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
-    "checked_at": 1792148932.2391655
+    "checked_at": 1792336705.093884
    },
-   "_ms": 4843
+   "_ms": 6266
   }
  ]
 }

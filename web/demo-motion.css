@@ -1,0 +1,25 @@
+/* The homepage's blue/mint motion language, scoped to the live demo. */
+.demo-cursor, .demo-click-layer { position: fixed; pointer-events: none; z-index: 10000; }
+.demo-cursor { width: 22px; height: 22px; border: 1px solid rgba(2,113,228,.45); border-radius: 50%; transform: translate(-50%,-50%); opacity: 0; transition: opacity .18s, width .2s, height .2s, background .2s; }
+.demo-cursor.is-visible { opacity: 1; }
+.demo-cursor.is-action { width: 40px; height: 40px; background: rgba(2,113,228,.06); }
+.demo-click-layer { inset: 0; overflow: hidden; }
+.demo-burst { position: absolute; width: 0; height: 0; }
+.demo-ring { position: absolute; left: -15px; top: -15px; width: 30px; height: 30px; border: 1px solid var(--blue); border-radius: 50%; }
+.demo-spark { position: absolute; left: -2px; top: -2px; width: 4px; height: 4px; background: var(--blue); border-radius: 50%; }
+.demo-progress { position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg,var(--blue),var(--mint)); transform: scaleX(0); transform-origin: left; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .dhero { position: relative; isolation: isolate; overflow: hidden; }
+  .dhero::before { transform: translate(var(--drift-x,0px),var(--drift-y,0px)) scale(1.035); transition: transform .5s ease-out; }
+  .dhero::after { content: ''; position: absolute; z-index: -1; inset: -30px; pointer-events: none; background: radial-gradient(ellipse at 80% 25%,rgba(162,241,169,.2),transparent 45%),radial-gradient(ellipse at 15% 75%,rgba(2,113,228,.08),transparent 45%); transform: translate(var(--drift-x,0px),var(--drift-y,0px)); transition: transform .35s ease-out; }
+  .demo-motion-card { transition: transform .3s ease-out, box-shadow .3s; }
+  .demo-motion-card.is-pointer { transform: perspective(900px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)); background-image: radial-gradient(circle at var(--light-x,50%) var(--light-y,50%),rgba(2,113,228,.065),transparent 65%); box-shadow: 0 8px 24px rgba(0,17,35,.06); }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .jbtn, .journey a, .prooftabs button { transition: translate .2s, background-color .2s, box-shadow .2s; }
+  .jbtn:hover, .prooftabs button:hover { translate: 0 -2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-cursor, .demo-click-layer { display: none; }
+}
+@media (hover: none), (pointer: coarse) { .demo-cursor { display: none; } }

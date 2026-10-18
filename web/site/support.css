@@ -1,0 +1,91 @@
+/* The Help chat on every site page (support.js): a launcher at the bottom right and a panel above it;
+   a full-width sheet on phones. Own copies of theme.css's tokens, so the judges' page styles can't change it.
+   Where Eddy's tour button sits at the bottom right (the judges' page), Help moves to the bottom left. */
+.sup-launch, .sup-panel { --s-blue: #0271e4; --s-blue-2: #0a5fc0; --s-blue-pale: #e8f2fd; --s-mint: #a2f1a9; --s-mint-ink: #12632a;
+  --s-ink: #001123; --s-ink-2: #26323f; --s-muted: #5d6874; --s-dim: #8b949e; --s-line: #e4e7eb; --s-line-2: #eef0f3; --s-soft: #f5f6f7;
+  --s-display: "Schibsted Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif; --s-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme: light; box-sizing: border-box; text-align: left; }
+.sup-launch *, .sup-panel * { box-sizing: border-box; }
+.sup-panel p, .sup-panel ul { margin: 0; }
+/* the judges' page styles every button (min-height, inset outline); undo that here */
+.sup-launch, .sup-panel button { min-height: 0; box-shadow: none; text-transform: none; opacity: 1; }
+.sup-form button, .sup-head .sup-x { padding: 0; }
+.sup-launch { box-shadow: 0 6px 24px rgba(0, 17, 35, .22) !important; }
+.sup-launch { position: fixed; right: 20px; bottom: 20px; z-index: 9000; display: inline-flex; align-items: center; gap: 8px;
+  height: 48px; padding: 0 18px 0 14px; border: 0; border-radius: 6px; background: var(--s-ink); color: #fff;
+  font: 500 15px/1 var(--s-display); letter-spacing: -.01em; cursor: pointer; box-shadow: 0 6px 24px rgba(0, 17, 35, .22);
+  transition: transform .15s ease, background .15s ease; }
+.sup-launch:hover { background: var(--s-blue); color: #fff; transform: translateY(-1px); }
+.sup-launch svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sup-launch[aria-expanded="true"] { background: var(--s-blue); }
+
+.sup-panel { position: fixed; right: 20px; bottom: 80px; z-index: 9001; width: 380px; max-height: min(600px, calc(100vh - 110px));
+  display: flex; flex-direction: column; background: #fff; color: var(--s-ink); border: 1px solid var(--s-line); border-radius: 10px;
+  box-shadow: 0 18px 50px rgba(0, 17, 35, .2); overflow: hidden; font: 14.5px/1.55 var(--s-sans);
+  transform-origin: bottom right; animation: sup-in .16s ease-out; }
+.sup-panel[hidden] { display: none; }
+@keyframes sup-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+@media (prefers-reduced-motion: reduce) { .sup-panel { animation: none; } .sup-launch { transition: none; } }
+
+.sup-head { display: flex; align-items: center; gap: 10px; padding: 14px 14px 12px 16px; border-bottom: 1px solid var(--s-line-2); }
+.sup-mark { width: 30px; height: 30px; border-radius: 6px; background: var(--s-mint); color: var(--s-mint-ink); display: grid; place-items: center;
+  font: 600 15px/1 var(--s-display); flex: none; }
+.sup-head b { display: block; font: 600 15px/1.2 var(--s-display); letter-spacing: -.01em; }
+.sup-head small { display: block; color: var(--s-muted); font-size: 12.5px; line-height: 1.3; }
+.sup-head .sup-x { margin-left: auto; width: 32px; height: 32px; border: 0; border-radius: 6px; background: none; color: var(--s-muted); cursor: pointer; display: grid; place-items: center; }
+.sup-head .sup-x:hover { background: var(--s-soft); color: var(--s-ink); }
+.sup-head .sup-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.sup-new { border: 0; background: none; color: var(--s-blue); font: inherit; font-size: 12.5px; cursor: pointer; padding: 4px 6px; border-radius: 4px; }
+.sup-new:hover { background: var(--s-blue-pale); }
+
+.sup-log { flex: 1; overflow-y: auto; padding: 14px 16px 6px; display: flex; flex-direction: column; gap: 10px; overscroll-behavior: contain; }
+.sup-msg { max-width: 88%; padding: 9px 12px; border-radius: 10px; overflow-wrap: anywhere; }
+.sup-msg p + p, .sup-msg p + ul, .sup-msg ul + p { margin-top: 6px; }
+.sup-msg ul { padding-left: 18px; list-style: disc; }
+.sup-msg a { color: var(--s-blue); text-decoration: underline; text-underline-offset: 2px; }
+.sup-me { align-self: flex-end; background: var(--s-ink); color: #fff; border-bottom-right-radius: 3px; }
+.sup-bot { align-self: flex-start; background: var(--s-soft); border-bottom-left-radius: 3px; }
+.sup-src { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.sup-src a { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid var(--s-line); border-radius: 4px; background: #fff;
+  color: var(--s-ink-2); font-size: 12.5px; text-decoration: none; line-height: 1.4; }
+.sup-src a:hover { border-color: var(--s-blue); color: var(--s-blue); }
+.sup-src a::before { content: "↗"; color: var(--s-blue); }
+.sup-hand { display: inline-block; margin-top: 8px; padding: 7px 12px; border-radius: 6px; background: var(--s-blue); color: #fff !important;
+  text-decoration: none !important; font-weight: 500; font-size: 13.5px; }
+.sup-hand:hover { background: var(--s-blue-2); }
+.sup-note { margin-top: 6px; color: var(--s-dim); font-size: 11.5px; }
+.sup-dots { display: inline-flex; gap: 4px; padding: 4px 0; }
+.sup-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--s-dim); animation: sup-dot 1s infinite ease-in-out; }
+.sup-dots i:nth-child(2) { animation-delay: .15s; } .sup-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes sup-dot { 0%, 80%, 100% { opacity: .3; } 40% { opacity: 1; } }
+
+.sup-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 16px 10px; }
+.sup-chips[hidden] { display: none; }
+.sup-chips button { border: 1px solid var(--s-line); background: #fff; border-radius: 999px; padding: 5px 11px; font-size: 13px; color: var(--s-ink-2); cursor: pointer; }
+.sup-chips button:hover { border-color: var(--s-blue); color: var(--s-blue); background: var(--s-blue-pale); }
+
+.sup-form { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--s-line-2); }
+.sup-form textarea { flex: 1; resize: none; min-height: 40px; max-height: 120px; padding: 9px 11px; border: 1px solid var(--s-line); border-radius: 6px;
+  font: inherit; color: var(--s-ink); background: #fff; line-height: 1.4; }
+.sup-form textarea:focus { outline: none; border-color: var(--s-blue); box-shadow: 0 0 0 3px var(--s-blue-pale); }
+.sup-form button { width: 40px; height: 40px; flex: none; border: 0; border-radius: 6px; background: var(--s-blue); color: #fff; cursor: pointer; display: grid; place-items: center; }
+.sup-form button:hover { background: var(--s-blue-2); color: #fff; }
+.sup-form button:disabled { background: var(--s-line); color: var(--s-dim); cursor: default; }
+.sup-form button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sup-foot { padding: 0 14px 10px; color: var(--s-dim); font-size: 11.5px; text-align: center; }
+.sup-foot a { color: var(--s-muted); text-decoration: underline; }
+
+body:has(.tg-launch) .sup-launch { right: auto; left: 20px; }
+body:has(.tg-launch) .sup-panel { right: auto; left: 20px; transform-origin: bottom left; }
+
+/* the Chat page keeps Eddy's message box and Send button at the bottom: Help sits above them */
+body.chat-page .sup-launch { bottom: 104px; }
+body.chat-page .sup-panel { bottom: 164px; max-height: min(600px, calc(100vh - 200px)); }
+
+@media (max-width: 520px) {
+  body.chat-page .sup-launch { bottom: 76px; }
+  body:has(.tg-launch) .sup-launch { left: 16px; }
+  .sup-launch { right: 16px; bottom: 16px; height: 46px; }
+  .sup-panel { left: 0; right: 0; bottom: 0; width: auto; max-height: calc(100dvh - 56px); border-radius: 12px 12px 0 0; border-bottom: 0; }
+  .sup-open .sup-launch { display: none; }
+}

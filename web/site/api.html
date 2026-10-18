@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SafeShelf API docs</title>
+  <meta name="description" content="The SafeShelf REST API: check a listing, read a product's safety record and follow every answer to its official source. 62 operations on Cloud Run, generated from the OpenAPI contract.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css?v=20261018b">
+  <link rel="stylesheet" href="pages.css?v=20261018b">
+  <link rel="stylesheet" href="support.css?v=20261018help5">
+  <link rel="stylesheet" href="api.css?v=20261018a">
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <nav class="nav wrap" aria-label="Primary navigation">
+      <a class="logo" href="index.html" aria-label="SafeShelf home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a>
+      <div class="links" id="links"><a href="index.html">Product</a><a href="chat.html">Chat</a><a href="how.html">How it works</a><a href="agents.html" aria-current="page">For agents</a><a href="results.html">Results</a><a href="team.html">Team</a></div>
+      <div class="nav-end"><a class="btn btn-ghost btn-sm" href="../index.html">See demo</a><a class="btn btn-ink btn-sm" href="get.html">Get SafeShelf</a><button class="menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button></div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="h-hero inner" aria-labelledby="hero-h">
+      <div class="h-hero-grid">
+        <div>
+          <span class="backed"><i>A</i>API docs · REST, JSON and server-sent events</span>
+          <h1 class="display" id="hero-h">One request. <span>Every answer with its evidence.</span></h1>
+          <p class="lead">Send a listing and get back <b>Is it safe?</b> and <b>Is it real?</b>, each with the official record or buyer report behind it. The same API runs the website, the Chrome extension, the Android app and the WhatsApp bot.</p>
+          <div class="btns"><a class="btn btn-blue" href="#start">Make your first call</a><a class="btn btn-line" href="#reference">Browse <span data-count>62</span> endpoints</a></div>
+        </div>
+        <div class="h-eddy" aria-hidden="true"><img src="assets/guide/eddy-pointing.webp" alt=""></div>
+      </div>
+      <dl class="api-facts">
+        <div><dt>Base URL</dt><dd><code id="base">https://safeshelf-api-368488022657.asia-south1.run.app</code><button class="copy-btn" type="button" data-copy-text="https://safeshelf-api-368488022657.asia-south1.run.app">Copy</button></dd></div>
+        <div><dt>Status</dt><dd><span class="api-live" id="live" role="status"><i></i>Checking…</span></dd></div>
+        <div><dt>Format</dt><dd>JSON in and out · investigations stream as SSE</dd></div>
+        <div><dt>Access</dt><dd>Public reads, no key · reviewer and developer keys for writes</dd></div>
+        <div><dt>Runs on</dt><dd>Cloud Run, Mumbai (asia-south1) · Gemini on Vertex AI</dd></div>
+      </dl>
+    </section>
+
+    <section class="h-sec" id="start" aria-labelledby="start-h">
+      <div class="h-head"><h2 class="display" id="start-h"><span class="mark" aria-hidden="true"></span>Your first call, in three steps.</h2><p class="lead">Each step is a real request to the live API. Copy it into your terminal or app, or press Run to send it from this page.</p></div>
+      <ol class="api-steps" role="tablist" aria-label="Quick start steps">
+        <li><button type="button" role="tab" aria-selected="true" data-step="health"><b>1</b><span>Is it up?</span><small>GET /health</small></button></li>
+        <li><button type="button" role="tab" aria-selected="false" data-step="trust"><b>2</b><span>Is it real?</span><small>POST /v1/listings/trust-check</small></button></li>
+        <li><button type="button" role="tab" aria-selected="false" data-step="stream"><b>3</b><span>Investigate it</span><small>POST /v1/agent/sessions/stream</small></button></li>
+      </ol>
+      <div class="api-console">
+        <div class="tty">
+          <div class="tty-top"><i></i><i></i><i></i>
+            <div class="tty-tabs api-langs" role="tablist" aria-label="Language">
+              <button class="api-lang" type="button" role="tab" aria-selected="true" data-lang="curl">cURL</button>
+              <button class="api-lang" type="button" role="tab" aria-selected="false" data-lang="js">JavaScript</button>
+              <button class="api-lang" type="button" role="tab" aria-selected="false" data-lang="py">Python</button>
+            </div>
+          </div>
+          <p class="tty-prompt" id="step-note"><span>&gt;</span> <em></em></p>
+<pre class="code" id="step-code" tabindex="0"></pre>
+          <div class="api-run-bar"><button class="btn btn-white btn-sm" type="button" id="step-run">Run</button><button class="copy-btn dark" type="button" data-copy-from="step-code">Copy</button><span id="step-status" role="status"></span></div>
+<pre class="code api-out" id="step-out" hidden tabindex="0"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="h-sec" id="answer" aria-labelledby="answer-h">
+      <div class="h-head"><h2 class="display" id="answer-h"><span class="mark" aria-hidden="true"></span>How to read an answer.</h2><p class="lead">Code picks the colour from the evidence; Gemini only explains it. Show the colour, then the reasons, then let people open the evidence behind each one.</p></div>
+      <div class="bento two">
+        <article class="cell flat">
+          <div class="cell-h"><div><b>The four answers</b><small><code>verdict.overall</code>, and <code>safe</code> and <code>real</code> on their own</small></div></div>
+          <div class="cell-b">
+            <ul class="api-answers">
+              <li><span class="pill red">red</span><div><b>Don't buy</b><p>An official recall of this exact model, or the listing is not real.</p></div></li>
+              <li><span class="pill amber">amber</span><div><b>Be careful</b><p>Buyer hazard reports under review, a recall abroad, or a safety mark that doesn't match the registry.</p></div></li>
+              <li><span class="pill green">green</span><div><b>No problems found</b><p>In what was checked. Never a promise that a product is safe.</p></div></li>
+              <li><span class="pill grey">unknown</span><div><b>Can't tell yet</b><p>Not enough evidence. SafeShelf says so instead of guessing, and never shows grey as green.</p></div></li>
+            </ul>
+            <p class="caption">Only an exact model match carries a recall. A look-alike's recall is never blamed on the wrong product.</p>
+          </div>
+        </article>
+        <article class="cell flat">
+          <div class="code-head"><span>Every reason points at its evidence</span></div>
+<pre class="code">{
+  <span class="k">"verdict"</span>: {
+    <span class="k">"safe"</span>: <span class="s">"red"</span>, <span class="k">"real"</span>: <span class="s">"unknown"</span>, <span class="k">"overall"</span>: <span class="s">"red"</span>,
+    <span class="k">"reasons"</span>: [{
+      <span class="k">"text"</span>: <span class="s">"Recalled in Japan: this exact model is on an
+               official recall list (CAA, 2026-10-05)"</span>,
+      <span class="k">"evidence_ids"</span>: [<span class="s">"EV-3F9A…"</span>]
+    }]
+  }
+}
+
+<span class="c"># then fetch the source, quote and date behind it</span>
+GET /v1/evidence?ids=EV-3F9A…</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="h-sec" id="reference" aria-labelledby="ref-h">
+      <div class="h-head"><h2 class="display" id="ref-h"><span class="mark" aria-hidden="true"></span>Every endpoint.</h2><p class="lead">All <span data-count>62</span> operations, built from the same OpenAPI contract the server loads. Examples are the contract's sample answers. Endpoints marked <span class="tag api-run-tag">RUN</span> are read-only, and you can call them live from here.</p></div>
+      <div class="api-ref">
+        <aside class="api-side" aria-label="Endpoint groups">
+          <label class="api-search"><span class="sr-only">Filter endpoints</span><input type="search" id="filter" placeholder="Filter: recall, /safety, POST…" autocomplete="off"></label>
+          <nav id="groups"></nav>
+        </aside>
+        <div id="ops" class="api-ops" aria-live="polite"><p class="caption">Loading the endpoint list…</p></div>
+      </div>
+    </section>
+
+    <section class="h-sec" id="limits" aria-labelledby="limits-h">
+      <div class="h-head"><h2 class="display" id="limits-h"><span class="mark" aria-hidden="true"></span>Access, limits and errors.</h2><p class="lead">The API is public so shoppers and judges can use it without signing up. Calls that use Gemini are rate-limited, so one caller can't use up the day for everyone.</p></div>
+      <div class="bento two">
+        <article class="cell flat">
+          <div class="cell-h"><div><b>Who can call what</b><small>Send keys in the <code>X-API-Key</code> header</small></div></div>
+          <div class="cell-b"><div class="tbl"><table>
+            <thead><tr><th>Access</th><th>Covers</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill green">public</span></td><td>Checks, product records, recalls, sources, benchmarks. No key needed</td></tr>
+              <tr><td><span class="pill amber">reviewer key</span></td><td>Deciding findings, cases and identity labels. A person signs off every consequential call</td></tr>
+              <tr><td><span class="pill blue">developer key</span></td><td>Catalog scans, signed webhooks and your own usage (<code>ssk_…</code> tenant keys)</td></tr>
+              <tr><td><span class="pill grey">MCP and A2A</span></td><td><code>/mcp</code> and <code>/a2a</code> are open on the hosted demo (A2A is rate-limited); a self-hosted server can require <code>X-API-Key</code>. See <a href="agents.html">For agents</a></td></tr>
+            </tbody></table></div></div>
+        </article>
+        <article class="cell flat">
+          <div class="cell-h"><div><b>Limits and status codes</b><small>Every refusal has CORS headers and a reason in <code>detail</code></small></div></div>
+          <div class="cell-b"><div class="tbl"><table>
+            <thead><tr><th>Code</th><th>When</th></tr></thead>
+            <tbody>
+              <tr><td class="ep">200</td><td>The answer. A <code>partial</code> outcome means a source was down; the answer says which</td></tr>
+              <tr><td class="ep">401</td><td>Missing or wrong <code>X-API-Key</code> on a keyed route</td></tr>
+              <tr><td class="ep">413</td><td>Body over 1 MB (9 MB for photo routes: chat, camera, incidents)</td></tr>
+              <tr><td class="ep">422</td><td>The body doesn't match the contract; <code>detail</code> names the field</td></tr>
+              <tr><td class="ep">429</td><td>Over 30 Gemini checks a minute per caller, or the daily cap. Honour <code>Retry-After</code></td></tr>
+            </tbody></table></div>
+            <p class="caption">Database reads (recalls, sources, timelines, benchmarks) don't count against the check limit. A listing checked in the last 10 minutes is answered from memory.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="h-sec" id="stream" aria-labelledby="stream-h">
+      <div class="h-head"><h2 class="display" id="stream-h"><span class="mark" aria-hidden="true"></span>Investigations stream as they work.</h2><p class="lead"><code>POST /v1/agent/sessions/stream</code> sends server-sent events, so your screen can show each step as it happens: page read, product matched, 12 countries' recall lists searched, reviews read, verdict.</p></div>
+      <div class="tg">
+        <article><code>open<span>EVENT</span></code><p>The session started: its <code>session_id</code> and the plan of steps.</p></article>
+        <article><code>step<span>EVENT</span></code><p>One step finished: tool, what it found, time taken. Many per session.</p></article>
+        <article><code>verdict<span>EVENT</span></code><p>The colours and reasons, as soon as code has decided them.</p></article>
+        <article><code>done<span>EVENT</span></code><p>The full result. Fetch every step's model, time and cost at <code>/v1/investigations/{id}/trace</code>.</p></article>
+      </div>
+    </section>
+
+    <section class="h-cta" aria-labelledby="cta-h">
+      <h2 class="display" id="cta-h">Build on the evidence. <span>Never on a guess.</span></h2>
+      <p>Building an AI agent? Connect it over MCP or A2A with the same read-only tools.</p>
+      <div class="btns"><a class="btn btn-white" href="agents.html">Connect an agent</a><a class="btn btn-ink" href="https://safeshelf-api-368488022657.asia-south1.run.app/docs" target="_blank" rel="noopener">Interactive OpenAPI</a></div>
+      <img class="fly" src="assets/guide/eddy-flying.webp" alt="" aria-hidden="true">
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="cols home-cols">
+      <div class="brand-col"><a class="logo" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf</a><p>Evidence-backed product checks for shoppers in India, Japan, Australia, Singapore and beyond.</p></div>
+      <div><h4>Product</h4><ul><li><a href="index.html">Trust check</a></li><li><a href="chat.html">Chat</a></li><li><a href="how.html#identity">Product identity</a></li><li><a href="get.html">Get SafeShelf</a></li><li><a href="how.html#where">WhatsApp (soon)</a></li></ul></div>
+      <div><h4>Learn</h4><ul><li><a href="how.html">How it works</a></li><li><a href="results.html">Results</a></li><li><a href="results.html#backtest">SafeShelfBench</a></li><li><a href="index.html#faq">FAQs</a></li></ul></div>
+      <div><h4>Builders</h4><ul><li><a href="agents.html">MCP server</a></li><li><a href="agents.html#rest">REST API</a></li><li><a href="api.html">API docs</a></li></ul></div>
+      <div><h4>Project</h4><ul><li><a href="team.html">Team Hashes</a></li><li><a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a></li><li><a href="../index.html">Judges' page</a></li></ul></div>
+    </div>
+    <div class="foot-bar">
+      <span>Records from CPSC · ACCC · KATS · CAA · CCPA · BIS · BSMI · CPSO · ASEAN · OECD</span>
+      <span>Verdicts are evidence for shoppers, not legal findings. Listings shown are examples.</span>
+      <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
+    </div>
+  </footer>
+</div>
+<script src="site.js?v=20261018b" defer></script>
+<script type="module" src="account.js?v=20261018u"></script>
+<script src="support.js?v=20261018help2" defer></script>
+<script src="api.js?v=20261018a" defer></script>
+</body>
+</html>

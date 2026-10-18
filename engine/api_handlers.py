@@ -38,6 +38,7 @@ from engine import (
     reviews,
     safety,
     supply_chain,
+    support,
     tenancy,
     trace,
     trust,
@@ -484,6 +485,11 @@ async def create_webhook(request: Request, params: dict[str, Any]) -> dict:
     return await run_in_threadpool(webhooks.create, caller.tenant_id, body.get("url") or "", body.get("events") or [])
 
 
+
+@bad_request
+async def support_ask(request: Request, params: dict[str, Any]) -> dict:
+    return await run_in_threadpool(support.ask, await body_of(request))
+
 async def bench_runs(request: Request, params: dict[str, Any]) -> dict:
     runs = []
     for path in sorted((BENCH / "runs").glob("*.json"), reverse=True):
@@ -590,6 +596,7 @@ HANDLERS = {
     "getIncidentSignals": incident_signals,
     "getRedteamRounds": redteam_rounds,
     "runRedteamRound": redteam_round,
+    "askSupport": support_ask,
 }
 HANDLERS = {op: tenant_guard(op, traced(op, handler)) for op, handler in HANDLERS.items()}
 HANDLERS["getTrace"] = tenant_guard("getTrace", get_trace)

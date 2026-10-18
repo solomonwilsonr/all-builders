@@ -20,14 +20,14 @@ RECHECK_SECRET ?= $(shell gcloud secrets describe recheck-token --project $(GCP_
 WEBHOOK_SECRET ?= $(shell gcloud secrets describe webhook-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 FIRECRAWL_SECRET ?= $(shell gcloud secrets describe firecrawl-key --project $(GCP_PROJECT) --format 'value(name)' 2>/dev/null)
 
-.PHONY: test-extension agents demo-pages shops deploy-shops api api-real test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
+.PHONY: api-docs test-extension agents demo-pages shops deploy-shops api api-real test db-up db-down load-data deploy-api deploy-research schedule-recheck bench warm eval-agents eval-owner-help web web-samples deploy-web \
 	test-engine test-sources test-integration test-security migrate source-health bench-evidence bench-identity bench-historical \
-	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery
+	bench-crossborder bench-japac eval-prospective bench-all schedule-watch-recheck check-live export-bigquery promo-video support-kb
 
 web-ext:        ## copy the extension into web/ext/ for "Try a sample" (signed in through the judges' page, no extension sign-in)
 	rm -rf web/ext && mkdir -p web/ext
 	cp extension/manifest.json extension/background.js extension/check.js extension/ops.js extension/panels.js \
-		extension/investigate.js extension/aftercare.js extension/content.js web/ext/
+		extension/investigate.js extension/aftercare.js extension/content.js extension/shelf-sync.js web/ext/
 	cp web/ext-shim/*.js web/ext/
 
 web: web-ext     ## the judges' page on :8095 (calls the live API)
@@ -44,10 +44,21 @@ deploy-apk:     ## the Android APK to a public Cloud Storage bucket (Firebase's 
 	gcloud storage cp web/downloads/*.apk $(APK_BUCKET)/ --content-type=application/vnd.android.package-archive
 	gcloud storage buckets add-iam-policy-binding $(APK_BUCKET) --member=allUsers --role=roles/storage.objectViewer --project $(GCP_PROJECT)
 
-deploy-web: web-ext ## the judges' page to Firebase Hosting, with the latest bench results
+api-docs:       ## the API docs page's endpoint list (web/site/api-endpoints.json), from contracts/openapi.yaml
+	python3 web/build_api_docs.py
+
+support-kb:     ## what the site's Help chat knows (web/site/support-kb.json), from the site pages; run after editing a page
+	python3 web/build_support_kb.py
+
+deploy-web: web-ext support-kb api-docs ## the judges' page to Firebase Hosting, with the latest bench results
 	cp bench/results.json web/data/bench.json && cp bench/agent_eval_results.json web/data/agent_eval.json && \
 		cp bench/catalog_results.json web/data/catalog.json
 	cd web && firebase deploy --only hosting --project $(FIREBASE_PROJECT)
+
+promo-video:    ## the 30-second demo reels (promo/demo-30s.html site style, promo/apple-30s.html keynote style, promo/reel-30s.html product film from the real extension) to promo/out/*.mp4; needs ffmpeg. SCALE=2 for 4K
+	cd promo && npm install --silent && node render.mjs --scale $(or $(SCALE),1)
+	cd promo && node render.mjs --page apple-30s.html --scale $(or $(SCALE),1)
+	cd promo && node render.mjs --page reel-30s.html --scale $(or $(SCALE),1)
 
 test-extension:  ## extension tests (plain Node, no Chrome, no network, no credits)
 	node extension/tests/run_all.mjs
@@ -91,6 +102,7 @@ load-data:      ## CPSC + JAPAC recalls (OECD GlobalRecalls) + India (CCPA, BIS)
 deploy-api:     ## API to Cloud Run: real engine on Cloud SQL (DEPLOY_MOCK=1 for example answers only)
 	rm -rf .build && mkdir -p .build && cp -R api engine contracts .build/ && mkdir -p .build/data && \
 		cp data/bis_mock.json data/authorised_sellers.json data/demo_domains.json data/regional_brands.json data/physical_limits.json data/source_registry_japac.yaml .build/data/ && \
+		cp web/site/support-kb.json .build/data/support_kb.json && \
 		mkdir -p .build/bench/runs && cp bench/results.json .build/bench/ && \
 		(cp bench/runs/*.json .build/bench/runs/ 2>/dev/null || true) && (cp bench/evidence_results.json .build/bench/ 2>/dev/null || true) && \
 		rm -rf .build/api/.venv .build/engine/.venv .build/engine/tests && cp api/Dockerfile .build/Dockerfile

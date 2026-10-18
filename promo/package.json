@@ -1,0 +1,12 @@
+{
+  "name": "safeshelf-promo",
+  "private": true,
+  "type": "module",
+  "description": "Renders demo-30s.html to an MP4, frame by frame",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

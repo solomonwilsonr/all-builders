@@ -34,6 +34,7 @@ BODIES = {
     "addShelfItem": {"product_id": "SS-P-10291"},
     "catalogScan": {"csv_url": "gs://safeshelf-demo/catalog.csv"},
     "startAgentSession": {"mode": "chat", "product_id": "SS-P-10291"},
+    "askSupport": {"question": "How many free checks do I get?"},
 }
 
 

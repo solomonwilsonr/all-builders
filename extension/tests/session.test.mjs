@@ -12,7 +12,9 @@ globalThis.chrome = {
 const jwt = (exp) => `h.${Buffer.from(JSON.stringify({ exp, sub: "u1", email: "ann@example.com", role: "business" })).toString("base64url")}.s`;
 let calls = []; let api401 = 0; let renewStatus = 200;
 globalThis.fetch = async (url, o = {}) => {
-  calls.push(url.includes("securetoken") ? "renew" : `${o.headers?.Authorization} ${url.replace(/^https?:\/\/[^/]+/, "")}`);
+  // Firestore is My Shelf's background sync after sign-in (shelf_sync.test.mjs covers it), not an API call
+  if (!url.startsWith("https://firestore.googleapis.com/"))
+    calls.push(url.includes("securetoken") ? "renew" : `${o.headers?.Authorization} ${url.replace(/^https?:\/\/[^/]+/, "")}`);
   if (url.includes("securetoken")) {
     if (renewStatus !== 200) return { ok: false, status: renewStatus, json: async () => ({}) };
     return { ok: true, status: 200, json: async () => ({ id_token: "id-new", refresh_token: "r-new", expires_in: "3600" }) };
@@ -31,7 +33,8 @@ const handOff = (msg, origin) => new Promise((res) => { if (listeners.ext(msg, {
 // Signed out
 assert.strictEqual((await send({ type: "safeshelf:account" })).result, null);
 await send({ type: "safeshelf:signin" });
-assert.strictEqual(tabs[0], "http://localhost:8095/signin.html?ext=ext-1");
+const { SIGNIN_URL } = await import(new URL("../config.js", import.meta.url));  // local or deployed build
+assert.strictEqual(tabs[0], `${SIGNIN_URL}?ext=ext-1`);
 
 // A session from another site is ignored; malformed or expired tokens are not kept
 assert.strictEqual(await handOff({ type: "safeshelf:session", idToken: jwt(9e9), refreshToken: "r" }, "https://evil.example"), undefined);

@@ -9,10 +9,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261018p">
-<link rel="stylesheet" href="whatsapp.css?v=20261018c">
-<link rel="stylesheet" href="tour.css?v=20261018m">
-<script type="module" src="app.js?v=20261018q"></script>
+<link rel="stylesheet" href="style.css?v=20261018faq2">
+<link rel="stylesheet" href="whatsapp.css?v=20261018e">
+<link rel="stylesheet" href="tour.css?v=20261018o">
+<script type="module" src="app.js?v=20261018rq"></script>
+<link rel="stylesheet" href="site/support.css?v=20261018help5">
+<link rel="stylesheet" href="demo-motion.css?v=20261018a">
+<script src="demo-motion.js?v=20261018a" defer></script>
 </head>
 <body>
 <a class="skip" href="#try">Skip to the demo</a>
@@ -40,7 +43,7 @@
 </section>
 
 <nav class="journey" aria-label="The demo, step by step">
-  <div class="journey-head"><b>The demo in seven steps</b><span class="jroles">I'm a <a href="#try">Shopper</a><a href="#business">Marketplace</a><a href="#regulator">Regulator</a><a href="#developers">Developer</a></span></div>
+  <div class="journey-head"><b>The demo in seven steps</b><span class="jroles">I'm a <a href="#try">Shopper</a><a href="#business">Marketplace</a><a href="#regulator">Regulator</a><a href="#developers">Developer</a><a href="#faq">Judge (FAQ)</a></span></div>
   <ol>
     <li><a href="#try"><span class="jn">1</span><b>Before you buy</b><small>Check a listing</small></a></li>
     <li><a href="#reach"><span class="jn">2</span><b>Reach everyone</b><small>Voice, WhatsApp, Android</small></a></li>
@@ -162,7 +165,12 @@
           </div>
         </div>
         <div class="rwin" id="rwin" hidden>
-          <div class="rbar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><b>Real Chrome</b><span class="rstate" id="rstate">Starting…</span><span class="rtime" id="rtime"></span><button class="rend" type="button" id="remote-end">End session</button></div>
+          <div class="rbar"><span class="lights"><button class="rclose" type="button" id="remote-close" title="Close the browser"><span class="sr">Close the browser</span></button><i></i><i></i></span><b>Real Chrome</b><span class="rstate" id="rstate">Starting…</span><span class="rtime" id="rtime"></span><button class="rend" type="button" id="remote-end">✕ Done, close browser</button></div>
+          <nav class="rprods" aria-label="Open a test product in this browser">
+            <span class="rp-lab">Open a test product</span>
+            <ol class="rp-list" id="rprods"></ol>
+            <p class="rp-exp" id="rp-exp" aria-live="polite">Pick one, then press the blue shield on the page's right edge.</p>
+          </nav>
           <iframe class="rframe" id="rframe" title="A real Chrome browser with the SafeShelf extension" allow="clipboard-read; clipboard-write" src="about:blank"></iframe>
           <p class="rnote">A shared cloud browser: don't sign in to your own shopping accounts here. It closes by itself after 5 minutes.</p>
         </div>
@@ -511,6 +519,79 @@
     </div>
   </section>
 
+  <section class="block" id="faq" aria-labelledby="h-faq">
+    <header class="block-head"><span class="kicker">For the judges</span><h2 id="h-faq">Questions we expect</h2><p>Why we built it, who it helps, what it runs on, and where it still falls short. Pick a topic.</p></header>
+    <div class="faq">
+      <aside class="faq-rail">
+        <div class="faq-tabs" role="tablist" aria-label="FAQ topics">
+          <button type="button" role="tab" id="tab-faq-idea" aria-controls="faq-idea" aria-selected="true"><span class="ft-n">01</span><span class="ft-t"><b>The idea</b><small>What it is and why</small></span><span class="ft-c">4</span></button>
+          <button type="button" role="tab" id="tab-faq-impact" aria-controls="faq-impact" aria-selected="false" tabindex="-1"><span class="ft-n">02</span><span class="ft-t"><b>Social impact</b><small>Who it protects</small></span><span class="ft-c">5</span></button>
+          <button type="button" role="tab" id="tab-faq-stack" aria-controls="faq-stack" aria-selected="false" tabindex="-1"><span class="ft-n">03</span><span class="ft-t"><b>Tech stack</b><small>What it runs on</small></span><span class="ft-c">4</span></button>
+          <button type="button" role="tab" id="tab-faq-limits" aria-controls="faq-limits" aria-selected="false" tabindex="-1"><span class="ft-n">04</span><span class="ft-t"><b>Honesty and limits</b><small>Accuracy, attacks, gaps</small></span><span class="ft-c">5</span></button>
+        </div>
+        <div class="faq-ask">
+          <img src="site/assets/guide/eddy-curious.webp" alt="" width="64" height="64" loading="lazy">
+          <p><b>Not answered here?</b>Eddy knows the whole project and cites its sources.</p>
+          <button class="ask-eddy" type="button" data-ask="I'm a hackathon judge. What is the most important thing to know about SafeShelf?">Ask Eddy <span aria-hidden="true">→</span></button>
+        </div>
+      </aside>
+
+      <div class="faq-panels">
+        <div class="faq-panel" role="tabpanel" id="faq-idea" aria-labelledby="tab-faq-idea">
+          <p class="faq-lede">Recall notices exist. Shoppers just never see them at the moment they buy.</p>
+          <details class="faq-q" open><summary><span class="q-n">01</span><span class="q-t">What problem does SafeShelf solve?</span></summary><div class="faq-a"><p>Product recalls are published as English web pages on regulators' sites, one country at a time. A power bank recalled in the US for fire can still be listed on an Indian or Australian marketplace, under the same model number or a new brand name. SafeShelf checks a listing at the point of purchase and answers two questions with evidence:</p><div class="faq-pair"><div><span class="dot2 red"></span><b>Is it safe?</b>Recalls, hazard reports in buyer reviews, safety marks</div><div><span class="dot2 amber"></span><b>Is it real?</b>Copied photos, an impossible price, a brand-new shop</div></div></div></details>
+          <details class="faq-q"><summary><span class="q-n">02</span><span class="q-t">Why the name, and who is Eddy?</span></summary><div class="faq-a"><p>A shelf is where you keep what you bought; SafeShelf watches it before and after you buy. Eddy is the guide who talks you through the answer, in chat, by voice or on WhatsApp. <b>Eddy explains; code decides.</b></p></div></details>
+          <details class="faq-q"><summary><span class="q-n">03</span><span class="q-t">Why Asia-Pacific first?</span></summary><div class="faq-a"><p>India, Japan, Australia, Singapore and Southeast Asia buy the same mass-market electronics as the US, but most published recall data is American: India has <b>36 notices</b> on file against <b>2,537</b> from the US. SafeShelf loads 8,689 records from 10 regulators and carries a US recall across the border as <i>"recalled abroad, same model"</i>, never as <i>"recalled here"</i>.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">04</span><span class="q-t">What makes it different from asking a chatbot?</span></summary><div class="faq-a"><p>A chatbot can invent a recall or miss one. In SafeShelf, Gemini reads, searches and explains, but plain code sets the colour from the evidence, and only an exact model match inherits a recall. When the evidence is thin it says <b>"Can't tell yet"</b>.</p><div class="faq-vs"><span><b>6/40</b>false alarms, Gemini alone</span><span class="win"><b>2/40</b>false alarms, SafeShelf</span></div></div></details>
+        </div>
+
+        <div class="faq-panel" role="tabpanel" id="faq-impact" aria-labelledby="tab-faq-impact" hidden>
+          <ul class="faq-stats" aria-label="Impact in numbers">
+            <li><b>26</b>languages, spoken or written</li>
+            <li><b>13 s</b>Hindi question to Hindi answer</li>
+            <li><b>22 days</b>median gap before a 2nd country recalls</li>
+            <li><b>10</b>regulators in one check</li>
+          </ul>
+          <details class="faq-q" open><summary><span class="q-n">01</span><span class="q-t">Who does it help?</span></summary><div class="faq-a"><ul class="faq-who"><li><b>Online shoppers</b>buying cheap electronics where recall notices are rare or in another language</li><li><b>Parents</b>buying chargers, heaters and children's products</li><li><b>Migrants and cross-border families</b>ordering for relatives back home</li><li><b>Visually impaired and low-literacy shoppers</b>through large text and the spoken "Ask out loud" mode</li></ul></div></details>
+          <details class="faq-q"><summary><span class="q-n">02</span><span class="q-t">Why does this matter now?</span></summary><div class="faq-a"><blockquote>On 5 May 2026 a power bank ignited in a seat pocket after IndiGo flight 6E-108 landed at Chandigarh; about 200 passengers were evacuated and at least 6 were hurt. No brand or model was named.<cite>The Times of India, citing the DGCA</cite></blockquote><p>Lithium batteries, heaters and children's products cause harm long before a regulator acts. In our early work, a product recalled in one country was recalled in a second a median of 22 days later, and up to 293 days later.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">03</span><span class="q-t">How does it reach people who never read recall notices?</span></summary><div class="faq-a"><p>It answers where people already shop and talk: on the listing (Chrome extension), on WhatsApp (text and voice notes), in an Android app and on the web. Answers can be read aloud in 26 Asia-Pacific languages, and it works with screen readers and the keyboard. See <a href="#reach">step 2</a>.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">04</span><span class="q-t">What happens after someone has already bought it?</span></summary><div class="faq-a"><p>My Shelf keeps watching saved products and shows when a status changes. If something goes wrong, SafeShelf gives safe steps first, then a refund request and a complaint to the right regulator (India NCH 1915, ACCC, Japan's CAA and others), already filled in with the official record. <b>It drafts them; it never sends anything on the shopper's behalf.</b></p></div></details>
+          <details class="faq-q"><summary><span class="q-n">05</span><span class="q-t">Does it help beyond one shopper?</span></summary><div class="faq-a"><p>Yes. The same engine scans a marketplace catalog and says what to do with each finding (stop selling, quarantine, notify buyers): on 500 test listings it found <b>49 of 50</b> planted problems with no wrong findings. Regulators get an evidence pack of products recalled abroad but still sold locally, with a case file per finding. See <a href="#business">step 5</a>.</p></div></details>
+        </div>
+
+        <div class="faq-panel" role="tabpanel" id="faq-stack" aria-labelledby="tab-faq-stack" hidden>
+          <p class="faq-lede">Google Cloud, end to end. One engine serves every channel.</p>
+          <ul class="faq-tiles" aria-label="Tech stack">
+            <li class="tile-ai"><span>AI</span><b>Gemini on Vertex AI</b>3.5 Flash and Flash-Lite read reviews, labels and listings · Live for voice and camera · embeddings match products · Google Search grounding</li>
+            <li class="tile-ai"><span>Agents</span><b>Google ADK</b>Investigate, Shelf Chat and Safer Alternative</li>
+            <li><span>Compute</span><b>Cloud Run</b>FastAPI engine and MCP server in Mumbai (asia-south1) · headless-browser Research Agent · cloud Chrome for "Try it"</li>
+            <li><span>Data</span><b>Cloud SQL</b>PostgreSQL with pgvector: catalog, recalls, reviews, case files</li>
+            <li><span>Web</span><b>Firebase</b>Hosting, Google sign-in, roles in Firestore</li>
+            <li><span>Channels</span><b>Everywhere shoppers are</b>Chrome MV3 · Android · WhatsApp Cloud API · REST, MCP and A2A for agents</li>
+          </ul>
+          <details class="faq-q"><summary><span class="q-n">01</span><span class="q-t">How does one check work, end to end?</span></summary><div class="faq-a"><ol class="faq-flow"><li><b>Read</b>Brand, model, ratings and safety marks, from text and photos</li><li><b>Match</b>The identity engine finds every copy under other names, so their reviews pool</li><li><b>Check</b>Eight agents: recalls, review hazards, safety marks, price, photos, the shop</li><li><b>Verify</b>Is the source official? This exact model, batch and country? Copies count once</li><li><b>Decide</b>Code sets red, amber, green or grey; Gemini explains it with a source per line</li></ol><p>A live check takes a median of <b>6.6 seconds</b>.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">02</span><span class="q-t">Where does the data come from?</span></summary><div class="faq-a"><p>Regulators' own feeds and pages, plus 29,379 real buyer reviews and an 8,470-record Australian energy registry. Sources that block automated access are shown as "couldn't be checked", never as clear.</p><ul class="faq-chips" aria-label="Regulators"><li>CPSC · US</li><li>ACCC · Australia</li><li>KATS · Korea</li><li>CAA · Japan</li><li>CCPA, BIS · India</li><li>BSMI · Taiwan</li><li>CPSO · Singapore</li><li>ASEAN alerts</li><li>OECD GlobalRecalls</li></ul></div></details>
+          <details class="faq-q"><summary><span class="q-n">03</span><span class="q-t">Can other AI shopping assistants use it?</span></summary><div class="faq-a"><p>Yes. Ten read-only tools over MCP, a streaming REST API and an A2A agent card, so an agent buying on someone's behalf can ask the same question. See <a href="#developers">step 6</a> or the <a href="site/api.html">API docs</a>.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">04</span><span class="q-t">Who built it?</span></summary><div class="faq-a"><p>Team Hashes, two builders in a week for the AI Builder Cup 2026, Retail &amp; Commerce: <b>Solomon</b>, the brain (engine, data, API, MCP, WhatsApp, benchmarks) and <b>Seshu</b>, the face (extension, ADK agents, web, voice). All the code is on <a href="https://github.com/solomonwilsonr/all-builders" target="_blank" rel="noopener">GitHub</a>.</p></div></details>
+        </div>
+
+        <div class="faq-panel" role="tabpanel" id="faq-limits" aria-labelledby="tab-faq-limits" hidden>
+          <ul class="faq-stats" aria-label="Measured results">
+            <li><b>2/40</b>false alarms on safe products</li>
+            <li><b>6/25</b>recalls flagged from reviews alone</li>
+            <li><b>21/22</b>live agent test cases pass</li>
+            <li><b>18/18</b>red-team attacks held</li>
+          </ul>
+          <details class="faq-q" open><summary><span class="q-n">01</span><span class="q-t">How accurate is it?</span></summary><div class="faq-a"><p>On 25 real US recalls and 40 never-recalled products, reading only reviews written before each recall, SafeShelf flagged 6 recalls with 2 false alarms. <b>Keyword rules flagged more (11) but raised 11 false alarms.</b> On the recalls we did not tune on, it caught 2 of 9 with no false alarms. The sample is small, and every number is in <a href="site/results.html">Results</a>.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">02</span><span class="q-t">Can it be fooled?</span></summary><div class="faq-a"><p>We attacked it ourselves, with Gemini writing the attacks: fake regulator pages, look-alike model numbers, hidden instructions aimed at AI tools. The red team found two real holes, which we fixed: lightly reworded reposts, and fake-shop notices "for AI shopping assistants" (now 13 of 13 caught, no false alarms on 27,822 real listings). See <a href="#trust">step 7</a>.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">03</span><span class="q-t">Is a green answer a guarantee?</span></summary><div class="faq-a"><p>No. Green means no problems were found in what was checked, and every answer lists what was checked and what could not be. Verdicts are evidence for shoppers, not legal findings; AI findings marked "under review" are not regulatory determinations.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">04</span><span class="q-t">What is real and what is demo?</span></summary><div class="faq-a"><p><b>Real:</b> recalls, reviews and registries. <b>Fictional:</b> Kelvo, SafeVolt, VoltNova, Zorvana and MegaDealz24, so the demo can show every answer without accusing a real seller. Cross-border "still on sale" matches are leads a person has not yet confirmed, so we do not count them as findings.</p></div></details>
+          <details class="faq-q"><summary><span class="q-n">05</span><span class="q-t">How would it be paid for?</span></summary><div class="faq-a"><p>Shoppers use it free. Marketplaces, insurers, payment providers and regulators would pay for catalog scans, purchase risk flags and the recall-check API. Tenant keys, webhooks and usage metering are already built.</p></div></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="end" aria-label="Get SafeShelf">
     <div class="cta">
       <h2>That was all of SafeShelf.</h2>
@@ -536,5 +617,6 @@
     <span>© 2026 Team Hashes · AI Builder Cup 2026</span>
   </div>
 </footer>
+<script src="site/support.js?v=20261018help2" defer></script>
 </body>
 </html>

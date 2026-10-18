@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SafeShelf Keynote Reel</title>
+<!-- The 30-second reel again, in a keynote style: black stage, big tight type revealed a line at a time, one phone
+     floating in the dark, callouts that fly out of it. Same story as demo-30s.html (the recorded fake-shop run,
+     web/samples/fake.json) and the same contract for render.mjs: window.seek(t), window.ready, window.DURATION. -->
+<style>
+:root {
+  --bg: #000; --fg: #f5f5f7; --grey: #86868b; --grey-2: #424245;
+  --blue: #0271e4; --mint: #a2f1a9; --cyan: #5ff0ef;
+  --red: #ff453a; --amber: #ff9f0a; --green: #30d158;
+  --sf: -apple-system, "SF Pro Display", BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+body { font: 26px/1.4 var(--sf); color: var(--fg); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); transform-origin: 0 0; perspective: 2200px; }
+.abs { position: absolute; }
+.center { left: 0; right: 0; text-align: center; }
+.hl { font-weight: 700; letter-spacing: -.045em; line-height: 1.02; }
+.grad { background: linear-gradient(100deg, var(--blue) 0%, var(--cyan) 55%, var(--mint) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.grad-red { background: linear-gradient(100deg, var(--red), var(--amber)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sub { color: var(--grey); font-weight: 600; letter-spacing: -.02em; }
+
+#glow { left: 50%; top: 50%; width: 1400px; height: 1400px; margin: -700px 0 0 -700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(2, 113, 228, .38) 0%, rgba(95, 240, 239, .10) 38%, transparent 66%); }
+
+/* 1 · words */
+.word { top: 410px; font-size: 190px; }
+
+/* the phone */
+#phone { left: 750px; top: 105px; width: 420px; height: 870px; border-radius: 68px; background: #1d1d1f; padding: 13px;
+  box-shadow: inset 0 0 0 2px #3a3a3c, 0 0 0 1px #000, 0 60px 140px rgba(0, 0, 0, .8), 0 0 120px rgba(2, 113, 228, .18); transform-style: preserve-3d; }
+.screen { position: relative; width: 100%; height: 100%; border-radius: 56px; overflow: hidden; background: #fff; color: #001123; }
+.island { position: absolute; left: 50%; top: 13px; width: 120px; height: 34px; margin-left: -60px; border-radius: 20px; background: #000; z-index: 5; }
+.status { position: absolute; left: 0; right: 0; top: 16px; padding: 0 34px; display: flex; justify-content: space-between; font: 600 17px var(--sf); z-index: 4; }
+.view { position: absolute; inset: 0; padding-top: 62px; }
+
+/* view A: the listing */
+#vA .bar { background: #e4402a; color: #fff; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
+#vA .bar b { font: 700 22px var(--sf); }
+#vA .bar span { font: 700 11px var(--sf); background: #ffe04a; color: #7a1c10; padding: 4px 8px; border-radius: 4px; }
+#vA svg { display: block; width: 100%; height: 300px; background: #fbfcfd; }
+#vA .info { padding: 16px 22px; }
+#vA .t { font: 600 21px/1.25 var(--sf); }
+#vA .r { color: #5d6874; font-size: 15px; margin-top: 6px; } #vA .r i { color: #f2a100; font-style: normal; }
+#vA .m { color: #5d6874; font-size: 15px; margin-top: 12px; } #vA .m em { color: #c40000; font-style: normal; font-weight: 700; }
+#vA .p { font: 700 46px var(--sf); letter-spacing: -.02em; }
+#vA .u { background: #fff3cd; color: #7a4b00; font-size: 14px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
+#vA .go { position: absolute; left: 22px; right: 22px; bottom: 34px; background: var(--blue); color: #fff; text-align: center; font: 600 20px var(--sf); padding: 17px 0; border-radius: 16px; }
+#tap { left: 210px; top: 795px; width: 60px; height: 60px; margin: -30px; border-radius: 50%; background: rgba(255, 255, 255, .7); }
+
+/* view B: the check */
+#vB { background: #f5f5f7; padding-left: 18px; padding-right: 18px; }
+.vb-head { display: flex; align-items: center; gap: 10px; font: 700 26px var(--sf); letter-spacing: -.02em; padding: 10px 6px 14px; }
+.vb-head svg { width: 30px; height: 30px; }
+.vb-head small { margin-left: auto; font: 500 14px var(--sf); color: #6e6e73; font-variant-numeric: tabular-nums; }
+.vb-card { background: #fff; border-radius: 18px; padding: 4px 16px; }
+.vrow { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid #e5e5ea; align-items: start; }
+.vrow:last-child { border-bottom: 0; }
+.vrow .d { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; }
+.vrow .d svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+.vrow b { display: block; font: 600 17px var(--sf); }
+.vrow span { display: block; font-size: 14px; color: #6e6e73; line-height: 1.3; }
+.ok .d { background: var(--green); } .red .d { background: var(--red); } .amber .d { background: var(--amber); }
+#vverdict { margin-top: 14px; border-radius: 18px; padding: 16px 18px; background: #ff3b30; color: #fff; }
+#vverdict b { display: block; font: 700 30px var(--sf); letter-spacing: -.02em; }
+#vverdict span { font-size: 14px; opacity: .9; }
+
+/* view C: Eddy */
+#vC { background: #fff; padding: 62px 18px 0; }
+.vc-head { display: flex; align-items: center; gap: 12px; padding: 8px 4px 16px; border-bottom: 1px solid #e5e5ea; }
+.vc-head img { width: 44px; height: 44px; border-radius: 50%; background: #e8f2fd; }
+.vc-head b { font: 600 19px var(--sf); } .vc-head small { display: block; color: #6e6e73; font-size: 13px; }
+.bq { margin: 22px 0 0 auto; width: fit-content; max-width: 300px; background: var(--blue); color: #fff; padding: 12px 16px; border-radius: 20px 20px 6px 20px; font-size: 17px; }
+.ba { position: relative; margin-top: 16px; background: #e9e9eb; border-radius: 20px 20px 20px 6px; height: 196px; width: 330px; }
+.ba p { position: absolute; left: 16px; right: 16px; top: 12px; margin: 0; font-size: 18px; line-height: 1.38; }
+.ba em { position: absolute; left: 16px; bottom: -26px; font: 600 12px var(--sf); color: var(--blue); font-style: normal; letter-spacing: .06em; }
+
+/* callouts */
+.co { width: 560px; }
+.co b { display: block; font: 700 54px/1.05 var(--sf); letter-spacing: -.035em; }
+.co span { display: block; margin-top: 10px; font: 600 28px/1.25 var(--sf); color: var(--grey); letter-spacing: -.015em; }
+.co.l { left: 140px; text-align: right; } .co.r { left: 1220px; }
+.co i { position: absolute; top: 30px; height: 2px; width: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5)); }
+.co.l i { left: 590px; } .co.r i { right: 590px; transform: scaleX(-1); transform-origin: right; }
+
+/* greetings behind the phone */
+.hello { top: 330px; font-size: 300px; font-weight: 700; letter-spacing: -.05em; color: #fff; white-space: nowrap; }
+
+/* stats */
+.stat { top: 360px; width: 560px; text-align: center; }
+.stat b { display: block; font: 700 170px/1 var(--sf); letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: 18px; font: 600 34px var(--sf); color: var(--grey); letter-spacing: -.02em; }
+
+#logo svg { width: 120px; height: 120px; margin: 0 auto; display: block; filter: drop-shadow(0 0 60px rgba(2, 113, 228, .7)); }
+#hud { position: fixed; left: 12px; bottom: 10px; font: 12px ui-monospace, Menlo, monospace; color: #555; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="abs" id="glow"></div>
+
+  <!-- 1 · three words -->
+  <div class="abs center hl word" id="w0">Too cheap.</div>
+  <div class="abs center hl word" id="w1">Too urgent.</div>
+  <div class="abs center hl word" id="w2">Too good to be true?</div>
+
+  <!-- 2 · meet -->
+  <div class="abs center hl" id="meet" style="top:40px;font-size:120px"><span class="grad">Meet SafeShelf.</span></div>
+  <div class="abs center sub" id="meetsub" style="top:178px;font-size:40px">Check any listing before you pay.</div>
+
+  <!-- greetings, behind the phone -->
+  <div class="abs center hello" id="h0" lang="hi">नमस्ते</div>
+  <div class="abs center hello" id="h1" lang="ja">こんにちは</div>
+  <div class="abs center hello" id="h2" lang="ta">வணக்கம்</div>
+  <div class="abs center hello" id="h3">Hello</div>
+
+  <!-- callouts -->
+  <div class="abs co l" id="c0" style="top:250px"><b>Official recalls.</b><span>Six JAPAC regulators. No notice.</span><i></i></div>
+  <div class="abs co r" id="c1" style="top:250px"><b>The price.</b><span>₹299 against a genuine ₹1,399.</span><i></i></div>
+  <div class="abs co l" id="c2" style="top:610px"><b>The shop.</b><span>Website registered 21 days ago.</span><i></i></div>
+  <div class="abs co r" id="c3" style="top:610px"><b>Hidden AI tricks.</b><span>Text telling AI to call it safe. Caught.</span><i></i></div>
+
+  <div class="abs" id="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="status"><span>9:41</span><span>5G ▮▮▮</span></div>
+      <div class="view" id="vA">
+        <div class="bar"><b>MegaDealz24</b><span>UP TO 90% OFF</span></div>
+        <svg viewBox="0 0 240 200"><rect x="68" y="34" width="104" height="104" rx="20" fill="#f4f6f8" stroke="#2b3440" stroke-width="3"/><rect x="98" y="62" width="44" height="10" rx="5" fill="#2b3440"/><rect x="98" y="82" width="44" height="10" rx="5" fill="#2b3440"/><path d="M104 138v16M136 138v16" stroke="#2b3440" stroke-width="6" stroke-linecap="round"/><text x="120" y="122" text-anchor="middle" font-size="12" font-weight="700" fill="#2b3440" font-family="Helvetica, Arial">Kelvo</text></svg>
+        <div class="info">
+          <div class="t">65W Super Fast Charger - Kelvo CX-65 Original</div>
+          <div class="r"><i>★★★★★</i> 4.9 · 52 ratings</div>
+          <div class="m"><em>-90%</em> M.R.P. <s>₹2,999</s></div>
+          <div class="p">₹299</div>
+          <div class="u">⚡ Only 3 left! 147 people viewing</div>
+        </div>
+        <div class="go">Check with SafeShelf</div>
+        <div class="abs" id="tap"></div>
+      </div>
+      <div class="view" id="vB">
+        <div class="vb-head"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>SafeShelf<small id="vtimer">0.0 s</small></div>
+        <div class="vb-card" id="vrows"></div>
+        <div id="vverdict"><b>Not real.</b><span>Don’t buy · every line has its source</span></div>
+      </div>
+      <div class="view" id="vC">
+        <div class="vc-head"><img src="../web/site/assets/eddy-face.webp" alt=""><div><b>Eddy</b><small>SafeShelf · 26 languages</small></div></div>
+        <div class="bq">Is this ₹299 charger safe?</div>
+        <div class="ba" id="ba"><em id="balang">ENGLISH</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · verdict -->
+  <div class="abs center hl" id="nr" style="top:330px;font-size:260px"><span class="grad-red">Not real.</span></div>
+  <div class="abs center sub" id="nrsub" style="top:640px;font-size:52px">Caught in 3.6 seconds.</div>
+
+  <!-- 5 · language headline -->
+  <div class="abs center hl" id="lang" style="top:46px;font-size:92px">Ask in <span class="grad">your language.</span></div>
+
+  <!-- 6 · stats -->
+  <div class="abs stat" id="s0" style="left:120px"><b class="grad" id="n0">0</b><span>official recalls</span></div>
+  <div class="abs stat" id="s1" style="left:680px"><b class="grad" id="n1">0</b><span>languages</span></div>
+  <div class="abs stat" id="s2" style="left:1240px"><b class="grad" id="n2">0</b><span>seconds to a verdict</span></div>
+
+  <!-- 7 · end -->
+  <div class="abs center" id="logo" style="top:250px"><svg viewBox="0 0 32 32"><path d="M4 8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8c0 7-5.5 12-12 14C9.5 28 4 23 4 16z" fill="#0271E4"/><path id="tick" d="m10.5 16 4 4 7-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="20" stroke-dashoffset="20"/></svg></div>
+  <div class="abs center hl" id="e1" style="top:420px;font-size:150px">SafeShelf.</div>
+  <div class="abs center hl" id="e2" style="top:600px;font-size:72px"><span class="grad">Check before you pay.</span></div>
+  <div class="abs center sub" id="e3" style="top:760px;font-size:30px">Free on the web · shelf2026-3656b.web.app</div>
+</div>
+<div id="hud"></div>
+
+<script>
+const DURATION = 30;
+const ROWS = [
+  ["ok",    "Listing read",      "Model CX-65"],
+  ["ok",    "Official recalls",  "6 countries · no notice"],
+  ["red",   "Price",             "₹299 vs genuine ₹1,399"],
+  ["red",   "Shop age",          "Registered 21 days ago"],
+  ["red",   "Hidden AI text",    "Tells AI it’s safe · ignored"],
+  ["amber", "Buyer reports",     "6 melted · 1 sparks"],
+];
+const ROW_T0 = 9.9, ROW_GAP = .85;
+const CALLOUT_ROW = [1, 2, 3, 4];         // callout i lands with this row
+const LINES = [
+  ["ENGLISH", "en", "Don’t buy. The price is far below the real one, and the shop is three weeks old."],
+  ["हिन्दी",  "hi", "मत खरीदिए। कीमत असली कीमत से बहुत कम है, और दुकान सिर्फ़ तीन हफ़्ते पुरानी है।"],
+  ["日本語",  "ja", "買わないでください。価格は正規品よりはるかに安く、ショップは開設3週間です。"],
+  ["தமிழ்",   "ta", "வாங்க வேண்டாம். விலை உண்மை விலையை விட மிகக் குறைவு; கடை மூன்று வாரம் மட்டுமே பழையது."],
+];
+const ICON = { ok: '<path d="m6 12.5 4 4 8-9"/>', red: '<path d="M7 7l10 10M17 7 7 17"/>', amber: '<path d="M12 6v7M12 17.5v.5"/>' };
+
+const $ = (id) => document.getElementById(id);
+$("vrows").innerHTML = ROWS.map(([tone, b, s], i) =>
+  `<div class="vrow ${tone}" id="v${i}"><div class="d"><svg viewBox="0 0 24 24">${ICON[tone]}</svg></div><div><b>${b}</b><span>${s}</span></div></div>`).join("");
+$("ba").insertAdjacentHTML("afterbegin", LINES.map(([, l, s], i) => `<p id="b${i}" lang="${l}">${s}</p>`).join(""));
+
+// ---------- timing helpers ----------
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const out3 = (x) => 1 - Math.pow(1 - x, 3);
+const out5 = (x) => 1 - Math.pow(1 - x, 5);
+const inOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const lerp = (a, b, x) => a + (b - a) * x;
+
+function put(el, { o = 1, x = 0, y = 0, s = 1, rx = 0, ry = 0, blur = 0 } = {}) {
+  el.style.opacity = o;
+  el.style.transform = `translate(${x}px, ${y}px) scale(${s}) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  el.style.filter = blur > .05 ? `blur(${blur}px)` : "";
+  el.style.visibility = o <= .001 ? "hidden" : "visible";
+}
+// the keynote reveal: rise a little, sharpen from a blur; leave by blurring out
+function reveal(el, t, a, b, { dist = 40, fin = .7, fout = .45, s0 = 1 } = {}) {
+  const i = out5(prog(t, a, a + fin)), o = prog(t, b - fout, b);
+  put(el, { o: Math.min(i, 1 - o), y: (1 - i) * dist, blur: (1 - i) * 18 + o * 18, s: lerp(s0, 1, i) * (1 + o * .04) });
+}
+
+// ---------- the frame ----------
+function render(t) {
+  // the glow breathes, warms to red on the verdict
+  const red = Math.min(prog(t, 16.6, 17.2), 1 - prog(t, 19.2, 19.8));
+  $("glow").style.background = red > 0
+    ? `radial-gradient(circle, rgba(255,69,58,${.36 * red}) 0%, rgba(255,159,10,${.1 * red}) 38%, transparent 66%)`
+    : "";
+  put($("glow"), { o: Math.min(prog(t, 4.6, 6.5), 1 - prog(t, 29.6, 30)) * .9 + red * .1, s: 1 + .05 * Math.sin(t * 1.3) });
+
+  // 1 · words (0–4.4)
+  reveal($("w0"), t, .2, 1.45);
+  reveal($("w1"), t, 1.45, 2.7);
+  reveal($("w2"), t, 2.7, 4.6, { fin: .8 });
+
+  // 2 · meet (4.6–9.4) — the phone rises out of the dark and tilts flat
+  reveal($("meet"), t, 4.7, 9.4, { s0: .96 });
+  reveal($("meetsub"), t, 5.2, 9.4);
+  const rise = out3(prog(t, 4.8, 6.6));
+  const lift = inOut(prog(t, 9.0, 9.8));            // phone settles to centre for the check
+  const back = inOut(prog(t, 16.5, 17.1)), ret = inOut(prog(t, 19.4, 20.2)), gone = inOut(prog(t, 23.6, 24.3));
+  put($("phone"), {
+    o: Math.min(prog(t, 4.8, 5.6), 1 - gone) * lerp(1, .12, back * (1 - ret)),
+    y: (1 - rise) * 700 + lerp(200, 0, lift) + ret * 120 + gone * 120,
+    rx: (1 - rise) * 38,
+    ry: Math.sin(t * .6) * 4 * (1 - back),
+    s: lerp(.92, 1, rise) * lerp(1, .82, back * (1 - ret)) * (1 - gone * .1),
+  });
+  const tp = prog(t, 8.2, 8.8);
+  put($("tap"), { o: tp > 0 && tp < 1 ? 1 - tp : 0, s: .4 + tp * 1.4 });
+  $("vA").querySelector(".go").style.transform = `scale(${t > 8.2 && t < 8.45 ? .96 : 1})`;
+
+  // screens: listing → check (9.1) → chat (19.6)
+  const toB = prog(t, 9.0, 9.4), toC = prog(t, 19.6, 20.0);
+  $("vA").style.opacity = 1 - toB;
+  $("vB").style.opacity = toB * (1 - toC);
+  $("vC").style.opacity = toC;
+
+  // 3 · the check (9.9–16.4)
+  const run = prog(t, 9.6, ROW_T0 + ROWS.length * ROW_GAP);
+  $("vtimer").textContent = run < 1 ? `${(run * 3.6).toFixed(1)} s` : "3.6 s";
+  ROWS.forEach((_, i) => {
+    const a = ROW_T0 + i * ROW_GAP, e = out3(prog(t, a, a + .4));
+    put($(`v${i}`), { o: e, y: (1 - e) * 14 });
+  });
+  const vv = out5(prog(t, 15.3, 15.8));
+  put($("vverdict"), { o: vv, s: lerp(.9, 1, vv), y: (1 - vv) * 20 });
+  CALLOUT_ROW.forEach((r, i) => {
+    const a = ROW_T0 + r * ROW_GAP + .1, el = $(`c${i}`);
+    const side = el.classList.contains("l") ? -1 : 1;
+    const e = out5(prog(t, a, a + .7)), o = prog(t, 16.0, 16.5);
+    put(el, { o: Math.min(e, 1 - o), x: (1 - e) * -side * 60, blur: (1 - e) * 14 + o * 14 });
+    el.querySelector("i").style.width = `${out3(prog(t, a + .2, a + .8)) * 90}px`;
+  });
+
+  // 4 · verdict (16.8–19.5)
+  reveal($("nr"), t, 16.8, 19.5, { s0: 1.25, fin: .6, dist: 0 });
+  reveal($("nrsub"), t, 17.5, 19.5);
+
+  // 5 · Eddy (19.6–24.2): greetings drift behind the phone, the answer changes language
+  reveal($("lang"), t, 19.8, 24.0);
+  for (let i = 0; i < 4; i++) {
+    const a = 20.0 + i * .95, el = $(`h${i}`);
+    const o = Math.min(prog(t, a, a + .35), 1 - prog(t, a + .75, a + 1.1)) * .14;
+    put(el, { o, x: lerp(80, -80, prog(t, a, a + 1.1)), blur: 2 });
+  }
+  const li = clamp(Math.floor((t - 20.6) / .8), 0, LINES.length - 1);
+  $("balang").textContent = LINES[li][0];
+  LINES.forEach((_, i) => {
+    const a = 20.6 + i * .8, last = i === LINES.length - 1;
+    put($(`b${i}`), { o: Math.min(prog(t, a, a + .2), last ? 1 : 1 - prog(t, a + .8, a + .95)), y: (1 - out3(prog(t, a, a + .3))) * 10 });
+  });
+
+  // 6 · stats (24.2–27.2), counting up
+  [[8689, 0], [26, 0], [3.6, 1]].forEach(([n, dp], i) => {
+    const a = 24.3 + i * .25;
+    reveal($(`s${i}`), t, a, 27.3, { dist: 60 });
+    const v = n * out3(prog(t, a, a + 1.3));
+    $(`n${i}`).textContent = dp ? v.toFixed(dp) : Math.round(v).toLocaleString("en-IN");
+  });
+
+  // 7 · end (27.3–30)
+  const lg = out5(prog(t, 27.3, 28.0));
+  put($("logo"), { o: lg, s: lerp(.6, 1, lg), blur: (1 - lg) * 12 });
+  $("tick").style.strokeDashoffset = 20 * (1 - out3(prog(t, 27.7, 28.3)));
+  reveal($("e1"), t, 27.6, 31);
+  reveal($("e2"), t, 28.1, 31);
+  reveal($("e3"), t, 28.6, 31);
+}
+
+// ---------- playback ----------
+const params = new URLSearchParams(location.search);
+const stage = $("stage");
+function fit() {
+  if (params.has("render")) return;
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `scale(${k})`;
+  stage.style.left = `${(innerWidth - 1920 * k) / 2}px`;
+  stage.style.top = `${(innerHeight - 1080 * k) / 2}px`;
+}
+addEventListener("resize", fit); fit();
+
+window.DURATION = DURATION;
+window.seek = (t) => render(t);
+window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map((im) => im.decode().catch(() => {}))));
+
+if (!params.has("render")) {
+  const loop = params.get("loop") !== "0";
+  let start = performance.now() - (parseFloat(params.get("t")) || 0) * 1000, paused = null;
+  addEventListener("keydown", (e) => {
+    if (e.code !== "Space") return;
+    if (paused === null) paused = performance.now();
+    else { start += performance.now() - paused; paused = null; }
+  });
+  window.ready.then(() => requestAnimationFrame(function tick(now) {
+    let t = ((paused ?? now) - start) / 1000;
+    if (t >= DURATION) { if (loop) { start = now; t = 0; } else t = DURATION; }
+    render(t);
+    $("hud").textContent = `${t.toFixed(2)} s · space to pause`;
+    requestAnimationFrame(tick);
+  }));
+} else {
+  $("hud").remove();
+  render(0);
+}
+</script>
+</body>
+</html>

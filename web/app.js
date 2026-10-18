@@ -9,8 +9,8 @@ import { auth, authFetch, quota, requireSignIn } from "./auth.js?v=20261018u";
 import { setAddress, startClock } from "./desk.js?v=20261017j";
 import { BROWSER_URL } from "./browser-config.js?v=20261017n";
 import { setUpRoles } from "./roles.js?v=20261018j";
-import { setUpWhatsApp } from "./whatsapp.js?v=20261018c";
-import { setUpTour } from "./tour.js?v=20261018m";
+import { setUpWhatsApp } from "./whatsapp.js?v=20261018e";
+import { setUpTour } from "./tour.js?v=20261018o";
 import { setUpJourney } from "./journey.js?v=20261018j";
 
 
@@ -337,6 +337,26 @@ async function setUpSamples() {
         shopUrl ? el("a", { className: "lu-act", href: shopUrl, target: "_blank", rel: "noopener", textContent: "Shop page ↗", title: "Open the test shop page in your own browser (needs the SafeShelf extension)" }) : null);
       lineup.append(el("li", {}, el("div", { className: `lu lu-${tone}` }, main, acts)));
     });
+    // the same seven as a row inside the real browser's window, so a judge can hop between them without scrolling
+    const rp = document.getElementById("rprods");
+    if (rp && openInReal) {
+      const exp = document.getElementById("rp-exp");
+      presets.forEach((p, i) => {
+        const shopUrl = shops && p.shop ? `${shops}/${p.shop}.html` : null;
+        if (!shopUrl) return;
+        const tone = p.control ? "green" : p.expect.overall[0];
+        const label = p.expect.label.replace(/^\P{L}+/u, "");
+        const b = el("button", { type: "button", className: `rp rp-${tone}`, title: `${p.name}. Right answer: ${label}` },
+          el("span", { className: "rp-n", "aria-hidden": "true", textContent: p.control ? "✓" : String(i + 1) }),
+          el("span", { textContent: p.name }));
+        b.onclick = () => {
+          rp.querySelectorAll("button").forEach((x) => x.setAttribute("aria-current", String(x === b)));
+          exp.replaceChildren(el("b", { textContent: `${i + 1} of ${presets.length}: ${p.name}.` }), ` Right answer: `, el("span", { className: `rp-ans rp-${tone}`, textContent: label }), ". Press the blue shield on the page's right edge.");
+          openInReal(shopUrl);
+        };
+        rp.append(el("li", {}, b));
+      });
+    }
     // keep the lineup in step with whichever tab is open
     new MutationObserver(() => tabs.forEach((t, i) => lineup.children[i].querySelector(".lu-main").setAttribute("aria-pressed", t.getAttribute("aria-selected"))))
       .observe(list, { subtree: true, attributes: true, attributeFilter: ["aria-selected"] });
@@ -406,7 +426,9 @@ function setUpRemote() {
     $("rwin").hidden = true;
     mac.classList.remove("remote");
     $("choose-msg").textContent = text || "";
-    if (panel.dataset.mode === "real") mode("choose");
+    $("rtime").classList.remove("low");
+    document.querySelectorAll("#rprods button").forEach((b) => b.removeAttribute("aria-current"));
+    if (panel.dataset.mode === "real") { mode("choose"); panel.scrollIntoView({ behavior: "smooth", block: "start" }); }
     left();
   };
   // a session starts on the SafeShelf test shops, or on one test product's page (`open`)
@@ -431,21 +453,25 @@ function setUpRemote() {
       $("rframe").contentWindow?.postMessage({ type: "open", url }, origin);
       mac.scrollIntoView({ behavior: "smooth", block: "start" });
     } else if (panel.dataset.mode === "real") {
-      $("rstate").textContent = "Starting… it opens on the test shops";
+      startAt = url; // still starting: it opens on this product once Chrome is up
+      $("rstate").textContent = "Starting… then opening your pick";
     } else start(url);
   };
+  $("remote-close").onclick = () => $("remote-end").click();
   $("remote-end").onclick = () => { $("rframe").contentWindow?.postMessage({ type: "end" }, origin); end("Session ended."); };
   $("mode-back").onclick = () => { if (panel.dataset.mode === "real") $("remote-end").click(); else mode("choose"); };
   addEventListener("message", async (e) => {
     if (e.origin !== origin) return;
     if (e.data?.type === "safeshelf-browser:loaded") {
-      try { $("rframe").contentWindow.postMessage({ type: "start", token: await auth.currentUser.getIdToken(), open: startAt }, origin); }
+      try { $("rframe").contentWindow.postMessage({ type: "start", token: await auth.currentUser.getIdToken(), open: startAt }, origin); startAt = ""; }
       catch (_) { end("Sign in again, then start a new session."); }
     }
     if (e.data?.type === "safeshelf-browser:ready") {
       $("rstate").textContent = "Live";
+      // a pick made after "loaded" but before "ready" was not in the start message
+      if (startAt) { $("rframe").contentWindow?.postMessage({ type: "open", url: startAt }, origin); startAt = ""; }
       let leftS = Number(e.data.seconds) || 300;
-      const draw = () => { $("rtime").textContent = `${Math.floor(leftS / 60)}:${String(leftS % 60).padStart(2, "0")} left`; };
+      const draw = () => { $("rtime").textContent = `${Math.floor(leftS / 60)}:${String(leftS % 60).padStart(2, "0")} left`; $("rtime").classList.toggle("low", leftS <= 30); };
       draw();
       timer = setInterval(() => { leftS -= 1; if (leftS <= 0) { end("The 5 minutes are up. Start another session if you have one left."); return; } draw(); }, 1000);
     }
@@ -588,6 +614,38 @@ function setUpTabs() {
   };
   addEventListener("hashchange", follow);
   follow();
+  setUpTryDock();
+}
+
+// --- Once the three ways in scroll off the top, the same three come back as icons on the left ---
+function setUpTryDock() {
+  const row = document.querySelector(".trytabs");
+  const block = row?.closest(".block");
+  if (!row || !block) return;
+  const dock = document.createElement("nav");
+  dock.className = "trydock";
+  dock.setAttribute("aria-label", "Ways to check a listing");
+  const mirrors = [...row.querySelectorAll("[role=tab]")].map((tab) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.title = tab.querySelector(".tt-t b")?.textContent || "";
+    b.setAttribute("aria-label", b.title);
+    b.append(tab.querySelector(".tt-i").cloneNode(true));
+    b.onclick = () => { tab.click(); row.scrollIntoView({ behavior: "smooth", block: "start" }); };
+    dock.append(b);
+    return [tab, b];
+  });
+  document.body.append(dock);
+  const sync = () => mirrors.forEach(([tab, b]) => { b.hidden = tab.hidden; b.setAttribute("aria-current", String(tab.getAttribute("aria-selected") === "true")); });
+  new MutationObserver(sync).observe(row, { subtree: true, attributes: true, attributeFilter: ["aria-selected", "hidden"] });
+  sync();
+  const update = () => {
+    const r = row.getBoundingClientRect(), s = block.getBoundingClientRect();
+    dock.classList.toggle("on", r.bottom < 80 && s.bottom > innerHeight * 0.4);
+  };
+  addEventListener("scroll", update, { passive: true });
+  addEventListener("resize", update);
+  update();
 }
 
 // --- The site's top bar: the phone menu, and the bar's border once the page scrolls ---

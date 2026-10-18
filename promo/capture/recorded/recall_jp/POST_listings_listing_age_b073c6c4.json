@@ -1,0 +1,18 @@
+{
+ "status": 200,
+ "body": {
+  "verdict": "unknown",
+  "headline": "Listing age not available",
+  "tone": "none",
+  "listed_on": null,
+  "age_days": null,
+  "text": "This page does not show when the product was first listed.",
+  "basis": "none",
+  "reasons": [
+   "No usable \"Date First Available\" on the page, and no review dates to go by"
+  ],
+  "policy_version": "listing-age-v1",
+  "label": "The age of this product listing (its \"Date First Available\"), not the seller's: marketplaces do not publish when a seller joined.",
+  "brand": null
+ }
+}

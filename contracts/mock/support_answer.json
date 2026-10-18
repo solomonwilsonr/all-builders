@@ -1,0 +1,9 @@
+{
+ "answer": "As a guest you get 1 live check on this browser, plus six sample listings with known answers. Sign in with Google or email for 5 live checks a day.",
+ "kind": "answered",
+ "sources": [
+  {"id": "S47", "title": "Signing in, guest checks and limits", "page": "Home", "url": "index.html"}
+ ],
+ "handoff": null,
+ "model_version": null
+}

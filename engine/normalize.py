@@ -19,6 +19,7 @@ MODEL_TOKEN = re.compile(
     r"\b[A-Za-z]{1,6}-?\d{2,6}[A-Za-z0-9-]{0,10}\b"  # A1366, CX-65, VN-65PD, RS76CG8003S9HL
     r"|\b[A-Za-z]{1,6}-[A-Za-z]{0,2}\d{1,6}[A-Za-z0-9]{0,4}\b"  # OD-B7
     r"|\b\d{2,5}[A-Za-z]{1,3}\d{0,3}\b"
+    r"|\b[A-Za-z]{1,3}\d(?:PRO|MAX|PLUS|LITE|MINI|ULTRA)\b"  # W5PRO (the CAA notice's 型番), X1MAX
 )
 
 

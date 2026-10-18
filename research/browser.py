@@ -24,6 +24,7 @@ from playwright.async_api import Page, async_playwright
 
 from engine.agents.guard import BLOCKED_HREF, BLOCKED_TEXT
 
+MAX_NOTICES = 4  # notices opened per site at most, within its time budget
 PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "project-03d8d835-d5c5-4ad4-bf8")
 READ_MODELS = ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-3.5-flash-lite"]
 # Computer use answers on Vertex with these (checked 12 Oct); 3.8-flash sometimes returns 500, so the next one tries.
@@ -175,8 +176,13 @@ Links:
                   "model": read.get("model")})
     matches = [{**m, "url": links[m["link"]]["href"] if 0 <= m.get("link", -1) < len(links) else None}
                for m in read.get("matches", []) if m.get("covers_this_model") in ("yes", "maybe")]
-    pick = read.get("open_link", -1)
-    if 0 <= pick < len(links) and not BLOCKED_HREF.search(links[pick]["href"]):
+    # Titles rarely name the model, so "can't tell from the titles" is exactly when notices must be opened (18 Oct:
+    # Gemini picked none for Anker A1263, and the CPSC notice naming it was the fourth result). Gemini's pick first,
+    # then the other possible ones, until a notice names the model.
+    picks = [read.get("open_link", -1)] + [m.get("link", -1) for m in read.get("matches", [])
+                                            if m.get("covers_this_model") in ("yes", "maybe")]
+    picks = [i for i in dict.fromkeys(picks) if 0 <= i < len(links) and not BLOCKED_HREF.search(links[i]["href"])]
+    for pick in picks[:MAX_NOTICES]:
         await page.goto(links[pick]["href"], wait_until="domcontentloaded", timeout=30000)
         await page.wait_for_timeout(2000)
         steps.append({"action": "open", "narration": f"Opened the notice \"{links[pick]['text'][:80]}\"",
@@ -192,6 +198,8 @@ Notice text:
         if notice.get("covers_this_model") in ("yes", "maybe"):
             matches.insert(0, {**{k: notice.get(k) for k in ("title", "date", "models_named", "hazard", "remedy",
                                                                "covers_this_model")}, "url": page.url})
+        if notice.get("covers_this_model") == "yes":
+            break
     return {"status": "found" if matches else "not_found", "query": query, "matches": matches[:5]}
 
 

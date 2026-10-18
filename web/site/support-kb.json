@@ -1,0 +1,369 @@
+{
+ "about": "What the SafeShelf site's Help chat knows. Made by web/build_support_kb.py; do not edit.",
+ "chunks": [
+  {
+   "id": "S1",
+   "page": "Home",
+   "title": "Check any listing before you pay. Without ten open tabs.",
+   "url": "index.html",
+   "text": "J Built for JAPAC · AI Builder Cup 2026\nCheck any listing before you pay. Without ten open tabs.\nOfficial recalls, buyer hazard reports, copied photos, impossible prices and brand-new shops, in one check. Ask Eddy about it in your language, and see the source behind every line.\nTry it live Get SafeShelf\nFree on the web today · 8,689 official recalls · 26 languages · no card, no install"
+  },
+  {
+   "id": "S2",
+   "page": "Home",
+   "title": "Checked against the public records of 10 regulators",
+   "url": "index.html",
+   "text": "Works on\n.in Flipkart .com .co.jp .com.au .sg .com\nChecked against the public records of 10 regulators\nCPSC US\nACCC AU\nKATS KR\nCAA JP\nCCPA IN\nBIS IN\nBSMI TW\nCPSO SG\nASEAN SEA\nOECD GLOBAL"
+  },
+  {
+   "id": "S3",
+   "page": "Home",
+   "title": "One check for recalls, copies, prices and fake shops.",
+   "url": "index.html",
+   "text": "One check for recalls, copies, prices and fake shops.\nThe product is matched to its exact model first, then checked against official records, buyer reports and the listing itself. Code sets the colour, and every line cites its evidence.\nExact model, not a look-alike Matched in about 27,800 products, with its rebranded twins +\nProducts on file 27,800\nSame brand ✓\nSame family ✓\nExact model 1\nLive check About 7 seconds, first colours in about 3 +\n~7 s Checking\n01 Read the page\n02 Find the product\n~3s First colours\n~7s Sourced verdict\nYour shelf Products you checked, watched after you buy +\n! CX-65 Charger amazon.in · MegaDealz24 Careful\n! NEWDERY power bank recalled abroad, same model Concern\n✓ Electric kettle flipkart.com All clear\n? Hair dryer amazon.com.au Not enough\nSafety marks Checked against the registry, not the photo +\nISI Registered BIS · India\nPSE Not found METI · Japan\nRCM Not shown Australia\nBuyer hazard reports Reviews read for fire, burn and shock +\n9 heat reports under review, not a recall\n29,379 reviews read this model, last 15 weeks\nCopies and rebrands Only the exact model inherits a recall +\nAppario Retail · ₹1,349 verified seller EXACT\nMegaDealz24 · ₹299 photos copied COPY\nQuickKart · ₹259 sent to a person REBRAND?"
+  },
+  {
+   "id": "S4",
+   "page": "Home",
+   "title": "Ask Eddy a question, and open the evidence behind the answer.",
+   "url": "index.html",
+   "text": "Ask Eddy a question, and open the evidence behind the answer.\nEddy answers follow-up questions about the product you just checked, in English, Hindi and 24 more languages, read aloud if you like. Every answer names its evidence, or says it does not know.\nYou\nAsked about the CX-65 charger\nIs this charger safe for my child's room?\nEddy · answered from 3 records\nNot yet. 9 reports of the USB-C port overheating are under review. Keep it out of children's reach until the review is done.\n▶ Listen English EV-201 · EV-207\nBehind the answer 3 records\nEV-201 · review photo REVIEW USB-C port overheating, buyer photo\nEV-207 · 9 reports REVIEW heat reports from separate buyers\nRecalls · 8 regions NONE no recall for this exact model\nMeet Eddy →"
+  },
+  {
+   "id": "S5",
+   "page": "Home",
+   "title": "Check listings without leaving your agent",
+   "url": "index.html",
+   "text": "Check listings without leaving your agent\nPoint Claude, Gemini or any MCP client at SafeShelf. Ten read-only tools: your agent can check a listing, find copies and read the evidence, never buy, report or act.\nConnect over MCP API docs\n> is amazon.in/dp/B0CX65SFC safe to buy?"
+  },
+  {
+   "id": "S6",
+   "page": "Home",
+   "title": "Free to check, on the web today.",
+   "url": "index.html",
+   "text": "Free to check, on the web today.\nNo card and nothing to install. Sign in with Google or email for more checks; agents connect over MCP or REST.\nGuest\nFree\n1 live check on this browser\nSix sample listings with known answers\nEvery line with its source Try a sample\nSigned in\nFree · 5 checks a day\nLive checks of your own listings\nAsk Eddy and Listen in 26 languages\nYour shelf, watched after you buy\nChrome extension and WhatsApp, soon Sign in and check\nAgents and marketplaces\nAPI\nTen read-only MCP tools at /mcp\nStreaming REST API and an A2A card\nCatalog Scan: 500 listings in one run\nA case file for every finding Connect an agent\nWhile we test, signed-in checks are not counted. The API rate-limits every caller. All the ways to get SafeShelf →"
+  },
+  {
+   "id": "S7",
+   "page": "Home",
+   "title": "Frequently asked questions",
+   "url": "index.html#faq",
+   "text": "Frequently asked questions\nPrivacy, phones, accuracy, or plugging in your own agent. Another question? Ask Eddy .\nEddy Pick a question to get started\nWhat is SafeShelf?\nA product check for online shoppers. It answers two questions about any listing: is it safe (recalls, hazard reports, safety marks) and is it real (copied photos, impossible price, brand-new shop), with the evidence for every line."
+  },
+  {
+   "id": "S8",
+   "page": "Home",
+   "title": "On the record",
+   "url": "index.html",
+   "text": "On the record\nNo made-up quotes. These are the records and measurements SafeShelf stands on, with where each one comes from.\n2/40\nFalse alarms on 40 never-recalled products. Gemini alone raised 6, keyword rules 11. Keyword rules do catch more recalls, and we would rather tell you that here.\nSafeShelfBench See every number\n13/13\nFake-shop notices aimed at AI shopping assistants, caught, with no false alarms on 27,822 real listings.\nAttacker vs defender Gemini writes the attacks\n“On 5 May 2026, a power bank in a seat pocket ignited after IndiGo flight 6E-108 landed at Chandigarh. About 200 passengers were evacuated, and at least 6 were hurt. No brand or model was named, which is exactly the gap SafeShelf is built to close.”\nThe Times of India, 6 May 2026, citing the DGCA Read the report\nThe NEWDERY power bank was recalled in the US for fire and burn hazards on 24 Sep 2026. An Indian shopper is told “recalled abroad, same model”, never “recalled here”.\nCPSC record cpsc:26792 From our JAPAC test run\n2 of 9\nRecalls caught that it was never tuned on, with no false alarms. Small, honest, and the number we are working to raise.\nHeld-out backtest How we measured\n13 s\nFrom a question spoken in Hindi to a spoken Hindi answer, through Gemini Live and SafeShelf's own tools. Code still sets the result.\nAsk out loud Measured through the API\n8,689\nOfficial recalls from the US and 7 Asia-Pacific regulators, and 29,379 buyer reviews read for fire, burn and shock.\nThe records Where the data comes from"
+  },
+  {
+   "id": "S9",
+   "page": "Home",
+   "title": "See what's behind the listing. Before you pay.",
+   "url": "index.html",
+   "text": "See what's behind the listing. Before you pay.\nRecalls, copies and fake shops, checked in one click, in your language, with the evidence on screen.\nTry it live Get SafeShelf"
+  },
+  {
+   "id": "S10",
+   "page": "Home",
+   "title": "What is SafeShelf?",
+   "url": "index.html#faq",
+   "text": "A product check for online shoppers. It answers two questions about any listing: is it safe (recalls, hazard reports, safety marks) and is it real (copied photos, impossible price, brand-new shop), with the evidence for every line."
+  },
+  {
+   "id": "S11",
+   "page": "Home",
+   "title": "Does it see my personal details?",
+   "url": "index.html#faq",
+   "text": "No. It reads only the product area of the page and filters out names, addresses, pincodes, emails and phone numbers before anything is sent. Nothing is sent until you press Check."
+  },
+  {
+   "id": "S12",
+   "page": "Home",
+   "title": "Does it work on my phone?",
+   "url": "index.html#faq",
+   "text": "Yes, in the browser: open the SafeShelf web page on any phone today. Phones cannot add browser extensions, so the Chrome extension is for computers, and it is coming soon. A WhatsApp version is built and waiting for its public number."
+  },
+  {
+   "id": "S13",
+   "page": "Home",
+   "title": "What if it is not sure?",
+   "url": "index.html#faq",
+   "text": "It says \"Not enough evidence yet\" in grey, never green. A product it cannot match exactly gets no safety claim, because a look-alike's recall is not this product's recall."
+  },
+  {
+   "id": "S14",
+   "page": "Home",
+   "title": "How accurate is it?",
+   "url": "index.html#faq",
+   "text": "On 25 real recalls and 40 never-recalled products, it raised 2 false alarms against 6 for Gemini alone and 11 for keyword rules. Keyword rules catch more recalls. On the recalls it was not tuned on, it caught 2 of 9 with no false alarms. All the numbers."
+  },
+  {
+   "id": "S15",
+   "page": "Home",
+   "title": "Can a fake shop fool it?",
+   "url": "index.html#faq",
+   "text": "We attack it ourselves: Gemini plays the attacker and writes new tricks. Hidden notices aimed at AI shopping assistants were caught 13 times out of 13, with no false alarms on 27,822 real listings. A forged page can never make a product \"recalled\"."
+  },
+  {
+   "id": "S16",
+   "page": "Home",
+   "title": "Is the verdict a legal finding?",
+   "url": "index.html#faq",
+   "text": "No. It is evidence for a shopper: official recalls, reports under review, and checks on photos, price and seller, each with its source."
+  },
+  {
+   "id": "S17",
+   "page": "Home",
+   "title": "Can my agent use it?",
+   "url": "index.html#faq",
+   "text": "Yes. Ten read-only tools over MCP at /mcp, a streaming REST API and an A2A agent card. An agent can look, never buy, report or act. Connect an agent."
+  },
+  {
+   "id": "S18",
+   "page": "How it works",
+   "title": "Two questions: is it safe, and is it real?",
+   "url": "how.html",
+   "text": "S How it works\nTwo questions: is it safe, and is it real?\nEvery check answers both, on one product-identity engine that recognises the same product under different brand names. The model writes the words; code decides the colour.\nTry it live See the results"
+  },
+  {
+   "id": "S19",
+   "page": "How it works",
+   "title": "How it works",
+   "url": "how.html#steps",
+   "text": "One check, from product page to a sourced verdict about 7 s\n01\nRead the page\nOnly the product area: title, model, price, photos and seller. Names, addresses, pincodes, emails and phone numbers are filtered out first.\n02\nFind the product\nMatched in a catalog of about 27,800 products with Gemini on Vertex AI, with its rebranded twins.\n03\nCheck the records\nOfficial recalls and notices from 8 regions, buyer hazard reports, and safety marks checked against the registry.\n04\nCheck the listing\nCopied photos, the price against the genuine product, how old the shop is, conflicting specs, hidden AI instructions.\n05\nSet the verdict\nRules set red, amber, green or grey. Gemini explains, and every sentence must cite an evidence id that exists.\nNothing leaves the page until you press Check First colours in about 3 s Median live check 6.6 s"
+  },
+  {
+   "id": "S20",
+   "page": "How it works",
+   "title": "A look-alike's recall is not this product's recall.",
+   "url": "how.html#identity",
+   "text": "A look-alike's recall is not this product's recall.\nMost false alarms come from matching the wrong product. SafeShelf sorts every match into one of three tiers before any recall is applied.\nExact model\nInherits the recall\nSame model number, same maker. A recall of this model applies to this listing.\nCX-65 · Appario Retail same model number EXACT\nPossible rebrand\nGoes to review\nThe same product under another brand name. Shown as \"needs review\", never as recalled, until a person checks it.\n65W Fast · QuickKart sent to a person REBRAND?\nLook-alike\nNever inherits\nSimilar photos or a similar name are not enough. A look-alike gets no safety claim at all.\n45W Type-C · Clicktech similar photos only LOOK-ALIKE\nRecalled abroad is not recalled here. A recall of the same model in another country is shown as \"recalled abroad, same model\", with the country and regulator named, so a shopper in India is never told a US recall is an Indian one."
+  },
+  {
+   "id": "S21",
+   "page": "How it works",
+   "title": "One engine, four ways in.",
+   "url": "how.html#where",
+   "text": "One engine, four ways in.\nThe extension, the web page, the WhatsApp bot and other agents all call the same API and get the same answer.\nLive\nWeb page\nSix sample listings with known answers, a live check of your own listing, and the bench results. Google sign-in.\nLive\nYour agent\nTen read-only MCP tools, REST endpoints and an A2A agent card. Connect one .\nComing soon\nChrome extension\nA rail on Amazon India, Japan, Australia, Singapore, the US and Flipkart. One chat with sources, Listen and Copy.\nNumber pending\nWhatsApp\nSend a link or a photo of the label; get text and a voice note back in English or Hindi. Built and tested."
+  },
+  {
+   "id": "S22",
+   "page": "How it works",
+   "title": "Private and honest, by default.",
+   "url": "how.html#private",
+   "text": "Private and honest, by default.\nSafeShelf reads only the product, sends nothing until you press Check, and never lets a model decide the colour on its own.\nPersonal details filtered\nNames, addresses, pincodes, emails and phone numbers removed before sending.\nNothing sent until you press Check\nThe extension waits for you.\nRead-only agent tools\nAn agent can look, never buy, report or act.\nCode sets the colour\nEvery sentence must cite evidence that exists. Thin evidence is grey, never green."
+  },
+  {
+   "id": "S23",
+   "page": "How it works",
+   "title": "See it on a real listing. Known answers first.",
+   "url": "how.html",
+   "text": "See it on a real listing. Known answers first.\nSix sample listings with known right answers, and a live check of your own.\nTry it live See the results"
+  },
+  {
+   "id": "S24",
+   "page": "For agents",
+   "title": "The same evidence, for your agent.",
+   "url": "agents.html",
+   "text": "S For builders\nThe same evidence, for your agent.\nEverything SafeShelf shows a shopper, your agent can ask for: over MCP, over REST, or agent to agent with A2A. Every tool is read-only. An agent can check a listing; it can never buy, report or act for a shopper.\nConnect over MCP API docs"
+  },
+  {
+   "id": "S25",
+   "page": "For agents",
+   "title": "Ten read-only tools at /mcp.",
+   "url": "agents.html#mcp",
+   "text": "Ten read-only tools at /mcp.\nPoint any MCP client at the server and send your key in the x-api-key header. Answers carry evidence ids your agent can show the shopper.\ncheck_listing READ-ONLY\n\"Is it real?\": copied photos, an impossible price, a brand-new website, conflicting specs, hidden AI instructions.\nidentify_product READ-ONLY\nWhich product is this listing? Returns a SafeShelf product_id for the other tools. Give a url or a title.\nproduct_safety READ-ONLY\nOfficial recall status, hazard reports found in reviews and photos, and safety-mark checks.\nfind_copies READ-ONLY\nThe same product in other listings or brands: exact model, possible rebrand, variant or look-alike, with reasons.\nsafety_marks READ-ONLY\nSafety and energy marks the listing claims, checked against the official registries.\nsafer_alternatives READ-ONLY\nSimilar products with no recall and no hazard reports, with the reason for each.\nowner_guidance READ-ONLY\nFor someone who already owns it: stop or take care, the recall remedy, return, or report.\nproduct_history READ-ONLY\nEverything that ever changed about the product, and its recalls.\ncase_file READ-ONLY\nFindings with evidence ids and quotes, and the code rule behind the verdict.\ninvestigation_trace READ-ONLY\nEvery step of an investigation: tool, model, time, tokens and estimated cost."
+  },
+  {
+   "id": "S26",
+   "page": "For agents",
+   "title": "Or call the API directly.",
+   "url": "agents.html#rest",
+   "text": "Or call the API directly.\nThe API runs on Cloud Run in Mumbai (asia-south1). The live investigation streams its steps as server-sent events, so your agent can show progress as it arrives.\nEndpoints REST and A2A +\nEndpoint What it does\nPOST /v1/agent/sessions/stream Live investigation, streamed step by step\nPOST /v1/agent/sessions Chat about a product, one answer\nGET /.well-known/agent-card.json A2A agent card\nGET /health Is the API up\nRequest fields and every response shape are in the API docs .\nCheck a listing\ncurl -N -X POST \\\nhttps://safeshelf-api-368488022657.asia-south1.run.app/v1/agent/sessions/stream \\\n-H 'content-type: application/json' \\\n-H \"authorization: Bearer $FIREBASE_ID_TOKEN\" \\\n-d '{\"mode\": \"investigate\", \"product_id\": \"unmatched\",\n\"listing\": {\"title\": \"65W Super Fast Charger CX-65\",\n\"url\": \"amazon.in/dp/B0CX65SFC\",\n\"price\": 299, \"currency\": \"INR\"}}'\nMCP client config\n{\n\"mcpServers\": {\n\"safeshelf\": {\n\"url\": \"https://safeshelf-api-368488022657.asia-south1.run.app/mcp\",\n\"headers\": { \"x-api-key\": \"YOUR_KEY\" }\n}\n}\n}"
+  },
+  {
+   "id": "S27",
+   "page": "For agents",
+   "title": "Build on the evidence. Never on a guess.",
+   "url": "agents.html",
+   "text": "Build on the evidence. Never on a guess.\nRead-only tools, sourced answers, and a verdict set by code.\nRead the API docs View the source"
+  },
+  {
+   "id": "S28",
+   "page": "Results",
+   "title": "What we measured, including what went against us.",
+   "url": "results.html",
+   "text": "S Results\nWhat we measured, including what went against us.\nEvery number on this site comes from our own test runs in the repository. Where a simpler method does better on something, we say so.\nSee the backtest Bench code"
+  },
+  {
+   "id": "S29",
+   "page": "Results",
+   "title": "Results",
+   "url": "results.html#glance",
+   "text": "Four tests on the live system 13 and 16 Oct 2026\nAgent test set 21/22\ncases pass, and 65 of 66 individual checks\nRed team 18/18\nattacks held, including 9 hard negatives\nCatalog scan, 500 listings 49/50\nplanted problems found, with no wrong findings\nInvestigate, median 6.6 s\nper live check; chat answers in 7.6 s\nAgent tests ran against the live API on 16 Oct 2026 The backtest on 13 Oct 2026"
+  },
+  {
+   "id": "S30",
+   "page": "Results",
+   "title": "Do buyer reviews warn before a recall?",
+   "url": "results.html#backtest",
+   "text": "Do buyer reviews warn before a recall?\n25 real US recalls (CPSC) and 40 products that were never recalled. Each method reads only the reviews written before the recall date. We count the recalls it would have flagged, and the safe products it would have wrongly flagged.\nFalse alarms On 40 never-recalled products. Shorter is better.\nKeyword rules 11/40\nGemini alone 6/40\nSafeShelf 2/40\nSafeShelfBench Recalls flagged, how early, and false alarms +\nMethod Recalls flagged Median warning False alarms\nKeyword rules 11/25 170 weeks 11/40\nGemini alone 6/25 104 weeks 6/40\nSafeShelf 6/25 93 weeks 2/40\nSafeShelf, without pooling copies 1/25 67 weeks 2/40\n\"Median warning\" is how long before the official recall the first warning would have appeared. Pooling the reviews of every copy of the same product is what moves SafeShelf from 1 recall to 6.\nWhere we fall short. Keyword rules flag more recalls (11 against our 6) and earlier, at the cost of 11 false alarms. On the half of the recalls we did not tune on, SafeShelf flagged 2 of 9 with no false alarms on 14 safe products. The sample is small, and we publish both numbers."
+  },
+  {
+   "id": "S31",
+   "page": "Results",
+   "title": "8,689 official recalls and notices.",
+   "url": "results.html#data",
+   "text": "8,689 official recalls and notices.\nLoaded from the regulators' own feeds and press releases. In India, raids and \"don't buy without the ISI mark\" notices are kept, but they never mark a product recalled; they only send it to review.\nWhat else is on file The catalog behind the identity engine\nProducts 27,800 about, in the catalog\nReal reviews 29,379 mostly from amazon.com\nEnergy registry 8,470 Australian records\nRegions 8 US and 7 Asia-Pacific\nRecords by region Official recalls and notices\nRegion Source Records\nAustralia ACCC 2,962\nUnited States CPSC 2,537\nSouth Korea KATS 2,242\nJapan CAA 677\nASEAN ASEAN product alerts 161\nTaiwan BSMI 45\nIndia CCPA and BIS 36\nSingapore CPSO 29\nTotal 8,689"
+  },
+  {
+   "id": "S32",
+   "page": "Results",
+   "title": "Early work: recalled in one country, then another.",
+   "url": "results.html#crossborder",
+   "text": "Early work: recalled in one country, then another.\nWe found 19 products recalled in one country and later in another, mostly the US first and Australia later. The second recall came a median of 22 days after the first, and up to 293 days.\nNot yet checked by a person These 19 pairs, and the 34 recalled products we found possibly still on sale, are leads from Firecrawl and Gemini. None has been hand-checked yet, so we do not count them as findings.\n22 days\nMedian gap between the first recall and the second, in another country."
+  },
+  {
+   "id": "S33",
+   "page": "Results",
+   "title": "Run the numbers yourself. It's all in the repo.",
+   "url": "results.html",
+   "text": "Run the numbers yourself. It's all in the repo.\nThe bench code, the test sets and every result file are in the repository.\nSee the bench code Try it live"
+  },
+  {
+   "id": "S34",
+   "page": "Team",
+   "title": "Two builders, one engine.",
+   "url": "team.html",
+   "text": "S Team Hashes · AI Builder Cup 2026\nTwo builders, one engine.\nSafeShelf was built in a week for the Retail and Commerce theme of the AI Builder Cup 2026. We split the work into a brain and a face, agreed the shape of every API answer on day one, and built against it in parallel.\nGitHub See the results"
+  },
+  {
+   "id": "S35",
+   "page": "Team",
+   "title": "Team",
+   "url": "team.html",
+   "text": "Solomon\nThe brain: engine, data and API\nRecall and notice data from 8 regions\nProduct identity and copy matching\nSafety radar, recall and safety-mark checks\n\"Is it real?\" listing checks\nThe API, the MCP server and the WhatsApp bot\nSafeShelfBench and the backtest\nSeshu\nThe face: extension, agents and web\nChrome extension and accessibility\nGoogle ADK agents: Investigate, Shelf Chat, Safer Alternative\nMy Shelf, scan and report\nThe web page and Google sign-in\nVoice answers\nThe judges' lab"
+  },
+  {
+   "id": "S36",
+   "page": "Team",
+   "title": "Google Cloud, end to end.",
+   "url": "team.html",
+   "text": "Google Cloud, end to end.\nThe same stack serves the extension, the web page, WhatsApp and other agents.\nGemini on Vertex AI\nProduct matching, hazard reading and the plain-language explanation.\nGoogle ADK\nThe investigating and chat agents.\nCloud Run\nThe API and MCP server, in Mumbai (asia-south1).\nCloud SQL\nThe catalog, recalls and reviews.\nFirebase\nHosting, Google sign-in and roles in Firestore.\nChrome MV3 · WhatsApp Cloud API\nWhere shoppers meet it."
+  },
+  {
+   "id": "S37",
+   "page": "Team",
+   "title": "Read the code. All of it.",
+   "url": "team.html",
+   "text": "Read the code. All of it.\nEverything on this site is in one repository.\nGitHub See the results"
+  },
+  {
+   "id": "S38",
+   "page": "Android app",
+   "title": "Check before you buy. Wherever you shop.",
+   "url": "get.html",
+   "text": "SafeShelf for Android Test build\nCheck before you buy. Wherever you shop.\nShare a shopping link or photograph a product label. Ask Eddy about recalls, safety and authenticity—and see the sources behind the answer.\nDownload for Android Explore the app\nv0.4.0 · Android 8.0+ · APK · 2.1 MB\nAndroid test build · Not on Google Play yet. Installation guide\nActual app screen · v0.4.0"
+  },
+  {
+   "id": "S39",
+   "page": "Android app",
+   "title": "Android app",
+   "url": "get.html",
+   "text": "01 Bring a link or a label.\n02 Ask Eddy. See the sources.\n03 Keep products in My Shelf."
+  },
+  {
+   "id": "S40",
+   "page": "Android app",
+   "title": "Bring a shopping link",
+   "url": "get.html",
+   "text": "Bring a shopping link\nShare from another Android app or paste a link. Review your question before sending.\nStart with a label\nTake a clear photo of the brand and model. Add it to a product check with Eddy.\nKeep products close\nSave supported products to My Shelf and check their latest in-app recall status."
+  },
+  {
+   "id": "S41",
+   "page": "Android app",
+   "title": "Everything you need. One simple app.",
+   "url": "get.html#inside",
+   "text": "A little check. More peace of mind.\nEverything you need. One simple app.\nExplore the four app screens. Choose a tab to see what you can do and how it works.\n01 / 04\nStart with what you have.\nPaste a shopping link or type a question. Prefer a photo or your voice? The shortcuts are right there. Your question opens in Check for you to review before sending.\nA product-link and question field\nLabel scans and voice input from Home\nQuick access to My Shelf and Eddy View the full screen\nActual app screens · v0.4.0. Live answers depend on the product and available evidence.\nHome · Your next check starts here."
+  },
+  {
+   "id": "S42",
+   "page": "Android app",
+   "title": "A few taps. Then you’re in.",
+   "url": "get.html#install",
+   "text": "From download to your first check\nA few taps. Then you’re in.\nInstall the Android test build, open SafeShelf, and bring your first product question. Get the APK\n01\nDownload on your Android phone\nUse the download button on this page. You’ll get SafeShelf-0.4.0-debug.apk . Downloaded on a computer? Transfer the file to your phone.\n02\nOpen the file and install\nOpen the APK from Downloads or your Files app. If Android asks, allow this browser or Files app to install it, then tap Install.\n03\nMeet Eddy. Check a product.\nOpen SafeShelf, sign in with email or try guest access, then paste a shopping link or scan a label. Review your question and press Send."
+  },
+  {
+   "id": "S43",
+   "page": "Android app",
+   "title": "Before you download.",
+   "url": "get.html",
+   "text": "A few things to know\nBefore you download.\nIs this on Google Play?\nThis version is a direct-download Android test build, not a Google Play release. The download on this page is the v0.4.0 APK. A production store release has not been published.\nWhat phone do I need?\nAn Android phone running Android 8.0 or newer, an up-to-date Android System WebView, and an internet connection for sign-in and live checks. Camera and voice input are optional; voice input depends on your device’s speech-recognition support.\nCan I try it without creating an account?\nYes. Choose Continue as guest in the app’s sign-in card, or use email and password. Your remaining checks are shown in the app. Google sign-in is currently available on the website, not inside the Android app.\nWill my phone send recall notifications?\nNot in this build. Save a supported product using “Watch for recalls”, then open My Shelf to see its latest status. Background push notifications have not been connected.\nWhat happens to my links, photos and saved products?\nLinks and photos are sent when you request a check. Camera access is optional. Signed-in watchlists use your account; a guest watchlist stays linked to this app’s stored identity. Clearing app data removes access to that guest watchlist. Desktop-extension saves use a separate shelf.\nCan I use SafeShelf on an iPhone or a computer?\nThis download is for Android. You can use Eddy in your web browser on other devices. An iOS app is not available.\nDoes a green result guarantee the product is safe?\nNo. An answer reflects the records and evidence checked, which can be incomplete. Read the sources and uncertainty shown in the result; no matching recall is not a guarantee of safety or authenticity."
+  },
+  {
+   "id": "S44",
+   "page": "Android app",
+   "title": "Know a little more. Before you bring it home.",
+   "url": "get.html#download",
+   "text": "Your next shopping companion\nKnow a little more. Before you bring it home.\nSafeShelf for Android. Your links, your questions, the evidence. Download the Android app v0.4.0 test build · Android 8.0+ · Direct APK download"
+  },
+  {
+   "id": "S45",
+   "page": "My Shelf",
+   "title": "Products you saved while shopping.",
+   "url": "shelf.html",
+   "text": "S My Shelf\nProducts you saved while shopping.\nSave a product with the SafeShelf extension while you're signed in, and it shows up here on any device. Open one to run a fresh safety check on the shop page."
+  },
+  {
+   "id": "S46",
+   "page": "My Shelf",
+   "title": "Saved products 0",
+   "url": "shelf.html#shelf",
+   "text": "Saved products 0 in your account\nNeeds a closer look 0 under review or needs attention\nNot checked yet 0 no saved verdict\nRecently saved 0 in the last 7 days\nSaved products 0\nAll products Looks fine Under review Needs attention Not checked\nNo products match your search.\nRemoving a product here also removes it from the extension the next time its My Shelf page opens. Product images come from the original listing."
+  },
+  {
+   "id": "S47",
+   "page": "Home",
+   "title": "Signing in, guest checks and limits",
+   "url": "index.html",
+   "text": "You can use SafeShelf free on the web, with no card and nothing to install. As a guest you get 1 live check on this browser, plus six sample listings with known answers. Sign in with Google or with email and password for 5 live checks a day, Ask Eddy and Listen in 26 languages, and My Shelf. Sign in from the account button at the top right of any page. While we test, signed-in checks are not counted. The API rate-limits every caller; if you see a 'too many requests' message, wait a minute and try again. The demo also has a daily limit of AI checks; if it is reached, try again the next day."
+  },
+  {
+   "id": "S48",
+   "page": "Chat",
+   "title": "Chat with Eddy: checking a product",
+   "url": "chat.html",
+   "text": "The Chat page is where you check a product with Eddy, SafeShelf's assistant. Paste a product link or a screenshot of a listing, or pick one of the demo products, and ask: is it safe, is it real, is the seller authorised, is there a safer one? Eddy checks recalls, reviews and safety registries and shows its sources. You can scan a label with the camera button, ask out loud with the mic and hear the answer read aloud, in English, Hindi and 24 more languages. Signing in is needed to ask about your own listings. Talk mode is a live voice conversation: point the camera at a label and ask 'Is this safe?'. The Tools drawer is for judges and developers: it switches the API, runs other agents (Investigate, Safer alternative, Report draft, Official sites) and shows the investigation trace."
+  },
+  {
+   "id": "S49",
+   "page": "Home",
+   "title": "Reading a verdict: the colours",
+   "url": "index.html#faq",
+   "text": "Every check ends in a colour set by code, not by the AI model. Red means a real concern, such as an official recall of this exact model. Amber means take care: for example hazard reports under review, a copied listing, an unauthorised seller, or the same model recalled abroad. Green means nothing was found in the records checked. Grey means 'Not enough evidence yet': SafeShelf could not match the exact model or the evidence is thin, so it makes no safety claim. Green is never a guarantee: no matching recall is not proof of safety or authenticity. Every line names its source; open it to check."
+  },
+  {
+   "id": "S50",
+   "page": "How it works",
+   "title": "Where SafeShelf works: shops, countries, languages",
+   "url": "how.html#where",
+   "text": "SafeShelf is built for shoppers in India, Japan, Australia, Singapore and the rest of Asia-Pacific. It reads listings on Amazon India (.in), Amazon Japan (.co.jp), Amazon Australia (.com.au), Amazon Singapore (.sg), Amazon US (.com) and Flipkart. It checks official recalls and notices from 10 regulators: CPSC (US), ACCC (Australia), KATS (South Korea), CAA (Japan), CCPA and BIS (India), BSMI (Taiwan), CPSO (Singapore), ASEAN product alerts and the OECD. Eddy answers in 26 languages, including Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Japanese, Korean, Chinese, Indonesian, Malay, Thai, Vietnamese and Filipino."
+  },
+  {
+   "id": "S51",
+   "page": "Team",
+   "title": "Getting help, reporting a problem, contact",
+   "url": "team.html",
+   "text": "SafeShelf is built by Team Hashes (Solomon and Seshu) for the AI Builder Cup 2026. To report a bug or a wrong answer, or to ask something this chat cannot answer, open an issue on the project's GitHub repository: https://github.com/solomonwilsonr/all-builders. Judges can use the judges' page (../index.html) for the six sample listings, the live lab and the bench results."
+  },
+  {
+   "id": "S52",
+   "page": "For agents",
+   "title": "API keys and API docs",
+   "url": "agents.html",
+   "text": "Agents connect to the MCP server at https://safeshelf-api-368488022657.asia-south1.run.app/mcp and send their key in the x-api-key header. The full API reference, with every request field and response shape, is the API docs page (api.html). The live investigation streams its steps as server-sent events from POST /v1/agent/sessions/stream. Every tool is read-only."
+  }
+ ]
+}

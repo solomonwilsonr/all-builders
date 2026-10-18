@@ -890,6 +890,46 @@ paths:
       responses:
         '200': {description: The answer to speak, with the result behind it, content: {application/json: {schema: {type: object, required: [answer, label]}}}}
 
+  /v1/support/ask:
+    post:
+      summary: "The website's Help chat: a question about SafeShelf or its site, answered from the site's own pages with links to them"
+      description: >-
+        Answered by Gemini from web/site/support-kb.json (web/build_support_kb.py) and nothing else. A request to check
+        a product comes back as kind product_check with a handoff to Eddy on the Chat page. Nothing is stored.
+      operationId: askSupport
+      x-mock: support_answer.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question: {type: string, maxLength: 1000}
+                history:
+                  type: array
+                  description: Earlier turns, oldest first; the last 6 are used.
+                  items: {type: object, properties: {role: {type: string, enum: [user, assistant]}, text: {type: string}}}
+                language: {type: string, description: 'The page language, e.g. English; a question in another language is answered in that one'}
+                page: {type: string, description: The site page the question was asked on}
+      responses:
+        '200':
+          description: The answer, its kind, and up to three site sections it came from
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [answer, kind, sources]
+                properties:
+                  answer: {type: string}
+                  kind: {type: string, enum: [answered, product_check, not_on_site, off_topic]}
+                  sources:
+                    type: array
+                    items: {type: object, properties: {id: {type: string}, title: {type: string}, page: {type: string}, url: {type: string}}}
+                  handoff: {type: [object, 'null']}
+                  model_version: {type: [string, 'null']}
+
   /v1/incidents:
     post:
       summary: A shopper's incident report (photo of a melted charger and what happened), checked by Gemini and grouped by model

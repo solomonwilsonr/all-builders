@@ -8,10 +8,18 @@
       "README.md",
       ".env.example",
       "record_samples.py",
+      "build_support_kb.py",
+      "build_api_docs.py",
       "**/.*",
       "**/__pycache__/**",
       "firestore.rules",
-      "downloads/**"
+      "downloads/**",
+      "api-integration/**",
+      "landing-terminal/**"
+    ],
+    "redirects": [
+      { "source": "/api-integration{,/**}", "destination": "/site/api.html", "type": 301 },
+      { "source": "/landing-terminal{,/**}", "destination": "/site/index.html", "type": 301 }
     ],
     "headers": [
       {

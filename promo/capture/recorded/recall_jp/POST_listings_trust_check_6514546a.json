@@ -1,0 +1,41 @@
+{
+ "status": 200,
+ "body": {
+  "listing_url": "https://www.amazon.co.jp/dp/SAFESHELF-W5PRO",
+  "matched_product_id": "SS-P-AMZ-B0BNL95XMR",
+  "matched_by": "url",
+  "checks": {
+   "copied_photos": {
+    "result": "unknown",
+    "reason": "no photos to compare",
+    "reference": "brand or authorised seller"
+   },
+   "price": {
+    "result": "unknown",
+    "price": 2980,
+    "currency": "JPY",
+    "lowest_credible_price": null,
+    "reason": "no JPY price from an authorised seller to compare with",
+    "reference": "brand or authorised seller"
+   },
+   "website_age": {
+    "result": "skipped",
+    "reason": "large marketplace; the seller, not the website, is what matters"
+   },
+   "spec": {
+    "result": "flag",
+    "conflicts": [
+     "capacity_mah differs (10000 vs 5000)"
+    ]
+   }
+  },
+  "hidden_instructions_found": false,
+  "summary": "Be careful: specs differ from the genuine model (capacity_mah differs (10000 vs 5000)).",
+  "good_signs": [],
+  "safety_of_genuine_model": "no hazard findings, no recall",
+  "label": "Evidence for the shopper - not a legal finding",
+  "evidence_ids": [
+   "EV-A3D58766"
+  ]
+ }
+}

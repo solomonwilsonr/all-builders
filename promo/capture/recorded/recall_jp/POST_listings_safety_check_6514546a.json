@@ -1,0 +1,30 @@
+{
+ "status": 200,
+ "body": {
+  "listing_url": "https://www.amazon.co.jp/dp/SAFESHELF-W5PRO",
+  "brand": "HAIARA",
+  "model": null,
+  "verdict": "not_enough_evidence",
+  "official_status": {
+   "recalled": false,
+   "searched": true,
+   "checked": [
+    "ACCC",
+    "CPSC",
+    "KATS",
+    "CAA",
+    "ASEAN",
+    "BSMI",
+    "CPSO",
+    "BIS",
+    "CCPA"
+   ],
+   "recall_ids": [],
+   "recall_ids_under_review": [],
+   "recalls": []
+  },
+  "ai_findings": [],
+  "reviews_checked": 0,
+  "label": "AI finding from the reviews on this page - not a regulatory determination"
+ }
+}

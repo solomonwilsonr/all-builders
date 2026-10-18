@@ -59,8 +59,10 @@ def resolve(listing: dict, max_distance: float = 0.12, needs_reference: bool = F
     Catalog and demo listings carry a marketplace and always count."""
     fp = fingerprint(listing)
     known = listing.get("url") and store.listing_by_url(listing["url"])
-    if known and (not needs_reference or any(row["url"] != listing["url"] or row["marketplace"]
-                                             for row in store.product_listings(known["product_id"]))):
+    # A URL filed under a product whose model or capacity contradicts the page was filed wrongly (18 Oct: before the
+    # look-alike check, the W5PRO demo URL had been attached to the 5000 mAh HAIARA W5), so the page's own facts win.
+    if known and not conflicts(fp, known["product_id"]) and (
+            not needs_reference or is_reference(known["product_id"], listing["url"])):
         return known["product_id"], "url"
     same_id = [p for p in store.by_identifier(fp) if same_brand(fp, listing, p)]
     if same_id:
@@ -68,10 +70,31 @@ def resolve(listing: dict, max_distance: float = 0.12, needs_reference: bool = F
     [vector] = gemini.embed([brand_blind_text(listing, fp)])
     brand = fp["brand_norm"] or next((b for b in store.brands_in(listing.get("title") or "")), "")
     same_brand_match = brand and store.nearest(vector, max_distance * 2, brand)
-    if same_brand_match:  # the brand's own product first; a brand-blind look-alike only when it has none close
-        return same_brand_match, "same_brand_look_alike"
+    if same_brand_match and not conflicts(fp, same_brand_match):
+        return same_brand_match, "same_brand_look_alike"  # the brand's own product first
     nearest = store.nearest(vector, max_distance)
-    return (nearest, "look_alike") if nearest else (None, "none")
+    return (nearest, "look_alike") if nearest and not conflicts(fp, nearest) else (None, "none")
+
+
+def is_reference(product_id: str, url: str) -> bool:
+    """A product known by URL is a reference for that page only if it has an identity (a model number or GTIN) and
+    is known from somewhere else too (a catalog or demo listing, or another page). 18 Oct: the fake shop's URL had
+    become an empty provisional product with a second, blank listing, so it hid the genuine Kelvo CX-65."""
+    stored = store.latest_fingerprint(product_id) or {}
+    if not (stored.get("model_norm") or stored.get("gtin")):
+        return False
+    return any(row["url"] != url or row["marketplace"] for row in store.product_listings(product_id))
+
+
+def conflicts(fp: dict, product_id: str) -> bool:
+    """A look-alike that states a different model number or a different capacity or wattage is another product.
+    18 Oct: "HAIARA W5PRO 10000mAh" landed on a provisional "HAIARA W5" (5000 mAh), so the W5PRO's CAA recall
+    was searched under the W5's name and not found."""
+    other = store.latest_fingerprint(product_id) or {}
+    if fp["model_norm"] and other.get("model_norm") and fp["model_norm"] != other["model_norm"]:
+        return True
+    mine, theirs = fp.get("attributes") or {}, other.get("attributes") or {}
+    return any(mine.get(k) and theirs.get(k) and mine[k] != theirs[k] for k in ("capacity_mah", "power_watts"))
 
 
 def identify(listing: dict) -> dict:
