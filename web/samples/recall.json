@@ -1,18 +1,18 @@
 {
- "recorded_at": "2026-10-18 20:48 IST",
+ "recorded_at": "2026-10-18 21:22 IST",
  "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
  "events": [
   {
    "type": "open",
    "mode": "investigate",
-   "investigation_id": "SS-I-8C3E9F91",
-   "_ms": 133
+   "investigation_id": "SS-I-1DE899B6",
+   "_ms": 157
   },
   {
    "type": "start",
    "agent": "page_reader",
    "tool": "page",
-   "_ms": 133
+   "_ms": 157
   },
   {
    "type": "step",
@@ -21,50 +21,50 @@
    "tool": "page",
    "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by url)",
    "model": null,
-   "seconds": 0.25,
-   "_ms": 406
+   "seconds": 0.57,
+   "_ms": 750
   },
   {
    "type": "start",
    "agent": "is_it_real",
    "tool": "is_it_real",
-   "_ms": 406
+   "_ms": 750
   },
   {
    "type": "start",
    "agent": "safety_radar",
    "tool": "safety_radar",
-   "_ms": 406
+   "_ms": 751
   },
   {
    "type": "start",
    "agent": "twin_finder",
    "tool": "twin_finder",
-   "_ms": 406
+   "_ms": 751
   },
   {
    "type": "start",
    "agent": "recall_checker",
    "tool": "recall_checker",
-   "_ms": 406
+   "_ms": 751
   },
   {
    "type": "start",
    "agent": "cert_verifier",
    "tool": "cert_verifier",
-   "_ms": 408
+   "_ms": 751
   },
   {
    "type": "start",
    "agent": "official_sources",
    "tool": "official_sources",
-   "_ms": 408
+   "_ms": 751
   },
   {
    "type": "start",
    "agent": "research_agent",
    "tool": "research_agent",
-   "_ms": 408
+   "_ms": 751
   },
   {
    "type": "step",
@@ -74,7 +74,7 @@
    "summary": "Safety marks: no marks claimed",
    "model": null,
    "seconds": 1.41,
-   "_ms": 2209
+   "_ms": 3124
   },
   {
    "type": "step",
@@ -83,48 +83,48 @@
    "tool": "research_agent",
    "summary": "Skipped: nothing to check this with",
    "model": null,
-   "seconds": 1.6,
-   "_ms": 2210
+   "seconds": 1.58,
+   "_ms": 3124
   },
   {
    "type": "step",
    "n": 4,
-   "agent": "recall_checker",
-   "tool": "recall_checker",
-   "summary": "3 linked recall notice(s)",
-   "model": null,
-   "seconds": 1.69,
-   "_ms": 2286
-  },
-  {
-   "type": "step",
-   "n": 5,
    "agent": "twin_finder",
    "tool": "twin_finder",
    "summary": "No related products on file",
    "model": null,
-   "seconds": 1.77,
-   "_ms": 2286
+   "seconds": 2.19,
+   "_ms": 3126
   },
   {
    "type": "step",
-   "n": 6,
+   "n": 5,
    "agent": "is_it_real",
    "tool": "is_it_real",
    "summary": "Is it real? no warning signs",
    "model": null,
-   "seconds": 1.81,
-   "_ms": 2286
+   "seconds": 2.24,
+   "_ms": 3126
   },
   {
    "type": "step",
-   "n": 7,
+   "n": 6,
    "agent": "official_sources",
    "tool": "official_sources",
    "summary": "Official sources (partial): 1 notice(s) may concern this product; India no matching notice found, the United States checked live, Japan no matching notice found",
    "model": null,
-   "seconds": 1.84,
-   "_ms": 2286
+   "seconds": 2.28,
+   "_ms": 3126
+  },
+  {
+   "type": "step",
+   "n": 7,
+   "agent": "recall_checker",
+   "tool": "recall_checker",
+   "summary": "3 linked recall notice(s)",
+   "model": null,
+   "seconds": 2.33,
+   "_ms": 3127
   },
   {
    "type": "step",
@@ -132,15 +132,15 @@
    "agent": "safety_radar",
    "tool": "safety_radar",
    "summary": "Safety: officially recalled; verdict red from 0 reviews",
-   "model": "gemini-3.5-flash",
-   "seconds": 6.73,
-   "_ms": 7155
+   "model": "gemini-3-flash-preview",
+   "seconds": 10.88,
+   "_ms": 11632
   },
   {
    "type": "start",
    "agent": "verdict",
    "tool": "verdict",
-   "_ms": 7155
+   "_ms": 11647
   },
   {
    "type": "step",
@@ -150,7 +150,7 @@
    "summary": "Code set the verdict: safety amber, is it real unknown, overall amber",
    "model": null,
    "seconds": 0.0,
-   "_ms": 7164
+   "_ms": 11647
   },
   {
    "type": "verdict",
@@ -196,7 +196,7 @@
        "name": "India",
        "is_market": true,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "india_notices",
@@ -230,7 +230,7 @@
        "name": "the United States",
        "is_market": false,
        "state": "checked_live",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "cpsc",
@@ -262,7 +262,7 @@
        "name": "Japan",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -280,7 +280,7 @@
        "name": "Australia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -298,7 +298,7 @@
        "name": "Singapore",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -336,7 +336,7 @@
        "name": "South Korea",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -354,7 +354,7 @@
        "name": "Taiwan",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -372,7 +372,7 @@
        "name": "Indonesia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -390,7 +390,7 @@
        "name": "Malaysia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -408,7 +408,7 @@
        "name": "the Philippines",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -426,7 +426,7 @@
        "name": "Thailand",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -444,7 +444,7 @@
        "name": "Vietnam",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -467,7 +467,7 @@
        "jurisdiction": "IN",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-18T15:18:12.608143+00:00",
+       "checked_at": "2026-10-18T15:52:14.953467+00:00",
        "freshness": "2026-09-09",
        "records_returned": 0,
        "matched": 0,
@@ -497,7 +497,7 @@
        "jurisdiction": "US",
        "state": "checked_live",
        "mode": "live",
-       "checked_at": "2026-10-18T15:18:11.500129+00:00",
+       "checked_at": "2026-10-18T15:52:13.657379+00:00",
        "freshness": "2026-02-26",
        "records_returned": 9,
        "matched": 1,
@@ -559,7 +559,7 @@
        "jurisdiction": "MULTI",
        "state": "checked_cache",
        "mode": "cache",
-       "checked_at": "2026-10-18T15:18:12.726192+00:00",
+       "checked_at": "2026-10-18T15:52:15.059035+00:00",
        "freshness": "2026-10-13",
        "records_returned": 26,
        "matched": 1,
@@ -852,7 +852,7 @@
      }
     ]
    },
-   "_ms": 7166
+   "_ms": 11654
   },
   {
    "type": "step",
@@ -861,14 +861,14 @@
    "tool": "gemini",
    "summary": "Wrote the answer",
    "model": "gemini-3.5-flash-lite",
-   "seconds": 0.89,
-   "_ms": 8065
+   "seconds": 1.98,
+   "_ms": 13640
   },
   {
    "type": "done",
    "result": {
-    "session_id": "SS-I-8C3E9F91",
-    "investigation_id": "SS-I-8C3E9F91",
+    "session_id": "SS-I-1DE899B6",
+    "investigation_id": "SS-I-1DE899B6",
     "mode": "investigate",
     "product_id": "SS-P-AMZ-B01B14ANLY",
     "language": "en",
@@ -914,7 +914,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -948,7 +948,7 @@
         "name": "the United States",
         "is_market": false,
         "state": "checked_live",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -980,7 +980,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -998,7 +998,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1016,7 +1016,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1054,7 +1054,7 @@
         "name": "South Korea",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1072,7 +1072,7 @@
         "name": "Taiwan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1090,7 +1090,7 @@
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1108,7 +1108,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1126,7 +1126,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1144,7 +1144,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1162,7 +1162,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1185,7 +1185,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:12.608143+00:00",
+        "checked_at": "2026-10-18T15:52:14.953467+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -1215,7 +1215,7 @@
         "jurisdiction": "US",
         "state": "checked_live",
         "mode": "live",
-        "checked_at": "2026-10-18T15:18:11.500129+00:00",
+        "checked_at": "2026-10-18T15:52:13.657379+00:00",
         "freshness": "2026-02-26",
         "records_returned": 9,
         "matched": 1,
@@ -1277,7 +1277,7 @@
         "jurisdiction": "MULTI",
         "state": "checked_cache",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "freshness": "2026-10-13",
         "records_returned": 26,
         "matched": 1,
@@ -1573,7 +1573,7 @@
     "messages": [
      {
       "role": "assistant",
-      "text": "This product has a recall in the United States for a fire risk, but there is no matching notice in India yet so the version sold here may or may not be affected. This amber status is an AI finding under review, not a regulator's decision.",
+      "text": "This product has a recall in the United States for a fire risk, but there is no matching notice for India yet. This amber finding is an AI finding under review, not a regulator's decision.",
       "evidence_ids": []
      }
     ],
@@ -1715,7 +1715,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2025-06-12",
-        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
+        "retrieved_at": "2026-10-18T15:52:13.657379+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion battery in the power bank can overheat, posing fire and burn hazards to consumers.",
@@ -1768,7 +1768,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2019-07-08",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "It is found that that defective products (40 pieces in the initial lot) generated in the manufacturing process were shipped mixed with normal products.",
@@ -1811,7 +1811,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2021-07-02",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "It is found that two burning accidents have occurred.",
@@ -1854,7 +1854,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2023-02-07",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The occurrence of an overseas incident has been confirmed in which this product ignited.",
@@ -1897,7 +1897,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2023-03-09",
-        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
+        "retrieved_at": "2026-10-18T15:52:13.657379+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion batteries in the recalled power banks can overheat, posing a fire hazard.",
@@ -1943,7 +1943,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2023-08-22",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "A serious product accident has occurred due to a defect in the battery installed in the product, and similar accidents may occur with some of the products.",
@@ -1996,7 +1996,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2023-10-16",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "There has been a serious product accident due to the defectiveness of the battery built in the product, and it is anticipated that a similar accident may occur with other products.",
@@ -2042,7 +2042,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2024-04-04",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "Due to the discovery of deficiencies in some lot management and there is a possibility of accidents.",
@@ -2088,7 +2088,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2024-04-04",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "Due to the discovery of deficiencies in some lot management and there is a possibility of accidents.",
@@ -2133,7 +2133,7 @@
         "jurisdiction": "KR",
         "record_type": "recall_notice",
         "published": "2024-06-25",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The lithium-ion battery, which is used in the portable battery, poses a risk of overheating. ◇ The lithium-ion battery, which is used in the portable battery, poses a risk of overheating.",
@@ -2176,7 +2176,7 @@
         "jurisdiction": "AU",
         "record_type": "recall_notice",
         "published": "2024-07-15",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "A short circuit in the battery can cause the speaker to overheat.\rThere is a risk of a serious injury and/or property damage if the speaker overheats and catches fire.\rA fire has occurred resulting in burn injuries and property damage.",
@@ -2219,7 +2219,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2024-09-17",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "There were reports that the product in question caught fire outside Japan, and as a result of an investigation, it was found that there were deficiencies in the manufacturing process, and there is a possibility of an accident.",
@@ -2268,7 +2268,7 @@
         "jurisdiction": "AU",
         "record_type": "recall_notice",
         "published": "2024-10-02",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The battery in the power bank can overheat and catch fire.\rThere is a risk of serious injury from burns and/or property damage if the power bank overheats and melts or catches fire.\rTwo incidents have caused injuries and property damage, which occurred overseas.",
@@ -2313,7 +2313,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2024-10-17",
-        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
+        "retrieved_at": "2026-10-18T15:52:13.657379+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion battery in the power banks can overheat, posing fire and burn hazards.",
@@ -2360,7 +2360,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2024-12-05",
-        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
+        "retrieved_at": "2026-10-18T15:52:13.657379+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The lithium-ion batteries in the recalled A3102 Anker Soundcore (black) and A3302 PowerConf S3 Bluetooth Speakers can overheat, posing a fire hazard.",
@@ -2406,7 +2406,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2025-06-26",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "Because it was found that the cell manufacturing supplier had used improper materials, which may lead to potential accidents.",
@@ -2456,7 +2456,7 @@
         "jurisdiction": "TW",
         "record_type": "recall_notice",
         "published": "2025-06-27",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "In severe cases, battery malfunction may lead to internal short circuits and thermal runaway in a certain proportion of the batteries.",
@@ -2499,7 +2499,7 @@
         "jurisdiction": "AU",
         "record_type": "recall_notice",
         "published": "2025-07-08",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "The power bank may overheat and catch fire.\rRisk of serious burn injuries and/or property damage if the power bank overheats and catches fire.\rIncidents have occurred overseas, resulting in property damage and injuries.",
@@ -2547,7 +2547,7 @@
         "jurisdiction": "KR",
         "record_type": "recall_notice",
         "published": "2025-07-31",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "- It was confirmed that the supplier used inappropriate components. It was found that inappropriate components were used within the cell, and there are products that may have a risk of internal short circuit. - Concerns about the risk of overheating during customer usage may arise.",
@@ -2590,7 +2590,7 @@
         "jurisdiction": "JP",
         "record_type": "recall_notice",
         "published": "2025-10-21",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "In certain products, incidents of ignition occurred in Japan. As a result of an investigation by the business operator, it was found that some products shipped within Japan, in which the battery cell manufacturing was outsourced to a supplier, may have contained foreign matter during specific period",
@@ -2644,7 +2644,7 @@
         "jurisdiction": "KR",
         "record_type": "recall_notice",
         "published": "2025-11-03",
-        "retrieved_at": "2026-10-18T15:18:12.726192+00:00",
+        "retrieved_at": "2026-10-18T15:52:15.059035+00:00",
         "mode": "cache",
         "language": "en",
         "hazard": "* Foreign matter may be mixed inside the battery cell, which could cause an internal short circuit. * There may be a risk of overheating due to an internal short circuit.",
@@ -2689,7 +2689,7 @@
         "jurisdiction": "US",
         "record_type": "recall_notice",
         "published": "2026-02-26",
-        "retrieved_at": "2026-10-18T15:18:11.500129+00:00",
+        "retrieved_at": "2026-10-18T15:52:13.657379+00:00",
         "mode": "live",
         "language": "en",
         "hazard": "The recalled bath seats violate the mandatory standard for infant bath seats because they are unstable and can tip over while in use, posing a risk of serious injury or death due to drowning.",
@@ -2736,7 +2736,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:12.608143+00:00",
+        "checked_at": "2026-10-18T15:52:14.953467+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -2766,7 +2766,7 @@
         "jurisdiction": "US",
         "state": "checked_live",
         "mode": "live",
-        "checked_at": "2026-10-18T15:18:11.500129+00:00",
+        "checked_at": "2026-10-18T15:52:13.657379+00:00",
         "freshness": "2026-02-26",
         "records_returned": 9,
         "matched": 1,
@@ -2828,7 +2828,7 @@
         "jurisdiction": "MULTI",
         "state": "checked_cache",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "freshness": "2026-10-13",
         "records_returned": 26,
         "matched": 1,
@@ -2844,7 +2844,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -2878,7 +2878,7 @@
         "name": "the United States",
         "is_market": false,
         "state": "checked_live",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -2910,7 +2910,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2928,7 +2928,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2946,7 +2946,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -2984,7 +2984,7 @@
         "name": "South Korea",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -3002,7 +3002,7 @@
         "name": "Taiwan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -3020,7 +3020,7 @@
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -3038,7 +3038,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -3056,7 +3056,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -3074,7 +3074,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -3092,7 +3092,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:12.726192+00:00",
+        "checked_at": "2026-10-18T15:52:15.059035+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -3132,7 +3132,7 @@
       "tool": "page",
       "summary": "Matched the listing to SS-P-AMZ-B01B14ANLY (by url)",
       "model": null,
-      "seconds": 0.25
+      "seconds": 0.57
      },
      {
       "n": 2,
@@ -3148,47 +3148,47 @@
       "tool": "research_agent",
       "summary": "Skipped: nothing to check this with",
       "model": null,
-      "seconds": 1.6
+      "seconds": 1.58
      },
      {
       "n": 4,
-      "agent": "recall_checker",
-      "tool": "recall_checker",
-      "summary": "3 linked recall notice(s)",
-      "model": null,
-      "seconds": 1.69
-     },
-     {
-      "n": 5,
       "agent": "twin_finder",
       "tool": "twin_finder",
       "summary": "No related products on file",
       "model": null,
-      "seconds": 1.77
+      "seconds": 2.19
      },
      {
-      "n": 6,
+      "n": 5,
       "agent": "is_it_real",
       "tool": "is_it_real",
       "summary": "Is it real? no warning signs",
       "model": null,
-      "seconds": 1.81
+      "seconds": 2.24
      },
      {
-      "n": 7,
+      "n": 6,
       "agent": "official_sources",
       "tool": "official_sources",
       "summary": "Official sources (partial): 1 notice(s) may concern this product; India no matching notice found, the United States checked live, Japan no matching notice found",
       "model": null,
-      "seconds": 1.84
+      "seconds": 2.28
+     },
+     {
+      "n": 7,
+      "agent": "recall_checker",
+      "tool": "recall_checker",
+      "summary": "3 linked recall notice(s)",
+      "model": null,
+      "seconds": 2.33
      },
      {
       "n": 8,
       "agent": "safety_radar",
       "tool": "safety_radar",
       "summary": "Safety: officially recalled; verdict red from 0 reviews",
-      "model": "gemini-3.5-flash",
-      "seconds": 6.73
+      "model": "gemini-3-flash-preview",
+      "seconds": 10.88
      },
      {
       "n": 9,
@@ -3204,13 +3204,13 @@
       "tool": "gemini",
       "summary": "Wrote the answer",
       "model": "gemini-3.5-flash-lite",
-      "seconds": 0.89
+      "seconds": 1.98
      }
     ],
     "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
-    "checked_at": 1792336698.8065288
+    "checked_at": 1792338746.383348
    },
-   "_ms": 8095
+   "_ms": 13685
   }
  ]
 }

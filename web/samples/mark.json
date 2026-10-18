@@ -1,18 +1,18 @@
 {
- "recorded_at": "2026-10-18 20:48 IST",
+ "recorded_at": "2026-10-18 21:22 IST",
  "api": "https://safeshelf-api-368488022657.asia-south1.run.app",
  "events": [
   {
    "type": "open",
    "mode": "investigate",
-   "investigation_id": "SS-I-AA871D6D",
-   "_ms": 204
+   "investigation_id": "SS-I-49D940B0",
+   "_ms": 169
   },
   {
    "type": "start",
    "agent": "page_reader",
    "tool": "page",
-   "_ms": 205
+   "_ms": 169
   },
   {
    "type": "step",
@@ -21,50 +21,50 @@
    "tool": "page",
    "summary": "Matched the listing to SS-P-30118 (by url)",
    "model": null,
-   "seconds": 0.07,
-   "_ms": 312
+   "seconds": 0.06,
+   "_ms": 302
   },
   {
    "type": "start",
    "agent": "is_it_real",
    "tool": "is_it_real",
-   "_ms": 312
+   "_ms": 302
   },
   {
    "type": "start",
    "agent": "safety_radar",
    "tool": "safety_radar",
-   "_ms": 312
+   "_ms": 302
   },
   {
    "type": "start",
    "agent": "twin_finder",
    "tool": "twin_finder",
-   "_ms": 312
+   "_ms": 302
   },
   {
    "type": "start",
    "agent": "recall_checker",
    "tool": "recall_checker",
-   "_ms": 312
+   "_ms": 302
   },
   {
    "type": "start",
    "agent": "cert_verifier",
    "tool": "cert_verifier",
-   "_ms": 312
+   "_ms": 302
   },
   {
    "type": "start",
    "agent": "official_sources",
    "tool": "official_sources",
-   "_ms": 312
+   "_ms": 302
   },
   {
    "type": "start",
    "agent": "research_agent",
    "tool": "research_agent",
-   "_ms": 312
+   "_ms": 302
   },
   {
    "type": "step",
@@ -73,8 +73,8 @@
    "tool": "twin_finder",
    "summary": "No related products on file",
    "model": null,
-   "seconds": 1.56,
-   "_ms": 2010
+   "seconds": 0.06,
+   "_ms": 1604
   },
   {
    "type": "step",
@@ -83,8 +83,8 @@
    "tool": "research_agent",
    "summary": "Skipped: nothing to check this with",
    "model": null,
-   "seconds": 1.66,
-   "_ms": 2010
+   "seconds": 0.9,
+   "_ms": 1604
   },
   {
    "type": "step",
@@ -93,28 +93,28 @@
    "tool": "cert_verifier",
    "summary": "Safety marks: BIS mismatch",
    "model": null,
-   "seconds": 1.68,
-   "_ms": 2039
+   "seconds": 0.93,
+   "_ms": 1671
   },
   {
    "type": "step",
    "n": 5,
-   "agent": "official_sources",
-   "tool": "official_sources",
-   "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
+   "agent": "is_it_real",
+   "tool": "is_it_real",
+   "summary": "Is it real? no warning signs",
    "model": null,
-   "seconds": 1.7,
-   "_ms": 2039
+   "seconds": 1.36,
+   "_ms": 1671
   },
   {
    "type": "step",
    "n": 6,
-   "agent": "safety_radar",
-   "tool": "safety_radar",
-   "summary": "Safety: verdict not_enough_evidence from 0 reviews",
+   "agent": "official_sources",
+   "tool": "official_sources",
+   "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
    "model": null,
-   "seconds": 1.71,
-   "_ms": 2039
+   "seconds": 1.39,
+   "_ms": 1680
   },
   {
    "type": "step",
@@ -123,24 +123,24 @@
    "tool": "recall_checker",
    "summary": "No recall notice linked",
    "model": null,
-   "seconds": 1.72,
-   "_ms": 2039
+   "seconds": 1.41,
+   "_ms": 1680
   },
   {
    "type": "step",
    "n": 8,
-   "agent": "is_it_real",
-   "tool": "is_it_real",
-   "summary": "Is it real? no warning signs",
+   "agent": "safety_radar",
+   "tool": "safety_radar",
+   "summary": "Safety: verdict not_enough_evidence from 0 reviews",
    "model": null,
-   "seconds": 1.83,
-   "_ms": 2213
+   "seconds": 1.43,
+   "_ms": 1692
   },
   {
    "type": "start",
    "agent": "verdict",
    "tool": "verdict",
-   "_ms": 2213
+   "_ms": 1692
   },
   {
    "type": "step",
@@ -150,7 +150,7 @@
    "summary": "Code set the verdict: safety unknown, is it real amber, overall amber",
    "model": null,
    "seconds": 0.0,
-   "_ms": 2214
+   "_ms": 1692
   },
   {
    "type": "verdict",
@@ -194,7 +194,7 @@
        "name": "India",
        "is_market": true,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "india_notices",
@@ -228,7 +228,7 @@
        "name": "Japan",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -246,7 +246,7 @@
        "name": "Australia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -264,7 +264,7 @@
        "name": "Singapore",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -284,7 +284,7 @@
        "name": "the United States",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "cpsc",
@@ -334,7 +334,7 @@
        "name": "South Korea",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -352,7 +352,7 @@
        "name": "Taiwan",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -370,7 +370,7 @@
        "name": "Indonesia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -388,7 +388,7 @@
        "name": "Malaysia",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -406,7 +406,7 @@
        "name": "the Philippines",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -424,7 +424,7 @@
        "name": "Thailand",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -442,7 +442,7 @@
        "name": "Vietnam",
        "is_market": false,
        "state": "no_matching_notice_found",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "sources": [
         {
          "source": "stored_notices",
@@ -465,7 +465,7 @@
        "jurisdiction": "IN",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-18T15:18:27.022292+00:00",
+       "checked_at": "2026-10-18T15:52:32.865521+00:00",
        "freshness": "2026-09-09",
        "records_returned": 0,
        "matched": 0,
@@ -495,7 +495,7 @@
        "jurisdiction": "US",
        "state": "no_matching_notice_found",
        "mode": "live",
-       "checked_at": "2026-10-18T15:18:26.442592+00:00",
+       "checked_at": "2026-10-18T15:52:32.144799+00:00",
        "freshness": null,
        "records_returned": 0,
        "matched": 0,
@@ -555,7 +555,7 @@
        "jurisdiction": "MULTI",
        "state": "no_matching_notice_found",
        "mode": "cache",
-       "checked_at": "2026-10-18T15:18:27.086612+00:00",
+       "checked_at": "2026-10-18T15:52:32.911512+00:00",
        "freshness": "2026-10-13",
        "records_returned": 0,
        "matched": 0,
@@ -717,7 +717,7 @@
     },
     "matches": []
    },
-   "_ms": 2214
+   "_ms": 1698
   },
   {
    "type": "step",
@@ -726,14 +726,14 @@
    "tool": "gemini",
    "summary": "Wrote the answer",
    "model": "gemini-3.5-flash-lite",
-   "seconds": 1.04,
-   "_ms": 3262
+   "seconds": 0.92,
+   "_ms": 2624
   },
   {
    "type": "done",
    "result": {
-    "session_id": "SS-I-AA871D6D",
-    "investigation_id": "SS-I-AA871D6D",
+    "session_id": "SS-I-49D940B0",
+    "investigation_id": "SS-I-49D940B0",
     "mode": "investigate",
     "product_id": "SS-P-30118",
     "language": "en",
@@ -777,7 +777,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -811,7 +811,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -829,7 +829,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -847,7 +847,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -867,7 +867,7 @@
         "name": "the United States",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -917,7 +917,7 @@
         "name": "South Korea",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -935,7 +935,7 @@
         "name": "Taiwan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -953,7 +953,7 @@
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -971,7 +971,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -989,7 +989,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1007,7 +1007,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1025,7 +1025,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1048,7 +1048,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:27.022292+00:00",
+        "checked_at": "2026-10-18T15:52:32.865521+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -1078,7 +1078,7 @@
         "jurisdiction": "US",
         "state": "no_matching_notice_found",
         "mode": "live",
-        "checked_at": "2026-10-18T15:18:26.442592+00:00",
+        "checked_at": "2026-10-18T15:52:32.144799+00:00",
         "freshness": null,
         "records_returned": 0,
         "matched": 0,
@@ -1138,7 +1138,7 @@
         "jurisdiction": "MULTI",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "freshness": "2026-10-13",
         "records_returned": 0,
         "matched": 0,
@@ -1303,7 +1303,7 @@
     "messages": [
      {
       "role": "assistant",
-      "text": "Official recall lists in 12 countries show no matching notice found in the sources checked (this is not proof of safety). The product's safety is currently unknown, and its authenticity is an AI finding under review, not a regulator's decision, because the BIS licence belongs to another brand (mock registry) with the listing saying VoltNova and the registry saying Kelvo. We read 0 buyer reviews, which is too few to judge from reviews alone.",
+      "text": "No matching notice was found in the sources checked, which is not proof of safety. Official safety recall lists in 12 countries show no recall for this VoltNova VN-65PD. Meanwhile, the listing's BIS licence belongs to another brand, which is an AI finding under review and not a regulator's decision.",
       "evidence_ids": []
      }
     ],
@@ -1376,7 +1376,7 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "VoltNova",
-        "checked_at": "2026-10-18T15:18:27+00:00",
+        "checked_at": "2026-10-18T15:52:33+00:00",
         "result": "mismatch",
         "field": "brand",
         "registry_value": "Kelvo",
@@ -1405,7 +1405,7 @@
         "authority": "BIS",
         "number": "R-41097318",
         "claimed_value": "VoltNova",
-        "checked_at": "2026-10-18T15:18:25+00:00",
+        "checked_at": "2026-10-18T15:52:32+00:00",
         "result": "mismatch",
         "field": "brand",
         "registry_value": "Kelvo",
@@ -1450,7 +1450,7 @@
         "jurisdiction": "IN",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:27.022292+00:00",
+        "checked_at": "2026-10-18T15:52:32.865521+00:00",
         "freshness": "2026-09-09",
         "records_returned": 0,
         "matched": 0,
@@ -1480,7 +1480,7 @@
         "jurisdiction": "US",
         "state": "no_matching_notice_found",
         "mode": "live",
-        "checked_at": "2026-10-18T15:18:26.442592+00:00",
+        "checked_at": "2026-10-18T15:52:32.144799+00:00",
         "freshness": null,
         "records_returned": 0,
         "matched": 0,
@@ -1540,7 +1540,7 @@
         "jurisdiction": "MULTI",
         "state": "no_matching_notice_found",
         "mode": "cache",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "freshness": "2026-10-13",
         "records_returned": 0,
         "matched": 0,
@@ -1554,7 +1554,7 @@
         "name": "India",
         "is_market": true,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "india_notices",
@@ -1588,7 +1588,7 @@
         "name": "Japan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1606,7 +1606,7 @@
         "name": "Australia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1624,7 +1624,7 @@
         "name": "Singapore",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1644,7 +1644,7 @@
         "name": "the United States",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "cpsc",
@@ -1694,7 +1694,7 @@
         "name": "South Korea",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1712,7 +1712,7 @@
         "name": "Taiwan",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1730,7 +1730,7 @@
         "name": "Indonesia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1748,7 +1748,7 @@
         "name": "Malaysia",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1766,7 +1766,7 @@
         "name": "the Philippines",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1784,7 +1784,7 @@
         "name": "Thailand",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1802,7 +1802,7 @@
         "name": "Vietnam",
         "is_market": false,
         "state": "no_matching_notice_found",
-        "checked_at": "2026-10-18T15:18:27.086612+00:00",
+        "checked_at": "2026-10-18T15:52:32.911512+00:00",
         "sources": [
          {
           "source": "stored_notices",
@@ -1842,7 +1842,7 @@
       "tool": "page",
       "summary": "Matched the listing to SS-P-30118 (by url)",
       "model": null,
-      "seconds": 0.07
+      "seconds": 0.06
      },
      {
       "n": 2,
@@ -1850,7 +1850,7 @@
       "tool": "twin_finder",
       "summary": "No related products on file",
       "model": null,
-      "seconds": 1.56
+      "seconds": 0.06
      },
      {
       "n": 3,
@@ -1858,7 +1858,7 @@
       "tool": "research_agent",
       "summary": "Skipped: nothing to check this with",
       "model": null,
-      "seconds": 1.66
+      "seconds": 0.9
      },
      {
       "n": 4,
@@ -1866,23 +1866,23 @@
       "tool": "cert_verifier",
       "summary": "Safety marks: BIS mismatch",
       "model": null,
-      "seconds": 1.68
+      "seconds": 0.93
      },
      {
       "n": 5,
+      "agent": "is_it_real",
+      "tool": "is_it_real",
+      "summary": "Is it real? no warning signs",
+      "model": null,
+      "seconds": 1.36
+     },
+     {
+      "n": 6,
       "agent": "official_sources",
       "tool": "official_sources",
       "summary": "Official sources (partial): 0 notice(s) may concern this product; India no matching notice found, Japan no matching notice found, Australia no matching notice found",
       "model": null,
-      "seconds": 1.7
-     },
-     {
-      "n": 6,
-      "agent": "safety_radar",
-      "tool": "safety_radar",
-      "summary": "Safety: verdict not_enough_evidence from 0 reviews",
-      "model": null,
-      "seconds": 1.71
+      "seconds": 1.39
      },
      {
       "n": 7,
@@ -1890,15 +1890,15 @@
       "tool": "recall_checker",
       "summary": "No recall notice linked",
       "model": null,
-      "seconds": 1.72
+      "seconds": 1.41
      },
      {
       "n": 8,
-      "agent": "is_it_real",
-      "tool": "is_it_real",
-      "summary": "Is it real? no warning signs",
+      "agent": "safety_radar",
+      "tool": "safety_radar",
+      "summary": "Safety: verdict not_enough_evidence from 0 reviews",
       "model": null,
-      "seconds": 1.83
+      "seconds": 1.43
      },
      {
       "n": 9,
@@ -1914,13 +1914,13 @@
       "tool": "gemini",
       "summary": "Wrote the answer",
       "model": "gemini-3.5-flash-lite",
-      "seconds": 1.04
+      "seconds": 0.92
      }
     ],
     "label": "AI-assisted investigation. Colours are set by code; findings under review are not regulatory determinations.",
-    "checked_at": 1792336708.342341
+    "checked_at": 1792338754.3858476
    },
-   "_ms": 3264
+   "_ms": 2637
   }
  ]
 }
