@@ -186,6 +186,9 @@ All of these go live with item 4 (`make deploy-api`); the web page with item 5.
 
 ## ✅ Done
 
+**Competitor scan (18 Oct)**
+- [x] Eleventh scan, submission day: 191 new real public entries, **≈497 in total** (Sustainability ~115, Future of Work ~110, BFSI ~100, Retail ~66, Manufacturing ~61, Media ~45). Closest new ones: ShopProof (same-product match across Shopee/Lazada/TikTok Shop, for price, not safety) and Remedy Mesh (car recalls, carmaker side). No entry checks a product against JAPAC recall and safety notices. See [COMPETITOR_ENTRIES.md](COMPETITOR_ENTRIES.md#eleventh-scan-2026-10-18-submission-day).
+
 **Website (18 Oct)**
 - [x] Homepage redesigned after the Databuddy layout, in our own theme: hero with Eddy, one product window with tabs and a price chart, regulator wall, a bento of six checks, Ask Eddy with switchable questions, agent terminal (MCP/REST/A2A), free plans, FAQ as a chat with Eddy, "On the record" (real records and measurements, no made-up quotes), closing band. New `web/site/home.css` and `home.js`; then every site page (How it works, For agents, Results, Team, Get SafeShelf, My Shelf) moved to the same layout: hero with an Eddy pose, a product window on the pixel sky, sections with the three-bar mark, card grids, the closing band and the new footer. Shared styles in `web/site/pages.css`; `get.css` removed. Chat page left as is (another change in progress there). The judges' demo page (`web/index.html`) got the same look: hero with Eddy, pill jump bar, section heads with the three-bar mark, pill tabs, the pixel closing band and the new footer; only CSS and the hero, closing-band and footer markup changed, every id, class and `data-say` the scripts use is kept. **Needs `make deploy-web`**
 
