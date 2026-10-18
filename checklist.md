@@ -184,6 +184,9 @@ All of these go live with item 4 (`make deploy-api`); the web page with item 5.
 
 ## ✅ Done
 
+**Website (18 Oct)**
+- [x] Homepage redesigned after the Databuddy layout, in our own theme: hero with Eddy, one product window with tabs and a price chart, regulator wall, a bento of six checks, Ask Eddy with switchable questions, agent terminal (MCP/REST/A2A), free plans, FAQ as a chat with Eddy, "On the record" (real records and measurements, no made-up quotes), closing band. New `web/site/home.css` and `home.js`; other pages unchanged. **Needs `make deploy-web`**
+
 **Live on Google Cloud**
 - [x] API live on Cloud Run: 18 endpoints return real data
 - [x] Cloud SQL + pgvector, Gemini 3.x on Vertex, Cloud Storage, Secret Manager; public API is rate-limited
